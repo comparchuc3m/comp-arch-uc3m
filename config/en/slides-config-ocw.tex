@@ -1,0 +1,32 @@
+\input{config/en/common}
+\input{config/slides-config}
+
+% Common part of titlepage
+\newcommand{\commontitle}{
+\author{
+\texorpdfstring{
+J. Daniel García Sánchez (coordinator)\\
+David Expósito Singh\\
+Francisco Javier García Blas
+}
+{J. Daniel Garcia et al.}
+}
+\subtitle{Computer Architecture}
+\institute{ARCOS Group\\
+Computer Science and Engineering Department\\
+University Carlos III of Madrid}
+\date{}
+}
+
+
+% Footline in every slide
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{\begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm,rightskip=.3cm]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\ccbyncndeu \quad -- \quad Computer Architecture \quad -- \quad ARCOS Group \quad -- \quad \url{http://www.arcos.inf.uc3m.es}
+    \hfill
+    \insertframenumber/\inserttotalframenumber
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+

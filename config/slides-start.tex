@@ -1,0 +1,21 @@
+\begin{frame}
+\titlepage
+\end{frame}
+
+\AtBeginSection[]
+{
+  \begin{frame}<*>[shrink]
+    \setbeamertemplate{section in toc shaded}[default][50]
+    \setbeamertemplate{subsection in toc shaded}[default][50]
+    \tableofcontents[currentsection,hideallsubsections]
+  \end{frame}
+}
+
+\AtBeginSubsection[]
+{
+  \begin{frame}<*>
+    \setbeamertemplate{subsection in toc shaded}[default][50]
+    \tableofcontents[sectionstyle=show/hide,subsectionstyle=show/shaded/hide]
+  \end{frame}
+}
+

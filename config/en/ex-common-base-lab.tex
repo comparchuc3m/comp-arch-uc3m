@@ -1,0 +1,107 @@
+\PassOptionsToPackage{usenames}{xcolor}
+\PassOptionsToPackage{dvipsnames}{xcolor}
+
+\documentclass[11pt,a4paper,fleqn,twoside,final,openright]{article}%
+\usepackage[a4paper,left=2cm,right=2cm,top=2.5cm,bottom=4cm]{geometry}
+
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue,plainpages=false,bookmarksnumbered=true,pdfpagemode=UseOutlines]{hyperref}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage[nottoc]{tocbibind}
+
+\usepackage{graphicx}
+\usepackage{xcolor}
+\input{config/tikz-config}
+
+\usepackage{url}
+
+\usepackage{pdfpages}
+
+\usepackage{rotating}
+\usepackage{array}
+
+%Package fancyhdr
+\usepackage{fancyhdr}
+\setlength{\headheight}{1.4cm}%{13.6pt}
+\pagestyle{fancyplain}
+\fancyhf{}
+\lhead{\includegraphics[height=1.25cm]{logos/logo-uc3m.jpg}}
+\rhead{\includegraphics[height=1.25cm]{logos/arcos.png}}
+\chead{}
+\rfoot{Arquitectura de Computadores}
+\cfoot{\thepage}
+\lfoot{\textbf{J. Daniel Garcia et al.} \newline \ccbyncndeu \quad ARCOS@uc3m}
+\renewcommand{\headrulewidth}{0.5pt} % remove lines as well
+\renewcommand{\footrulewidth}{0.5pt}
+\renewcommand{\plainheadrulewidth}{0.5pt}
+\renewcommand{\plainfootrulewidth}{0.5pt}
+
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.9}
+
+\usepackage{listings}
+\input{config/cpp11-config}
+
+\author{}
+\date{}
+
+\usepackage[scale=1.2]{ccicons}
+
+\newcommand{\bulletgood}[1]{%
+{\color{blue}\textbf{#1}}%
+}
+
+\newcommand{\bulletenum}[1]{%
+{\color{blue!60!black}\textbf{#1}}%
+}
+
+\newcommand{\bulletmark}[1]{%
+{\color{orange!70!black}\textbf{#1}}%
+}
+
+\newcommand{\textgood}[1]{%
+{\color{blue}\textbf{#1}}%
+}
+
+\newcommand{\textenum}[1]{%
+{\color{blue!60!black}\textbf{#1}}%
+}
+
+\newcommand{\textmark}[1]{%
+{\color{orange!70!black}\textbf{#1}}%
+}
+
+\newcommand{\textbad}[1]{%
+{\color{red}\textbf{#1}}%
+}
+
+\newcommand{\credithennessy}{%
+\creditsource: Computer Architecture: A Quantitative Approach. 5 Ed\\
+Hennessy and Patterson. Morgan Kaufmann. 2012.\\
+}
+
+\newcommand{\figcredit}[1]{%
+\begin{small}
+#1
+\end{small}
+}
+
+
+% Common part of titlepage
+\newcommand{\commontitle}{
+\author{J. Daniel García Sánchez (coordinador)\\
+%David Expósito Singh\\
+%Javier García Blas\\
+%J. Manuel Pérez Lobato\\
+Estefanía Serrano López\\
+Alberto Cascajo García\\
+\\
+Arquitectura de Computadores\\
+Grupo ARCOS\\
+Departamento de Informática\\
+Universidad Carlos III de Madrid\\
+\date{}
+}}

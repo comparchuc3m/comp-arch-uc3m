@@ -1,0 +1,24 @@
+% Font selection
+\usepackage{palatino}
+
+%Encoding for spanish
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% Beamer template
+\usetheme{Antibes}
+
+%Creative commons icons
+\usepackage[scale=1.2]{ccicons}
+
+\usepackage{tabularx}
+\usepackage{multicol}
+
+\tikzset{
+  invisible/.style={opacity=0},
+  visible on/.style={alt=#1{}{invisible}},
+  alt/.code args={<#1>#2#3}{%
+    \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
+  },
+}
+
