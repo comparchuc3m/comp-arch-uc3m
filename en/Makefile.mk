@@ -1,6 +1,7 @@
 EN_CONFIG_INPUT=\
 config/*.tex \
 config/en/*.tex \
+en/license-cc.tex \
 
 #include definitions for slides
 include en/00-intro/Makefile.def
