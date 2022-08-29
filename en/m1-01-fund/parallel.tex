@@ -1,0 +1,141 @@
+\section{Parallelism}
+
+\begin{frame}[t]{The speed of a serial computer}
+\begin{itemize}
+  \item A 1 TFLOP ($10^{12}$ FLOPS) \textgood{sequential machine}:
+    \begin{itemize}
+      \item Data must travel a certain \textmark{distance} ($r$) from memory to CPU.
+      \item 1 \textmark{data element} per cycle $\Rightarrow$ $10^{12}$ times per second $\Rightarrow$ $10^{-12}$ s. per cycle.
+      \item Data traveling at \textmark{light speed}: $c=3 \cdot 10^8$ m/s.
+      \item $r = 3 \cdot 10^8 \cdot 10^{-12} = 0.3 mm$
+    \end{itemize}
+
+  \mode<presentation>{\pause\vfill}
+  \item 1 TB of data in 0.3 mm$^2$ \textmark{surface}:
+    \begin{itemize}
+      \item Each data to be stored in 3 Angmstroms (approx.)
+        \begin{itemize}
+          \item The size of a small atom!
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textemph{CONSEQUENCE}: Sequential approach not feasible.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Parallelism Kinds}
+\begin{itemize}
+  \item \emph{Parallelism}: The only way to go for increasing performance.
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Constraints}:
+    \begin{itemize}
+      \item Energy comsumption.
+      \item Cost.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Types of application parallelism}:
+    \begin{itemize}
+      \item \textmark{Data parallelism}: Same operation applied to many data.
+        \begin{itemize}
+          \item \textemph{Example}: Apply the same operation of all pixels in an image.
+        \end{itemize}
+
+      \item \textmark{Task parallelism}: Tasks operate independently and in parallel.
+        \begin{itemize}
+          \item \textemph{Example}: A pipeline of filters to a sequence of images.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Hardware parallelism}
+\begin{itemize}
+  \item \textmark{ILP}: Instruction-Level Parallelism.
+    \begin{itemize}
+      \item Exploits data-parallelism with compiler help
+      (pipeline, speculative execution, \ldots).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Vector} architectures and GPUs.
+    \begin{itemize}
+      \item Exploit data parallelism applying the same instruction to
+            several data in parallel.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{TLP}: Thread-Level Parallelism.
+    \begin{itemize}
+      \item Exploits data or task parallelism in highly coupled hardware.
+      \item Allows inter-thread interactions.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{RLP}: Request-Level Parallelism.
+    \begin{itemize}
+      \item Exploits parallelism among highly decoupled tasks.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Flynn Taxonomy (1966)}
+\begin{itemize}
+  \item A classification of possible parallel architectures.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{SISD}: Single Instruction Stream / Single Data Stream.
+    \begin{itemize}
+      \item Mono-processor.
+      \item May use ILP techniques.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{SIMD}: Single Instruction Stream / Multiple Data Streams.
+    \begin{itemize}
+      \item Same instructions executed by different processors on distinct data items.
+      \item \textgood{Alternatives}: Vector processors, multimedia extensions, and GPUs.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{MISD}: Multiple Instructions Streams / Single Data Stream.
+    \begin{itemize}
+      \item No known commercial implementation.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{MIMD}: Multiple Instructions Streams / Multiple Data Stream.
+    \begin{itemize}
+      \item Each processor operates on its own data items $\Rightarrow$ Task Parallelism.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{More about MIMD}
+\begin{itemize}
+  \item Variety in \textmark{MIMD} architectures:
+    \begin{itemize}
+      \item Highly coupled architectures.
+        \begin{itemize}
+          \item \textgood{TLP} (\emph{Thread-Level Parallelism}): Multi/Many-core architectures.
+        \end{itemize}
+      \item Weakly coupled architectures:
+        \begin{itemize}
+          \item \textgood{RLP} (\emph{Request-Level Parallelism}): Clusters and WSCs.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{MIMD} is:
+    \begin{itemize}
+      \item More flexible and general than SIMD.
+      \item More expensive than SIMD.
+      \item Requires enough task granularity.
+    \end{itemize}
+  
+\end{itemize}
+\end{frame}
+
