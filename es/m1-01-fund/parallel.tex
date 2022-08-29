@@ -1,0 +1,142 @@
+\section{Paralelismo}
+
+\begin{frame}[t]{Velocidad de máquina secuencial}
+\begin{itemize}
+  \item Una \textgood{máquina secuencial} de 1 TFLOP ($10^{12}$ FLOPS):
+    \begin{itemize}
+      \item Los datos deben viajar una cierta \textmark{distancia} ($r$) desde memoria a CPU.
+      \item 1 \textmark{dato elemental} por ciclo:
+        \begin{itemize}
+          \item $\Rightarrow$ $10^{12}$ veces por segundo $\Rightarrow$ $10^{-12}$ s. por ciclo.
+        \end{itemize}
+      \item Datos viajando a la \textmark{velocidad de la luz}: $c=3 \cdot 10^8$ m/s.
+      \item $r = 3 \cdot 10^8 \cdot 10^{-12} = 0.3 mm$
+    \end{itemize}
+
+  \mode<presentation>{\pause\vfill}
+  \item 1 TB de datos en \textmark{superficie} de 0.3 mm$^2$:
+    \begin{itemize}
+      \item Cada dato debería almacenarse en 3 Angmstroms (aprox.).
+        \begin{itemize}
+          \item ¡El tamaño de un átomo pequeño!
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textemph{CONCLUSIÓN}: Aproximación secuencial no factible.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Tipos de paralelismo}
+\begin{itemize}
+  \item \textgood{Paralelismo}: La única alternativa para mejorar el rendimiento.
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Restricciones}:
+    \begin{itemize}
+      \item Consumo energético.
+      \item Costes.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Tipos de paralelismo en las aplicaciones}:
+    \begin{itemize}
+      \item \textmark{Paralelismo de datos}: Una operación aplicada a muchos datos.
+        \begin{itemize}
+          \item \textemph{Ejemplo}: Aplicar la misma operación a todos los píxeles de una imagen.
+        \end{itemize}
+
+      \item \textmark{Paralelismo de tareas}: Tareas operan independientemente y en paralelo.
+        \begin{itemize}
+          \item \textemph{Ejemplo}: Una cadena de filtros aplicada a una secuencia de imágenes.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Paralelismo hardware}
+\begin{itemize}
+  \item \textmark{ILP}: \emph{Instruction-Level Parallelism}.
+    \begin{itemize}
+      \item Explota paralelismo de datos con ayuda del compilador
+      (segmentación, ejecución especulativa, \ldots).
+    \end{itemize}
+
+  \mode<presentation>{\pause\vfill}
+  \item Arquitecturas \textmark{Vectoriales} y \textmark{GPUs}.
+    \begin{itemize}
+      \item Explota paralelismo de datos aplicando la misma operación
+            a varios datos en paralelo.
+    \end{itemize}
+
+  \mode<presentation>{\pause\vfill}
+  \item \textmark{TLP}: \emph{Thread-Level Parallelism}.
+    \begin{itemize}
+      \item Explota paralelismo de datos o tareas en hardware altamente acoplado.
+      \item Permite interacciones entre hilos.
+    \end{itemize}
+
+  \mode<presentation>{\pause\vfill}
+  \item \textmark{RLP}: Request-Level Parallelism.
+    \begin{itemize}
+      \item Explota paralelismo entre tareas altamente desacopladas.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Taxonomía de Flynn (1966)}
+\begin{itemize}
+  \item Una clasificación de arquitecturas paralelas posibles.
+
+  \mode<presentation>{\pause\vfill}
+  \item \textgood{SISD}: \emph{Single Instruction Stream / Single Data Stream}.
+    \begin{itemize}
+      \item Mono-procesador.
+      \item Puede usar técnicas de ILP.
+    \end{itemize}
+
+  \mode<presentation>{\pause\vfill}
+  \item \textgood{SIMD}: \emph{Single Instruction Stream / Multiple Data Streams}.
+    \begin{itemize}
+      \item Las mismas instrucciones ejecutadas por procesadores diferentes sobre datos distintos.
+      \item \textgood{Alternativas}: Procesadores vectoriales, extensiones multimedia y \emph{GPU}s.
+    \end{itemize}
+
+  \mode<presentation>{\pause\vfill}
+  \item \textgood{MISD}: \emph{Multiple Instructions Streams/ Single Data Stream}.
+    \begin{itemize}
+      \item No se conocen implementaciones comerciales.
+    \end{itemize}
+
+  \mode<presentation>{\pause\vfill}
+  \item \textgood{MIMD}: \emph{Multiple Instructions Streams / Multiple Data Streams}.
+    \begin{itemize}
+      \item Cada procesador opera sobre sus propios datos $\Rightarrow$ Paralelismo de tareas.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Más sobre MIMD}
+\begin{itemize}
+  \item Variedad de arquitecturas \textmark{MIMD}:
+    \begin{itemize}
+      \item Arquitecturas altamente acopladas.
+        \begin{itemize}
+          \item \textgood{TLP} (\emph{Thread-Level Parallelism}): Arquitecturas \emph{Multi/Many-core}.
+        \end{itemize}
+      \item Arquitecturas débilmente acopladas:
+        \begin{itemize}
+          \item \textgood{RLP} (\emph{Request-Level Parallelism}): \emph{Clusters} y \emph{WSC}s.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{MIMD} es:
+    \begin{itemize}
+      \item Más flexible y general que SIMD.
+      \item Más caro que SIMD.
+      \item Requiere suficiente granularidad de tareas.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
