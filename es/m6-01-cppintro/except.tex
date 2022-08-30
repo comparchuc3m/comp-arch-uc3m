@@ -1,0 +1,82 @@
+\subsection{Excepciones}
+
+\begin{frame}[t,fragile]{Excepciones}
+\begin{itemize}
+  \item El modelo de excepciones de C++ presenta diferencias con
+        otros lenguajes.
+
+  \pause\vfill
+  \item Una excepción puede ser cualquier tipo definido por el usuario.
+\begin{lstlisting}
+class tiempo_negativo {};
+\end{lstlisting}
+
+  \pause\vfill
+  \item Cuando una función detecta una situación excepcional lanza
+        (\cppkey{throw}) una excepción.
+\begin{lstlisting}
+void imprime_velocidad(double s, double t) {
+  if (t > 0.0) {
+    cout << s/t << "\n";
+  }
+  else {
+    throw tiempo_negativo{};
+  }
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Tratamiento de excepciones}
+\begin{itemize}
+  \item El llamante puede tratar una excepción con un bloque \cppkey{try}-\cppkey{catch}.
+\begin{lstlisting}
+void f() {
+  double s = lee_espacio();
+  double t = lee_tiempo();
+  try {
+    imprime_velocidad(s,t);
+  }
+  catch (tiempo_negativo) {
+    cerr << "Error: Tiempo negativo\n";
+  }
+}
+\end{lstlisting}
+  \vfill\pause
+  \item No es necesario tratar una excepción $\rightarrow$ se propaga.
+\begin{lstlisting}
+void f() {
+  double s = lee_espacio(), t = lee_tiempo();
+  imprime_velocidad(s,t);
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Excepciones estándar}
+\begin{itemize}
+  \item Varias excepciones predefinidas en la biblioteca estándar.
+    \begin{itemize}
+      \item \cppid{out\_of\_range}, \cppid{invalid\_argument}, \ldots
+      \item Todos heredan de \cppid{exception}
+      \item Todos tienen una función miembro \cppid{what()}.
+    \end{itemize}
+\end{itemize}
+\begin{lstlisting}
+int main()
+  try {
+    f();
+    return 0;
+  }
+  catch (out_of_range & e) {
+    cerr << "Out of range:" << e.what() << "\n";
+    return -1;
+  }
+  catch (exception & e) {
+    cerr << "Excepción: " << e.what() << "\n";
+    return -2;
+  }
+}
+\end{lstlisting}
+\end{frame}

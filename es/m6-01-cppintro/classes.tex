@@ -1,0 +1,73 @@
+\subsection{Clases}
+
+\begin{frame}[t,fragile]{Clases en C++}
+\begin{itemize}
+  \item Una clase se puede definir con \cppkey{struct} o \cppkey{class}.
+    \begin{itemize}
+      \item La única diferencia es la visibilidad por defecto.
+    \end{itemize}
+\begin{lstlisting}
+struct fecha {
+  // Visibilidad pública por defecto
+};
+
+class fecha {
+  // Visibilidad privada por defecto
+};
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Función miembro}
+\begin{itemize}
+  \item Solamente se puede invocar para un objeto del tipo definido.
+\end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Punto}
+\begin{lstlisting}
+struct punto {
+  double x, y;
+  double modulo();
+  double mover_a(double cx, double cy);
+};
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+\begin{block}{Usando un punto}
+\begin{lstlisting}
+void f() {
+  punto p{2.5, 3.5};
+  p.mover_a(5.0, 7.5);
+  cout << p.modulo() << "\n";
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Visibilidad}
+\begin{itemize}
+  \item Niveles de visibilidad de los miembros de una clase:
+    \begin{itemize}
+      \item \cppkey{public}: Cualquiera puede acceder.
+      \item \cppkey{private}: Solamente por miembros de la clase.
+      \item \cppkey{protected}: Miembros de clases derivadas pueden acceder.
+    \end{itemize}
+\end{itemize}
+\vfill
+\begin{lstlisting}
+class fecha {
+public:
+  // Miembros públicos
+protected:
+  // Miembros protegidos
+private:
+  // Miembros privados
+};
+\end{lstlisting}
+\end{frame}

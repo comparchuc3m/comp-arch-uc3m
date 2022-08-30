@@ -1,0 +1,76 @@
+\subsection{Punteros inteligentes}
+
+\begin{frame}[t]{Punteros}
+\begin{itemize}
+  \item Un \bulletmark{puntero inteligente} encapsula un puntero y gestiona
+        de forma automática la gestión de la memoria asociada.
+    \begin{itemize}
+      \item Su destructor libera automáticamente la memoria asociada.
+    \end{itemize}
+
+  \vfill\pause
+  \item Tipos de punteros inteligentes:
+    \begin{itemize}
+      \item \cppid{unique\_ptr}: Puntero a un objeto que no admite copias.
+      \item \cppid{shared\_ptr}: Puntero con contador de referencias asociado.
+      \item \cppid{weak\_ptr}: Puntero auxiliar para \cppid{shared\_ptr}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Cuenta de referencias}
+\begin{itemize}
+  \item Un \cppid{shared\_ptr} mantiene un contador de referencias:
+    \begin{itemize}
+      \item Cuando se copia se incrementa el contador de referencias.
+      \item Cuando se destruye se decrementa el contador.
+      \item Si el contador llega a cero el objeto se destruye.
+    \end{itemize}
+\end{itemize}
+
+\begin{lstlisting}
+void f() {
+  shared_ptr<string> p1{new string{"Hola"}};
+  shared_ptr<string> p2{p1}; // referencias -> 2
+
+  auto n = p1->size(); // string::size(). p1 usado como ptr
+  *p1 = "Adios";
+  if (p2) { cerr << "Ocupado\n"; }
+
+  p1 = nullptr; // referencias -> 1
+  //...
+} // referencias -> 0 ==> Destrucción
+\end{lstlisting}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Punteros únicos}
+\begin{itemize}
+  \item \cppid{unique\_ptr} ofrece un puntero no compartido que no se puede copiar.
+\end{itemize}
+
+\begin{lstlisting}
+void f(string & s, int n) {
+  unique_ptr<int> p = new int{50};
+
+  string tmp = s; // Podría lanzar excepción
+  if (n<0) return;
+
+  *p = 42;
+} // Libera p
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[t,fragile]{Creación simplificada}
+\begin{itemize}
+  \item Función de creación.
+\begin{lstlisting}
+auto p = std::make_shared<registro>("Daniel", 42);
+auto q = std::make_unique<string>("Hola");
+\end{lstlisting}
+  \item Asigna el objeto y los meta-datos en una única operación.
+\end{itemize}
+\end{frame}
+

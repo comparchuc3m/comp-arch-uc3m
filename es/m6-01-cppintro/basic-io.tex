@@ -1,0 +1,41 @@
+\subsection{Entrada/salida básica}
+
+\begin{frame}[t,fragile]{Entrada salida estándar}
+\begin{itemize}
+  \item Cabecera: \cppid{<iostream>}.
+  \item Espacio de nombres: \cppid{std}.
+  \item Objetos globales:
+    \begin{itemize}
+      \item \cppid{cin}: Entrada estándar.
+      \item \cppid{cout}: Salida estándar.
+      \item \cppid{cerr}: Salida de errores.
+      \item \cppid{clog}: Salida de log.
+    \end{itemize}
+  \item Operadores:
+    \begin{itemize}
+      \item Volcado de un dato en un flujo:
+\begin{lstlisting}
+std::cout << "Valores: " << x << " , " << y << "\n";
+\end{lstlisting}
+      \item Lectura de valores:
+\begin{lstlisting}
+std::cin >> x >> y;
+\end{lstlisting}
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Ejemplo de entrada/salida}
+\begin{block}{Lectura de nombre}
+\lstinputlisting{int/m6-01-cppintro/basic-io/hello1.cpp}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Ejemplo de entrada/salida}
+\begin{block}{Lectura de nombre}
+\lstinputlisting{int/m6-01-cppintro/basic-io/hello2.cpp}
+\end{block}
+\begin{itemize}
+  \item \cppkey{using namespace} evita repetir cualificaciones \cppid{std::}.
+\end{itemize}
+\end{frame}

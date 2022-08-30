@@ -1,0 +1,104 @@
+\subsection{Funciones y paso de parámetros}
+
+\begin{frame}[t,fragile]{Funciones}
+\begin{itemize}
+  \item \textgood{Declaración}: Incluye parámetros y tipo de retorno.
+    \begin{itemize}
+      \item Dos sintaxis alternativas.
+    \end{itemize}
+\begin{lstlisting}
+double area(double ancho, double alto);
+auto area(double ancho, double alto) -> double;
+\end{lstlisting}
+
+  \vfill
+  \item \textgood{Definición}: Permite deducción automática de tipo de retorno
+\begin{lstlisting}
+auto area(double ancho, double alto) {
+  return ancho * alto;
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Paso por valor}
+\begin{itemize}
+  \item Único paso de parámetros válido en C.
+  \item Se pasa a la función una copia del argumento especificado en la llamada.
+\begin{lstlisting}
+int incrementa(int n) {
+  ++n;
+  return n;
+}
+
+void f() {
+  int x = 5;
+  int a = incrementa(x);
+  int b = incrementa(x);
+  int c = incrementa(42);
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Paso por referencia constante}
+\begin{itemize}
+\item Pasa la dirección del objeto pero impide su 
+      alteración dentro de la función.
+  \begin{itemize}
+    \item Conceptualmente equivale a paso por valor.
+    \item Físicamente equivalente a paso de un puntero.
+  \end{itemize}
+\end{itemize}
+
+\begin{columns}[T]
+
+\column{.6\textwidth}
+\begin{lstlisting}
+double maxref(const std::vector<double> & v) {
+  double res = std::numeric_limits<double>::min();
+  for (auto x : v) {
+    if (x>res) {
+      res = x;
+    }
+  }
+  return res;
+}
+\end{lstlisting}
+
+\column{.4\textwidth}
+\begin{lstlisting}
+void f() {
+  vector<double> vec(1000000);
+  //...
+  cout << "Max: " << maxref(vec) << "\n";
+}
+\end{lstlisting}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Paso por referencia}
+\begin{itemize}
+  \item Elimina la restricción de no modificar el parámetro dentro de la función.
+\begin{lstlisting}
+void rellena(std::vector <int> & v, int n) {
+  for (int i=0; i<n; ++i) {
+    v.push_back(i);
+  } 
+}
+
+void f() {
+  using namespace std;
+  vector<int> v;   // v.size() == 0
+  rellena(v, 100); // v.size() == 100
+}
+\end{lstlisting}
+
+  \vfill
+  \item No se pasa una copia.
+    \begin{itemize}
+      \item Se tiene acceso al propio objeto.
+    \end{itemize}
+\end{itemize}
+\end{frame}

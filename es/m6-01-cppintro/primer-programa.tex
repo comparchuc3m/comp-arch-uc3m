@@ -1,0 +1,50 @@
+\subsection{Un primer programa}
+
+\begin{frame}{Hola}
+\begin{columns}[T]
+
+\column{ .4\textwidth}
+\begin{block}{hola.cpp}
+\lstinputlisting{int/m6-01-cppintro/hello/hello.cpp}
+\end{block}
+
+\column{.6\textwidth}
+  \begin{itemize}
+    \item Archivo de cabecera: \mode<presentation>{\cppid{iostream}.}
+      \mode<article>{
+        \begin{itemize}
+          \item Se sigue el paradigma de sustitución de texto.
+        \end{itemize}
+      }
+      \mode<article>{
+        \begin{itemize}
+          \item Alcance que contiene elementos de una biblioteca para evitar conflictos de nombrado.
+          \item Es distinto de los modelos de \emph{paquetes} de otros lenguajes.
+        \end{itemize}
+      }
+    \item Importación de espacio de nombres: \mode<presentation>{\cppid{std}.}
+    \item Programa principal: \mode<presentation>{\cppid{main}.}
+      \begin{itemize}
+        \item Es el punto de entrada al programa.
+      \end{itemize}
+      \mode<article>{
+        \begin{itemize}
+          \item Hay cosas que ocurren antes.
+          \item Hay cosas que ocurren después.
+        \end{itemize}
+      }
+    \item Flujo de salida estándar: \mode<presentation>{\cppid{cout}.}
+        \begin{itemize}
+          \item Es una variable global.
+        \end{itemize}
+    \item Operador de salida: \mode<presentation>{\cppkey{<{}<}.}
+        \begin{itemize}
+          \item Envia datos a la salida estándar.
+          \item Definido para la mayoría de los tipos.
+        \end{itemize}
+    \item Salto de línea: \cppid{endl} como \cppstr{"\textbackslash n"}.
+    \item Código de salida: \cppid{0} (devuelto a SO).
+  \end{itemize}
+
+\end{columns}
+\end{frame}

@@ -1,0 +1,60 @@
+\subsection{Destructor}
+
+\begin{frame}[t,fragile]{Destrucción de objetos}
+\begin{columns}[T]
+
+\column{.4\textwidth}
+\begin{itemize}
+  \item Un \bulletmark{destructor} es una función miembro especial que se
+        ejecuta \bulletgood{de forma automática} cuando un objeto sale de
+        alcance.
+    \begin{itemize}
+      \item No tiene tipo de retorno.
+      \item No toma parámetros.
+      \item Nombre de clase precedido de carácter \textbf{\cppid{~}}.
+    \end{itemize}
+\end{itemize}
+
+
+\column{.6\textwidth}
+\begin{block}{Definición}
+\begin{lstlisting}
+class numvector {
+public:
+  //...
+
+  numvector(int n) : size{n}, vec{new double[size]}
+    {}
+
+  ~numvector() { delete []vec; }
+
+private:
+  int size;
+  double * vec;
+};
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Invocación de destructor}
+\begin{itemize}
+  \item El destructor se invoca de forma automática.
+\end{itemize}
+
+\begin{block}{Invocación automática}
+\begin{lstlisting}
+void f() {
+  numvector v(100);
+  for (int i=0; i<100; ++i) {
+    v[i] = i;
+  }
+  // ...
+  for (int i=0; i<100; ++i) {
+    cout << v[i] << "\n";
+  }
+} // Invocación de destructor
+\end{lstlisting}
+\end{block}
+\end{frame}

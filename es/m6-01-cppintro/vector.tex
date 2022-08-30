@@ -1,0 +1,302 @@
+\subsection{Vectores}
+
+\begin{frame}{Colecciones de valores}
+\begin{itemize}
+  \item \cppid{vector} permite almacenar y procesar un conjunto de valores
+  de un mismo tipo.
+    \mode<article>{
+      \begin{itemize}
+        \item C++ también tiene \emph{arrays} pero son demasiado limitados
+          y simples. Se revisará su uso más adelante.
+      \end{itemize}
+    }
+  \item Un \cppid{vector}:
+    \begin{itemize}
+      \item Tiene una secuencia de elementos.
+      \item Se puede acceder a los elementos por su índice.
+      \item Incluye información de su tamaño.
+    \end{itemize}
+\begin{tikzpicture}
+\tikzset{
+    bloque/.style={rectangle,draw=black, top color=white, bottom color=blue!50,
+                   very thick, inner sep=0.5em, minimum size=0.6cm, text centered, font=\tiny},
+    flecha/.style={->, >=latex', shorten >=1pt, thick},
+    etiqueta/.style={text centered, font=\tiny} 
+}  
+\node[bloque] (bsize) {5};
+\node[bloque,right=0cm of bsize] (bptr) { };
+\node[bloque,below right=0.5cm and 0.75cm of bptr] (v0) {1};
+\node[bloque,right=0cm of v0] (v1) {2};
+\node[bloque,right=0cm of v1] (v2) {4};
+\node[bloque,right=0cm of v2] (v3) {8};
+\draw[flecha] (bptr) -- (v0);
+\node[etiqueta, left=0.1cm of bsize] {v:};
+\node[etiqueta, above=0cm of bsize] {size()};
+\node[etiqueta, above=0cm of v0] {v[0]};
+\node[etiqueta, above=0cm of v1] {v[1]};
+\node[etiqueta, above=0cm of v2] {v[2]};
+\node[etiqueta, above=0cm of v3] {v[3]};
+\end{tikzpicture}
+  \item Alternativa a usar arrays directamente.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Uso básico}
+\vspace{-1.5em}
+\begin{columns}[t]
+
+\column{.5\textwidth}
+\begin{block}{Uso de vector}
+\lstinputlisting{int/m6-01-cppintro/vector/vec1.cpp}
+\end{block}
+
+\column{.5\textwidth}
+\begin{itemize}
+  \item Archivo de cabecera: \cppid{<vector>}
+
+  \mode<presentation>{\vspace{1em}}
+  \item Se debe indicar el tipo del elemento.
+    \begin{itemize}
+      \item Todos del mismo tipo.
+    \end{itemize}
+
+  \mode<presentation>{\vspace{1em}}
+  \item Parámetro del constructor: \textmark{Tamaño inicial}.
+
+  \mode<presentation>{\vspace{1em}}
+  \item No se puede acceder a indices más allá del tamaño (inclusive).
+    \begin{itemize}
+      \item \textbad{Comportamiento no definido}.
+    \end{itemize}
+\end{itemize}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\begin{block}{Vectores y tipos}
+\lstinputlisting{int/m6-01-cppintro/vector/vec2.cpp}
+\end{block}
+\end{frame}
+
+\mode<article>{
+\begin{itemize}
+  \item Cada vector debe indicar su tipo de elemento.
+  \item Se realiza comprobación de tipos.
+    \begin{itemize}
+      \item No se pueden mezclar tipos.
+    \end{itemize}
+\end{itemize}
+}
+
+\begin{frame}[t,fragile]{Vectores e iniciación}
+\begin{itemize}
+  \item Un vector con tamaño inicia todos sus valores al valor por defecto del tipo.
+    \begin{itemize}
+      \item Valores numéricos: \mode<presentation>{\cppid{0}}
+      \item Valores de cadena: \mode<presentation>{\cppid{``''}}
+    \end{itemize}
+
+  \vfill
+  \item Si no se indica tamaño inicial, el vector tiene tamaño \cppid{0}.
+\begin{lstlisting}
+vector<double> v; // Vector con 0 elementos
+\end{lstlisting}
+
+  \vfill
+  \item Se puede suministrar un valor inicial distinto.
+\begin{lstlisting}
+vector<double> v(100, 0.5); // 100 posiciones iniciadas a 0.5
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{block}{Iniciación en la declaración}
+\lstinputlisting{int/m6-01-cppintro/vector/vec3.cpp}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Vectores que crecen}
+\begin{itemize}
+  \item Un \cppid{vector} puede \emph{crecer} cuando se añaden elementos.
+    \begin{itemize}
+      \item Operación \cppid{push\_back()}: \mode<presentation>{Añade un elemento al final del vector.}
+    \end{itemize}
+\end{itemize}
+\pause
+\begin{lstlisting}
+vector<int> v;
+\end{lstlisting}
+\mode<presentation>{\vspace{-.5em}}
+\begin{tikzpicture}
+\tikzset{
+    bloque/.style={rectangle,draw=black, top color=white, bottom color=blue!50,
+                   very thick, inner sep=0.5em, minimum size=0.6cm, text centered, font=\tiny},
+    flecha/.style={->, >=latex', shorten >=1pt, thick},
+    etiqueta/.style={text centered, font=\tiny} 
+}  
+\node[bloque] (bsize) {0};
+\node[bloque,right=0cm of bsize] (bptr) { };
+\node[etiqueta, left=0.1cm of bsize] {v:};
+\node[etiqueta, above=0cm of bsize] {size()};
+\end{tikzpicture}
+\pause
+\begin{lstlisting}
+v.push_back(1);
+\end{lstlisting}
+\mode<presentation>{\vspace{-.5em}}
+\begin{tikzpicture}
+\tikzset{
+    bloque/.style={rectangle,draw=black, top color=white, bottom color=blue!50,
+                   very thick, inner sep=0.5em, minimum size=0.6cm, text centered, font=\tiny},
+    flecha/.style={->, >=latex', shorten >=1pt, thick},
+    etiqueta/.style={text centered, font=\tiny} 
+}  
+\node[bloque] (bsize) {1};
+\node[bloque,right=0cm of bsize] (bptr) { };
+\node[bloque,right=0.75cm of bptr] (v0) {1};
+\draw[flecha] (bptr) -- (v0);
+\node[etiqueta, left=0.1cm of bsize] {v:};
+\node[etiqueta, above=0cm of bsize] {size()};
+\node[etiqueta, above=0cm of v0] {v[0]};
+\end{tikzpicture}
+\pause
+\begin{lstlisting}
+v.push_back(4);
+\end{lstlisting}
+\mode<presentation>{\vspace{-.5em}}
+\begin{tikzpicture}
+\tikzset{
+    bloque/.style={rectangle,draw=black, top color=white, bottom color=blue!50,
+                   very thick, inner sep=0.5em, minimum size=0.6cm, text centered, font=\tiny},
+    flecha/.style={->, >=latex', shorten >=1pt, thick},
+    etiqueta/.style={text centered, font=\tiny} 
+}  
+\node[bloque] (bsize) {2};
+\node[bloque,right=0cm of bsize] (bptr) { };
+\node[bloque,right=0.75cm of bptr] (v0) {1};
+\node[bloque,right=0cm of v0] (v1) {4};
+\draw[flecha] (bptr) -- (v0);
+\node[etiqueta, left=0.1cm of bsize] {v:};
+\node[etiqueta, above=0cm of bsize] {size()};
+\node[etiqueta, above=0cm of v0] {v[0]};
+\node[etiqueta, above=0cm of v1] {v[1]};
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}[t,fragile]{Recorrido de un vector}
+\begin{itemize}
+  \item Se puede consultar el tamaño de un vector mediante la \emph{función miembro} \cppid{size}.
+\begin{lstlisting}
+cout << v.size();
+\end{lstlisting}
+
+  \vfill
+  \item \cppid{size()} permite definir un bucle para recorrer los elementos de un vector.
+\begin{lstlisting}
+for (int i=0; i<v.size(); ++i) {
+  cout << "v[" << i << "] = " << v[i] << "\n";
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Recorrido basado en rango}
+\begin{itemize}
+  \item Se puede usar un recorrido basado en rango para un vector.
+\begin{lstlisting}
+vector<int> v1 { 1, 2, 3, 4 };
+for (auto x : v1) {
+  cout << x << "\n";
+}
+
+vector<string> v2 { "Carlos", "Daniel", "José", "Manuel" };
+for (auto x : v2) {
+  cout << x << "\n";
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Ejemplo: Estadísticas}
+\begin{itemize}
+  \item \alert{Objetivo}: Leer de la entrada estándar una secuencia de calificaciones
+    y volcar en la salida estándar la calificación mínima, la máxima y la calificación media.
+    \begin{itemize}
+      \item Finalizar la lectura si se llega a fin de fichero.
+      \item Finalizar la lectura si no se lee un valor correctamente (p. ej. letras en lugar de números).
+      \item Se desconoce (y  no se pregunta) el número de valores.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\mode<presentation> {
+
+\begin{frame}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{block}{notas.cpp}
+\lstinputlisting[lastline=16]{int/m6-01-cppintro/vector/marks.cpp}
+\ldots
+\end{block}
+
+\column{0.5\textwidth}
+\begin{block}{notas.cpp}
+\ldots
+\lstinputlisting[firstline=17]{int/m6-01-cppintro/vector/marks.cpp}
+\end{block}
+\end{columns}
+\end{frame}
+
+}
+
+\mode<article> {
+\begin{frame}
+\begin{block}{notas.cpp}
+\lstinputlisting{int/m6-01-cppintro/vector/notas.cpp}
+\end{block}
+\end{frame}
+}
+
+\begin{frame}[t]{Ejemplo: Palabras únicas}
+\begin{itemize}
+  \item \alert{Objetivo}: Volcar la lista ordenada de palabras únicas de un texto.
+    \begin{itemize}
+      \item El texto se lee de la entrada estándar hasta fin de fichero.
+      \item La lista de palabras se imprime en la salida estándar.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\mode<presentation> {
+
+\begin{frame}
+\begin{columns}[T]
+
+\column{0.5\textwidth}
+\begin{block}{unique.cpp}
+\lstinputlisting[lastline=15]{int/m6-01-cppintro/vector/unique.cpp}
+\ldots
+\end{block}
+
+\column{0.5\textwidth}
+\begin{block}{unique.cpp}
+\ldots
+\lstinputlisting[firstline=16]{int/m6-01-cppintro/vector/unique.cpp}
+\end{block}
+\end{columns}
+\end{frame}
+
+}
+
+\mode<article> {
+
+\begin{frame}
+\begin{block}{unique.cpp}
+\lstinputlisting{int/m6-01-cppintro/vector/unique.cpp}
+\end{block}
+\end{frame}
+
+}
