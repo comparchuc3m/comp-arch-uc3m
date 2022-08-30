@@ -1,0 +1,272 @@
+\subsection{Vectors}
+
+\begin{frame}{Collection of values}
+\begin{itemize}
+  \item \cppid{vector} 
+        allows storing and processing a set of values from the same type.
+      \begin{itemize}
+        \item C++ also has \emph{arrays} but they are too limited and simple.
+      \end{itemize}
+  \item A \cppid{vector}:
+    \begin{itemize}
+      \item Has a sequence of elements.
+      \item Elements can be accessed by index.
+      \item Includes size information
+    \end{itemize}
+\begin{tikzpicture}
+\tikzset{
+    bloque/.style={rectangle,draw=black, top color=white, bottom color=blue!50,
+                   very thick, inner sep=0.5em, minimum size=0.6cm, text centered, font=\tiny},
+    flecha/.style={->, >=latex', shorten >=1pt, thick},
+    etiqueta/.style={text centered, font=\tiny} 
+}  
+\node[bloque] (bsize) {5};
+\node[bloque,right=0cm of bsize] (bptr) { };
+\node[bloque,below right=0.5cm and 0.75cm of bptr] (v0) {1};
+\node[bloque,right=0cm of v0] (v1) {2};
+\node[bloque,right=0cm of v1] (v2) {4};
+\node[bloque,right=0cm of v2] (v3) {8};
+\draw[flecha] (bptr) -- (v0);
+\node[etiqueta, left=0.1cm of bsize] {v:};
+\node[etiqueta, above=0cm of bsize] {size()};
+\node[etiqueta, above=0cm of v0] {v[0]};
+\node[etiqueta, above=0cm of v1] {v[1]};
+\node[etiqueta, above=0cm of v2] {v[2]};
+\node[etiqueta, above=0cm of v3] {v[3]};
+\end{tikzpicture}
+  \item Alternative to direct use of arrays.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Basic use}
+\vspace{-1.5em}
+\begin{columns}[t]
+
+\column{.5\textwidth}
+\begin{block}{Using a vector}
+\lstinputlisting{int/m6-01-cppintro/vector/vec1.cpp}
+\end{block}
+
+\column{.5\textwidth}
+\begin{itemize}
+  \item Header file:
+      \cppid{<vector>}
+
+  \mode<presentation>{\vspace{1em}}
+  \item Must specify element type.
+    \begin{itemize}
+      \item All from the same type.
+    \end{itemize}
+
+  \mode<presentation>{\vspace{1em}}
+  \item Constructor argument:
+      \textmark{Initial size}.
+
+  \mode<presentation>{\vspace{1em}}
+  \item Indices beyond size (included) cannot be accessed.
+    \begin{itemize}
+      \item \textbad{Undefined behavior}.
+    \end{itemize}
+\end{itemize}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\begin{block}{Vectors and types}
+\lstinputlisting{int/m6-01-cppintro/vector/vec2.cpp}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Vectors and initialization}
+\begin{itemize}
+  \item A vector with size initializes all its values to the default value for the element type.
+    \begin{itemize}
+      \item Numeric values: \cppid{0}
+      \item String values: \cppid{``''}
+    \end{itemize}
+
+  \vfill
+  \item If no initial value is provided, vector has a size of \cppid{0}.
+\begin{lstlisting}
+vector<double> v; // Vector with 0 elements
+\end{lstlisting}
+
+  \vfill
+  \item A different initial value can be provided.
+\begin{lstlisting}
+vector<double> v(100, 0.5); // 100 elements initialized to 0.5
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{block}{Initializing at definition}
+\lstinputlisting{int/m6-01-cppintro/vector/vec3.cpp}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Growing vectors}
+\begin{itemize}
+  \item A \cppid{vector} may \emph{grow} when new elements are added.
+    \begin{itemize}
+      \item Operation \cppid{push\_back()}: Adds an element at the end of the vector.
+    \end{itemize}
+\end{itemize}
+\pause
+\begin{lstlisting}
+vector<int> v;
+\end{lstlisting}
+\vspace{-.5em}
+\begin{tikzpicture}
+\tikzset{
+    bloque/.style={rectangle,draw=black, top color=white, bottom color=blue!50,
+                   very thick, inner sep=0.5em, minimum size=0.6cm, text centered, font=\tiny},
+    flecha/.style={->, >=latex', shorten >=1pt, thick},
+    etiqueta/.style={text centered, font=\tiny} 
+}  
+\node[bloque] (bsize) {0};
+\node[bloque,right=0cm of bsize] (bptr) { };
+\node[etiqueta, left=0.1cm of bsize] {v:};
+\node[etiqueta, above=0cm of bsize] {size()};
+\end{tikzpicture}
+
+\pause
+\begin{lstlisting}
+v.push_back(1);
+\end{lstlisting}
+\vspace{-.5em}
+\begin{tikzpicture}
+\tikzset{
+    bloque/.style={rectangle,draw=black, top color=white, bottom color=blue!50,
+                   very thick, inner sep=0.5em, minimum size=0.6cm, text centered, font=\tiny},
+    flecha/.style={->, >=latex', shorten >=1pt, thick},
+    etiqueta/.style={text centered, font=\tiny} 
+}  
+\node[bloque] (bsize) {1};
+\node[bloque,right=0cm of bsize] (bptr) { };
+\node[bloque,right=0.75cm of bptr] (v0) {1};
+\draw[flecha] (bptr) -- (v0);
+\node[etiqueta, left=0.1cm of bsize] {v:};
+\node[etiqueta, above=0cm of bsize] {size()};
+\node[etiqueta, above=0cm of v0] {v[0]};
+\end{tikzpicture}
+
+\pause
+\begin{lstlisting}
+v.push_back(4);
+\end{lstlisting}
+\vspace{-.5em}
+\begin{tikzpicture}
+\tikzset{
+    bloque/.style={rectangle,draw=black, top color=white, bottom color=blue!50,
+                   very thick, inner sep=0.5em, minimum size=0.6cm, text centered, font=\tiny},
+    flecha/.style={->, >=latex', shorten >=1pt, thick},
+    etiqueta/.style={text centered, font=\tiny} 
+}  
+\node[bloque] (bsize) {2};
+\node[bloque,right=0cm of bsize] (bptr) { };
+\node[bloque,right=0.75cm of bptr] (v0) {1};
+\node[bloque,right=0cm of v0] (v1) {4};
+\draw[flecha] (bptr) -- (v0);
+\node[etiqueta, left=0.1cm of bsize] {v:};
+\node[etiqueta, above=0cm of bsize] {size()};
+\node[etiqueta, above=0cm of v0] {v[0]};
+\node[etiqueta, above=0cm of v1] {v[1]};
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}[t,fragile]{Traversing a vector}
+\begin{itemize}
+  \item Size value can be obtained from a vector through \cppid{size} \emph{member function}.
+\begin{lstlisting}
+cout << v.size();
+\end{lstlisting}
+
+  \vfill
+  \item \cppid{size()} allows defining a loop to traverse elements in a vector.
+\begin{lstlisting}
+for (int i=0; i<v.size(); ++i) {
+  cout << "v[" << i << "] = " << v[i] << "\n";
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Range based traversal}
+\begin{itemize}
+  \item A vector can be traversed with a range based loop.
+\begin{lstlisting}
+vector<int> v1 { 1, 2, 3, 4 };
+for (auto x : v1) {
+  cout << x << "\n";
+}
+
+vector<string> v2 { "Carlos", "Daniel", "José", "Manuel" };
+for (auto x : v2) {
+  cout << x << "\n";
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Example: Statistics}
+\begin{itemize}
+  \item \alert{Goal}: Read from standard input a sequence of students marks
+        and dump to standard output minimum, maximum and average mark.
+    \begin{itemize}
+      \item Finish reading when reaching to end-of-file.
+      \item Finish reading if a value cannot be correctly read (e.g. letters instead of numbers).
+      \item Number of values is unknown (and not asked).
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\mode<presentation> {
+
+\begin{frame}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{block}{marks.cpp}
+\lstinputlisting[lastline=16]{int/m6-01-cppintro/vector/marks.cpp}
+\ldots
+\end{block}
+
+\column{0.5\textwidth}
+\begin{block}{marks.cpp}
+\ldots
+\lstinputlisting[firstline=17]{int/m6-01-cppintro/vector/marks.cpp}
+\end{block}
+\end{columns}
+\end{frame}
+
+}
+
+\begin{frame}[t]{Example: Unique words}
+\begin{itemize}
+  \item \alert{Goal}: Dump the sorted list of unique words from a text.
+    \begin{itemize}
+      \item Text is read from standard input until end-of-file.
+      \item The list of words is printed to standard output.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\begin{columns}[T]
+
+\column{0.5\textwidth}
+\begin{block}{unique.cpp}
+\lstinputlisting[lastline=15]{int/m6-01-cppintro/vector/unique.cpp}
+\ldots
+\end{block}
+
+\column{0.5\textwidth}
+\begin{block}{unique.cpp}
+\ldots
+\lstinputlisting[firstline=16]{int/m6-01-cppintro/vector/unique.cpp}
+\end{block}
+\end{columns}
+\end{frame}
+

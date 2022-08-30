@@ -1,0 +1,189 @@
+\subsection{The free store}
+
+\begin{frame}[t]{Free store memory}
+\begin{itemize}
+  \item The \bulletgood{free store} holds the memory that can be
+        acquired and released.
+
+  \vfill
+  \item \bulletmark{IMPORTANT}:
+        C++ is not a language with automated resource management. 
+    \begin{itemize}
+      \item If you acquire a resource you must free it.
+      \item Acquired memory must be released.
+    \end{itemize}
+\end{itemize}
+\vfill
+\begin{quote}
+C++ is my favorite garbage collected language
+because it generates so little garbage.
+\\
+\textbf{Bjarne Stroustrup}
+\end{quote}
+\end{frame}
+
+\begin{frame}[t,fragile]{Memory allocation operator}
+\begin{itemize}
+  \item Operator \cppkey{new} allows allocating memory from the free store.
+\begin{lstlisting}
+int * p = new int; // Allocates memory for an int
+char * q = new char[10]; // Allocates memory for 10 char
+\end{lstlisting}
+
+  \vfill
+  \item \emph{Effect}:
+    \begin{itemize}
+      \item Operator \cppkey{new} returns a pointer to start of allocated memory.
+      \item An expression \cppkey{new} \cppid{T} returns a value of type \cppid{T*}.
+      \item An expression \cppkey{new} \cppid{T[sz]} returns a value of type \cppid{T*}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Access problems}
+\begin{itemize}
+  \item A pointer variable is not automatically initialized to a value.
+    \begin{itemize}
+      \item Dereferencing an uninitialized pointer leads to undefined behavior.
+    \end{itemize}
+\begin{lstlisting}
+int * p;
+*p = 42; // Undefined behavior
+p[0] = 42; // Undefined behavior
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item A pointer variable initialized to a sequence can only be accessed within
+        the sequence limits.
+\begin{lstlisting}
+int * v = new int[10];
+v[0] = 42; // OK
+x = v[-1]; // Undefined
+x = v[15]; // Undefined
+v[10] = 0; // Undefined
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Null pointer}
+\begin{itemize}
+  \item A pointer can be initialized to the \emph{null pointer value} to signal
+        that points to no object.
+    \begin{itemize}
+      \item \cppkey{nullptr} literal.
+    \end{itemize}
+\begin{lstlisting}
+int * p = nullptr;
+char * q = nullptr;
+if (p != nullptr) { /* ... */ }
+if (q == nullptr) { /* ... */ }
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Memory allocation and initialization}
+\begin{itemize}
+  \item Operator \cppkey{new} does not initialize the allocated object.
+\begin{lstlisting}
+int * p = new int;
+x = *p; // x has an unknown value
+\end{lstlisting}
+    \begin{itemize}
+      \item Initial value can be specified in curly braces.
+\begin{lstlisting}
+p = new int{42}; // *p == 42
+p = new int{}; // *p == 0
+\end{lstlisting}
+    \end{itemize}
+
+  \vfill\pause
+  \item If a sequence is allocated with \cppkey{new}, no object is initialized.
+\begin{lstlisting}
+int * v = new int[10];
+\end{lstlisting}
+    \begin{itemize}
+      \item Initial values can be specified in curly braces.
+    \end{itemize}
+\begin{lstlisting}
+v = new int[4]{1,2,3,4}; // v[0] = 1, v[1] = 2, v[2] = 3, v[3] = 4
+v = new int[4]{1, 2};    // v[0] = 1, v[1] = 2, v[2] = 0, v[3] = 0
+v = new int[4]{};        // v[0] = 0, v[1] = 0, v[2] = 0, v[3] = 0
+v = new int[4]{1,2,3,4,5}; // Error. Too many initializers.
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Memory deallocation operator}
+\begin{itemize}
+  \item Operator \cppkey{delete} allows to release memory and mark it
+        as non-allocated.
+  \item It can only be applied to:
+    \begin{itemize}
+      \item Memory returned by a call to operator \cppkey{new} and currently allocated.
+      \item A null pointer value.
+    \end{itemize}
+\begin{lstlisting}
+int * p = new int{10};
+*p = 20;
+delete p; // Release p
+\end{lstlisting}
+  \item It is an error to invoke twice \cppkey{delete} on the same pointer value.
+\begin{lstlisting}
+int * p = new int{10};
+delete p; // Release p
+delete p; // Undefined behavior
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Array deallocation}
+\begin{itemize}
+  \item There is a different version of \cppkey{delete} to deallocate \emph{arrays}.
+\begin{lstlisting}
+int * p = new int{10};
+int * v = new int[10];
+delete p;   // Release p
+delete []v; // Release v
+\end{lstlisting}
+
+  \vfill\pause
+  \item \bulletmark{Important}: 
+        The right deallocation version must be used.
+    \begin{itemize}
+      \item If memory is allocated with \cppkey{new T} it must be released with \cppkey{delete}.
+      \item If memory is allocated with \cppkey{new T[n]} it must be released with \cppkey{delete[]}.
+    \end{itemize}
+\begin{lstlisting}
+int * p = new int{10};
+int * v = new int[10];
+delete []p; // Undefined behavior
+delete v;   // Undefined behavior
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Reasons to deallocate}
+\begin{itemize}
+  \item If memory is allocated and not released it remains allocated.
+\begin{lstlisting}
+void f() {
+  int * v = new int[1024*1024];
+  // ...
+}
+\end{lstlisting}
+    \begin{itemize}
+      \item Each time \cppid{f()} is invoked 8 MB are lost (assuming \cppkey{sizeof(int)}\cppid{==8}).
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item Problems with \bulletmark{memory leaks}:
+    \begin{itemize}
+      \item Each memory allocation might require more time.
+      \item If program runs for a long time, memory could be exhausted.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item If memory is exhausted \cppid{bad\_alloc} exception is thrown.
+\end{itemize}
+\end{frame}

@@ -1,0 +1,41 @@
+\subsection{Constructors}
+
+\begin{frame}[t,fragile]{Constructor}
+\begin{itemize}
+  \item A \bulletmark{constructor} is a special member function.
+    \begin{itemize}
+      \item Used to initialize object from the type defined by a class.
+      \item Syntax ensures constructor invocation. 
+    \end{itemize}
+\end{itemize}
+\vfill
+\begin{columns}[T]
+
+\column{.4\textwidth}
+\begin{block}{Definition}
+\begin{lstlisting}
+class point {
+public:
+  point(double cx, double cy) : 
+    x{cx}, y{cy} {}
+  //...
+private:
+  double x;
+  double y;
+};
+\end{lstlisting}
+\end{block}
+
+\column{.6\textwidth}
+\begin{block}{Use}
+\begin{lstlisting}
+void f() {
+  point p{1.5, 1.5}; // Construct point
+  point q;           // Error: Missing args
+  point r{p};        // OK. Copy
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}

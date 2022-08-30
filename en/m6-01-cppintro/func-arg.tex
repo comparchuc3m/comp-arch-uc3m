@@ -1,0 +1,104 @@
+\subsection{Functions and argument passing}
+
+\begin{frame}[t,fragile]{Functions}
+\begin{itemize}
+  \item \bulletgood{Declaration}: Includes parameters and return type.
+    \begin{itemize}
+      \item Two alternate syntaxes.
+    \end{itemize}
+\begin{lstlisting}
+double area(double width, double height);
+auto area(double width, double height) -> double;
+\end{lstlisting}
+
+  \vfill
+  \item \bulletgood{Definition}: Allows return type deduction.
+\begin{lstlisting}
+auto area(double width, double height) {
+  return width * height;
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Pass by value}
+\begin{itemize}
+  \item Only valid argument passing in C.
+  \item Function is passed a copy from the argument in the call.
+\begin{lstlisting}
+int increment(int n) {
+  ++n;
+  return n;
+}
+
+void f() {
+  int x = 5;
+  int a = increment(x);
+  int b = increment(x);
+  int c = increment(42);
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Pass by constant reference}
+\begin{itemize}
+\item Passes the object address but disallows modifications
+      within function body.
+  \begin{itemize}
+    \item Conceptually equivalent to pass by value.
+    \item Physically equivalent to pass by pointer.
+  \end{itemize}
+\end{itemize}
+
+\begin{columns}[T]
+
+\column{.6\textwidth}
+\begin{lstlisting}
+double maxref(const std::vector<double> & v) {
+  double res = std::numeric_limits<double>::min();
+  for (auto x : v) {
+    if (x>res) {
+      res = x;
+    }
+  }
+  return res;
+}
+\end{lstlisting}
+
+\column{.4\textwidth}
+\begin{lstlisting}
+void f() {
+  vector<double> vec(1000000);
+  //...
+  cout << "Max: " << maxref(vec) << "\n";
+}
+\end{lstlisting}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Pass by reference}
+\begin{itemize}
+  \item Removes constraint of not modifying parameter within function. 
+\begin{lstlisting}
+void fill(std::vector <int> & v, int n) {
+  for (int i=0; i<n; ++i) {
+    v.push_back(i);
+  } 
+}
+
+void f() {
+  using namespace std;
+  vector<int> v;   // v.size() == 0
+  fill(v, 100); // v.size() == 100
+}
+\end{lstlisting}
+
+  \vfill
+  \item Copy not passed, address passed instead.
+    \begin{itemize}
+      \item Access to the argument object.
+    \end{itemize}
+\end{itemize}
+\end{frame}

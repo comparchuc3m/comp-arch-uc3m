@@ -1,0 +1,76 @@
+\subsection{Smart pointers}
+
+\begin{frame}[t]{Why a smart pointer?}
+\begin{itemize}
+  \item A \bulletmark{smart pointer} encapsulates a pointer and 
+        automatically manages the associated memory.
+    \begin{itemize}
+      \item Its destructor automatically releases the associated memory.
+    \end{itemize}
+
+  \vfill\pause
+  \item Types of smart pointers:
+    \begin{itemize}
+      \item \cppid{unique\_ptr}: Pointer to object with no copying.
+      \item \cppid{shared\_ptr}: Pointer with associated reference counter.
+      \item \cppid{weak\_ptr}: Auxiliary pointer for \cppid{shared\_ptr}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Reference counting}
+\begin{itemize}
+  \item A \cppid{shared\_ptr} keeps a reference counter:
+    \begin{itemize}
+      \item When pointer is copied, reference counter is incremented.
+      \item When pointer is destroyed, reference counter is decremented.
+      \item If counter reaches to zero, the pointed object is destroyed.
+    \end{itemize}
+\end{itemize}
+
+\begin{lstlisting}
+void f() {
+  shared_ptr<string> p1{new string{"Hello"}};
+  shared_ptr<string> p2{p1}; // references -> 2
+
+  auto n = p1->size(); // string::size(). p1 used as ptr
+  *p1 = "Bye";
+  if (p2) { cerr << "Busy\n"; }
+
+  p1 = nullptr; // references -> 1
+  //...
+} // references -> 0 ==> Destruction
+\end{lstlisting}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Unique pointers}
+\begin{itemize}
+  \item \cppid{unique\_ptr} offers a non-shared pointer that cannot be copied.
+\end{itemize}
+
+\begin{lstlisting}
+void f(string & s, int n) {
+  unique_ptr<int> p = new int{50};
+
+  string tmp = s; // Might throw an exception
+  if (n<0) return;
+
+  *p = 42;
+} // Release p
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[t,fragile]{Simplified creation}
+\begin{itemize}
+  \item Creation function:
+\begin{lstlisting}
+auto p = std::make_shared<record>("Daniel", 42);
+auto q = std::make_unique<string>("Hello");
+\end{lstlisting}
+  \item Allocate object and meta-data in a single operation.
+\end{itemize}
+\end{frame}
+

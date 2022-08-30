@@ -1,0 +1,81 @@
+\subsection{Exceptions}
+
+\begin{frame}[t,fragile]{Exceptions}
+\begin{itemize}
+  \item C++ exception model exhibits differences with other languages.
+
+  \pause\vfill
+  \item An exception may be any type.
+\begin{lstlisting}
+class negative_time {};
+\end{lstlisting}
+
+  \pause\vfill
+  \item When a function detects an exceptional situation throws
+        (\cppkey{throw}) an exception.
+\begin{lstlisting}
+void print_velocity(double s, double t) {
+  if (t > 0.0) {
+    cout << s/t << "\n";
+  }
+  else {
+    throw negative_time{};
+  }
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Exception handling}
+\begin{itemize}
+  \item Caller may handle an exception with a \cppkey{try}-\cppkey{catch} block.
+\begin{lstlisting}
+void f() {
+  double s = get_space();
+  double t = get_time();
+  try {
+    print_velocity(s,t);
+  }
+  catch (negative_time) {
+    cerr << "Error: Negative time\n";
+  }
+}
+\end{lstlisting}
+  \vfill\pause
+  \item If an exception is not handled $\rightarrow$ it propagates to next level.
+\begin{lstlisting}
+void f() {
+  double s = get_space(), t = get_time();
+  print_velocity(s,t);
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Standard exceptions}
+\begin{itemize}
+  \item Several predefined exceptions in the standard library.
+    \begin{itemize}
+      \item \cppid{out\_of\_range}, \cppid{invalid\_argument}, \ldots
+      \item All inheriting from \cppid{exception}.
+      \item All have a \cppid{what()} member function.
+    \end{itemize}
+\end{itemize}
+\begin{lstlisting}
+int main()
+  try {
+    f();
+    return 0;
+  }
+  catch (out_of_range & e) {
+    cerr << "Out of range:" << e.what() << "\n";
+    return -1;
+  }
+  catch (exception & e) {
+    cerr << "Exception: " << e.what() << "\n";
+    return -2;
+  }
+}
+\end{lstlisting}
+\end{frame}

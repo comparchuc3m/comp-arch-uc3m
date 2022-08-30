@@ -1,0 +1,33 @@
+\subsection{A first program}
+
+\begin{frame}{Hello}
+\begin{columns}[T]
+
+\column{.65\textwidth}
+  \begin{itemize}
+    \item Header file: \mode<presentation>{\cppid{iostream}.}
+    \item Main program: \mode<presentation>{\cppid{main}.}
+        \begin{itemize}
+          \item It is program entry point.
+        \end{itemize}
+    \item Import from namespace: \cppid{std}
+    \item Standard output stream: \cppid{cout}.
+        \begin{itemize}
+          \item It is a global variable
+        \end{itemize}
+    \item Output operator: \cppkey{<{}<}.
+        \begin{itemize}
+          \item Operator to send data to stream.
+          \item Defined for most types.
+        \end{itemize}
+    \item End of line: \cppid{endl} (like \cppid{"\textbackslash n"}).
+    \item Exit code: \cppid{0} (returned to OS).
+  \end{itemize}
+
+\column{ .35\textwidth}
+\begin{block}{hello.cpp}
+\lstinputlisting{int/m6-01-cppintro/hello/hello.cpp}
+\end{block}
+
+\end{columns}
+\end{frame}

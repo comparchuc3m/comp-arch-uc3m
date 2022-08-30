@@ -7,6 +7,8 @@ en/license-cc.tex \
 include en/00-intro/Makefile.def
 include en/m1-01-fund/Makefile.def
 
+include en/m6-01-cppintro/Makefile.def
+
 ALL_EN_FINAL_PDF=\
 $(FINAL_DIR) \
 $(ALL_SLIDES_EN_FINAL_PDF) \
@@ -18,4 +20,7 @@ allen:	$(ALL_EN_FINAL_PDF)
 
 #include rules for slides
 include $(EN_00_INTRO_DIR)/Makefile.mk
+
 include $(EN_M1_01_FUND_DIR)/Makefile.mk
+
+include $(EN_M6_01_CPPINTRO_DIR)/Makefile.mk

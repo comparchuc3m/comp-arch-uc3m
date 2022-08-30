@@ -1,0 +1,59 @@
+\subsection{Destructor}
+
+\begin{frame}[t,fragile]{Objects destruction}
+\begin{columns}[T]
+
+\column{.4\textwidth}
+\begin{itemize}
+  \item A \bulletmark{destructor} is a special member function is executed
+        \bulletgood{automatically} when an object exits scope.
+    \begin{itemize}
+      \item Has no return type.
+      \item Does not take any parameter.
+      \item Class name with prepended \textbf{\cppid{~}}.
+    \end{itemize}
+\end{itemize}
+
+
+\column{.6\textwidth}
+\begin{block}{Definition}
+\begin{lstlisting}
+class numvector {
+public:
+  //...
+
+  numvector(int n) : size{n}, vec{new double[size]}
+    {}
+
+  ~numvector() { delete []vec; }
+
+private:
+  int size;
+  double * vec;
+};
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Destructor invocation}
+\begin{itemize}
+  \item Destructor is automatically invoked.
+\end{itemize}
+
+\begin{block}{Automatic invocation}
+\begin{lstlisting}
+void f() {
+  numvector v(100);
+  for (int i=0; i<100; ++i) {
+    v[i] = i;
+  }
+  // ...
+  for (int i=0; i<100; ++i) {
+    cout << v[i] << "\n";
+  }
+} // Destructor invocation
+\end{lstlisting}
+\end{block}
+\end{frame}

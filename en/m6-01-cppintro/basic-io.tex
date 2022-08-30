@@ -1,0 +1,48 @@
+\subsection{Basic input/output}
+
+\begin{frame}[t,fragile]{Standard input/output}
+\begin{itemize}
+  \item Header: \cppid{<iostream>}.
+  \item Namespace: \cppid{std}.
+  \item Global objects
+    \begin{itemize}
+      \item \cppid{cin}: Standard input.
+      \item \cppid{cout}: Standard output
+      \item \cppid{cerr}: Standard error.
+      \item \cppid{clog}: Standard log.
+    \end{itemize}
+  \item Operators:
+    \begin{itemize}
+      \item Dump data to a stream:
+\begin{lstlisting}
+std::cout << "Values: " << x << " , " << y << "\n";
+\end{lstlisting}
+      \item Value reading:
+\begin{lstlisting}
+std::cin >> x >> y;
+\end{lstlisting}
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Input/output example}
+\begin{block}{Reading a name}
+\lstinputlisting{int/m6-01-cppintro/basic-io/hello1.cpp}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Input/output example}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Reading a name}
+\lstinputlisting{int/m6-01-cppintro/basic-io/hello2.cpp}
+\end{block}
+
+\column{.5\textwidth}
+\begin{itemize}
+  \item \cppkey{using namespace} avoids repeating \cppid{std::} qualifications.
+\end{itemize}
+
+\end{columns}
+\end{frame}
