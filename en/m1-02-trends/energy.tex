@@ -1,0 +1,213 @@
+\section{Power and energy trends}
+
+\begin{frame}[t]{Power and energy: Primary concerns}
+\begin{enumerate}
+  \item \textgood{Maximum power}
+    \begin{itemize}
+      \item Processor draws more power than supplied $\Rightarrow$ \textmark{Voltage drop}
+            $\Rightarrow$ \textbad{Malfunction}.
+      \item Voltage indexing to allow slow down to regulate voltage.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Thermal Design Power (TDP)}
+    \begin{itemize}
+      \item Power consumption under the maximum theoretical load.
+      \item It determines cooling requirement.
+      \item It can be exceeded in short periods.
+      \item What if TDP is exceeded for longer term?
+        \begin{itemize}
+          \item Lower clock rate.
+          \item Power down the chip.
+        \end{itemize}
+    \end{itemize}   
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Energy}
+    \begin{itemize}
+      \item Power is energy per unit time.
+      \item 1 Watt = 1 Joule $\times$ 1 second.
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[t]{Power and Energy: Example}
+\begin{itemize}
+  \item Two different systems (\bulletmark{A} y \bulletmark{B}).
+    \begin{itemize}
+      \item \bulletmark{A} consumes 20\% more power than \bulletmark{B}.
+      \item \bulletmark{A} runs a task in 70\% of \bulletmark{B} time.
+      \item Which has a lower cost?
+    \end{itemize}
+
+  \mode<presentation>{\pause\vfill}
+  \item The adequate metric for comparison is \bulletgood{Energy}.
+    \begin{itemize}
+      \item $E(B) = P(B) \cdot t(B)$
+      \item $E(A) = 1.2 \cdot P(B) \cdot 0.7 \cdot t(B) = 0.84 \cdot E(B)$
+      \item System \bulletmark{A} uses 84\% of \bulletmark{B} energy.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Energy and power in microprocessors}
+\begin{itemize}
+  \item In CMOS technology, \bulletmark{energy consumption} is derived from
+        \bulletmark{transistors switching}.
+
+  \mode<presentation>{\pause\vfill}
+  \item \bulletenum{Dynamic energy}:
+    \begin{itemize}
+      \item Amount of energy needed to switch.
+        \begin{itemize}
+          \item $0 \rightarrow 1$ or $1 \rightarrow 0$.
+          \item $E_d \approx \frac{1}{2} \cdot X_c \cdot V^2$
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\pause\vfill}
+  \item \bulletenum{Dynamic power}:
+    \begin{itemize}
+      \item Depends on switching frequency.
+        \begin{itemize}
+          \item $P_d \approx \frac{1}{2} \cdot X_c \cdot V^2 \cdot f$
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\begin{block}{Note}
+\begin{small}
+  $X_c$: Capacitive load\qquad
+  $V$: Voltage \qquad
+  $f$: Frequency
+\end{small}
+\end{block}
+\end{frame}
+
+\begin{frame}[t]{Example}
+\begin{itemize}
+  \item If a 15\% voltage reduction implies a 15\% frequency reduction:
+    \begin{itemize}
+      \item Which is the effect on dynamic energy and dynamic power?
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\pause\vfill}
+\begin{block}{Solution}
+\begin{displaymath}
+\frac{E_{new}}{E_{old}} =
+\frac
+{(V \cdot 0.85)^2}
+{V^2} =
+0.85^2 =
+0.72
+\end{displaymath}
+\pause
+\begin{displaymath}
+\frac{P_{new}}{P_{old}} =
+\frac
+{(V \cdot 0.85)^2 \cdot (f \cdot 0.85)}
+{V^2 \cdot f} =
+0.85^3 =
+0.61
+\end{displaymath}
+\end{block}
+\end{frame}
+
+\begin{frame}[t]{Evolution}
+\begin{itemize}
+  \item Trends over time:
+    \begin{itemize}
+      \item Increasing the \textgood{number of transistors} switching.
+      \item Increasing \textgood{switch frequency}.
+      \item \textmark{More relevant} than decrease in capacitive load and voltage.
+      \item \textemph{Net effect}: Growth in power comsumption and enegery.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Power Comsumption}
+    \begin{itemize}
+      \item Intel 80386 (1986): 2W.
+      \item Intel Core i7-6700K (2015): 91W.
+      \item Intel Core i7-12700K (2021): 125W.
+      \item \textbad{Aproaching limits of cooling}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textemph{Impact on clock frequency}
+    \begin{itemize}
+      \item Intel 80386 (1986): 33 MHz.
+      \item Intel Core i7-6700K (2015): 4.00 -- 4.20 GHz.
+      \item Intel Core i7-12700K (2021): 3.60 -- 4.90 GHz.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Energy efficiency}
+\begin{itemize}
+ \item \bulletgood{Techniques}:
+   \mode<presentation>{\vfill}
+   \begin{enumerate}
+     \item Turn off clock for inactive modules.
+       \begin{itemize}
+         \item No floating point executing $\Rightarrow$ Switch off FP unit.
+         \item Disabled unused cores.
+       \end{itemize}
+
+     \mode<presentation>{\vfill}
+     \item Dynamic Voltage-Frequency Scaling (DVFS).
+       \begin{itemize}
+         \item Multiple operating frequency $\Rightarrow$ Power savings.
+       \end{itemize}
+
+     \mode<presentation>{\vfill}
+     \item Low power modes.
+       \begin{itemize}
+         \item Requires reactivation mechanism.
+       \end{itemize}
+     \mode<presentation>{\vfill}
+
+     \item Automatic overclocking.
+       \begin{itemize}
+         \item Enabled when it is safe.
+         \item Example: Core i7 3.3 GHz may run busts at 3.6 GHz.
+       \end{itemize}
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Static power effect}
+\begin{itemize}
+  \item Static power increasingly important.
+    \begin{itemize}
+      \item Current flows even if transistor is off.
+
+\pause
+\begin{block}{Static power}
+\begin{displaymath}
+P_s \approx current\_{static} \times Voltage
+\end{displaymath}
+\end{block}
+
+      \pause
+      \item Static power is porportional to number of devices.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Impact}:
+    \begin{itemize}
+      \item Increasing transistor count $\Rightarrow$ Increases power.
+        \begin{itemize}
+          \item \textbad{Even if idle!}
+        \end{itemize}
+
+      \pause
+      \item \textmark{Power gating}: Turn off power supply to inactive modules.
+
+      \pause
+      \item High performance chips may leak up to 50\%.
+        \begin{itemize}
+          \item Large cache memories using SRAM (static RAM).
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
