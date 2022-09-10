@@ -1,0 +1,38 @@
+\begin{acexercise}\end{acexercise}
+
+During one year a computer has been working all the time except a single
+failure that required shutting down the system for one day.
+
+Answer the following questions:
+
+\begin{enumerate}
+
+  \item Compute the system availability during that year.
+
+  \item Is it possible that another computer that has 4 failures during a year
+has the same availability value? Reason your answer.
+
+\end{enumerate}
+
+\begin{acsolution}\end{acsolution}
+
+\begin{enumerate}
+
+\item
+
+During one year, the system was working correctly during 364 days and was out of service
+for one day.
+
+\[
+A = \frac{MTTF}{MTTF + MTTR} = \frac{364}{365} = 0.9973 \quad
+\rightarrow \quad 99.73\%
+\]
+
+\item
+
+Yes. If repair time for 4 failures equals to 1 day, the availability would be the same. 
+
+For example, if the system is not available for one whole day is equivalent
+to being not available 6 hours in 4 different days.
+
+\end{enumerate}

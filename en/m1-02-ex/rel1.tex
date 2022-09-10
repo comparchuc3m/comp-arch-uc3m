@@ -1,0 +1,41 @@
+\begin{acexercise}\end{acexercise}
+
+Given a computer working continuously and without failures until time $t=20$ months.
+
+\begin{enumerate}
+
+\item What is the reliability of that computer for $t=0$, $t24$ and $t=30$ (where $t$ is expressed in months).
+
+\item If during two years of usage, the computer has two failures whose repair times are $3.85$ and $4.15$ days respectively, what would be its availability?
+
+\end{enumerate}
+
+\begin{acsolution}\end{acsolution}
+
+Reliability ($R$) is the probability that the system lifetime ($X$)
+is greater than a given time $t$. That is $P[X>t]$.
+Reliability is a function of time and fulfills the following:
+
+\[ R(t=0)=1 \]
+\[ R(t=\infty)=0 \]
+\[ R(0<t<\infty) \in [0,1] \]
+
+In the example:
+
+\[ R(t=0)=1, R(t=24)=0, R(t=30)=0 \]
+
+Availability ($A$) is the fraction of time that the system is working correctly, or free of errors.
+Formally, the average availability will be:
+
+\[
+A=\frac{MTTF}{MTTF+MTTR}
+\]
+
+Where $MTTF$ is the average time between failures and $MTTR$ is the average time to repair.
+
+Consequently, the availability of the system in the example:
+
+\[ MTTR=3.85+4.15=8 \]
+\[ MTTF=365*2-8=722 \]
+\[ A=\frac{722}{730}= 0,9890 \rightarrow 98.9\% \]
+

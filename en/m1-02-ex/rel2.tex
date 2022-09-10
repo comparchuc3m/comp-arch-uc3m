@@ -1,0 +1,38 @@
+\begin{acexercise}\end{acexercise}
+
+A processor as FIT (\emph{failures in time}) of 200. Replacing the processor requires 3 days.
+
+\begin{enumerate}
+
+\item What is the MTTF (\emph{mean time to failure})?
+
+\item What is the system's availability?
+
+\item What is the MTTF of a data center using 500 of those processors?
+
+\end{enumerate}
+
+\begin{acsolution}\end{acsolution}
+
+\begin{enumerate}
+
+\item The FIT is expressed in failures per $10^9$ hours. Consequently:
+
+\[MTTF = 10^9 \frac{1}{FIT} = \frac{10^9}{2 \cdot 10^2} = 0.5 \cdot 10^7 hours\]
+
+\item The time to repair is 24 hours. Consequently:
+
+\[
+A = \frac{MTTF}{MTTF + MTTR} =
+\frac{0.5 \cdot 10^7}{0.5 \cdot 10^7 + 24} =
+0.9999952 \approx 1
+\]
+
+\item If we assume that a failure in any processor makes the system to fail.
+
+\[
+A = 1 - \prod_{i=1}^{500}(1 - A_i) = 1 - 0.0000048^{500} \approx 1
+\]
+
+\end{enumerate}
+
