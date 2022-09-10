@@ -2,11 +2,11 @@
 
 \begin{frame}[t]{Free store memory}
 \begin{itemize}
-  \item The \bulletgood{free store} holds the memory that can be
+  \item The \textgood{free store} holds the memory that can be
         acquired and released.
 
   \vfill
-  \item \bulletmark{IMPORTANT}:
+  \item \textmark{IMPORTANT}:
         C++ is not a language with automated resource management. 
     \begin{itemize}
       \item If you acquire a resource you must free it.
@@ -148,7 +148,7 @@ delete []v; // Release v
 \end{lstlisting}
 
   \vfill\pause
-  \item \bulletmark{Important}: 
+  \item \textmark{Important}: 
         The right deallocation version must be used.
     \begin{itemize}
       \item If memory is allocated with \cppkey{new T} it must be released with \cppkey{delete}.
@@ -177,7 +177,7 @@ void f() {
     \end{itemize}
 
   \mode<presentation>{\vfill}
-  \item Problems with \bulletmark{memory leaks}:
+  \item Problems with \textmark{memory leaks}:
     \begin{itemize}
       \item Each memory allocation might require more time.
       \item If program runs for a long time, memory could be exhausted.
