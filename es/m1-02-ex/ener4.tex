@@ -1,25 +1,24 @@
-\begin{acexercise}
-\end{acexercise}
+\begin{acexercise}\end{acexercise}
 
-Evalúe cuál sería el impacto si el voltaje no se puede reducir por debajo del 50\%
-aunque la frecuencia si se puede reducir al 10\% de su valor original.
-Determine los ahorros esperados.
+Para mejorar el ahorro se está considerando remlazar el procesador de 4 núcleos
+por un procesador con un núcloe de rendimiento (uno de los núcleos originales) y
+un núcleo de energía.
+El núcleo de energía requiere un 30\% de la energía del núcleo de rendimiento.
 
-\begin{acsolution}
-\end{acsolution}
+Al ejecutar aplicaciones de mensajería, el núcleo de rendimiento se utiliza el
+20\% del tiempo y el núcleo de energía el 80\% del tiempo.
 
-La razón de energías es:
+¿Cuál será la energía requerida?
+
+\begin{acsolution}\end{acsolution}
+
+El núcleo de rendimiento se ejecutará el 20\% del tiempo usando $\frac{1}{4}$  de la energía.
+El núcleo de energía se ejecutará el 80\% del tiempo usando $\frac{1}{4} \cdot 30\%$ 
+de la energía.
+
 \[
-\frac{E_{new}}{E_{old}} =
-\frac{(0.5 \cdot \times V_{old})^2}{V_{old}^2} =
-0.5^2 =
-0.25
-\] 
-
-Y la razón de potencias es:
-\[
-\frac{P_{new}}{P_{old}} =
-\frac{(0.5 \cdot V_{old})^2 \cdot 0.1 \cdot f}{V_{old}^2 \cdot f} =
-0.5^2 \cdot 0.1 =
-0.025
+E_d = 0.2 \cdot 0.25 + 0.8 \cdot 0.25 \cdot 0.3 =
+0.05 + 0.06 = 
+0.11
 \]
+

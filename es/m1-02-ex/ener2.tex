@@ -1,0 +1,40 @@
+\begin{acexercise}
+\end{acexercise}
+
+El escalado de frecuencia y el escalado de voltaje se pueden utilizar para
+mejorar el consumo a cambio de un menor rendimiento. Considere un dispositivo
+móvil con 4 cores de propósito general. Asuma que tanto la potencia dinámica
+como al energía dinámica se reducen al 10\% de su valor. Dada esta situación,
+¿cuánta energía dinámica es necesaria cuando se aplica el escalado? ¿Cuánta
+potencia dinámica es necearia?
+
+\begin{acsolution}
+\end{acsolution}
+
+In this situation we have:
+\[V_{new} = 0.1 \times V_{old}\]
+\[f_{new} = 0.1 \times f_{old}\]
+
+Como, la energía y potencia dinámica son:
+\[
+E_d \approx \frac{1}{2} \cdot X_c \cdot V^2
+\]
+\[
+P_d \approx \frac{1}{2} \cdot X_c \cdot V^2 \cdot f
+\]
+
+Por tanto, la razón de energías es:
+\[
+\frac{E_{new}}{E_{old}} =
+\frac{(0.1 \cdot \times V_{old})^2}{V_{old}^2} =
+0.1^2 =
+0.01
+\] 
+
+Y la razón de potencias es:
+\[
+\frac{P_{new}}{P_{old}} =
+\frac{(0.1 \cdot V_{old})^2 \cdot 0.1 \cdot f}{V_{old}^2 \cdot f} =
+0.1^3 =
+0.001
+\]
