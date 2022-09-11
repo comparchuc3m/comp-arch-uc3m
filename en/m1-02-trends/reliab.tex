@@ -277,12 +277,14 @@ R(t) = 1 - (1 - 0.9)^3 = 0.999
 
 \begin{frame}[t]{Availability measurement}
 \begin{itemize}
-  \item Let MTTF the average time to failure.
-  \item Let MTTR the average time to repair.
-  \item System availability $A$ is defined as:
+  \item \textgood{FIT}: Failure in time (usually for $10^9$ hours).
+  \item \textgood{MTTF}: Mean Time to Failure.
+  \item \textgood{MTTR}: Mean Time to Repair.
 \end{itemize}
 
 \begin{equation*}
+FIT = \frac{10^9}{MTTF}
+\quad\quad
 A = \frac{MTTF}{MTTF + MTTR}
 \end{equation*}
 
