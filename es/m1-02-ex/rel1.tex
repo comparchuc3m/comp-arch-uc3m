@@ -1,0 +1,45 @@
+\begin{acexercise}\end{acexercise}
+
+Sea un computador funcionando continuamente y sin fallos hasta $t=20$ meses.
+
+\begin{enumerate}
+
+\item ¿Cuál es la fiabilidad de ese computador para $t=0$, $t24$ and $t=30$ (donde $t$ se expresa en meses)?
+
+\item Si durante dos años de uso, el computador tiene dos fallos cuyos tiempos de reparación son 
+      respectivamente $3.85$ y $4.15$ días ¿cuál sería su disponibilidad?
+
+\end{enumerate}
+
+\begin{acsolution}\end{acsolution}
+
+La fiabilidad ($R$) es la probabilidad de que la vida del sistema ($X$) 
+sea mayor que un valor dado del tiempo $t$. Esto es $P[X>t]$.
+
+La fiabilidad es una función del tiempo y cumple las siguientes propiedades:
+
+\[ R(t=0)=1 \]
+\[ R(t=\infty)=0 \]
+\[ R(0<t<\infty) \in [0,1] \]
+
+En el ejemplo:
+
+\[R(t=0)=1\] 
+\[R(t=24)=0\] 
+\[R(t=30)=0\]
+
+La disponibilidad ($A$) es la fracción del tiempo que el sistema está funcionando correctamente,
+o libre de errores.
+Formalmente, la disponibilidad promedio será:
+
+\[
+A=\frac{MTTF}{MTTF+MTTR}
+\]
+
+Donde $MTTF$ es el tiempo medio entre fallos y $MTTR$ es el tiempo medio de reparación.
+
+En consecuencia, la disponibilidad del sistema del ejemplo:
+
+\[ MTTR=3.85+4.15=8 \]
+\[ MTTF=365*2-8=722 \]
+\[ A=\frac{722}{730}= 0,9890 \rightarrow 98.9\% \]

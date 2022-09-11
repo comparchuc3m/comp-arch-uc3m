@@ -1,0 +1,66 @@
+\PassOptionsToPackage{usenames}{xcolor}
+\PassOptionsToPackage{dvipsnames}{xcolor}
+
+\documentclass[11pt,a4paper,fleqn,twoside,final]{article}%
+\usepackage[a4paper,left=2cm,right=2cm,top=2.5cm,bottom=4cm]{geometry}
+
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue,plainpages=false,bookmarksnumbered=true,pdfpagemode=UseOutlines]{hyperref}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage[spanish]{babel}
+\usepackage[nottoc]{tocbibind}
+
+\selectlanguage{spanish}
+\usepackage[fixlanguage]{babelbib}
+\selectbiblanguage{spanish}
+
+\usepackage{graphicx}
+\usepackage{xcolor}
+\input{config/tikz-config}
+
+\usepackage{url}
+
+\usepackage{pdfpages}
+
+\usepackage{rotating}
+\usepackage{array}
+
+%Package fancyhdr
+\usepackage{fancyhdr}
+\setlength{\headheight}{1.4cm}%{13.6pt}
+\pagestyle{fancyplain}
+\fancyhf{}
+\lhead{\includegraphics[height=1.25cm]{logos/uc3m.png}}
+\rhead{}
+\chead{}
+\rfoot{Arquitectura de Computadores}
+\cfoot{\thepage}
+\lfoot{\textbf{J. Daniel Garcia (coordinador)} \newline \ccbyncndeu \quad Universidad Carlos III de Madrid}
+\renewcommand{\headrulewidth}{0.5pt} % remove lines as well
+\renewcommand{\footrulewidth}{0.5pt}
+\renewcommand{\plainheadrulewidth}{0.5pt}
+\renewcommand{\plainfootrulewidth}{0.5pt}
+
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.9}
+
+\usepackage{listings}
+\input{config/cpp11-config}
+\input{config/es/defs-common}
+\input{config/common-defs}
+
+\usepackage[scale=1.2]{ccicons}
+
+% Common part of titlepage
+\author{J. Daniel Garcia (coordinador)\\
+Arquitectura de Computadores\\
+Departamento de Informática\\
+Universidad Carlos III de Madrid\\
+}
+\date{\the\year{}}
+
+
+

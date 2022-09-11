@@ -9,6 +9,8 @@ include es/00-intro/Makefile.def
 include es/m1-01-fund/Makefile.def
 include es/m1-02-trends/Makefile.def
 
+include es/m1-02-ex/Makefile.def
+
 include es/m6-01-cppintro/Makefile.def
 
 ALL_ES_FINAL_PDF=\
@@ -25,5 +27,7 @@ include $(ES_00_INTRO_DIR)/Makefile.mk
 
 include $(ES_M1_01_FUND_DIR)/Makefile.mk
 include $(ES_M1_02_TRENDS_DIR)/Makefile.mk
+
+include $(ES_M1_02_EX_DIR)/Makefile.mk
 
 include $(ES_M6_01_CPPINTRO_DIR)/Makefile.mk

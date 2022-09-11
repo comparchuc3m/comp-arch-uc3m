@@ -1,0 +1,38 @@
+\begin{acexercise}\end{acexercise}
+
+Durante un año un computador ha estado funcionando todo el tiempo excepto
+durante un único fallo que requirión el apagado del sistema durante un día.
+
+Responda a las siguientes preguntas:
+
+\begin{enumerate}
+
+  \item Calcule la disponibilidad del sistema durante ese año.
+
+  \item ¿Es posible que otro computador que ha tenido 4 fallos durante un año
+        tenga el mismo valor de disponibilidad? Razona tu respuesta.
+
+\end{enumerate}
+
+\begin{acsolution}\end{acsolution}
+
+\begin{enumerate}
+
+\item
+
+Durante un año, el sistema estuvo funcionando correctamente 364 días y estuvo
+fuera de servicio durante un día.
+
+\[
+A = \frac{MTTF}{MTTF + MTTR} = \frac{364}{365} = 0.9973 \quad
+\rightarrow \quad 99.73\%
+\]
+
+\item
+
+Si. Si el tiempo de reparación de los 4 fallos suma 1 día, la disponibilidad sería la misma.
+
+For ejemplo, si el sistema no está disponible durante un día completo
+es equivalente a no estar disponible 6 horas en cuatro días diferentes.
+
+\end{enumerate}

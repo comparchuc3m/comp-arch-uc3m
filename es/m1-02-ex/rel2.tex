@@ -1,0 +1,56 @@
+\begin{acexercise}\end{acexercise}
+
+Un procesador tiene un valor de FIT (\emph{fallos durante periodo}) de 200.
+Se requeiren 3 días para remplazar un procesador.
+
+\begin{enumerate}
+
+\item ¿Cuál es el MTTF (\emph{mean time to failure})?
+
+\item ¿Cuál es la disponbilidad del sistema?
+
+\item ¿Cuál es el MTTF de un centro de datos con 100 servidores? ¿Y con 1000?
+
+\end{enumerate}
+
+\begin{acsolution}\end{acsolution}
+
+\begin{enumerate}
+
+\item El FIT se expresa en fallos por $10^9$ horas. Por tanto:
+
+\[MTTF = 10^9 \frac{1}{FIT} = \frac{10^9}{2 \cdot 10^2} = 0.5 \cdot 10^7 hours\]
+
+\item El tiempo de reparación es $3 \cdot 24 = 72$ horas.
+
+\[
+A = \frac{MTTF}{MTTF + MTTR} =
+\frac{0.5 \cdot 10^7}{0.5 \cdot 10^7 + 72} =
+0.9999856 \approx 1
+\]
+
+\item Si se asume que el fallo en cualquier procesador hace que el sistema falle.
+
+\[
+A = \prod_{i=1}^{100}(1 - A_i) = 0.9999856^{100} = 0.998561
+\]
+\[A = \frac{MTTF}{MTTF + 72} \]
+\[MTTF \cdot A + 72 \cdot A = MTTF\]
+\[MTTF \cdot A - MTTF = - 72 \cdot A\]
+\[(A-1) \cdot MTTF = - 72 \cdot A\]
+\[MTTF = \frac{72 \cdot A}{1 - A} = \frac{72 \cdot 0.998561}{0.998561} =
+\frac{71,896392}{0,001439} =
+49962.75 horas
+\]
+
+Esto es aproximadamente 5.7 años.
+
+Si consideramos un centro de datos con 1000 nodos servidores, entonces:
+
+\[A = 0,9999856^{1000} = 0.985703\]
+\[MTTF = \frac{72 \cdot 0,985703}{0,014297} = 4964.02 horas\]
+
+Esto es algo menos de 7 meses.
+
+\end{enumerate}
+
