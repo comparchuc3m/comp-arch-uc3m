@@ -8,7 +8,7 @@ A processor as FIT (\emph{failures in time}) of 200. Replacing the processor req
 
 \item What is the system's availability?
 
-\item What is the MTTF of a data center using 500 of those processors?
+\item What is the MTTF of a data center using 100 of those processors? And if we use 1000?
 
 \end{enumerate}
 
@@ -20,19 +20,35 @@ A processor as FIT (\emph{failures in time}) of 200. Replacing the processor req
 
 \[MTTF = 10^9 \frac{1}{FIT} = \frac{10^9}{2 \cdot 10^2} = 0.5 \cdot 10^7 hours\]
 
-\item The time to repair is 24 hours. Consequently:
+\item The time to repair is $3 \cdot 24 = 72$ hours. Consequently:
 
 \[
 A = \frac{MTTF}{MTTF + MTTR} =
-\frac{0.5 \cdot 10^7}{0.5 \cdot 10^7 + 24} =
-0.9999952 \approx 1
+\frac{0.5 \cdot 10^7}{0.5 \cdot 10^7 + 72} =
+0.9999856 \approx 1
 \]
 
 \item If we assume that a failure in any processor makes the system to fail.
 
 \[
-A = 1 - \prod_{i=1}^{500}(1 - A_i) = 1 - 0.0000048^{500} \approx 1
+A = \prod_{i=1}^{100}(1 - A_i) = 0.9999856^{100} = 0.998561
+\]
+\[A = \frac{MTTF}{MTTF + 72} \]
+\[MTTF \cdot A + 72 \cdot A = MTTF\]
+\[MTTF \cdot A - MTTF = - 72 \cdot A\]
+\[(A-1) \cdot MTTF = - 72 \cdot A\]
+\[MTTF = \frac{72 \cdot A}{1 - A} = \frac{72 \cdot 0.998561}{0.998561} =
+\frac{71,896392}{0,001439} =
+49962.75 hours
 \]
 
-\end{enumerate}
+This is approximately 5.7 years.
 
+If we consider a data center with 1000 server nodes, then:
+
+\[A = 0,9999856^{1000} = 0.985703\]
+\[MTTF = \frac{72 \cdot 0,985703}{0,014297} = 4964.02 hours\]
+
+This is less than 7 months.
+
+\end{enumerate}
