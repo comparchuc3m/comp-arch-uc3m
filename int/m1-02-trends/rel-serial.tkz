@@ -1,0 +1,25 @@
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, font=\tiny} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny, minimum width=1cm, minimum height=0.5cm},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+}  
+\node[bloque] (c1) {};
+\node[connpoint, left=0.5cm of c1] (c0) {};
+\node[etiqueta, below=0.1cm of c1] {$R_1(t)$};
+\node[bloque, right=0.5cm of c1] (c2) {};
+\node[etiqueta, below=0.1cm of c2] {$R_2(t)$};
+\node[bloque, right=0.5cm of c2] (c3) {};
+\node[etiqueta, below=0.1cm of c3] {$R_3(t)$};
+\node[bloque, right=0.5cm of c3] (c4) {};
+\node[etiqueta, below=0.1cm of c4] {$R_4(t)$};
+\node[connpoint, right=0.5cm of c4] (c5) {};
+\path[sinflecha] (c0) -- (c1);
+\path[sinflecha] (c1) -- (c2);
+\path[sinflecha] (c2) -- (c3);
+\path[sinflecha] (c3) -- (c4);
+\path[sinflecha] (c4) -- (c5);
+\end{tikzpicture}

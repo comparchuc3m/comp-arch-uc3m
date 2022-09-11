@@ -1,0 +1,13 @@
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, font=\tiny} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny, minimum width=1cm, minimum height=0.5cm},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+}  
+\node[etiqueta] (e1) {For $t=100$};
+\node[etiqueta,right=0.25cm of e1] (e2) {$R_i(t)=0.9$};
+\node[bloque,above=0.1cm of e2, minimum width=0.5cm, minimum height=0.2cm] {};
+\end{tikzpicture}

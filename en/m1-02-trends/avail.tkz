@@ -1,0 +1,18 @@
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3.5cm,
+                    semithick]
+  \tikzstyle{every state}=[fill=blue,draw=none,text=white,font=\tiny,minimum width=1.5cm]
+  \tikzset{every edge/.append style={font=\tiny}}
+
+  \node[state] (working) {Working};
+
+  \node[state] (stopped) [right=2.5cm of working] {Not working};
+
+
+  \path (working) edge[bend left=30]  
+          node{Failure}                  
+        (stopped);
+
+  \path (stopped) edge[bend left=30]   
+          node{Repair} 
+        (working);
+\end{tikzpicture}

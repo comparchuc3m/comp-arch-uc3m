@@ -2,11 +2,11 @@
 
 \begin{frame}[t]{Memoria del almacén libre}
 \begin{itemize}
-  \item El \bulletgood{almacén libre} contiene la memoria que 
+  \item El \textgood{almacén libre} contiene la memoria que 
         se puede adquirir y liberar.
 
   \vfill
-  \item \bulletmark{IMPORTANTE}: C++ no es un lenguaje con gestión
+  \item \textmark{IMPORTANTE}: C++ no es un lenguaje con gestión
         automática de recursos.
     \begin{itemize}
       \item Si se adquiere un recurso, se debe liberar.
@@ -146,7 +146,7 @@ delete []v;
 \end{lstlisting}
 
   \vfill\pause
-  \item \bulletmark{Importante}: Se debe usar la versión correcta de desasignación.
+  \item \textmark{Importante}: Se debe usar la versión correcta de desasignación.
     \begin{itemize}
       \item Si se reserva memoria con \cppkey{new T} debe liberarse con \cppkey{delete}.
       \item Si se reserva memoria con \cppkey{new T[n]} debe liberarse con \cppkey{delete[]}.
