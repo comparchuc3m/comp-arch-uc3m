@@ -13,6 +13,9 @@ include es/m1-02-ex/Makefile.def
 
 include es/m6-01-cppintro/Makefile.def
 
+# Labs statements
+include es/labs/Makefile.def
+
 ALL_ES_FINAL_PDF=\
 $(FINAL_DIR) \
 $(ALL_SLIDES_ES_FINAL_PDF) \
@@ -31,3 +34,6 @@ include $(ES_M1_02_TRENDS_DIR)/Makefile.mk
 include $(ES_M1_02_EX_DIR)/Makefile.mk
 
 include $(ES_M6_01_CPPINTRO_DIR)/Makefile.mk
+
+#Rules for labs
+include ${ES_LABS_DIR}/Makefile.mk

@@ -1,0 +1,3 @@
+ES_LABS_DIR=es/labs
+
+include $(ES_LABS_DIR)/lab1-cppdev/Makefile.def
