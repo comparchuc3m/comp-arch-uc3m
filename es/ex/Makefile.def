@@ -1,0 +1,3 @@
+ES_EX_DIR=es/ex
+
+include $(ES_EX_DIR)/m2-01/Makefile.def

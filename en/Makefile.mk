@@ -10,7 +10,7 @@ include en/m2-01-trends/Makefile.def
 include en/m6-01-cppintro/Makefile.def
 
 #include definitions for exercises
-include en/m2-01-ex/Makefile.def
+include en/ex/Makefile.def
 
 ALL_EN_FINAL_PDF=\
 $(FINAL_DIR) \
@@ -28,4 +28,4 @@ include $(EN_M2_01_TRENDS_DIR)/Makefile.mk
 include $(EN_M6_01_CPPINTRO_DIR)/Makefile.mk
 
 #include rules for exercises
-include $(EN_M2_01_EX_DIR)/Makefile.mk
+include $(EN_EX_DIR)/Makefile.mk

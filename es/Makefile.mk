@@ -10,7 +10,7 @@ include es/m2-01-trends/Makefile.def
 include es/m6-01-cppintro/Makefile.def
 
 # Exercise statements
-include es/m2-01-ex/Makefile.def
+include es/ex/Makefile.def
 
 # Labs statements
 include es/labs/Makefile.def
@@ -31,7 +31,7 @@ include $(ES_M2_01_TRENDS_DIR)/Makefile.mk
 include $(ES_M6_01_CPPINTRO_DIR)/Makefile.mk
 
 #Rules for exercises
-include $(ES_M2_01_EX_DIR)/Makefile.mk
+include $(ES_EX_DIR)/Makefile.mk
 
 #Rules for labs
 include ${ES_LABS_DIR}/Makefile.mk
