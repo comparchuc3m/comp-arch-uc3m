@@ -1,0 +1,360 @@
+\section{Fiabilidad y disponibilidad}
+
+\subsection{Fiabilidad}
+
+\begin{frame}[t]{Fiabilidad}
+\begin{itemize}
+  \item El tiempo de vida de un sistema se puede representar como una variable aleatoria
+        $X$.
+
+  \item La fiabilidad del sistema se define como una función $R(t)$
+\begin{displaymath}
+R(t) = P(X > t) : R(0) = 1 \quad y \quad R(\infty) = 0
+\end{displaymath}
+
+  \mode<presentation>{\vfill\pause}
+  \item Obtenida del estudio de fallos de componentes.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Fiabilidad}:
+        Probabilidad de que un dispositivo funcione adecuadamente
+        durante un periodo dado de tiempo 
+        bajo condiciones de operación específicas.
+        
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Distribuciones de fiabilidad}
+\begin{itemize}
+  \item Ejemplos de distribuciones usadas para fiabilidad:
+    \begin{itemize}
+      \mode<presentation>{\vfill}
+      \item \textgood{Exponencial}:
+        \begin{itemize}
+          \item Si la tasa de errores es constante 
+                (generalmente correcto para componentes eléctricos)m
+                la fiabilidad sigue una distribución exponencial.
+        \end{itemize}
+      \mode<presentation>{\vfill}
+      \item \textgood{Weibull}:
+        \begin{itemize}
+          \item Modela la distribución de fallos cuando la tasa de fallos es
+                proporcional a una potencia del tiempo.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t]{Sistemas serie}
+\begin{itemize}
+  \item Sea $R_i(t)$ la fiabilidad del componente \textmark{i}.
+  \item El sistema falla cuando algún componente falla.
+\end{itemize}
+
+\begin{center}
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, font=\tiny} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny, minimum width=1cm, minimum height=0.5cm},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+}  
+\node[bloque] (c1) {};
+\node[connpoint, left=0.5cm of c1] (c0) {};
+\node[etiqueta, below=0.1cm of c1] {$R_1(t)$};
+\node[bloque, right=0.5cm of c1] (c2) {};
+\node[etiqueta, below=0.1cm of c2] {$R_2(t)$};
+\node[bloque, right=0.5cm of c2] (c3) {};
+\node[etiqueta, below=0.1cm of c3] {$R_3(t)$};
+\node[bloque, right=0.5cm of c3] (c4) {};
+\node[etiqueta, below=0.1cm of c4] {$R_4(t)$};
+\node[connpoint, right=0.5cm of c4] (c5) {};
+\path[sinflecha] (c0) -- (c1);
+\path[sinflecha] (c1) -- (c2);
+\path[sinflecha] (c2) -- (c3);
+\path[sinflecha] (c3) -- (c4);
+\path[sinflecha] (c4) -- (c5);
+\end{tikzpicture}
+\end{center}
+
+\pause
+\begin{itemize}
+  \item Si los fallos son independientes, entonces:
+\end{itemize}
+\begin{equation*}
+R(t) = \prod_{i=1}^{N} R_i(t)
+\end{equation*}
+
+\mode<presentation>{\pause}
+\begin{itemize}
+  \item La fiabilidad del sistema es menor:
+\end{itemize}
+\begin{equation*}
+R(t) < R_i(t) \forall i
+\end{equation*}
+\end{frame}
+
+\begin{frame}[t]{Sistema paralelo}
+\begin{itemize}
+  \item El sistema falla cuando todos los componentes fallan.
+\end{itemize}
+
+\begin{equation*}
+R(t) = 1 - \prod_{i=1}^N Q_i(t) : Q_i(t) = 1 - R_i(t)
+\end{equation*}
+
+\begin{center}
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, font=\tiny} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny, minimum width=1cm, minimum height=0.5cm},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+}  
+\node[bloque] (c1) {};
+\node[etiqueta,below=0.05cm of c1] {$R_1(t)$};
+\node[connpoint, left=0.5cm of c1] (lc1) {};
+\node[connpoint, right=0.5cm of c1] (rc1) {};
+\path[sinflecha] (lc1) -- (c1);
+\path[sinflecha] (rc1) -- (c1);
+\node[bloque, below=0.5cm of c1] (c2) {};
+\node[etiqueta,below=0.05cm of c2] {$R_2(t)$};
+\node[connpoint, left=0.5cm of c2] (lc2) {};
+\node[connpoint, right=0.5cm of c2] (rc2) {};
+\path[sinflecha] (lc2) -- (c2);
+\path[sinflecha] (rc2) -- (c2);
+\node[bloque, below=0.5cm of c2] (c3) {};
+\node[etiqueta,below=0.05cm of c3] {$R_3(t)$};
+\node[connpoint, left=0.5cm of c3] (lc3) {};
+\node[connpoint, right=0.5cm of c3] (rc3) {};
+\path[sinflecha] (lc3) -- (c3);
+\path[sinflecha] (rc3) -- (c3);
+\path[sinflecha] (lc1) -- (lc2);
+\path[sinflecha] (lc3) -- (lc2);
+\path[sinflecha] (rc1) -- (rc2);
+\path[sinflecha] (rc3) -- (rc2);
+\node[connpoint,left=1cm of lc2] (inicio) {};
+\path[sinflecha] (inicio) -- (lc2);
+\node[connpoint,right=1cm of rc2] (fin) {};
+\path[sinflecha] (fin) -- (rc2);
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\begin{frame}[t]{Ejemplo}
+\begin{center}
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, font=\tiny} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny, minimum width=1cm, minimum height=0.5cm},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+}  
+\node[etiqueta] (e1) {Para $t=100$};
+\node[etiqueta,right=0.25cm of e1] (e2) {$R_i(t)=0.9$};
+\node[bloque,above=0.1cm of e2, minimum width=0.5cm, minimum height=0.2cm] {};
+\end{tikzpicture}
+\end{center}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, font=\tiny} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny, minimum width=1cm, minimum height=0.5cm},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+}  
+\node[bloque] (c1) {};
+\node[connpoint, left=0.5cm of c1] (c0) {};
+\node[etiqueta, below=0.1cm of c1] {$R_1(t)$};
+\node[bloque, right=0.5cm of c1] (c2) {};
+\node[etiqueta, below=0.1cm of c2] {$R_2(t)$};
+\node[bloque, right=0.5cm of c2] (c3) {};
+\node[etiqueta, below=0.1cm of c3] {$R_3(t)$};
+\node[connpoint, right=0.5cm of c3] (c4) {};
+\path[sinflecha] (c0) -- (c1);
+\path[sinflecha] (c1) -- (c2);
+\path[sinflecha] (c2) -- (c3);
+\path[sinflecha] (c3) -- (c4);
+\end{tikzpicture}
+
+\column{.5\textwidth}
+
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, font=\tiny} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny, minimum width=1cm, minimum height=0.5cm},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+}  
+\node[bloque] (c1) {};
+\node[etiqueta,below=0.05cm of c1] {$R_1(t)$};
+\node[connpoint, left=0.5cm of c1] (lc1) {};
+\node[connpoint, right=0.5cm of c1] (rc1) {};
+\path[sinflecha] (lc1) -- (c1);
+\path[sinflecha] (rc1) -- (c1);
+\node[bloque, below=0.5cm of c1] (c2) {};
+\node[etiqueta,below=0.05cm of c2] {$R_2(t)$};
+\node[connpoint, left=0.5cm of c2] (lc2) {};
+\node[connpoint, right=0.5cm of c2] (rc2) {};
+\path[sinflecha] (lc2) -- (c2);
+\path[sinflecha] (rc2) -- (c2);
+\node[bloque, below=0.5cm of c2] (c3) {};
+\node[etiqueta,below=0.05cm of c3] {$R_3(t)$};
+\node[connpoint, left=0.5cm of c3] (lc3) {};
+\node[connpoint, right=0.5cm of c3] (rc3) {};
+\path[sinflecha] (lc3) -- (c3);
+\path[sinflecha] (rc3) -- (c3);
+\path[sinflecha] (lc1) -- (lc2);
+\path[sinflecha] (lc3) -- (lc2);
+\path[sinflecha] (rc1) -- (rc2);
+\path[sinflecha] (rc3) -- (rc2);
+\node[connpoint,left=1cm of lc2] (inicio) {};
+\path[sinflecha] (inicio) -- (lc2);
+\node[connpoint,right=1cm of rc2] (fin) {};
+\path[sinflecha] (fin) -- (rc2);
+\end{tikzpicture}
+
+\end{columns}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+
+\begin{equation*}
+R(t) = 0.9 \cdot 0.9 \cdot 0.9 = 0.729
+\end{equation*}
+
+\column{.5\textwidth}
+
+\begin{equation*}
+R(t) = 1 - (1 - 0.9)^3 = 0.999
+\end{equation*}
+
+\end{columns}
+
+\end{frame}
+
+\subsection{Disponibilidad}
+
+\begin{frame}[t]{Disponibilidad}
+\begin{itemize}
+  \item En muchos casos, es más interesante conocer la disponibilidad.
+  \item La disponibilidad de un sistema $A(t)$ se define como
+        la probabilidad de que el sistema esté funcionando correctamente
+        en el instante $t$.
+    \begin{itemize}
+      \item La fiabilidad considera el intervalo $[0,t]$.
+      \item La disponibilidad considera un instante concreto en el tiempo.
+    \end{itemize}
+  \item Un sistema modelado como el siguiente diagrama de estados.
+\end{itemize}
+\begin{center}
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3.5cm,
+                    semithick]
+  \tikzstyle{every state}=[fill=blue,draw=none,text=white,font=\tiny,minimum width=1.5cm]
+  \tikzset{every edge/.append style={font=\tiny}}
+
+  \node[state] (working) {Funcionando};
+
+  \node[state] (stopped) [right=2.5cm of working] {No funcionando};
+
+
+  \path (working) edge[bend left=30]  
+          node{Fallo}                  
+        (stopped);
+
+  \path (stopped) edge[bend left=30]   
+          node{Reparación} 
+        (working);
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\begin{frame}[t]{Medida de la disponibilidad}
+\begin{itemize}
+  \item \textgood{FIT} (\emph{Failures in Time}): 
+        Fallos en un periodo (expresado en $10^9$ horas).
+  \item \textgood{MTTF} (\emph{Mean Time To Failure}):
+        Tiempo medio hasta fallo.
+  \item \textgood{MTTR} (\emph{Mean Time To Repais}):
+        Tiempo medio de reparación.
+\end{itemize}
+
+\begin{equation*}
+FIT = \frac{10^9}{MTTF}
+\quad\quad 
+A = \frac{MTTF}{MTTF + MTTR}
+\end{equation*}
+
+\begin{itemize}
+  \item ¿Qué significa una fiabilidad del 99\%?
+    \begin{itemize}
+      \item En 365 días, funciona correctamente $\frac{99 \cdot 365}{100} = 361.35$ días.
+      \item Fuera de servicio $3.65$ días.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Tiempo anula sin servicio}
+\begin{center}
+{\small
+\begin{tabular}{|l|l|}
+\hline
+Disponibilidad (\%) & Días sin sercicio en un año\\
+\hline
+\hline
+98\% & 7.3 días\\
+\hline
+99\% & 3.65 días\\
+\hline
+99.8\% & 17 horas y 30 minutos\\
+\hline
+99.9\% & 8 horas y 45 minutos\\
+\hline
+99.99\% & 52 minutos y 30 segundos\\
+\hline
+99.999\% & 5 minutos y 15 segundos\\
+\hline
+99.9999\% & 31.5 segundos\\
+\hline
+\end{tabular}
+}
+\end{center}
+\end{frame}
+
+\begin{frame}{Cálculo de disponibilidad}
+\begin{itemize}
+  \item Disponibilidad de elementos:
+    \begin{itemize}
+      \item HW: 99.99\%
+      \item Dico: 99.9\%
+      \item SO: 99.99\%
+      \item Aplicación: 99.9\%
+      \item Comunicaciones: 99.9\%
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Disponibilidad del sistema:
+    \begin{itemize}
+      \item Producto de disponibilidades elementales:
+    \end{itemize}
+\end{itemize}
+\begin{equation*}
+A(t) = \prod_{i=1}^{N} A_i(t) = 99.6804 \Rightarrow 1.17 \text{días sin servicio}
+\end{equation*}
+\end{frame}

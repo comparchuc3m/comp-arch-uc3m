@@ -1,0 +1,214 @@
+\section{Tendencia en potencia y energía}
+
+\begin{frame}[t]{Potencia y energía: Principales aspectos}
+\begin{enumerate}
+  \item \textgood{Potencia máxima}
+    \begin{itemize}
+      \item Procesador consume más potencia de la suministrada $\Rightarrow$ \textmark{caída de voltaje}
+            $\Rightarrow$ \textbad{mal funcionamiento}.
+      \item Indexado de voltaje para permitir reducir velocidad para regular voltaje.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Potencia Térmica de Diseño (TDP -- \emph{Thermal Design Power})}
+    \begin{itemize}
+      \item Consumo de potenica baj máxima carga teórica.
+      \item Determina los requisitos de enfriamiento.
+      \item Se puede superar durante periodos cortos de tiempo.
+      \item Qué pasa si el TDP se supera por más tiempo?
+        \begin{itemize}
+          \item Bajar tasa de reloj.
+          \item Apagar el chip.
+        \end{itemize}
+    \end{itemize}   
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Energía}
+    \begin{itemize}
+      \item La potencia es energía por unidad de tiempo.
+      \item 1 Watio = 1 Julio / 1 segundo.
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[t]{Potencia y Energía: Ejemplo}
+\begin{itemize}
+  \item Dos sistemas diferentes (\textmark{A} y \textmark{B}).
+    \begin{itemize}
+      \item \textmark{A} consume un 20\% más de potencia que \textmark{B}.
+      \item \textmark{A} ejecuta una tarea en el 70\% del tiempo de \textmark{B}.
+      \item Qué tiene un coste más bajo?
+    \end{itemize}
+
+  \mode<presentation>{\pause\vfill}
+  \item La métrica adecuada para comparar es la \textgood{Energía}.
+    \begin{itemize}
+      \item $E(B) = P(B) \cdot t(B)$
+      \item $E(A) = 1.2 \cdot P(B) \cdot 0.7 \cdot t(B) = 0.84 \cdot E(B)$
+      \item El sistema \textmark{A} usa el 84\% de la energía de \textmark{B}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Potencia y energía en microprocesadores}
+\begin{itemize}
+  \item En tecnología CMOS, el \textmark{consumo de energía} se deriva de la
+        \textmark{conmutación de transistores}.
+
+  \mode<presentation>{\pause\vfill}
+  \item \textgood{Energía dinámica}:
+    \begin{itemize}
+      \item Cantidad de energía necesaria para conmutar.
+        \begin{itemize}
+          \item $0 \rightarrow 1$ o $1 \rightarrow 0$.
+          \item $E_d \approx \frac{1}{2} \cdot X_c \cdot V^2$
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\pause\vfill}
+  \item \textgood{Potencia dinámica}:
+    \begin{itemize}
+      \item Depende de la frecuencia de conmutación.
+        \begin{itemize}
+          \item $P_d \approx \frac{1}{2} \cdot X_c \cdot V^2 \cdot f$
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\begin{block}{Nota}
+\begin{small}
+  $X_c$: Carga capacitiva\qquad
+  $V$: Voltaje \qquad
+  $f$: Frequencia
+\end{small}
+\end{block}
+\end{frame}
+
+\begin{frame}[t]{Ejemplo}
+\begin{itemize}
+  \item Si una reducción del voltaje del 15\% implica una reducción de frecuencia del 15\%:
+    \begin{itemize}
+      \item ¿Cuál es el efecto sobre la energía dinámica y la potencia dinámica?
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\pause\vfill}
+\begin{block}{Solución}
+\begin{displaymath}
+\frac{E_{nueva}}{E_{ant}} =
+\frac
+{(V \cdot 0.85)^2}
+{V^2} =
+0.85^2 =
+0.72
+\end{displaymath}
+\pause
+\begin{displaymath}
+\frac{P_{nueva}}{P_{ant}} =
+\frac
+{(V \cdot 0.85)^2 \cdot (f \cdot 0.85)}
+{V^2 \cdot f} =
+0.85^3 =
+0.61
+\end{displaymath}
+\end{block}
+\end{frame}
+
+\begin{frame}[t]{Evolución}
+\begin{itemize}
+  \item Tendencias a lo largo del tiempo:
+    \begin{itemize}
+      \item Incremento del \textgood{número de transistores} que conmutan.
+      \item Incremento de la \textgood{frecuencia de conmutación}.
+      \item \textmark{Más relevante} que el decremento en carga capacitiva y voltaje.
+      \item \textemph{Efecto neto}: Crecimiento en consumo de potencia y energía.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Consumo de potencia}
+    \begin{itemize}
+      \item Intel 80386 (1986): 2W.
+      \item Intel Core i7-6700K (2015): 91W.
+      \item Intel Core i7-12700K (2021): 125W.
+      \item \textbad{Aproximación a límites de enfriamiento}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textemph{Impacto sobre frecuencia de reloj}
+    \begin{itemize}
+      \item Intel 80386 (1986): 33 MHz.
+      \item Intel Core i7-6700K (2015): 4.00 -- 4.20 GHz.
+      \item Intel Core i7-12700K (2021): 3.60 -- 4.90 GHz.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Eficiencia energética}
+\begin{itemize}
+ \item \textgood{Técnicas}:
+   \mode<presentation>{\vfill}
+   \begin{enumerate}
+     \item Desactivar reloj de módulos inactivos.
+       \begin{itemize}
+         \item Sin ejecución de coma flotante $\Rightarrow$ Desactivar unidad FP.
+         \item Desactivar cores no usados.
+       \end{itemize}
+
+     \mode<presentation>{\vfill}
+     \item Escalado dinámico de Voltaje-Frecuencia (DVFS -- \emph{Dynamic Voltage-Frequency Scaling}).
+       \begin{itemize}
+         \item Varias fecuencias de operación $\Rightarrow$ Ahorro de potencia.
+       \end{itemize}
+
+     \mode<presentation>{\vfill}
+     \item Modos de baja potencia.
+       \begin{itemize}
+         \item Requiere mecanismo de reactivación.
+       \end{itemize}
+     \mode<presentation>{\vfill}
+
+     \item \emph{Overclocking} automático.
+       \begin{itemize}
+         \item Activado cuando es seguro.
+         \item Ejemplo: Core i7 3.3 GHz con ráfagas a 3.6 GHz.
+       \end{itemize}
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Efecto de potencia estática}
+\begin{itemize}
+  \item Potencia estática cada vez más importante.
+    \begin{itemize}
+      \item La corriente fluye incluso si el transistor está apagado.
+
+\pause
+\begin{block}{Potencia estática}
+\begin{displaymath}
+P_s \approx current\_{static} \times Voltage
+\end{displaymath}
+\end{block}
+
+      \pause
+      \item La potencia estática es proporcional al número de dispositivos.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Impacto}:
+    \begin{itemize}
+      \item Creciente número de transistores $\Rightarrow$ incremento de potencia.
+        \begin{itemize}
+          \item \textbad{Incluso si inactivo!}
+        \end{itemize}
+
+      \pause
+      \item \textmark{Limitación de potencia}: 
+            Apagar suministro de potencia a módulos inactivos.            
+
+      \pause
+      \item Chips de alto rendimiento pueden perder hasta el 50\%.
+        \begin{itemize}
+          \item Grandes memorias caché que usan SRAM (RAM estática).
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
