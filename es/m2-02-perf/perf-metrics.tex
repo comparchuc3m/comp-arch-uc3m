@@ -1,0 +1,79 @@
+\subsection{Métricas de rendimiento}
+
+\begin{frame}[t]{Velocidad de ejecución}
+\begin{itemize}
+  \item ¿Qué significa que el computador \textmark{A} es más rápido
+        que el computador \textmark{B}?
+    \mode<presentation>{\pause\vfill}
+    \begin{itemize}
+      \item Desktop.
+        \begin{itemize}
+          \item Mi programa se ejecuta en menos tiempo.
+          \item Quiero reducir el tiempo de ejecución.
+        \end{itemize}
+    \mode<presentation>{\pause\vfill}
+      \item Administrador de sitio Web.
+        \begin{itemize}
+          \item Puedo procesar más transacciones por hora.
+          \item Quiero aumentar la tasa de procesamiento.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Rendimiento y tiempo de ejecución}
+\begin{itemize}
+  \item El rendimiento $R(x)$ es una métrica inversa al tiempo de 
+        ejecución $T(x)$.
+\end{itemize}
+\begin{columns}
+\begin{column}{.4\textwidth}
+\begin{block}{Rendimiento}
+\begin{math}
+R(x) = \frac{1}{T(x)}
+\end{math}
+\end{block}
+\end{column}
+\begin{column}{.6\textwidth}
+\begin{itemize}
+  \item Alto rendimiento $\rightarrow$ Bajo tiempo de ejecución.
+\end{itemize}
+\end{column}
+\end{columns}
+\mode<presentation>{\pause\vfill}
+\begin{itemize}
+  \item X se ejecuta n veces más rápido que Y.
+\end{itemize}
+\begin{block}{Aceleración}
+\begin{math}
+n=\frac{T(x)}{T(y)}=
+\frac{
+\frac{1}{R(x)}
+}{
+\frac{1}{R(y)}
+}
+=
+\frac{R(y)}{R(x)}
+\end{math}
+\end{block}
+\end{frame}
+
+\begin{frame}[t]{Métricas}
+\begin{itemize}
+  \item La \alert{única} métrica fiable para comparar el rendimiento de computadores 
+        es la ejecución de \textmark{programas reales}.
+    \begin{itemize}
+      \item Cualquier otra métrica conduce a errores.
+      \item Cualquier alternativa a programas reales conduce a errores.
+    \end{itemize}
+  \mode<presentation>{\pause\vfill}
+  \item \textgood{Tiempo de ejecución}.
+    \begin{itemize}
+      \item \textbf{Tiempo de respuesta}: 
+            Tiempo total transcurrido.
+      \item \textbf{Tiempo de CPU}: 
+            Tiempo que la CPU ha estado ocupada.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+

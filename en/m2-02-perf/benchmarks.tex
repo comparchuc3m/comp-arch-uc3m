@@ -1,0 +1,107 @@
+\subsection{Benchmarks}
+
+\begin{frame}[t]{Workload}
+\begin{itemize}
+  \item Computer \textmark{performance} depends on the
+        evaluated \textmark{workload}.
+
+  \mode<presentation>{\pause\vfill}
+  \item Computers adapted to specific workloads:
+    \begin{itemize}
+      \item Web servers.
+      \item Database servers.
+      \item File servers.
+      \item Personal computers.
+      \item Multiprocessors.
+      \item Multicomputers.
+      \item \ldots
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Benchmarks}
+\begin{itemize}
+  \item Application or set of applications used to evaluate performance.
+
+  \mode<presentation>{\pause\vfill}
+  \item \textgood{Approaches}:
+    \begin{itemize}
+      \item \textmark{Kernels}: Small parts of real applications.
+        \begin{itemize}
+          \item \emph{Example}: FFT.
+        \end{itemize}
+      \item \textmark{Toy programs}: Short programs.
+        \begin{itemize}
+          \item \emph{Example}: Quicksort.
+        \end{itemize}
+      \item \textmark{Synthetic benchmarks}: 
+            Invented to represent real applications.
+        \begin{itemize}
+          \item \emph{Example}: Dhrystone.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\pause\vfill}
+  \item All are bad approaches:
+    \begin{itemize}
+      \item \alert{Architect and compiler might cheat!}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Benchmarks}
+\begin{itemize}
+  \item \textgood{Embedded}:
+    \begin{itemize}
+      \item Dhrystone (arguable relevance).
+      \item EEMBC (kernels).
+    \end{itemize}
+
+  \mode<presentation>{\pause\vfill}
+  \item \textgood{Desktop}:
+    \begin{itemize}
+      \item SPEC2017 (mix of integer and floating point programs).
+    \end{itemize}
+
+  \mode<presentation>{\pause\vfill}
+  \item \textgood{Servers}:
+    \begin{itemize}
+      \item SPECWeb, SPECSFS, SPECjbb, SPECvirt\_Sc2010.
+      \item TPC
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Example: SPEC2006}
+\begin{itemize}
+  \item \textmark{SPECrate/SPECspeed 2017 Integer}: Integer arithmetic.
+    \begin{itemize}
+      \item 20 programs: C (10), C++ (8), Fortran (2).
+      \item Several application domains:
+        \begin{itemize}
+          \item Languages and compilers, 
+                route planning,
+                event simulation,
+                video compression, 
+                artificial intelligence, \ldots
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{SPECrate 2017, SPECspeed 2017 Floating point}: Floating point
+    \begin{itemize}
+      \item 23 programs:
+           Fortran (6),
+           C (6),
+           Fortran/C (5)
+           C++ (2),
+           C++/C (2),
+           C++/C/Fortran (2).
+      \item Several application domains:
+        \begin{itemize}
+          \item Physics, Chemistry, Biology, Algebra, image \emph{rendering},
+                \ldots
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}

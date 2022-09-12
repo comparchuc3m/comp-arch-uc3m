@@ -1,0 +1,84 @@
+\subsection{Performance metrics}
+
+\begin{frame}[t]{Execution speed}
+\begin{itemize}
+  \item What does it mean that computer \textmark{A} 
+        is faster than computer \textmark{B}?
+
+    \mode<presentation>{\pause\vfill}
+    \begin{itemize}
+      \item \textgood{Desktop}.
+        \begin{itemize}
+          \item My program runs in less time.
+          \item I want to decrease execution time.
+        \end{itemize}
+
+    \mode<presentation>{\pause\vfill}
+      \item \textgood{Website admin}.
+        \begin{itemize}
+          \item I can process more transactions per hour.
+          \item I want to increase throughput.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Performance and execution time}
+\begin{itemize}
+  \item Performance $P(x)$ is a metric, inverse to
+        execution time $T(x)$.
+\end{itemize}
+
+\begin{columns}
+\begin{column}{.4\textwidth}
+\begin{block}{Performance}
+\begin{math}
+P(x) = \frac{1}{T(x)}
+\end{math}
+\end{block}
+\end{column}
+\begin{column}{.6\textwidth}
+\begin{itemize}
+  \item High Performance $\rightarrow$ Low execution time.
+\end{itemize}
+\end{column}
+\end{columns}
+
+\mode<presentation>{\pause\vfill}
+\begin{itemize}
+  \item $x$ runs $n$ times faster than $Y$.
+\end{itemize}
+\begin{block}{Speedup}
+\begin{math}
+n=\frac{T(x)}{T(y)}=
+\frac{
+\frac{1}{P(x)}
+}{
+\frac{1}{P(y)}
+}
+=
+\frac{P(y)}{P(x)}
+\end{math}
+\end{block}
+\end{frame}
+
+\begin{frame}[t]{Metrics}
+\begin{itemize}
+  \item The \alert{only} reliable metric for comparing computer performance
+        is the execution of \textmark{real programs}.
+    \begin{itemize}
+      \item Any other metric is error-prone.
+      \item Any alternative other than real programs is error-prone.
+    \end{itemize}
+
+  \mode<presentation>{\pause\vfill}
+  \item \textgood{Execution time}.
+    \begin{itemize}
+      \item \textbf{Response time}: 
+            Total elapsed time.
+      \item \textbf{Perceived by the user}:
+            CPU time: Time the CPU has been busy.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+

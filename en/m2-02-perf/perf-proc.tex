@@ -1,0 +1,155 @@
+\subsection{Processor performance}
+
+\begin{frame}[t]{Execution time}
+\begin{itemize}
+  \item A processor executes each instruction during several clock cycles.
+\end{itemize}
+\begin{block}{Time consumed by CPU}
+\begin{displaymath}
+time_{CPU} = 
+\frac{cycles_{CPU}}{\text{clock frequency}}
+\end{displaymath}
+\end{block}
+\end{frame}
+
+\begin{frame}[t]{CPI: Cycles per instruction}
+  \begin{itemize}
+    \item Average speed may be expressed as cycles per instruction (CPI) using:
+      \begin{itemize}
+         \item Total number of consumed cycles, and
+         \item number of executed instructions or instruction count (IC).
+      \end{itemize}
+  \end{itemize}
+\begin{block}{CPI}
+\begin{displaymath}
+CPI =
+\frac{cycles_{CPU}}{IC}
+\end{displaymath}
+\end{block}
+\end{frame}
+
+\begin{frame}[t]{Factors in execution time}
+\begin{block}{CPI and CPU time}
+\begin{displaymath}
+CPI=\frac{cycles_{CPU}}{IC}
+\end{displaymath}
+\pause
+\begin{displaymath}
+time_{CPU}=
+\frac{cycles_{CPU}}{f} \pause =
+\frac{CPI \times IC}{f} \pause =
+CPI \times IC \times T
+\end{displaymath}
+\end{block}
+\mode<article>{
+\begin{itemize}
+  \item Symbols used:
+    \begin{itemize}
+      \item \textbf{f}: Clock frequency.
+      \item \textbf{T}: Clock period.
+    \end{itemize}
+\end{itemize}
+}
+\mode<presentation>{\pause\vfill}
+\begin{itemize}
+  \item If any of the 3 factors is reduced by 10\%
+        the total execution time is reduced by 10\%.
+    \begin{itemize}
+      \item \alert{But the 3 factors are related}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Instructions classes}
+\begin{itemize}
+  \item Different instruction classes have different IC and CPI.
+\end{itemize}
+\begin{columns}
+\begin{column}{.7\textwidth}
+\begin{block}{Global CPI}
+\mode<presentation>{\begin{small}}
+\begin{displaymath}
+cycles_{CPU}=\sum_{i=1}^n IC_i \times CPI
+\end{displaymath}
+\pause
+\begin{displaymath}
+time_{CPU} =
+\big( \sum_{i=1}^n IC_i \times CPI_i \big) \times T
+\end{displaymath}
+\pause
+\begin{displaymath}
+CPI_{global} = 
+\frac
+{\sum_{i=1}^n IC_i \times CPI_i}
+{IC}
+\pause =
+\sum_{i=1}^n \frac{IC_i}{IC} \times CPI_i
+\end{displaymath}
+\mode<presentation>{\end{small}}
+\end{block}
+\end{column}
+\begin{column}{.3\textwidth}
+\pause
+\alert{Impact of instructions relative frequency in program execution}.
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Example}
+\begin{itemize}
+  \item In a program's execution we have observed that:
+    \begin{itemize}
+      \item \textmark{Floating point operation}: 25\% (4.0 CPI on average).
+      \item \textmark{Operation FPSQR} (\emph{square root}): 2\% (20.0 CPI).
+        \begin{itemize}
+          \item \alert{Included in floating point}.
+        \end{itemize}
+      \item \textmark{Rest of instructions}: 1.33 CPI.
+    \end{itemize}
+
+  \mode<presentation>{\pause\vfill}
+  \item Choose among design alternatives:
+    \begin{enumerate}[a]
+      \item Decrease FPSQR CPI to 2.
+      \item Decrease all floating point instructions CPI to 2.5.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Solution}
+\begin{math}
+CPI = 0.25 \times 4 + 1.33 \times 0.75 = \textbf{1.9975}
+\end{math}
+\mode<presentation>{\pause\vfill}
+\begin{math}
+0.25 \times CPI_{FP} = 0.23 \times CPI_{otherFP} + 0.02 \times CPI_{FPSQR}
+\end{math}
+\pause
+\begin{math}
+0.25 \times 4 = 0.23 \times CPI_{otherFP} + 0.02 \times 20
+\end{math}
+\pause
+\framebox{
+\begin{math}
+CPI_{otherFP} =
+\frac{0.24 \times 4 - 0.02 \times 20}{0.23} =
+2.6087
+\end{math}
+}
+\mode<presentation>{\pause\vfill}
+\begin{math}
+CPI_{nuevoFPSQR} = 0.23 \times 2.6087 + 0.02 \times \alert{2} + 0.75 \times 1.33 = \textbf{1.6375}
+\end{math}
+\pause
+\begin{math}
+CPI_{newFP} = 0.25 \times \alert{2.5} + 0.75 \times 1.33 = \textbf{1.6225}
+\end{math}
+\mode<article>{
+\begin{itemize}
+  \item \alert{Observation}: Although reducing one instruction (FPSQR)
+        from 20 cycles down to 2 cycles may result appealing, a similar
+        improvement can be achieved with a more modest reduction (from 4 to 2 cycles)
+        for a family of instructions.
+\end{itemize}
+}
+\end{frame}

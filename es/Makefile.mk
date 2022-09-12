@@ -7,6 +7,7 @@ es/license-cc.tex \
 include es/00-intro/Makefile.def
 include es/m1-01-fund/Makefile.def
 include es/m2-01-trends/Makefile.def
+include es/m2-02-perf/Makefile.def
 include es/m6-01-cppintro/Makefile.def
 
 # Exercise statements
@@ -28,6 +29,7 @@ alles:	$(ALL_ES_FINAL_PDF)
 include $(ES_00_INTRO_DIR)/Makefile.mk
 include $(ES_M1_01_FUND_DIR)/Makefile.mk
 include $(ES_M2_01_TRENDS_DIR)/Makefile.mk
+include $(ES_M2_02_PERF_DIR)/Makefile.mk
 include $(ES_M6_01_CPPINTRO_DIR)/Makefile.mk
 
 #Rules for exercises

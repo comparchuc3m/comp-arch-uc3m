@@ -1,0 +1,99 @@
+\subsection{Benchmarks}
+
+\begin{frame}[t]{Carga de trabajo}
+\begin{itemize}
+  \item El \textmark{rendimiento} de un computador depende de 
+        la \textmark{carga de trabajo} con la que se evalúa.
+  \mode<presentation>{\pause\vfill}
+  \item Computadores adaptados a cargas específicas:
+    \begin{itemize}
+      \item Servidores web.
+      \item Servidores de bases de datos.
+      \item Servidores de ficheros.
+      \item Computadores personales.
+      \item Multiprocesadores.
+      \item Multicomputadores.
+      \item \ldots
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Benchmarks}
+\begin{itemize}
+  \item Aplicación o conjunto de aplicaciones usadas para evaluar el rendimiento.
+  \mode<presentation>{\pause\vfill}
+  \item \textgood{Aproximaciones}:
+    \begin{itemize}
+      \item \textmark{Kernels}: Partes pequeñas de aplicaciones reales.
+        \begin{itemize}
+          \item \emph{Ejemplo}: FFT.
+        \end{itemize}
+      \item \textmark{Programas de juguete}: Programas cortos.
+        \begin{itemize}
+          \item \emph{Ejemplo}: Quicksort.
+        \end{itemize}
+      \item \textmark{Benchmarks sintéticos}: Inventados para representar aplicaciones reales.
+        \begin{itemize}
+          \item \emph{Ejemplo}: Dhrystone.
+        \end{itemize}
+    \end{itemize}
+  \mode<presentation>{\pause\vfill}
+  \item Todas malas aproximaciones:
+    \begin{itemize}
+      \item \alert{¡El arquitecto y el compilador pueden engañar!}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Benchmarks}
+\begin{itemize}
+  \item \textgood{Empotrados}:
+    \begin{itemize}
+      \item Dhrystone (relevancia discutible).
+      \item EEMBC (kernels).
+    \end{itemize}
+  \mode<presentation>{\pause\vfill}
+  \item \textgood{Desktop}:
+    \begin{itemize}
+      \item SPEC2017 (mezcla de programas enteros y coma flotante).
+    \end{itemize}
+  \mode<presentation>{\pause\vfill}
+  \item \textgood{Servidores}:
+    \begin{itemize}
+      \item SPECWeb, SPECSFS, SPECjbb, SPECvirt\_Sc2010.
+      \item TPC
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Ejemplo: SPEC2017}
+\begin{itemize}
+  \item \textmark{SPECrate/SPECspeed 2017 Integer}: Aritmética entera.
+    \begin{itemize}
+      \item 20 programas: C (10), C++ (8), Fortran (2).
+      \item Diversas áreas de aplicación:
+        \begin{itemize}
+          \item Lenguajes y compiladores, 
+                planficiación de rutas,
+                simulación de eventos,
+                compresión de video,
+                inteligencia artificial, \ldots
+        \end{itemize}
+    \end{itemize}
+  \item \textmark{SPECrate 2017, SPECspeed 2017 Floating point}: Coma flotante
+    \begin{itemize}
+      \item 23 programas.
+           Fortran (6),
+           C (6),
+           Fortran/C (5)
+           C++ (2),
+           C++/C (2),
+           C++/C/Fortran (2).
+      \item Diversas áreas de aplicación:
+        \begin{itemize}
+          \item Física, Química, Biología, Álgebra, \emph{Rendering} de imágenes,
+                \ldots
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
