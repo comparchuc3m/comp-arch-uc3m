@@ -1,0 +1,29 @@
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, font=\tiny} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+}  
+\node[bloque,minimum width=1cm,minimum height=1.75cm] (proc) {Procesador};
+\node[connpoint,right=0cm of proc] (p1) {};
+\node[connpoint,above=0.25cm of p1] (p2) {};
+\node[connpoint,right=2cm of p2] (c1) {};
+\path[flecha] (p2) -- (c1); 
+\node[bloque,minimum width=1.cm, minimum height=1cm,right=0cm of c1] (cache) {Caché};
+\node[bloque,minimum width=1.cm, minimum height=0.5cm,below=0.25cm of cache] (buffer) {Buffer};
+\node[connpoint,left=0cm of buffer] (b1) {};
+\node[connpoint,left=1cm of b1] (p3) {};
+\node[connpoint,above=1cm of p3] (p4) {};
+\path[flecha] (p3) -- (b1);
+\path[sinflecha] (p4) -- (p3);
+\node[bloque,minimum width=1cm,minimum height=1.75cm,right=4cm of proc] (mem) {Sig. Nivel};
+\node[connpoint,right=0cm of cache] (c2) {};
+\node[connpoint,right=0.93cm of c2] (c3) {};
+\path[flecha] (c2) -- (c3);
+\node[connpoint,right=0cm of buffer] (b2) {};
+\node[connpoint,right=0.93cm of b2] (b3) {};
+\path[flecha] (b2) -- (b3);
+\end{tikzpicture}

@@ -1,0 +1,262 @@
+\section{Políticas y estrategias}
+
+\begin{frame}[t]{Cuatro preguntas sobre la jerarquía de memoria}
+\begin{enumerate}
+  \item ¿Dónde se ubica un bloque en el nivel superior?
+    \begin{itemize}
+      \item \textmark{Ubicación de bloque}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item ¿Cómo se localiza un bloque en el nivel superior?
+    \begin{itemize}
+      \item \textmark{Identificación de bloque}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item ¿Qué bloque debe remplazarse en caso de fallo?
+    \begin{itemize}
+      \item \textmark{Remplazo de bloque}.
+    \end{itemize}
+
+
+  \mode<presentation>{\vfill\pause}
+  \item ¿Qué ocurre en caso de escritura?
+    \begin{itemize}
+      \item \textmark{Estrategia de escritura}.
+    \end{itemize}
+
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[t,shrink=10]{P1: Ubicación de bloque}
+\begin{itemize}
+  \item \textgood{Correspondencia directa}.
+    \begin{itemize}
+      \item Caché organizada líneas de caché.
+      \item Un bloque de memoria se ubica en una línea determinada por su dirección.
+      \item Ubicación $\rightarrow$ $bloque \mod n_{bloques}$
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Correspondencia totalmente asociativa}.
+    \begin{itemize}
+      \item Cada bloque de memoria tiene asociada una etiqueta única.
+      \item Cada línea de la caché guarda la etiqueta del bloque que contiene.
+      \item Un bloque de memoria se ubica en cualquier línea de la caché.
+      \item Ubicación $\rightarrow$ Cualquier lugar.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Correspondencia asociativa por conjuntos}.
+    \begin{itemize}
+      \item Las líneas de la caché se organizan en conjuntos.
+      \item Cada conjunto tiene varias líneas.
+      \item Selección de conjunto determinada por dirección de bloque 
+            $\rightarrow$ $bloque \mod n_{conjuntos}$
+      \item Ubicación dentro de conjunto determinada por etiqueta
+            $\rightarrow$ Cualquier lugar de conjunto.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Razones para los fallos de caché}
+\begin{itemize}
+  \item Un fallo de caché puede deberse a alguna de las siguientes razones:
+
+    \begin{itemize}
+    
+      \mode<presentation>{\vfill\pause}
+      \item \textmark{Obligatorio} (\emph{Compulsory}):
+        \begin{itemize}
+          \item Primer acceso a una dirección de memoria de un bloque.
+          \item Ocurrirían incluso con caché de tamaño infinito.
+        \end{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textmark{Capacidad} (\emph{Capacity}):
+        \begin{itemize}
+          \item Acceso a un bloque que ha sido expulsado de la caché.
+          \item Podría no ocurrir en caché de mayor tamaño.
+        \end{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textmark{Conflicto} (\emph{Conflict}):
+        \begin{itemize}
+          \item Acceso a un bloque que ha sido expulsado porque le corresponde 
+                el mismo conjunto/línea que otro.
+          \item Solamente en caché que no sean totalmente asociativas.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{P2: Identificación de bloque}
+\begin{itemize}
+  \item \textgood{Dirección de bloque}:
+    \begin{itemize}
+      \item \textmark{Etiqueta}: Identifica la dirección en entrada.
+        \begin{itemize}
+          \item Bit validez en cada entrada indica el contenido es válido.
+        \end{itemize}
+      \item \textmark{Índice}: Selecciona el conjunto.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Desplazamiento de bloque}:
+    \begin{itemize}
+      \item Selecciona datos dentro de un bloque.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Con mayor asociatividad}:
+    \begin{itemize}
+      \item Menos bit de \textmark{índice}.
+      \item Más bits de \textmark{etiqueta}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{P3: Remplazo de bloque}
+\begin{itemize}
+  \item \textgood{Relevante} para \textmark{asociativa} y 
+        \textmark{asociativa por conjuntos}:
+    \begin{itemize}
+      \item \textmark{Aleatorio}.
+        \begin{itemize}
+          \item Fácil de implementar.
+        \end{itemize}
+      \item \textmark{LRU}: Menos recientemente usado.
+        \begin{itemize}
+          \item Complejidad creciente cuando aumenta asociatividad.
+        \end{itemize}
+      \item \textmark{FIFO}.
+        \begin{itemize}
+          \item Aproxima LRU con menor complejidad.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[t]{P4: Estrategia de escritura}
+\begin{columns}[T]
+
+\begin{column}{.5\textwidth}
+\begin{block}{Escritura inmediata (\emph{write-through})}
+\begin{itemize}
+  \item Todas las escrituras van a bus y memoria.
+  \item Fácil de implementar.
+  \item Problemas de rendimiento en SMP’s
+\end{itemize}
+\end{block}
+\end{column}
+
+\pause
+\begin{column}{.5\textwidth}
+\begin{block}{Post-escritura (\emph{write-back})}
+\begin{itemize}
+  \item Muchas escrituras son aciertos.
+  \item Aciertos de escritura \alert{no} van a bus y memoria.
+  \item Problemas de propagación y serialización.
+  \item Más complejo.
+\end{itemize}
+\end{block}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,shrink=10]{P4: Estrategia de escritura}
+\begin{itemize}
+  \item \textgood{¿Donde se escribe?}:
+    \begin{itemize}
+      \item \textmark{write-trhough}: En bloque de caché y siguiente nivel de memoria.
+      \item \textmark{write-back}: Solamente en bloque de caché.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{¿Qué ocurre cuándo bloque sale de caché?}:
+    \begin{itemize}
+      \item \textmark{write-trhough}: Nada más.
+      \item \textmark{write-back}: Se actualiza siguiente nivel de memoria.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Depuración}:
+    \begin{itemize}
+      \item \textmark{write-trhough}: Fácil.
+      \item \textmark{write-back}: Difícil.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Fallo provoca escritura}:
+    \begin{itemize}
+      \item \textmark{write-trhough}: No.
+      \item \textmark{write-back}: Si.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Escritura repetida va al siguiente nivel}:
+    \begin{itemize}
+      \item \textmark{write-trhough}: Si.
+      \item \textmark{write-back}: No.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Búfer de escritura}
+\makebox[\textwidth][c]{
+\input{es/m3-01-cache/write-buffer.tkz}
+}
+
+\begin{columns}[T]
+
+\begin{column}{.5\textwidth}
+\begin{itemize}
+  \item \textmark{¿Por qué un búfer?}
+    \begin{itemize}
+      \item Para evitar detenciones de CPU.
+    \end{itemize}
+  \item \textmark{¿Por qué un búfer y no un registro?}
+    \begin{itemize}
+      \item Ráfagas de escritura son comunes.
+    \end{itemize}
+\end{itemize}
+\end{column}
+
+\begin{column}{.5\textwidth}
+\begin{itemize}
+  \item \textmark{¿Puede haber riesgos RAW?}
+    \begin{itemize}
+      \item Si.
+    \end{itemize}
+  \item \textgood{Alternativas}:
+    \begin{itemize}
+      \item \textmark{Write allocate}: Se asigna un bloque en caché.
+      \item \textmark{No-write allocate}: Se modifica bloque en siguiente nivel.
+    \end{itemize}
+\end{itemize}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Penalización de fallo}
+\begin{itemize}
+  \item \textgood{Penalización de fallo}:
+    \begin{itemize}
+      \item Latencia total del fallo.
+      \item Latencia expuesta (la que obliga a detener CPU).
+    \end{itemize}
+\end{itemize}
+\mode<presentation>{\vfill}
+\begin{block}{Penalización de fallos}
+\[
+\frac{\text{ciclos\_detención}_{memoria}}{IC} =
+\]
+\[
+\frac{fallos}{IC} \times \left( latencia_{total} - latencia_{solapada} \right)
+\]
+\end{block}
+\end{frame}

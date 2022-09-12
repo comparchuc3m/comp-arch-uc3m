@@ -1,0 +1,43 @@
+\subsection{Lectura adelantada hardware}
+
+\begin{frame}[t]{Lectura adelantada de instrucciones}
+\begin{itemize}
+  \item \textmark{Observación}: Las instrucciones presentan 
+        alta localidad espacial.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Instruction prefetching}: Lectura adelantada
+        de instrucciones.
+    \begin{itemize}
+      \item Lectura de dos bloques en caso de fallo.
+        \begin{itemize}
+          \item Bloque que provoca el fallo.
+          \item Bloque siguiente.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Ubicación}:
+    \begin{itemize}
+      \item Bloque que provoca el fallo $\rightarrow$ \textmark{caché de instrucciones}.
+      \item Bloque siguiente $\rightarrow$ \textmark{búfer de instrucciones}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Lectura adelantada de datos}
+\begin{itemize}
+  \item \textmark{Ejemplo}: Pentium 4.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Data prefetching}: Permite lectura adelantada de páginas de 4KB a caché L2.
+
+  \mode<presentation>{\vfill\pause}
+  \item Se invoca lectura adelantada si:
+    \begin{itemize}
+      \item 2 fallos en L2 debidos a una misma página.
+      \item Distancia entre fallos menor que 256 bytes.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}

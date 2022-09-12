@@ -1,0 +1,30 @@
+\subsection{Cachés no bloqueantes}
+
+\begin{frame}[t]{Cachés no bloqueantes}
+\begin{itemize}
+  \item \textmark{Problema}: 
+        Fallo de caché genera una parada (\emph{stall}) hasta que se obtiene el bloque.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Solución}: Ejecución fuera de orden.
+    \begin{itemize}
+      \item \textbad{Pero}: 
+            ¿Cómo se accede a la caché mientras se resuelve el fallo?
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Acierto durante fallo}:
+    \begin{itemize}
+      \item Permitir accesos con acierto mientras se espera.
+      \item Reduce la penalización del fallo.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Acierto durante fallos / Fallo durante fallo}:
+    \begin{itemize}
+      \item Permitir fallos solapados.
+      \item Necesita memoria multi-canal.
+      \item Altamente complejo.
+    \end{itemize}
+\end{itemize}
+\end{frame}

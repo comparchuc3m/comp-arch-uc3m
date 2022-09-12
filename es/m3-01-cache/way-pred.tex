@@ -1,0 +1,21 @@
+\subsection{Predicción de vía}
+
+\begin{frame}[t]{Predicción de vía}
+\begin{itemize}
+  \item \textmark{Problema}:
+    \begin{itemize}
+      \item \textgood{Correspondencia directa} $\rightarrow$ rápida pero muchos fallos.
+      \item \textgood{Asociativa por conjuntos} $\rightarrow$ menos fallos pero más conjuntos (más lenta).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Predicción de vía}
+    \begin{itemize}
+      \item Se almacenan bits adicionales para predecir la vía que se seleccionará en el próximo acceso.
+      \item Acceso adelantado al bloque y comparación con una única etiqueta.
+        \begin{itemize}
+          \item Si hay fallo se compara con las demás etiquetas.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}

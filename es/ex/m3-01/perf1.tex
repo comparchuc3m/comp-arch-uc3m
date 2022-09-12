@@ -1,0 +1,55 @@
+\begin{acexercise}\end{acexercise}
+
+Un computador tiene un valor para CPI de 1.0 en condiciones ideales
+(cuando todos los accesos a memoria son aciertos).
+
+El 25\% de las instrucciones son de tipo carga/almacenamiento.
+No hay ningún otro tipo de instrucción que acceda a la memoria.
+La penalización por fallo es de 50 ciclos y la tase de fallos 
+es del 5\%.
+
+¿Cuál sería la aceleración si no hubiese fallos con respecto al
+caso en que si los hay?
+
+\begin{acsolution}\end{acsolution}
+
+\[
+t_{cpu} = (ciclos_cpu + ciclos_{\text{detención}}) \times t\_{ciclo}
+\]
+
+Para el caso ideal, no hay detenciones de memoria y por tanto:
+
+\[
+t_{cpu} = IC \times CPI \times t_{ciclo} =
+IC \times t_{ciclo}
+\]
+
+Para el caso con fallos, se tiene:
+
+\[
+ciclos_{\text{detención}} =
+IC \times accesos_{instr} \times (1 - h) \times \text{penalización}_{fallo}
+\]
+
+Los accesos por instrucción serán $0.25$ puesto que
+en el 25\% de las instrucciones se accede a un dato. En cuanto a la tasa de
+aciertos $h$ será $0.95$. La penalización por fallo es de $50$ ciclos.
+
+\[
+ciclos_{\text{detención}} =
+IC \times 0.25 \times 0.05 \times 50 =
+0.625 IC
+\]
+
+Y por tanto el tiempo de CPU será:
+
+\[
+t_{cpu} = (IC \times 1.0 + 0.625 \times IC) \times t_{ciclo} =
+1.625 \times IC \times t_{ciclo}
+\]
+
+Con esto la aceleración, será:
+
+\[
+S = \frac{1.625 \times IC \times t_{ciclo}}{IC \times t_{ciclo}} = 1.625
+\]

@@ -1,0 +1,202 @@
+\section{Optimizaciones básicas}
+
+\begin{frame}[t]{Optimizaciones básicas de caché}
+\begin{itemize}
+  \item \textgood{Reducción} de \textmark{tasa de fallos}.
+    \begin{itemize}
+      \item Aumento de tamaño de bloques.
+      \item Aumento de tamaño de caché.
+      \item Incremento de asociatividad.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textgood{Reducción} de \textmark{penalización de fallos}.
+    \begin{itemize}
+      \item Cachés multinivel.
+      \item Prioridad de lecturas sobre escrituras.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textgood{Reducción} de \textmark{tiempo de acierto}.
+    \begin{itemize}
+      \item Evitar traducción de direcciones en indexado en caché.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\subsection{Reducción de tasa de fallos}
+
+\begin{frame}[t]{1: Aumento de tamaño de bloque}
+\begin{itemize}
+  \item Mayor tamaño de bloque $\rightarrow$ \textgood{menor la tasa de fallos}.
+    \begin{itemize}
+       \item Mejor aprovechamiento de localidad espacial.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Mayor tamaño de bloque $\rightarrow$ \textbad{mayor penalización por fallo}.
+    \begin{itemize}
+      \item En caso de fallo hay que transferir bloques más grandes.
+      \item Más fallos porque la caché tiene menos bloques.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \textgood{Necesidad de equilibrio}:
+    \begin{itemize}
+      \item Memoria de alta latencia y alto ancho de banda:
+        \begin{itemize}
+          \item Incrementar tamaño de bloque.
+        \end{itemize}
+      \item Memoria con baja latencia y bajo ancho de banda:
+        \begin{itemize}
+          \item Tamaño de bloque reducido.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{2: Aumento de tamaño de la caché}
+\begin{itemize}
+  \item Mayor tamaño de caché $\rightarrow$ \textgood{menor tasa de fallos}.
+    \begin{itemize}
+      \item Caben más datos en la caché.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Puede \textbad{incrementar el tiempo de acierto}.
+    \begin{itemize}
+      \item Hace falta más tiempo para encontrar el bloque.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Mayor coste}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Mayor consumo de energía}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Necesidad de encontrar un equilibrio}.
+    \begin{itemize}
+      \item Especialmente en cachés on-chip.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{3: Incremento de asociatividad}
+\begin{columns}[T]
+
+\column{.55\textwidth}
+
+\begin{itemize}
+  \item Mayor asociatividad $\rightarrow$ \textgood{menor tasa de fallos}.
+    \begin{itemize}
+      \item Hay menos conflictos al poderse usar más vías en un mismo conjunto.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Puede \textbad{incrementar tiempo de acierto}.
+    \begin{itemize}
+      \item Hace falta más tiempo para encontrar el bloque.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Consecuencia}:
+    \begin{itemize}
+      \item 8 vías $\approx$ Totalmente asociativa.
+    \end{itemize}
+\end{itemize}
+
+\column{.45\textwidth}
+
+\end{columns}
+\end{frame}
+
+\subsection{Reducción de penalización de fallos}
+
+\begin{frame}[t]{4: Cachés multinivel}
+\begin{itemize}
+  \item \textmark{Objetivo}: \textgood{Reducción de la penalización de fallos}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Evolución}:
+    \begin{itemize} 
+      \item \textbad{Mayor distancia} entre rendimiento de DRAM y CPU a lo largo del tiempo.
+      \item \textbad{Coste} de penalización de fallo \textbad{creciente}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Alternativas}:
+    \begin{itemize} 
+      \item Hacer la caché \textgood{más rápida}.
+      \item Hacer la caché \textgood{más grande}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Solución}:
+    \begin{itemize}
+      \item \textgood{¡Las dos cosas!}
+      \item \textgood{Varios niveles de caché}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Tasa de fallos global y local}
+\begin{itemize}
+  \item \textmark{Tasa de fallos local}:
+    \begin{itemize}
+      \item Fallos en un nivel de la caché con respecto a accesos a ese nivel de caché.
+      \item Tasa de fallos en L1 $\rightarrow$ $m(L1)$
+      \item Tasa de fallos en L2 $\rightarrow$ $m(L2)$
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Tasa de fallos global}:
+    \begin{itemize}
+      \item Fallos en un nivel de caché con respecto a todos los accesos a memoria.
+      \item Tasa de fallos en L1 $\rightarrow$ $m(L1)$
+      \item Tasa de fallos en L2 $\rightarrow$ $m(L1) \times m(L2)$
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Tiempo medio de acceso}:
+\end{itemize}
+\[
+t_a(L1) + m(L1) \times t_f(L1) =
+\]
+\[
+t_a(L1) + m(L1) \times \left( t_a(L2) + m(L2) \times t_f(L2) \right)
+\]
+\end{frame}
+
+\begin{frame}[t]{5: Prioridad de fallos de lectura sobre escritura}
+\begin{itemize}
+  \item \textmark{Objetivo}: \textgood{Reduce la penalización de fallos}.
+    \begin{itemize}
+      \item Evita que un fallo de lectura tenga que esperar a que 
+            una escritura termine.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Cachés de escritura inmediata}.
+    \begin{itemize}
+      \item El búfer de escritura \textbad{podría contener una modificación}
+            del dato que se lee.
+        \begin{enumerate}[a)]
+          \item Esperar el vaciado del búfer de escritura.
+          \item Comprobar los valores del búfer de escritura.
+        \end{enumerate}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Cachés con post-escritura}.
+    \begin{itemize}
+      \item Un fallo de lectura \textbad{podría remplazar un bloque modificado}.
+        \begin{itemize}
+          \item Copiar bloque modificado a búfer, leer y volcar bloque a memoria.
+          \item Aplicar opciones \textgood{a} o \textgood{b} al búfer.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+

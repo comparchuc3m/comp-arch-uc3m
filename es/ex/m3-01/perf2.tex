@@ -1,0 +1,118 @@
+\begin{acexercise}\end{acexercise}
+
+Dada una arquitectura con dos niveles caché con las siguientes características:
+
+\begin{tabular}{|l|r|r|}
+\hline
+Memoria &
+Tiempo de acceso (ns) &
+Tasa de aciertos
+\\
+\hline
+\hline
+
+L1 &
+2 &
+0.8
+\\
+\hline
+
+L2 &
+8 &
+0.9
+\\
+\hline
+
+RAM &
+100 &
+1
+\\
+\hline
+
+\end{tabular}
+
+El ordenador ejecuta un programa que reside completamente en memoria (no hay
+accesos a disco). Se pide:
+
+\begin{enumerate}
+
+  \item Asumiendo que el 100\% de los accesos a memoria son operaciones de
+escritura, calcular de forma justificada el tiempo medio de acceso a memoria
+para (a) una política de escritura inmediata (write-through) y (b) una política
+de post-escritura (write-back) en las memorias caché L1 y L2.
+
+  \item Considerando los dos niveles de memoria caché L1 y L2 como una única
+caché global se pide calcular el tiempo medio de acceso y la tasa de aciertos
+de esta caché global.
+
+  \item Dado el siguiente código:
+\begin{lstlisting}
+for (i=0;i<1000;i=i+32){
+  a[i]=a[i+8]+a[i+16];
+}
+\end{lstlisting}
+
+El tamaño de cada entrada de a es de 8 bytes y el de bloque de 64 bytes. El
+índice del bucle se almacena en un registro del procesador.  Se pide comentar
+razonablemente el efecto en el rendimiento del empleo de una técnica de caché
+multibanco que emplea 4 bancos. ¿Qué repercusión tendría el empleo de esta
+técnica en el tiempo de cada acceso y en el ancho de banda de la caché para
+este código?
+
+\end{enumerate}
+
+\begin{acsolution}\end{acsolution}
+
+\paragraph{Apartado 1}
+
+En el caso de escritura inmediata, como el 100\% de los accesos son operaciones
+de escritura, todos ellos se realizan en memoria principal. Por este motivo, el
+tiempo de acceso será en todos los casos:
+
+\[
+t = 2 + 8 + 100 = 110 ns
+\]
+
+En el caso de post escritura,si se produce un acierto caché no es necesario escribir en memoria. De este modo el tiempo de acceso será:
+
+\[
+t= 2 + (1 - 0.8) \cdot (8 + (1-0.9) \cdot 100) =
+2 + 0.2 \cdot (8 + 0.1 \cdot 100) =
+2 + 0.2 \cdot 18 = 
+2 + 3.6 = 5.6ns
+\]
+
+\paragraph{Apartado 2}
+El tiempo medio de acceso es: 
+
+\[
+t = 2 + (1 - 0.8) \cdot 8 =
+2 + 0.2 \cdot 8 =
+2 + 1.6 =
+3.6ns
+\]
+
+Y la tasa media de aciertos: 
+\[
+h =
+1 - (1-0.8) \cdot (1-0.9) =
+1-0.2 \cdot 0.1 = 
+1 - 0.02 =
+0.98.
+\]
+
+\paragraph{Apartado 3}
+
+En cada iteración del bucle se acceden a tres bloques distintos que están
+ubicados en posiciones consecutivas de memoria. Mediante el empleo de una
+memoria caché no multibanco, se producirían 3 fallos caché que tendrían que ser
+atendidos secuencialmente. En el caso de una caché multibanco, sería posible
+acceder de forma paralela a estos tres bloques.
+
+El tiempo de acceso sería el mismo que antes, debido a que esta optimización no
+mejora el tiempo de acceso a la memoria caché.
+
+El ancho de banda sería el agregado, ya que se estarían haciendo accesos en
+paralelo. En este caso, serían 3 accesos simultáneos por lo que el ancho de
+banda sería el triple.
+

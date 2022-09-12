@@ -1,0 +1,32 @@
+\begin{tikzpicture}
+\tikzset{
+  block1/.style={rectangle,font=\tiny,text=white,draw=black,fill=blue!80,minimum width=1.25cm},
+  block2/.style={rectangle,font=\tiny,text=white,draw=black,fill=green!80!black,minimum width=1.25cm},
+  block3/.style={rectangle,font=\tiny,text=white,draw=black,fill=orange!80!black,minimum width=1.25cm},
+}  
+\node[block1] (linea1) {P1};
+\node[block1,below=0 of linea1] (linea2) {P1};
+\node[block1,below=0 of linea2] (linea3) {P1};
+\node[block1,below=0 of linea3] (linea4) {P1};
+\node[block2,below=0 of linea4] (linea5) {P2};
+\node[block2,below=0 of linea5] (linea6) {P2};
+\node[block2,below=0 of linea6] (linea7) {P2};
+\node[block2,below=0 of linea7] (linea8) {P2};
+\node[block3,below=0 of linea8] (linea9) {P3};
+\node[block3,below=0 of linea9] (linea10) {P3};
+\node[block3,below=0 of linea10] (linea11) {P3};
+\node[block3,below=0 of linea11] (linea12) {P3};
+\node[block1,right=0.5cm of linea1] (lineb1) {P1};
+\node[block1,below=0 of lineb1] (lineb2) {P1};
+\node[block1,below=0 of lineb2] (lineb3) {P1};
+\node[block1,below=0 of lineb3] (lineb4) {P1};
+\node[block3,below=0 of lineb4] (lineb5) {P3};
+\node[block3,below=0 of lineb5] (lineb6) {P3};
+\node[block3,below=0 of lineb6] (lineb7) {P3};
+\node[block3,below=0 of lineb7] (lineb8) {P3};
+\node[block2,below=0 of lineb8] (lineb9) {P2};
+\node[block2,below=0 of lineb9] (lineb10) {P2};
+\node[block2,below=0 of lineb10] (lineb11) {P2};
+\node[block2,below=0 of lineb11] (lineb12) {P2};
+\end{tikzpicture}
+

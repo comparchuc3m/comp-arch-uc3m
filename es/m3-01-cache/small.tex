@@ -1,0 +1,73 @@
+\subsection{Cachés pequeñas y simples}
+
+\begin{frame}[t]{Cachés pequeñas}
+\begin{itemize}
+  \item Proceso de \textgood{búsqueda}:
+    \begin{itemize}
+      \item Selección de línea utilizando índice.
+      \item Lectura de etiqueta de línea.
+      \item Comparación con etiqueta de dirección.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item El tiempo de búsqueda se \textbad{incrementa} con 
+        el tamaño de la caché.
+  
+  \mode<presentation>{\vfill}
+  \item Una caché \textmark{más pequeña} permite:
+    \begin{itemize}
+      \item Hardware de búsqueda más simple.
+      \item La caché cabe en el chip del procesador.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Una caché pequeña mejora el tiempo de búsqueda}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Cachés simples}
+\begin{itemize}
+  \item Simplificación de la caché.
+    \begin{itemize}
+      \item Uso de mecanismos de correspondencia lo más \textgood{sencillo} posibles.
+      \item \textgood{Correspondencia directa}:
+        \begin{itemize}
+          \item Se permite \textmark{paralelizar} la comparación de 
+                la etiqueta con la transmisión del dato.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Observación}:
+        La mayoría de los procesadores modernos se centran más 
+        en usar cachés pequeñas que en su simplificación.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Intel Core i7}
+\begin{itemize}
+  \item Caché L1 (1 por núcleo)
+    \begin{itemize}
+      \item 32 KB instrucciones
+      \item 32 KB datos
+      \item Latencia: 3 ciclos
+      \item Asociativa 4(i), 8(d) vías. 
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item Caché L2 (1 por núcleo)
+    \begin{itemize}
+      \item 256 KB
+      \item Latencia: 9 ciclos
+      \item Asociativa 8 vías.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item Caché L3 (compartida)
+    \begin{itemize}
+      \item 8 MB
+      \item Latencia: 39 ciclos
+      \item Asociativa 16 vías.
+    \end{itemize}
+\end{itemize}
+\end{frame}

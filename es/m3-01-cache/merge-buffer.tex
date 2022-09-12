@@ -1,0 +1,38 @@
+\subsection{Mezclas en búfer de escritura}
+
+\begin{frame}[t]{Búfer de escritura}
+\begin{itemize}
+  \item Un \textmark{búfer de escritura} permite \textgood{reducir} la penalización de fallo.
+    \begin{itemize}
+      \item Cuando se ha escrito en el búfer el procesador da la escritura por efectuada.
+      \item Escrituras simultáneas en memoria son más eficientes que una única escritura.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Usos}:
+    \begin{itemize}
+      \item \textmark{Escritura inmediata} (\emph{write-through}): En todas las escrituras.
+      \item \textmark{Post escritura} (\emph{write-back}): Cuando se remplaza un bloque.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Mezclas en búfer de escritura}
+\begin{itemize}
+  \item Si el búfer contiene bloques modificados, 
+        se comprueban las direcciones para ver si se puede sobrescribir.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Efectos}:
+    \begin{itemize}
+      \item Reduce el número de \textgood{escrituras en memoria}.
+      \item Reduce \textgood{paradas} debidas a que el búfer esté lleno.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Mezclas en buffer de escritura}
+\input{es/m3-01-cache/merge-buffer-1.tkz}
+\mode<presentation>{\vfill\pause}
+\input{es/m3-01-cache/merge-buffer-2.tkz}
+\end{frame}

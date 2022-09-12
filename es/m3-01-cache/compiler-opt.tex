@@ -1,0 +1,246 @@
+\subsection{Optimizaciones del compilador}
+
+\begin{frame}[t]{Optimizaciones del compilador}
+\begin{itemize}
+  \item \textmark{Objetivo}:
+        Generar código que provoque menos fallos de 
+        instrucciones y datos.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Instrucciones}: 
+    \begin{enumerate}[1.]
+      \item Reordenación de procedimientos.
+      \item Alinear bloques de código al inicio de bloques de caché.
+      \item Linearización de saltos.
+    \end{enumerate}
+
+  \mode<presentation>{\vfill}
+  \item \textgood{Datos}: 
+    \begin{enumerate}[1.]
+      \item Fusión de arrays.
+      \item Intercambio de bucles.
+      \item Fusión de bucles.
+      \item Acceso por bloques.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Reordenación de procedimientos}
+\begin{columns}
+
+\column{.7\textwidth}
+
+\begin{itemize}
+  \item \textgood{Objetivo}: Reducir los \textbad{fallos por conflicto} debidos a que 
+        dos procedimientos coincidentes en el tiempo se corresponden 
+        con la \textmark{misma línea de caché}.
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Técnica}: Reordenar los procedimientos en memoria.
+
+\end{itemize}
+
+\column{.3\textwidth}
+\pause
+\input{es/m3-01-cache/reorder-proc.tkz}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Alineación de bloques básicos}
+\begin{itemize}
+  \item \textmark{Definición}: 
+        Un \textgood{bloque básico} es un conjunto de instrucciones 
+        que se ejecuta secuencialmente (no contiene saltos).
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Objetivo}: Reducir la posibilidad de 
+        \textbad{fallos de caché} para código secuencial.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Técnica}: 
+        Hacer coincidir la \textgood{primera instrucción} de un bloque básico 
+        con la \textgood{primera palabra} de una línea de caché.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Linearización de saltos}
+\begin{itemize}
+  \item \textmark{Objetivo}: Reducir los fallos de caché debidos a saltos condicionales.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Técnica}: Si el compilador sabe que es probable que se tome un salto, 
+        puede cambiar el sentido de la condición en intercambiar los bloques 
+        básicos de las dos alternativas.
+    \begin{itemize}
+      \item Algunos compiladores definen extensiones para dar pistas al compilador.
+      \item \textmark{Ejemplo}: \textgood{gcc} (\cppkey{\_\_likely\_\_}).
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Fusión de arrays}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Arrays paralelos}
+\begin{lstlisting}
+vector<int> key;
+vector<int> val;
+
+for (int i=0;i<max;++i) {
+  cout << key[i] << "," 
+       <<  val[i] << endl;
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Array fusionado}
+\begin{lstlisting}
+struct entry {
+  int key;
+  int val;
+};
+vector<entry> v;
+
+for (int i=0;i<max;++i) {
+  cout << v[i].key << "," 
+       <<  v[i].val << endl;
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\begin{itemize}
+  \item Reducción de conflictos.
+  \item Mejora de localidad espacial.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Intercambio de bucles}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Acceso con saltos}
+\begin{lstlisting}
+for (int j=0; j<100; ++j) {
+  for (int i=0; i<5000; ++i) {
+    v[i][j] = k * v[i][j];
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Accesos secuenciales}
+\begin{lstlisting}
+for (int i=0; i<5000; ++i) {
+  for (int j=0; j<100; ++j) {
+    v[i][j] = k * v[i][j];
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item \textmark{Objetivo}: Mejorar localidad espacial.
+  \item Dependiente del modelo de almacenamiento vinculado al lenguaje de programación.
+    \begin{itemize}
+      \item FOTRAN versus C.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Fusión de bucles}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Bucles separados}
+\begin{lstlisting}
+for (int i=0; i<rows; ++i) {
+  for (int j=0; j<cols; ++j) {
+    a[i][j] = b[i][j] * c[i][j];
+  }
+}
+for (int i=0; i<rows; ++i) {
+  for (int j=0; j<cols; ++j) {
+    d[i][j] = a[i][j] + c[i][j];
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Bucles fusionados}
+\begin{lstlisting}
+for (int i=0; i<rows; ++i) {
+  for (int j=0; j<cols; ++j) {
+    a[i][j] = b[i][j] * c[i][j];
+    d[i][j] = a[i][j] + c[i][j];
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item \textmark{Objetivo}: Mejorar localidad temporal.
+  \item \textbad{Cuidado}: Puede reducir localidad espacial.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Acceso por bloques}
+\begin{columns}[T]
+
+\column{.4\textwidth}
+\begin{block}{Producto original}
+\begin{lstlisting}
+for (int i=0; i<size; ++i) {
+  for (int j=0; j<size; ++j) {
+    r=0;
+    for (int k=0; k<size; ++k) {
+      r+= b[i][k] * c[k][j];
+    }
+    a[i][j] = r;
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.6\textwidth}
+\begin{block}{Producto con acceso por bloques}
+\begin{lstlisting}
+for (bj=0; bj<size; bj+=bsize) {
+  for (bk=0; bk<size; bk +=bs) {
+    for (i=0; i<size; ++i) {
+      for (j=bj; j<min(bj+bsize,size); ++j) {
+        r=0;
+        for (k=bk;k<min(bk+bsize,size); ++k) {
+          r +=b[i][k] * c[k][j];
+        }
+        a[i][j] += r;
+      }
+    }
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item \cppid{bsize}: Factor de bloque.
+\end{itemize}
+
+\end{frame}

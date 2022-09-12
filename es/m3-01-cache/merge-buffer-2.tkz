@@ -1,0 +1,54 @@
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, text=orange!70,font=\tiny,minimum width=1cm},
+  banketiq/.style={text centered, text=black,font=\tiny,minimum width=.15cm},
+  block/.style={rectangle,font=\footnotesize,draw=black,fill=blue!50,minimum width=1.25cm,minimum height=0.5cm,inner sep=0},
+  block2/.style={rectangle,font=\footnotesize,draw=black,fill=white,minimum width=1.25cm,minimum height=0.5cm},
+  address/.style={rectangle,font=\footnotesize,draw=black,fill=green!80,minimum width=0.8cm,minimum height=0.5cm},
+  validbit/.style={rectangle,font=\footnotesize,draw=black,fill=orange!70,minimum width=0.3cm,minimum height=0.5cm},
+}  
+\node[etiqueta] (addrlbl) {Write address};
+\node[address,below=0 of addrlbl] (addra1) {100};
+\node[address,below=0 of addra1]  (addra2) {};
+\node[address,below=0 of addra2]  (addra3) {};
+\node[address,below=0 of addra3]  (addra4) {};
+\node[etiqueta,right=0cm of addrlbl] (vlbl1) {V};
+\node[validbit,below=0 of vlbl1] (va11) {1};
+\node[validbit,below=0 of va11] (va12) {1};
+\node[validbit,below=0 of va12] (va13) {1};
+\node[validbit,below=0 of va13] (va14) {1};
+\node[block,right=0 of va11] (ma11) {M[100]};
+\node[block2,right=0 of va12] (ma12) {};
+\node[block2,right=0 of va13] (ma13) {};
+\node[block2,right=0 of va14] (ma14) {};
+\node[validbit,right=0 of ma11] (va21) {0};
+\node[validbit,below=0 of va21] (va22) {0};
+\node[validbit,below=0 of va22] (va23) {0};
+\node[validbit,below=0 of va23] (va24) {0};
+\node[etiqueta,above=0cm of va21] (vlbl2) {V};
+\node[block,right=0 of va21] (ma21) {M[108]};
+\node[block2,right=0 of va22] (ma22) {};
+\node[block2,right=0 of va23] (ma23) {};
+\node[block2,right=0 of va24] (ma24) {};
+%
+\node[validbit,right=0 of ma21] (va31) {0};
+\node[validbit,below=0 of va31] (va32) {0};
+\node[validbit,below=0 of va32] (va33) {0};
+\node[validbit,below=0 of va33] (va34) {0};
+\node[etiqueta,above=0cm of va31] (vlbl3) {V};
+\node[block,right=0 of va31] (ma31) {M[116]};
+\node[block2,right=0 of va32] (ma32) {};
+\node[block2,right=0 of va33] (ma33) {};
+\node[block2,right=0 of va34] (ma34) {};
+%
+\node[validbit,right=0 of ma31] (va41) {0};
+\node[validbit,below=0 of va41] (va42) {0};
+\node[validbit,below=0 of va42] (va43) {0};
+\node[validbit,below=0 of va43] (va44) {0};
+\node[etiqueta,above=0cm of va41] (vlbl3) {V};
+\node[block,right=0 of va41] (ma41) {M[124]};
+\node[block2,right=0 of va42] (ma42) {};
+\node[block2,right=0 of va43] (ma43) {};
+\node[block2,right=0 of va44] (ma44) {};
+\end{tikzpicture}
+

@@ -1,0 +1,238 @@
+\section{Introducción}
+
+\begin{frame}[t]{Evolución de la latencia}
+\begin{itemize}
+  \item Hay múltiples visiones del rendimiento.
+    \begin{itemize}
+      \item $rendimiento = \frac{1}{latencia}$
+      \item Útil para comparar evolución de procesadores y memoria.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Procesadores}
+    \begin{itemize}
+      \item Incrementos de rendimiento anuales de de entre 25\% y 52%.
+      \item Efecto combinado de 1980 a 2005 $\rightarrow$ superior a $10,000$ veces.
+      \item Crecimiento marginal desde entonces.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Memoria}
+    \begin{itemize}
+      \item Incrementos de rendimiento anuales alrededor del 7\%
+      \item Efecto combinado de 1980 a 2015 $\rightarrow$ alrededor de $10$ veces.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Efecto multi-core}
+\begin{itemize}
+  \item \textmark{Intel Core i7 6700}.
+    \begin{itemize}
+      \item 2 accesos a datos de 64 bits por ciclo.
+      \item 4 cores, 4.2 GHz $\rightarrow$ $32.8 \times 10^9$ referencias/seg
+      \item Demanda instrucciones: $12.8 \times 10^9$ de 128 bits.
+      \item Pico de ancho de banda: $524.8$ GB/s + $204.8$ GB/s
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Memoria SDRAM}.
+    \begin{itemize}
+      \item DDR2 (2003): 3.2 GB/seg – 8.5 GB/seg
+      \item DDR3 (2007):  8.53 GB/seg – 18 GB/seg
+      \item DDR4 (2014): 17.06 GB/seg – 25.6 GB/seg
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Soluciones}:
+    \begin{itemize}
+      \item Memoria multipuerta, cachés segmentadas, cachés multinivel, 
+            cachés por core, separación instrucciones y datos.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Principio de localidad}
+\begin{itemize}
+  \item \textgood{Principio de localidad}.
+    \begin{itemize}
+      \item Es una \textmark{propiedad de los programas} que se explota en el diseño del hardware.
+      \item Los programas acceden una porción relativamente pequeña del espacio de direcciones.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Tipos de localidad}:
+    \begin{itemize}
+      \item \textmark{Localidad temporal}: 
+            Los elementos accedidos recientemente tienden a volver a ser accedidos.
+        \begin{itemize}
+          \item Ejemplos: Bucles, reutilización de variables, \ldots
+        \end{itemize}
+      \item \textmark{Localidad espacial}: 
+            Los elementos próximos a los accedidos recientemente tienden a ser accedidos.
+        \begin{itemize}
+          \item Ejemplos: Ejecución secuencial de instrucciones, arrays, \ldots
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Jerarquía de memoria}
+\makebox[\textwidth][c]{
+\input{es/m3-01-cache/mem-hier.tkz}
+}
+\end{frame}
+
+\begin{frame}[t]{Situación (2017)}
+\begin{itemize}
+  \item \textgood{Registros} $\rightarrow$ \emph{CMOS}.
+    \begin{itemize}
+      \item \textmark{Tiempo de acceso}: 0.1 ns -- 0.2 ns.
+      \item \textmark{Tamaño típico}: < 4KiB.
+      \item \textmark{Ancho de banda}: $10^6$ -- $10^7$ MiB/s
+    \end{itemize}
+  \item \textgood{Caché} $\rightarrow$ \emph{SRAM CMOS en chip}.
+    \begin{itemize}
+      \item \textmark{Tiempo de acceso}: 0.5 ns -- 10 ns.
+      \item \textmark{Tamaño típico}: 32KiB -- 8 MiB.
+      \item \textmark{Ancho de banda}: $2 \cdot 10^4$ -- $5 \cdot 10^4$ MiB/s. 
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textgood{Memoria principal} $\rightarrow$ \emph{DRAM CMOS}.
+    \begin{itemize}
+      \item \textmark{Tiempo de acceso}: $30$ns -- $150$ ns
+      \item \textmark{Typical size}: < 1 TB
+      \item \textmark{Bandwidth}: $10^4$ --$3 \cdot 10^4$ MiB/s 
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Escala de las latencias}
+\begin{itemize}
+  \item \textgood{Tiempos típicos}:
+    \begin{itemize}
+      \item \textmark{Ciclo de CPU}: 0.3 ns $\rightarrow$ 1 s
+      \item \textmark{Caché L1}: 0.9 ns $\rightarrow$ 3 s
+      \item \textmark{Caché L2}: 2.8 ns $\rightarrow$ 9 s
+      \item \textmark{Memoria principal}: 120 ns $\rightarrow$ 6 min.
+      \item \textmark{SSD}: 50--150 $\mu$s 
+      \item \textmark{Disco}: 1--10 ms
+    \end{itemize}
+
+  \pause
+  \item \textgood{Si un ciclo fuese un segundo}:
+    \begin{itemize}
+      \item \textmark{Ciclo de CPU}: 1 s
+      \item \textmark{Caché L1}: 3 s
+      \item \textmark{Caché L2}: 9 s
+      \item \textmark{Memoria principal}: 6 min.
+      \item \textmark{SSD}: 2--6 días.
+      \item \textmark{Disco}: 1-12 meses.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Jerarquía de memoria}
+\begin{itemize}
+  \item \textgood{Bloque o línea}: Unidad de copia.
+    \begin{itemize}
+      \item Suele estar formada por múltiples palabras.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Si dato accedido está \textmark{presente} en nivel superior:
+    \begin{itemize}
+      \item \textgood{Acierto}: Satisfecho por nivel superior.
+    \end{itemize}
+\[
+h = \frac{aciertos}{accesos}
+\]
+
+  \mode<presentation>{\vfill\pause}
+  \item Si dato accedido está \textmark{ausente}.
+    \begin{itemize}
+      \item \textgood{Fallo}: Bloque se copia de nivel inferior.
+      \item Acceso a dato en nivel superior.
+      \item Tiempo necesario $\rightarrow$ \textmark{Penalización de fallo}.
+    \end{itemize}
+\[
+m = \frac{fallos}{accesos} = 1 - h
+\]
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Medidas}
+\begin{itemize}
+  \item Tiempo medio de acceso a memoria:
+\[
+t_M = t_A + (1-h) t_F
+\]
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Penalización de fallo}:
+    \begin{itemize}
+      \item Tiempo en remplazar y bloque y entregarlo a CPU.
+      \item \textmark{Tiempo de acceso}.
+        \begin{itemize}
+          \item Tiempo de obtenerlo de nivel inferior.
+          \item Depende de latencia a nivel inferior.
+        \end{itemize}
+      \item \textmark{Tiempo de transferencia}.
+        \begin{itemize}
+          \item Tiempo de transferir un bloque.
+          \item Depende de ancho de banda entre niveles.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Medidas}
+\begin{itemize}
+  \item \textgood{Tiempo de ejecución de CPU}:
+\[
+t_{CPU} = 
+\left( ciclos_{CPU} + ciclos_{\text{detencion memoria}} \right) \times t_{ciclo}
+\]
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Ciclos de reloj CPU}:
+\[
+ciclos_{CPU} =
+IC \times CPI
+\]
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Ciclos de detención de memoria}:
+\[
+ciclos_{\text{detención memoria}} =
+n_{fallos} \times \text{penalización}_{fallo}=
+\]
+\[
+IC \times fallo_{instr} \times \text{penalización}_{fallo} =
+\]
+\[
+IC \times accesos\_memoria_{instr} \times (1 - h ) \times \text{penalización}_{fallo}
+\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Distinguiendo lecturas de escrituras}
+\begin{itemize}
+  \item Patrones de lectura y escritura diferenciados:
+    \begin{itemize}
+      \item Diferentes tasas de acierto: $h_{lect}$, $h_{escr}$.
+      \item Diferentes pnealizaciones: $penalización_{lect}$, $penalización_{escr}$
+    \end{itemize}
+
+\[
+ciclos_{\text{detención memoria}} =
+IC \times lecturas_{instr} \times (1 - h_{lect}) \times \text{penalización}_{lect} +
+\]
+\[
+IC \times escrituras_{instr} \times (1 - h_{escr}) \times \text{penalización}_{escr}
+\]
+\end{itemize}
+\end{frame}

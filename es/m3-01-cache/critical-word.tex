@@ -1,0 +1,32 @@
+\subsection{Palabra crítica primero y reinicio temprano}
+
+\begin{frame}[t]{Palabra crítica primero y reinicio temprano}
+\begin{itemize}
+  \item \textmark{Observación}: 
+        Normalmente el procesador necesita una única palabra para poder proseguir.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Solución}: 
+        No esperar a recibir todo el bloque de memoria.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Alternativas}:
+    \begin{itemize}
+      \item \textmark{Palabra crítica primero}: 
+            El bloque se recibe reordenado con la palabra que 
+            necesita el procesador al principio.
+
+      \item \textmark{Reinicio temprano}: 
+            El bloque se recibe sin reordenar.
+        \begin{itemize}
+          \item En cuanto se recibe la palabra de interés la CPU prosigue.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Efectos}:
+        Depende del tamaño de bloque $\rightarrow$ Mejor más grande.
+
+
+\end{itemize}
+\end{frame}
