@@ -1,0 +1,364 @@
+\section{Tasks}
+
+\subsection{Check your compiler version}
+
+The compiler interface for the gcc compiler is the \textmark{g++} command.
+
+First, you will check the compiler version you have:
+
+\begin{lstlisting}[style=terminal]
+user$machine:~$g++ --version
+\end{lstlisting}
+
+You should get the version number, if the g++ command is found.
+
+\subsubsection{In your own machine}
+
+\begin{enumerate}
+
+\item Install the \textmark{build-essential} package:
+
+\begin{lstlisting}[style=terminal]
+user$machine:~$sudo apt install build-essential
+\end{lstlisting}
+
+\item Check the compiler version
+
+\begin{lstlisting}[style=terminal]
+user$machine:~$g++ --version
+\end{lstlisting}
+
+\item If you want to install multiple versions of the compiler,
+      you may want to read the following pages:
+  \begin{itemize}
+    \item \url{https://linuxize.com/post/how-to-install-gcc-on-ubuntu-20-04/}
+    \item \url{https://lindevs.com/install-gcc-on-ubuntu}
+  \end{itemize}
+\end{enumerate}
+
+\subsection{Compile a simple program}
+
+For this compilation exercise we will use the \cppid{hello.cpp} file with the following contents:
+
+\begin{lstlisting}
+#include <iostream>
+
+int main() {
+  using namespace std;
+
+  cout << "Hello C++\n";
+}
+\end{lstlisting}
+
+We will use a number of options to get different behaviors from the \textmark{g++} command line interface:
+
+\begin{itemize}
+  \item \cppid{g++ hello.cpp -E -o hello.ii}: 
+  Run only the preprocessor and get the output to file \cppid{hello.ii}.
+    \begin{itemize}
+      \item Try to find out how many C++ lines of code are generated after preprocessiong \cppid{hello.cpp}.
+    \end{itemize}
+
+  \item \cppid{g++ hello.cpp -S -o hello.s}:
+  Generate assembly code for the current translation unit.
+    \begin{itemize}
+      \item Try to find how many lines of assembly code are generated for \cppid{hello.cpp}.
+    \end{itemize}
+
+  \item \cppid{g++ hello.cpp -c -o hello.o}:
+  Generate an object file \cppid{hello.o} that can be linked with other object files.
+    \begin{itemize}
+      \item Try to find how many bytes are required for object file \cppid{hello.o}.
+    \end{itemize}
+
+  \item \cppid{g++ hello.cpp -o hello}:
+  Generate an executable file \cppid{hello}.
+    \begin{itemize}
+      \item Try to find how many bytes are required for binary executable \cppid{hello}.
+    \end{itemize}
+\end{itemize}
+
+There are other related tools that might be useful for you as systems developer, but are not
+covered in this lab. Try to find information about the following:
+
+\begin{itemize}
+  \item \cppid{nm}
+  \item \cppid{readelf}
+  \item \cppid{objdump}
+  \item \cppid{c++filt}
+\end{itemize}
+
+\subsection{Using \textbf{CLion} development environment}
+
+\begin{enumerate}
+
+\item
+Launch the CLion IDE.
+When you are asked for a license, use the user and password
+that you got when registering your student account at JetBrains site.
+
+\item
+Create a new project named \cppid{hello}:
+
+\begin{itemize}
+  \item Project type: C++ Executable.
+  \item Language standard: C++20
+\end{itemize}
+
+\item
+Check that the following files were generated:
+
+\begin{itemize}
+  \item \cppid{main.cpp}: Modify it to write our \cppid{hello.cpp} content in that file.
+  \item \cppid{CMakeLists.txt}
+\end{itemize}
+
+\item
+Build the program through \textmark{Build | Build Project} and check that the program was correctly compiled.
+
+\item
+Run the program through \textmark{Run | Run 'hello'}. Check that you can see the program output from the IDE.
+
+\end{enumerate}
+
+\subsection{Using multiple source files}
+
+In this section we will write a project with multiple source files:
+
+\begin{enumerate}
+
+\item
+Create a new project named \cppid{areas}.
+
+\item
+Change the extension for header files by following the following steps:
+\begin{itemize}
+  \item Menu \textmark{File | Settings}.
+  \item In the dialog box select \textmark{Editor | Code Style | C/C++}.
+  \item Select the tab for \textmark{New File Extensions}.
+  \item Change \textmark{Header extensions} to \textgood{hpp}.
+  \item Change \textmark{File Naming convention} to \textgood{snake\_case}.
+\end{itemize}
+
+\item
+Add a file named \cppid{geom.hpp}
+
+\begin{lstlisting}
+#ifndef AREAS_GEOM_HPP
+#define AREAS_GEOM_HPP
+
+namespace geom {
+
+  double area(double w, double h);
+
+}
+
+#endif
+\end{lstlisting}
+
+\item 
+Add a file named \cppid{geom.cpp}:
+
+\begin{lstlisting}
+#include "geom.hpp"
+
+namespace geom {
+  double area(double w, double h) {
+    return w * h;
+  }
+}
+\end{lstlisting}
+
+\item
+Modify your program \cppid{main.cpp}:
+
+\begin{lstlisting}
+#include <iostream>
+#include "geom.hpp"
+
+int main() {
+  double x = 2.0;
+  double y = 3.0;
+  std::cout << "area(" << x << "," << y << ")= " << geom::area(x,y) << "\n";
+}
+\end{lstlisting}
+
+\item
+Modify your \cppid{CMakeLists.txt} file to add some compile options to enable warnings:
+
+\begin{lstlisting}
+...
+set(CMAKE_CXX_STANDARD 20)
+add_compile_options(-Wall -Wextra -Werror -pedantic -pedantic-errors)
+
+add_executable(shape main.cpp geom.hpp geom.cpp)
+\end{lstlisting}
+
+\item
+Run the program.
+
+\end{enumerate}
+
+\subsection{Debug version versus Release Version}
+
+When you use CLion the default compilation is the Debug version.
+However, when you are not debugging you prefer to get an optimized \textgood{Release} version.
+
+\begin{enumerate}
+
+\item
+Open the \textgood{settings dialog} through \textmark{File | Settings}.
+
+\item
+Select \textmark{Build, Execution, Deployment | CMake}.
+
+\item 
+You will see the \textgood{Debug} configuration.
+
+\item 
+Click in the \textmark{+} symbol to add another configuration. The \textgood{Release} configuration
+will be added.
+
+\item
+Apply the configuration change.
+
+\item
+In the build drop down list, you now may select \cppid{areas | Debug} or \cppid{areas | Release}.
+
+\end{enumerate}
+
+\subsection{Finding memory leaks with valgrind}
+
+\begin{enumerate}
+
+\item
+Create an application named \cppid{numbers}.
+
+\item Add a file named \cppid{primitive\_vecnum.hpp}
+
+\begin{lstlisting}
+#ifndef NUMBERS_PRIMITIVE_VECNUM_HPP
+#define NUMBERS_PRIMITIVE_VECNUM_HPP
+
+class vecnum {
+public:
+  explicit vecnum(int n) : size_{n}, buffer_{new double[n]{}} {}
+  [[nodiscard]] int size() const { return size_; }
+
+  double operator[](int i) const { return buffer_[i]; }
+  double &operator[](int i) { return buffer_[i]; }
+private:
+  int size_;
+  double * buffer_;
+};
+
+#endif//NUMBERS_PRIMITIVE_VECNUM_HPP
+\end{lstlisting}
+
+\item
+Write the following \cppid{main.cpp}
+
+\begin{lstlisting}
+#include <iostream>
+#include "primitive_vecnum.hpp"
+
+int main() {
+  vecnum v(5);
+  v[2] = 3.0;
+  for (int i=0; i<v.size(); ++i) {
+    std::cout << "v[" << i << "] = " << v[i] << '\n';
+  }
+}
+\end{lstlisting}
+
+\item
+Run the program and check the results.
+
+\item
+Run the program through \textmark{Run | Run with valgrind memcheck} and analyze the output.
+
+\end{enumerate}
+
+\subsection{Performing dynamic analysis with sanitizers}
+
+There are several \textmark{sanitizers} available in some C++ compilers:
+
+\begin{itemize}
+  \item \textmark{Address Sanitizer}: Detects memory errors.
+  \item \textmark{Leak Sanitizer}: Subset of Address Sanitizer only for memory leaks.
+  \item \textmark{Thread Sanitizer}: Detects concurrency errors.
+  \item \textmark{Undefined Behavior Sanitizer}: Dectects some undefined behaviors.
+  \item \textmark{Memory Sanitizer} (only with \cppid{clang++}): Detects use of uninitialized memory.
+\end{itemize}
+
+You can use them by adding extra profiles in CLion:
+
+\begin{enumerate}
+
+\item
+Open the settings dialog through \textmark{File | Settings}.
+
+\item
+Select \textmark{Build, Execution, Deployment | CMake}.
+
+\item
+Copy the \textmark{Debug} profile into a new one and name it as \textmark{Debug-address-sanitizer}.
+
+\item
+In options field add \cppid{-DCMAKE\_CXX\_FLAGS="-fsanitize=address -fno-omit-frame-pointer"}.
+
+\end{enumerate}
+
+\subsection{Fixing the memory leak}
+
+Try to fix the memory leak in at least one of the following ways:
+
+\begin{enumerate}
+
+\item Add a destructor to the existing class.
+\begin{itemize}
+  \item Make sure that you use in a destructor 
+        a \cppkey{delete []} \cppid{var} 
+        and not a \cppkey{delete} \cppid{var}.
+\end{itemize}
+
+\item Change the \cppkey{double*} data member by a \cppid{std::unique\_ptr<double[]>} data member.
+Consider the following:
+
+\begin{itemize}
+  \item Include the \cppid{<memory>} header.
+  \item Change the \cppid{buffer\_} data member to type \cppid{std::unique\_ptr<double[]>}.
+  \item Replace the \cppkey{new} in the constructor by a call to \cppid{std::make\_unique<double[]>(n)}.
+  \item Include the \cppid{<algorithm>} header.
+  \item Add a copy constructor.
+\begin{lstlisting}
+vecnum(const vecnum & v) : size_{v.size_}, buffer_{std::make_unique<double[]>(size_) {
+  std::copy_n(v.buffer_.get(), v.size_, buffer_.get());
+}
+\end{lstlisting}
+\end{itemize}
+
+\end{enumerate}
+
+Then, analyze the effects on memory leaks when you use the following \cppid{main.cpp} program:
+
+\begin{lstlisting}
+#include <iostream>
+#include "primitive_vecnum.hpp"
+
+int main() {
+  vecnum v(5);
+  v[2] = 3.0;
+
+  vecnum w{v};
+
+  for (int i=0; i<v.size(); ++i) {
+    std::cout << "v[" << i << "] = " << v[i] << '\n';
+  }
+
+  for (int i=0; i<w.size(); ++i) {
+    std::cout << "w[" << i << "] = " << w[i] << '\n';
+  }
+}
+\end{lstlisting}
+

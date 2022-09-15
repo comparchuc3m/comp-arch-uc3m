@@ -13,6 +13,9 @@ include en/m6-01-cppintro/Makefile.def
 #include definitions for exercises
 include en/ex/Makefile.def
 
+#include definitions for labs
+include en/labs/Makefile.def
+
 ALL_EN_FINAL_PDF=\
 $(FINAL_DIR) \
 $(ALL_SLIDES_EN_FINAL_PDF) \
@@ -31,3 +34,6 @@ include $(EN_M6_01_CPPINTRO_DIR)/Makefile.mk
 
 #include rules for exercises
 include $(EN_EX_DIR)/Makefile.mk
+
+#include rules for labs
+include $(EN_LABS_DIR)/Makefile.mk
