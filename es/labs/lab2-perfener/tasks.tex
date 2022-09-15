@@ -1,0 +1,293 @@
+\section{Tareas}
+
+\subsection{Apertura de cuenta}
+
+Si no tienes cuenta en el Laboratorio de Informática, debes abrir una cuenta.
+
+Encontrarás toda la información en la siguiente página:
+
+\begin{itemize}
+  \item \url{https://www.lab.inf.uc3m.es/servicios/apertura-de-cuenta/}
+\end{itemize}
+
+Esta es la cuenta que usarás para acceder al clúster docente del Departamento de Informática.
+
+\subsection{Acceso al Clúster}
+
+Tienes las siguientes opciones:
+
+
+\begin{itemize}
+  \item Conectarte por Web. Tienes toda la información de acceso en:
+    \begin{itemize}
+      \item \url{https://www.lab.inf.uc3m.es/servicios/aulas-virtuales-del-laboratorio/}.
+      \item Una vez conectado, debes seleccionar el equipo \textemph{Avignon}.
+    \end{itemize}
+
+  \item Conectarte mediante \cppid{ssh} a \cppkey{avignon.lab.inf.uc3m.es}.
+\begin{lstlisting}[style=terminal]
+$ ssh -l nombreusuario avignon.lab.inf.uc3m.es
+jdgarcia@avignon.lab.inf.uc3m.es's password: 
+Linux avignon-frontend 5.10.0-15-amd64 #1 SMP Debian 5.10.120-1 (2022-06-09) x86_64
+...
+$
+\end{lstlisting}
+
+\end{itemize}
+
+\subsection{Ejecución de mandatos}
+
+Una vez introducida la clave estarás en el nodo del \emph{front-end}.
+Ten en cuenta que esta máquina simplemente te da acceso a lanzar trabajos
+en otros equipos, pero que no debes ejecutar nada directamente.
+
+Para ejecutar un trabajo debes escribir un \emph{shell script} con las tareas
+a ejecutar y lanzarlo utilizando el mandato \textmark{sbatch}.
+
+Vamos a crear un script para conocer las características del hardware del nodo
+en el que vas a ejecutar los trabajos. Para conocer estas características
+se puede usar el mandato \textmark{lscpu}. 
+
+Escribe el siguiente código en un archivo que llamarás \cppid{runlscpu.sh}
+
+\begin{lstlisting}[language=sh]
+#!/bin/sh
+lscpu
+\end{lstlisting}
+
+Para lanzar el mandato debes usar el mandato \textmark{sbatch}:
+
+\begin{lstlisting}[style=terminal]
+$ sbatch runlscpu
+Submitted batch job 408
+$
+\end{lstlisting}
+
+Podrás consultar la lista de trabajos activos con el mandato \textmark{squeue}.
+Cuando el trabajo haya terminado, la salida estándar del mismo se habrá guardado
+en un archivo llamado \cppid{slurm-XXX.out}, donde XXX es el número de trabajo.
+
+Compara las características del nodo \emph{front-end} y el nodo de ejecución.
+
+\subsection{Compilación de los programas C++}
+
+En esta tarea vamos a compilar en un nodo de ejecución dos programas:
+
+\begin{itemize}
+  \item \cppid{mandel.cpp}: Versión secuencial simplificada.
+  \item \cppid{mandel-par.cpp}: Versión paralela optimizada manualmente.
+\end{itemize}
+
+Para cada una de estas versiones deberás generar un ejecutable con la versión de 
+\textmark{Debug} y otro con la versión de \textmark{Release}.
+
+Para ello, dentro del directoria donde vayas a trabajar, descarga los archivos
+fuente suministrados en un subdirectorio que llamaremos \cppkey{mandel}.
+Deberás ejecutar los siguientes mandatos.
+
+Para ello desde el directorio raíz del proyecto, deberás ejecutar los siguientes
+mandatos:
+
+\begin{itemize}
+  \item Para generar la configuración de CMake para \textmark{Debug}:
+\begin{lstlisting}[style=terminal]
+cmake -S mandel -B debug -DCMAKE_BUILD_TYPE=Debug
+\end{lstlisting}
+
+  \item Para generar la configuración de CMake para \textmark{Release}:
+\begin{lstlisting}[style=terminal]
+cmake -S mandel -B release -DCMAKE_BUILD_TYPE=Release
+\end{lstlisting}
+
+  \item Para compilar la versión de \textmark{Debug}:
+\begin{lstlisting}[style=terminal]
+cmake --build debug
+\end{lstlisting}
+
+  \item Para compilar la versión de \textmark{Release}:
+\begin{lstlisting}[style=terminal]
+cmake --build release
+\end{lstlisting}
+
+\end{itemize}
+
+\textbad{IMPORTANTE}: No ejecutes estos mandatos en el \emph{front-end}.
+En ese caso generarías código que no es válido para ejecutar en los 
+nodos de cómputo. En su lugar, crea un \emph{shell script} con estas
+órdenes y lánzalo en un nodo de cómputo con \cppid{sbatch}.
+
+\subsection{Ejecución de los programas}
+
+En esta tarea vamos a ejecutar los tres programas en un nodo de cómputo.
+Para las versiones de C++ ejecutaremos solamente las versiones de \textmark{Release}.
+
+\begin{enumerate}
+  \item \cppid{mandel.py}: Para ejecutar este programa usaremos el intérprete de Python.
+        Tienes disponible la versión 3.9.
+
+    \begin{itemize}
+      \item Recuerda pasar a Python la opción \cppid{-OO} para eliminar información
+            de depuración.
+      \item El programa toma como parámetro el tamaño de la imagen, que es cuadrada.
+      \item Debes redirigir la salida a un archivo con extensión \cppkey{.pbm}.
+    \end{itemize}
+
+\begin{lstlisting}[style=terminal,title=runpy.sh]
+#!/bin/sh
+python3.9 -OO mandel/mandel.py 8000 > py-mandel.pbm
+\end{lstlisting}
+
+  \item \cppid{mandel}: Para ejecutar este programa invocaremos directamente al
+        ejecutable.
+    \begin{itemize}
+      \item El programa toma como primer parámetro el tamaño de la imagen, que es cuadrada.
+      \item El programa toma como segundo parámetro el nombre del archivo de salida.
+    \end{itemize}
+
+\begin{lstlisting}[style=terminal,title=run-seq-mandel.sh]
+#!/bin/sh
+release/mandel 8000 seq-mandel.pbm
+\end{lstlisting}
+
+  \item \cppid{mandel-par}: Para ejecutar este programa invocaremos directamente al
+        ejecutable.
+    \begin{itemize}
+      \item El programa toma como primer parámetro el tamaño de la imagen, que es cuadrada.
+      \item Debes redirigir la salida a un archivo con extensión \cppkey{.pbm}.
+    \end{itemize}
+
+\begin{lstlisting}[style=terminal,title=run-par-mandel.sh]
+#!/bin/sh
+release/mandel 8000 > par-mandel.pbm
+\end{lstlisting}
+\end{enumerate}
+
+\textbad{IMPORTANTE}: Recuerda comprobar que los tres archivps \cppkey{.pbm}
+generados son idénticos.
+
+\subsection{Medición básica del rendimiento}
+
+Para realizar una medición básica del rendimiento, vamos a usar la
+herramienta \cppkey{perf}. Esta herramienta desarrollada para el sistema
+operativo Linux y que ofrece acceso a a información del kernel
+del sistema operativo así como a contadores hardware del procesador.
+
+La herramienta \cppkey{perf} ofrece varios subcomandos. En este
+laboratorio usaremos el subcomando \cppkey{stat} que recoge información
+básica sobre la ejecución de un programa:
+
+\begin{lstlisting}[style=terminal,basicstyle=\ttfamily]
+$ perf stat program param1 param2
+
+ Performance counter stats for 'program param1 param2':
+
+         56.050,69 msec task-clock                #    0,992 CPUs utilized          
+             6.851      context-switches          #    0,122 K/sec                  
+                30      cpu-migrations            #    0,001 K/sec                  
+             2.082      page-faults               #    0,037 K/sec                  
+   192.416.969.761      cycles                    #    3,433 GHz                    
+   437.336.887.712      instructions              #    2,27  insn per cycle         
+    46.898.229.743      branches                  #  836,711 M/sec                  
+        94.154.392      branch-misses             #    0,20% of all branches        
+
+      56,521233276 seconds time elapsed
+
+      55,930658000 seconds user
+       0,120151000 seconds sys
+$
+\end{lstlisting}
+
+Ten en cuenta que si quieres obtener la información de todas las CPUSs
+debes usar la opción \cppkey{-a}.
+
+\begin{lstlisting}[style=terminal]
+$ perf stat -a program params
+$
+\end{lstlisting}
+
+Puedes observar alguna información interesante que se puede determinar.
+Nos centraremos por ahora en algunos aspectos básicos. Otros se
+cubriran más adelante en la asignatura.
+
+\begin{itemize}
+  \item El número de ciclos de reloj consumidos.
+  \item El número de instrucciones ejecutadas.
+  \item El tiempo transcurrido en la ejecución del programa
+  \item El tiempo total de usuario y del sistema.
+  \item El número equivalente de CPUs usada. Este valor será mayor de 1 si
+        se usan varios cores simultáneamente.
+  \item La frecuencia de reloj promedio a la que se ha ejecutado.
+  \item El número de instrucciones por ciclo.
+\end{itemize}
+
+En esta tarea deberás obtener información sobre los parámetros de ejecución de
+las siguientes versiones del programa cuando se genera una imagen de 8000x8000.
+
+\begin{enumerate}
+  \item \cppkey{mandel.py}
+  \item \cppkey{debug/mandel}
+  \item \cppkey{release/mandel}
+  \item \cppkey{debug/mandel-par}
+  \item \cppkey{release/mandel-par}
+\end{enumerate}
+
+\textbad{IMPORTANTE}: Recuerda que tendrás que escribir los correspondientes
+scripts y lanzarlos con \cppkey{sbatch}. Por cada invocación a
+\cppkey{sbatch} se genera un archivo \cppid{slurm-XXX.out} con la salida
+estándar de la ejecución.
+
+Intenta sacar unas breves conclusiones de los resultados obtenidos.
+
+\subsection{Medición de la energía}
+
+El subcomando \cppkey{stat} también puede usarse per medir determinados eventos
+en la ejecución de un programa.
+
+Puedes obtener la lita completa de eventos disponibles con el subcomando \cppkey{list}.
+
+\begin{lstlisting}[style=terminal]
+$ perf list
+ branch-instructions OR branches                    [Hardware event]
+  branch-misses                                      [Hardware event]
+  bus-cycles                                         [Hardware event]
+  cache-misses                                       [Hardware event]
+  cache-references                                   [Hardware event]
+  cpu-cycles OR cycles                               [Hardware event]
+  instructions                                       [Hardware event]
+  ref-cycles                                         [Hardware event]
+  alignment-faults                                   [Software event]
+  bpf-output                                         [Software event]
+  context-switches OR cs                             [Software event]
+  cpu-clock                                          [Software event]
+  cpu-migrations OR migrations                       [Software event]
+  dummy                                              [Software event]
+  emulation-faults                                   [Software event]
+  major-faults                                       [Software event]
+  minor-faults                                       [Software event]
+  page-faults OR faults                              [Software event]
+...
+$
+\end{lstlisting}
+
+\textbad{Cuidado}: Debes ejecutar el mandato en un nodo de cómputo.
+
+Utiliza \cppkey{perf list} para obtener aquellos contadores que comienzan 
+por \cppid{power}.
+
+Una vez hayas encontrado estos eventos puedes pasarlo a \cppkey{perf}
+con la opción \cppkey{-e}.
+
+\begin{lstlisting}[style=terminal]
+$ perf stat -a -e 'evento1,evento2,evento3' program params
+...
+$
+\end{lstlisting}
+
+En esta tarea debes obtener información energética de la ejecución de cada uno de los
+cinco programas del apartado anterior.
+
+Los contadores obtenidos expresan la energía consumida en Julios. Como además
+dispondrás del tiempo total de ejecución, puedes obtener también la potencia
+media expresada en Watios.
+
+Intenta sacar unas breves conclusiones de los resultados obtenidos.
