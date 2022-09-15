@@ -1,0 +1,52 @@
+\section{Conclusión}
+
+\begin{frame}[t,shrink=10]{Resumen}
+\begin{itemize}
+
+  \item Cachés como solución para mitigar el \textbad{muro de memoria}.
+
+  \mode<presentation>{\vfill\pause}
+  \item La \textmark{evolución} tecnológica y el principio de \textmark{localidad}
+        generan más presión sobre las cachés.
+  
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Penalización de fallos} dependiente de \textmark{tiempo de acceso}
+        y \textmark{tiempo de transferencia}.
+
+  \mode<presentation>{\vfill\pause}
+  \item Cuatro dimensiones clave en el \textgood{diseño de cachés}:
+    \begin{itemize}
+      \item 
+        \textmark{Ubicación de bloque}, 
+        \textmark{identificación de bloque},
+        \textmark{remplazo de bloque}, y
+        \textmark{estrategia de escritura}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Seis \textgood{optimizaciones básicas} de caché:
+    \begin{itemize}
+      \item \textmark{Reducir tasa de fallos}: 
+        Aumentar tamaño de bloque,
+        aumentar tamaño de caché,
+        incrementar asociatividad.
+      \item \textmark{Reducir penalización de fallos}:
+        Cachés multi-nivel,
+        dar prioridad a lecturas sobre escrituras.
+      \item \textmark{Reducir tiempo de acierto}:
+        Evitar traducción de direcciones.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t]{Referencias}
+\begin{itemize}
+  \item \bibhennessy
+    \begin{itemize}
+       \item Sección B.1 -- Introduction.
+       \item Sección B.2 -- Cache Performance.
+       \item Sección B.3 -- Size Cache Optimizations.
+    \end{itemize}
+\end{itemize}
+\end{frame}
