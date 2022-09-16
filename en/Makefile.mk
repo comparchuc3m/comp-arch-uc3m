@@ -8,6 +8,7 @@ include en/00-intro/Makefile.def
 include en/m1-01-fund/Makefile.def
 include en/m2-01-trends/Makefile.def
 include en/m2-02-perf/Makefile.def
+include en/m3-01-cache/Makefile.def
 include en/m6-01-cppintro/Makefile.def
 
 #include definitions for exercises
@@ -30,6 +31,7 @@ include $(EN_00_INTRO_DIR)/Makefile.mk
 include $(EN_M1_01_FUND_DIR)/Makefile.mk
 include $(EN_M2_01_TRENDS_DIR)/Makefile.mk
 include $(EN_M2_02_PERF_DIR)/Makefile.mk
+include $(EN_M3_01_CACHE_DIR)/Makefile.mk
 include $(EN_M6_01_CPPINTRO_DIR)/Makefile.mk
 
 #include rules for exercises

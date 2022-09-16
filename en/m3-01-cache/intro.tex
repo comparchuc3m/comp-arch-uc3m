@@ -1,0 +1,240 @@
+\section{Introduction}
+
+\begin{frame}[t]{Latency evolution}
+\begin{itemize}
+  \item Multiple views of performance
+    \begin{itemize}
+      \item $performance = \frac{1}{latency}$
+      \item Useful for comparing processor and memory evolution.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Processors}
+    \begin{itemize}
+      \item Yearly performance increase from 25\% to 52\%.
+      \item Combined effect from 1980 to 2005 $\rightarrow$ above $10,000$ times.
+      \item Marginal growth since then.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Memory}
+    \begin{itemize}
+      \item Yearly performance increase around 7\%
+      \item Combined effect from 1980 to 2015 $\rightarrow$ around $10$ times.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Multi-core effect}
+\begin{itemize}
+  \item \textmark{Intel Core i7 6700}.
+    \begin{itemize}
+      \item Two 64 bits data accesses per cycle.
+      \item 4 cores, 4.2 GHz $\rightarrow$ $32.8 \times 10^9$ references/sec
+      \item Instructions demand: $12.8 \times 10^9$ of 128 bits.
+      \item Peak bandwidth: $524.8$ GB/sec + $204.8$ GB/s
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{SDRAM memory}.
+    \begin{itemize}
+      \item DDR2 (2003): 3.20 GB/sec – 8.50 GB/sec
+      \item DDR3 (2007):  8.53 GB/sec – 18.00 GB/sec
+      \item DDR4 (2014): 17.06 GB/sec – 25.60 GB/sec
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Solutions}:
+    \begin{itemize}
+      \item Multi-port memories, pipelined caches, multi-level caches,
+            per-core caches, instruction/data caches separation.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Principle of locality}
+\begin{itemize}
+  \item \textgood{Principle of locality}.
+    \begin{itemize}
+      \item It is \textmark{property of programs} exploited in the hardware design.
+      \item Programs are accessed in a relatively small portion of address space.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Types of locality}:
+    \begin{itemize}
+      \item \textmark{Temporal locality}: 
+            Elements recently accessed tend to be accessed again.
+        \begin{itemize}
+          \item Examples: Loops, variable reuse, \ldots
+        \end{itemize}
+      \item \textmark{Spatial locality}: 
+            Elements next to a recently accessed one tend to be accessed in the future.
+        \begin{itemize}
+          \item Examples: Sequential execution of instructions, arrays, \ldots
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Memory hierarchy}
+\makebox[\textwidth][c]{
+\input{en/m3-01-cache/mem-hier.tkz}
+}
+\end{frame}
+
+\begin{frame}[t]{Situation (2017)}
+\begin{itemize}
+  \item \textgood{Registers} $\rightarrow$ \emph{CMOS}.
+    \begin{itemize}
+      \item \textmark{Access Time}: 0.1 ns -- 0.2 ns.
+      \item \textmark{Typical size}: < 4KiB.
+      \item \textmark{Bandwidth}: $10^6$ -- $10^7$ MiB/s
+    \end{itemize}
+
+  \item \textgood{Cache} $\rightarrow$ \emph{On-chip CMOS SRAM}.
+    \begin{itemize}
+      \item \textmark{Access time}: 0.5 ns -- 1.0 ns.
+      \item \textmark{Typical size}: 32KiB -- 8 MiB.
+      \item \textmark{Bandwidth}: $2 \cdot 10^4$ -- $5 \cdot 10^4$ MiB/s 
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textgood{Main memory} $\rightarrow$ \emph{CMOS DRAM}.
+    \begin{itemize}
+      \item \textmark{Access time}: $30$ ns -- $150$ ns
+      \item \textmark{Typical size}: < 1 TB
+      \item \textmark{Bandwidth}: $10^4$ -- $3 \cdot 10^4$ MiB/s 
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Scale of latencies}
+\begin{itemize}
+  \item \textgood{Tiempos típicos}:
+    \begin{itemize}
+      \item \textmark{CPU Cycle}: 0.3 ns
+      \item \textmark{L1}: 0.9 ns 
+      \item \textmark{L2}: 2.8 ns 
+      \item \textmark{Main memory}: 120 ns 
+      \item \textmark{SSD}: 50--150 $\mu$s 
+      \item \textmark{Disco}: 1--10 ms
+    \end{itemize}
+
+  \pause
+  \item \textgood{Si un ciclo fuese un segundo}:
+    \begin{itemize}
+      \item \textmark{Ciclo de CPU}: 1 s
+      \item \textmark{Caché L1}: 3 s
+      \item \textmark{Caché L2}: 9 s
+      \item \textmark{Memoria principal}: 6 min.
+      \item \textmark{SSD}: 2--6 días.
+      \item \textmark{Disco}: 1-12 meses.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Memory hierarchy}
+\begin{itemize}
+  \item \textgood{Block or line}: Unit of copy operations.
+    \begin{itemize}
+      \item Usually composed of multiple words.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item If accessed data is \textmark{present} in upper level:
+    \begin{itemize}
+      \item \textgood{Hit}: Delivered by higher level.
+    \end{itemize}
+\[
+h = \frac{hits}{acceses}
+\]
+
+  \mode<presentation>{\vfill\pause}
+  \item If accessed data is \textmark{missing}.
+    \begin{itemize}
+      \item \textgood{Miss}: Block copied from lower level.
+      \item Data access in upper level.
+      \item Needed time $\rightarrow$ \textmark{Miss penalty}.
+    \end{itemize}
+\[
+m = \frac{misses}{acceses} = 1 - h
+\]
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Metrics}
+\begin{itemize}
+  \item Average memory access time:
+\[
+t_M = t_H + (1-h) t_M
+\]
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Miss penalty}:
+    \begin{itemize}
+      \item Time to replace a block and deliver to CPU.
+      \item \textmark{Access time}.
+        \begin{itemize}
+          \item Time to get from lower level.
+          \item Depends on lower level latency.
+        \end{itemize}
+      \item \textmark{Transfer time}.
+        \begin{itemize}
+          \item Time to transfer a block.
+          \item Depends on the bandwidth across levels.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Metrics}
+\begin{itemize}
+  \item \textgood{CPU execution time}:
+\[
+t_{CPU} = 
+\left( cycles_{CPU} + cycles_{\text{memory stall}} \right) \times t_{cycle}
+\]
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{CPU clock cycles}:
+\[
+cycles_{CPU} =
+IC \times CPI
+\]
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Memory stall cycles}:
+\[
+cycles_{\text{memory stall}} =
+n_{misses} \times \text{penalty}_{miss}=
+\]
+\[
+IC \times miss_{instr} \times \text{penalty}_{miss} =
+\]
+\[
+IC \times memory\_accesses_{instr} \times (1 - h ) \times \text{penalty}_{miss}
+\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Difference between reads and writes}
+\begin{itemize}
+  \item Read and write different patterns:
+    \begin{itemize}
+      \item Differen hit rates: $h_{read}$, $h_{write}$.
+      \item Different penalties: $\text{penalty}_{read}$, $\text{penalty}_{write}$
+    \end{itemize}
+
+\[
+ciclos_{\text{detención memoria}} =
+IC \times reads_{instr} \times (1 - h_{read}) \times \text{penalty}_{read} +
+\]
+\[
+IC \times writes_{instr} \times (1 - h_{write}) \times \text{penalty}_{write}
+\]
+\end{itemize}
+\end{frame}
+

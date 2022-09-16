@@ -1,0 +1,261 @@
+\section{Policies and strategies}
+
+\begin{frame}[t]{Four questions about memory hierarchy}
+\begin{enumerate}
+  \item Where is a block placed in the upper level?
+    \begin{itemize}
+      \item \textmark{Block placement}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item How is a block found in the upper level?
+    \begin{itemize}
+      \item \textmark{Block identification}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Which block must be replaced on a miss?
+    \begin{itemize}
+      \item \textmark{Block replacement}.
+    \end{itemize}
+
+
+  \mode<presentation>{\vfill\pause}
+  \item What happens on a write?
+    \begin{itemize}
+      \item \textmark{Write strategy}.
+    \end{itemize}
+
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[t,shrink=10]{Q1: Block placement}
+\begin{itemize}
+  \item \textgood{Direct mapping}.
+    \begin{itemize}
+      \item Cache organized in cache lines.
+      \item A memory block is placed in a line determined by its address.
+      \item Placement $\rightarrow$ $block \mod n_{blocks}$
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Fully associative mapping}.
+    \begin{itemize}
+      \item Each block has associated a unique tag.
+      \item Each line stores the tag of the currently contained block.
+      \item A block is placed in any line in the cache.
+      \item Placement $\rightarrow$ Anywhere.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Set associative mapping}.
+    \begin{itemize}
+      \item Cache lines organized in sets.
+      \item Each set has multiple lines.
+      \item Set selection determined by block address 
+            $\rightarrow$ $block \mod n_{sets}$
+      \item Block placement within set determined by tag 
+            $\rightarrow$ Anywhere in set.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Reasons for cache misses}
+\begin{itemize}
+  \item A miss may be due to any of the following reasons:
+
+    \begin{itemize}
+    
+      \mode<presentation>{\vfill\pause}
+      \item \textmark{Compulsory}:
+        \begin{itemize}
+          \item First access to a memory address in a block.
+          \item They would happen even with an infinite cache.
+        \end{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textmark{Capacity}:
+        \begin{itemize}
+          \item Accessing a block that was evicted from cache.
+          \item They might not happen in a larger cache.
+        \end{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textmark{Conflict}:
+        \begin{itemize}
+          \item Accessing a block that was evicted because 
+                it is mapped to the same set/line than another block.
+          \item Only in caches that are not fully associative.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t]{Q2: Block identification}
+\begin{itemize}
+  \item \textgood{Block address}:
+    \begin{itemize}
+      \item \textmark{Tag}: Identifies entry address.
+        \begin{itemize}
+          \item Validity bit in every entry to signal whether content is valid.
+        \end{itemize}
+      \item \textmark{Index}: Selects the set.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Block offset}:
+    \begin{itemize}
+      \item Selects data within block.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Higher associativity means}:
+    \begin{itemize}
+      \item Less \textmark{index} bits.
+      \item More \textmark{tag} bits.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Q3: Block replacement}
+\begin{itemize}
+  \item \textgood{Relevant} for \textmark{associative mapping} and 
+        \textmark{set associative mapping}:
+    \begin{itemize}
+      \item \textmark{Random}.
+        \begin{itemize}
+          \item Easy to implement.
+        \end{itemize}
+      \item \textmark{LRU}: Least Recently Used.
+        \begin{itemize}
+          \item Increasing complexity as associative increases.
+        \end{itemize}
+      \item \textmark{FIFO}.
+        \begin{itemize}
+          \item Approximates LRU with a lower complexity.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Q4: Write strategy}
+\begin{columns}[T]
+
+\begin{column}{.5\textwidth}
+\begin{block}{Write-through}
+\begin{itemize}
+  \item All writes sent to bus and memory.
+  \item Easy to implement.
+  \item Performance issues in SMPs.
+\end{itemize}
+\end{block}
+\end{column}
+
+\pause
+\begin{column}{.5\textwidth}
+\begin{block}{Write-back}
+\begin{itemize}
+  \item Many writes are a hit.
+  \item Write hits do \alert{not} go to bus and memory.
+  \item Propagation and serialization problems.
+  \item More complex.
+\end{itemize}
+\end{block}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,shrink=10]{Q4: Write strategy}
+\begin{itemize}
+  \item \textgood{Where is write done?}:
+    \begin{itemize}
+      \item \textmark{write-through}: In cache block and next level in memory.
+      \item \textmark{write-back}: Only in cache block.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{What happens when a block is evicted from cache?}:
+    \begin{itemize}
+      \item \textmark{write-through}: Nothing else.
+      \item \textmark{write-back}: Next level in memory is updated.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Debugging}:
+    \begin{itemize}
+      \item \textmark{write-through}: Easy.
+      \item \textmark{write-back}: Difficult.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Miss causes write?}:
+    \begin{itemize}
+      \item \textmark{write-through}: No.
+      \item \textmark{write-back}: Yes.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Repeated write goes to next level?}:
+    \begin{itemize}
+      \item \textmark{write-through}: Yes.
+      \item \textmark{write-back}: No.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Write buffer}
+\makebox[\textwidth][c]{
+\input{en/m3-01-cache/write-buffer.tkz}
+}
+
+\begin{columns}[T]
+
+\begin{column}{.5\textwidth}
+\begin{itemize}
+  \item \textmark{Why a buffer?}
+    \begin{itemize}
+      \item To avoid stalls in CPU.
+    \end{itemize}
+  \item \textmark{Why a buffer instead of a register?}
+    \begin{itemize}
+      \item Write bursts are frequent.
+    \end{itemize}
+\end{itemize}
+\end{column}
+
+\begin{column}{.5\textwidth}
+\begin{itemize}
+  \item \textmark{Are RAW hazards possible?}
+    \item Yes.
+    \item \textgood{Alternatives}:
+      \begin{itemize}
+        \item \textmark{Write allocate}: Block allocated in cache.
+        \item \textmark{No-write allocate}: Block modified in next level.
+      \end{itemize}
+\end{itemize}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Miss penalty}
+\begin{itemize}
+  \item \textgood{Miss penalty}:
+    \begin{itemize}
+      \item Total latency miss.
+      \item Exposed latency (generating CPU stalls).
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{block}{Miss penalty}
+\[
+\frac{\text{stall\_cycles}_{memory}}{IC} =
+\]
+\[
+\frac{misses}{IC} \times \left( latency_{total} - latency_{overlapped} \right)
+\]
+\end{block}
+\end{frame}

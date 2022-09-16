@@ -1,0 +1,196 @@
+\section{Basic optimizations}
+
+\begin{frame}[t]{Cache basic optimizations}
+\begin{itemize}
+  \item \textgood{Decrease} the \textmark{miss rate}.
+    \begin{itemize}
+      \item Increase block size.
+      \item Increase cache size.
+      \item Increase associativity.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textgood{Decrease} \textmark{miss penalty}.
+    \begin{itemize}
+      \item Multi-level caches.
+      \item Prioritize reads over writes.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textgood{Decrease} the \textmark{hit time}.
+    \begin{itemize}
+      \item Avoid address translation in cache indexing.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\subsection{Decrease miss rate}
+
+\begin{frame}[t]{1: Increase block size}
+\begin{itemize}
+  \item Larger block size $\rightarrow$ \textgood{Lower miss rate}.
+    \begin{itemize}
+       \item Better exploitation of spatial locality.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Larger block size $\rightarrow$ \textbad{Higher miss penalty}.
+    \begin{itemize}
+      \item Upon miss, larger blocks need to be transferred.
+      \item More misses as cache has less blocks.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \textgood{Need to balance}:
+    \begin{itemize}
+      \item Memory with high latency and high bandwidth:
+        \begin{itemize}
+          \item Increase block size.
+        \end{itemize}
+      \item Memory with low latency and low bandwidth:
+        \begin{itemize}
+          \item Decrease block size.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t]{2: Increase cache size}
+\begin{itemize}
+  \item Larger cache size $\rightarrow$ \textgood{lower miss rate}.
+    \begin{itemize}
+      \item More data fit in cache.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item It may \textbad{increase hit time}.
+    \begin{itemize}
+      \item More time needed to find a block.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Higher cost}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Higher energy consumption}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Need to find a balance}.
+    \begin{itemize}
+      \item Specially in on-chip caches.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{3: Increase associativity}
+
+\begin{itemize}
+  \item Higher associativity $\rightarrow$ \textgood{Lower miss rate}.
+    \begin{itemize}
+      \item Less conflicts as more ways in the same set may be used.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item It may \textbad{increase hit time}.
+    \begin{itemize}
+      \item More time needed to find a block.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Consequence}:
+    \begin{itemize}
+      \item 8 ways $\approx$ Fully associative.
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\subsection{Decrease miss penalty}
+
+\begin{frame}[t]{4: Multi-level caches}
+\begin{itemize}
+  \item \textmark{Goal}: \textgood{Decrease miss penalty}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Evolution}:
+    \begin{itemize} 
+      \item \textbad{Higher distance} from DRAM and CPU performance over time.
+      \item \textbad{Increasing} miss penalty \textbad{cost}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Alternatives}:
+    \begin{itemize} 
+      \item Make cache \textgood{faster}.
+      \item Make cache \textgood{larger}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Solution}:
+    \begin{itemize}
+      \item \textgood{Both of them!}
+      \item \textgood{Several cache levels}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Global and local miss rates}
+\begin{itemize}
+  \item \textmark{Local miss rate}:
+    \begin{itemize}
+      \item Misses at a cache level over accesses to that cache level.
+      \item L1 miss rate $\rightarrow$ $m(L1)$
+      \item L2 miss rate $\rightarrow$ $m(L2)$
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Global miss rate}:
+    \begin{itemize}
+      \item Misses at a cache level over to all memory accesses.
+      \item L1 miss rate $\rightarrow$ $m(L1)$
+      \item L2 miss rate $\rightarrow$ $m(L1) \times m(L2)$
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Average access time}:
+\end{itemize}
+\[
+t_h(L1) + m(L1) \times t_m(L1) =
+\]
+\[
+t_h(L1) + m(L1) \times \left( t_h(L2) + m(L2) \times t_m(L2) \right)
+\]
+\end{frame}
+
+\begin{frame}[t]{5: Prioritize read misses over writes}
+\begin{itemize}
+  \item \textmark{Goal}: \textgood{Decrease miss penalty}.
+    \begin{itemize}
+      \item Avoid that a read miss has to wait until writes are completed.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Write-through caches}.
+    \begin{itemize}
+      \item Write buffer \textbad{might contain} the 
+            data being read.
+        \begin{enumerate}[a)]
+          \item Wait for write buffer to be empty.
+          \item Check values in write buffer.
+        \end{enumerate}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Write-back caches}.
+    \begin{itemize}
+      \item A read miss \textbad{might replace a modified block}.
+        \begin{itemize}
+          \item Copy modified block to buffer, read, and dump block to memory.
+          \item Apply options \textgood{a} or \textgood{b} to buffer.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+

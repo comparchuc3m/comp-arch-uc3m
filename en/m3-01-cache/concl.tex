@@ -1,0 +1,52 @@
+\section{Conclusion}
+
+\begin{frame}[t]{Summary}
+\begin{itemize}
+
+  \item Caching as a solution to mitigate the \textbad{memory wall}.
+
+  \mode<presentation>{\vfill\pause}
+  \item Technology \textmark{evolution} and principle of \textmark{locality}
+        place more \textbad{pressure} over caches.
+  
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Miss penalty} dependent on \textmark{access time}
+        and \textmark{transfer time}.
+
+  \mode<presentation>{\vfill\pause}
+  \item Four key dimensions in \textgood{cache design}:
+    \begin{itemize}
+      \item 
+        \textmark{Block placement}, 
+        \textmark{block identification},
+        \textmark{block replacement}, and
+        \textmark{write strategy}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Six \textgood{basic} cache \textgood{optimizations}:
+    \begin{itemize}
+      \item \textmark{Decrease miss rate}: 
+        Increase block size,
+        increase cache size,
+        increase associativity.
+      \item \textmark{Decrease miss penalty}:
+        Multi-level caches, 
+        prioritize reads over writes.
+      \item \textmark{Decrease hit time}:
+        Avoid address translation.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t]{References}
+\begin{itemize}
+  \item \bibhennessy
+    \begin{itemize}
+       \item Sección B.1 -- Introduction.
+       \item Sección B.2 -- Cache Performance.
+       \item Sección B.3 -- Size Cache Optimizations.
+    \end{itemize}
+\end{itemize}
+\end{frame}
