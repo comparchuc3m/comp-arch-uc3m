@@ -1,4 +1,4 @@
-\subsection{Rendimiento del procesador}
+\section{Rendimiento del procesador}
 
 \begin{frame}[t]{Tiempo de ejecución}
 \begin{itemize}
@@ -127,7 +127,8 @@ CPI = 0.25 \times 4 + 1.33 \times 0.75 = \textbf{1.9975}
 \begin{math}
 0.25 \times 4 = 0.23 \times CPI_{otrasFP} + 0.02 \times 20
 \end{math}
-\pause
+
+\mode<presentation>{\pause\vfill}
 \framebox{
 \begin{math}
 CPI_{otrasFP} = \frac{0.24 \times 4 - 0.02 \times 20}{0.23} = 2.6087
@@ -141,11 +142,4 @@ CPI_{nuevoFPSQR} = 0.23 \times 2.6087 + 0.02 \times \alert{2} + 0.75 \times 1.33
 \begin{math}
 CPI_{nuevoFP} = 0.25 \times \alert{2.5} + 0.75 \times 1.33 = \textbf{1.6225}
 \end{math}
-\mode<article>{
-\begin{itemize}
-  \item \alert{Observación}: Aunque reducir una instrucción (FPSQR) de 20 ciclos a 2 ciclos
-        puede resultar llamativo, se consigue una mejora similar con una reducción mucho más
-        modesta (de 4 a 2 ciclos) para una familia de instrucciones.
-\end{itemize}
-}
 \end{frame}

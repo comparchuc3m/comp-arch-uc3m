@@ -1,4 +1,4 @@
-\subsection{Benchmarks}
+\section{Benchmarks}
 
 \begin{frame}[t]{Workload}
 \begin{itemize}
@@ -49,30 +49,30 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}[t]{Benchmarks}
+\begin{frame}[t]{Benchmark suites}
 \begin{itemize}
-  \item \textgood{Embedded}:
+  \item A \textemph{benchmark suite} consists of a set of progrmas.
     \begin{itemize}
-      \item Dhrystone (arguable relevance).
-      \item EEMBC (kernels).
+      \item Evaluates performance of \textmark{all programs}.
+      \item It may define compiler options.
+      \item Includes workload for each program.
     \end{itemize}
 
-  \mode<presentation>{\pause\vfill}
-  \item \textgood{Desktop}:
-    \begin{itemize}
-      \item SPEC2017 (mix of integer and floating point programs).
-    \end{itemize}
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Activity}:
+    \begin{enumerate}
+      \item \emph{Read} the following sections from 
 
-  \mode<presentation>{\pause\vfill}
-  \item \textgood{Servers}:
-    \begin{itemize}
-      \item SPECWeb, SPECSFS, SPECjbb, SPECvirt\_Sc2010.
-      \item TPC
-    \end{itemize}
+        \bibhennessy
+        \begin{itemize}
+          \item Desktop Benchmarks (pages 41--43).
+          \item Server Benchmarks (pages 43--45).
+        \end{itemize}
+    \end{enumerate}
 \end{itemize}
 \end{frame}
 
-\begin{frame}[t]{Example: SPEC2006}
+\begin{frame}[t]{Example: SPEC2017}
 \begin{itemize}
   \item \textmark{SPECrate/SPECspeed 2017 Integer}: Integer arithmetic.
     \begin{itemize}

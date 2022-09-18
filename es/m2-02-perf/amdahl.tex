@@ -1,4 +1,4 @@
-\subsection{Ley de Amdahl}
+\section{Ley de Amdahl}
 
 \begin{frame}[t]{Ley de Amdahl}
 \begin{itemize}
@@ -21,7 +21,7 @@ S = \frac{T(O)}{T(M)}
 
 \begin{frame}[t]{Tiempo de ejecución}
 \begin{columns}
-\begin{column}{0.5\textwidth}
+\begin{column}{0.4\textwidth}
 \begin{tikzpicture}
 \tikzset{
     etiqueta/.style={text centered, font=\footnotesize} 
@@ -37,15 +37,17 @@ S = \frac{T(O)}{T(M)}
 \end{tikzpicture}
 \end{column}
 \pause
-\begin{column}{.5\textwidth}
+\begin{column}{.6\textwidth}
 \begin{small}
 \begin{displaymath}
-F=\frac{T(A)}{T} = \pause
-\frac{T(A)}{T(A)+T(B)}
+F=\frac{T(A)}{T} \pause
+\quad \Rightarrow \quad 1 - F = \frac{T(B)}{T} \pause
+\quad \Rightarrow \quad T(B) = (1 - F) T \pause
 \end{displaymath}
 \pause
 \begin{displaymath}
-S(m)=\frac{T(A)}{T(A')}
+S(m)=\frac{T(A)}{T(A')} \pause
+\quad \Rightarrow \quad T(A') = \frac{T(A)}{S(m)}
 \end{displaymath}
 \end{small}
 \end{column}
@@ -65,47 +67,6 @@ T'=\frac{F \times T}{S(m)} + (1-F) \times T
 T'=T \times \Big[ (1 - F) + \frac{F}{S(m)} \Big]
 \end{displaymath}
 \end{small}
-\end{frame}
-
-\begin{frame}[t]{Ejemplo}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\begin{tikzpicture}
-\tikzset{
-    etiqueta/.style={text centered, font=\footnotesize} 
-}  
-\fill(0,1.25) [fill=blue] rectangle (4,1.75);
-\fill(4,1.25) [fill=green!40!black] rectangle (5,1.75);
-\node[etiqueta] at (2,2) {$20$};
-\node[etiqueta] at (4.5,2) {$5$};
-\fill(0,0) [fill=blue] rectangle (2,0.5);
-\fill(2,0) [fill=green!40!black] rectangle (3,0.5);
-\node[etiqueta] at (1,0.75) {$10$};
-\node[etiqueta] at (2.5,0.75) {$5$};
-\end{tikzpicture}
-\end{column}
-\pause
-\begin{column}{.5\textwidth}
-\begin{small}
-\begin{displaymath}
-F=\frac{20}{20+5}=0.8
-\end{displaymath}
-\begin{displaymath}
-S(m)=\frac{20}{10}=2
-\end{displaymath}
-\end{small}
-\end{column}
-\end{columns}
-\pause
-\begin{small}
-\begin{displaymath}
-T'=T \times \Big[ (1 - F) + \frac{F}{S(m)} \Big] =
-25 \times \Big[ (1-0.8) + \frac{0.8}{2} \Big] = 15
-\end{displaymath}
-\end{small}
-\begin{itemize}
-  \item \alert{¡Esto ya lo sabíamos!}
-\end{itemize}
 \end{frame}
 
 \begin{frame}[t]{Ley de Amdahl}

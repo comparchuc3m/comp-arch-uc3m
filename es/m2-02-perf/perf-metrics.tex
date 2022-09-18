@@ -1,4 +1,4 @@
-\subsection{Métricas de rendimiento}
+\section{Métricas de rendimiento}
 
 \begin{frame}[t]{Velocidad de ejecución}
 \begin{itemize}
@@ -60,7 +60,7 @@ n=\frac{T(x)}{T(y)}=
 
 \begin{frame}[t]{Métricas}
 \begin{itemize}
-  \item La \alert{única} métrica fiable para comparar el rendimiento de computadores 
+  \item La \textbad{única} métrica \textemph{fiable} para comparar el rendimiento de computadores 
         es la ejecución de \textmark{programas reales}.
     \begin{itemize}
       \item Cualquier otra métrica conduce a errores.
@@ -69,10 +69,20 @@ n=\frac{T(x)}{T(y)}=
   \mode<presentation>{\pause\vfill}
   \item \textgood{Tiempo de ejecución}.
     \begin{itemize}
-      \item \textbf{Tiempo de respuesta}: 
+      \item \textmark{Tiempo de respuesta}: 
             Tiempo total transcurrido.
-      \item \textbf{Tiempo de CPU}: 
+        \begin{itemize}
+          \item Tiempo de reloj (\emph{wall-clock time}) o tiempo transcurrido (\emph{elapsed time}).
+        \end{itemize}
+      \mode<presentation>{\vfill}
+      \item \textmark{Tiempo de CPU}: 
             Tiempo que la CPU ha estado ocupada.
+        \begin{itemize}
+          \item Con \textgood{un solo procesador} usado \textemph{suele ser menor} 
+                que el \textmark{tiempo de respuesta}.
+          \item Con \textgood{varios procesadores} usados \textemph{puede ser mayor}
+                que el \textmark{tiempo de respuesta}.
+        \end{itemize}
     \end{itemize}
 \end{itemize}
 \end{frame}

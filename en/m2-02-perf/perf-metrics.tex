@@ -1,4 +1,4 @@
-\subsection{Performance metrics}
+\section{Performance metrics}
 
 \begin{frame}[t]{Execution speed}
 \begin{itemize}
@@ -64,7 +64,7 @@ n=\frac{T(x)}{T(y)}=
 
 \begin{frame}[t]{Metrics}
 \begin{itemize}
-  \item The \alert{only} reliable metric for comparing computer performance
+  \item The \textbad{only} \textemph{reliable} metric for comparing computer performance
         is the execution of \textmark{real programs}.
     \begin{itemize}
       \item Any other metric is error-prone.
@@ -74,10 +74,20 @@ n=\frac{T(x)}{T(y)}=
   \mode<presentation>{\pause\vfill}
   \item \textgood{Execution time}.
     \begin{itemize}
-      \item \textbf{Response time}: 
+      \item \textmark{Response time}: 
             Total elapsed time.
-      \item \textbf{Perceived by the user}:
-            CPU time: Time the CPU has been busy.
+        \begin{itemize}
+          \item Wall-clock time or elapsed time.
+        \end{itemize}
+
+      \mode<presentation>{\vfill}
+      \item \textmark{CPU time}: Time the CPU has been busy.
+        \begin{itemize}
+          \item With \textgood{a single processor} in use, it is \textemph{usually lower}
+                than \textmark{response time}.
+          \item With \textgood{multiple processors} in use, it is \textemph{usually higher}
+                than \textmark{response time}.
+        \end{itemize}
     \end{itemize}
 \end{itemize}
 \end{frame}
