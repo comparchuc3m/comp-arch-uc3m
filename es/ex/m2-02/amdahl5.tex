@@ -1,0 +1,109 @@
+\begin{acexercise}\end{acexercise}
+
+Se dispone de un computador con un solo núcleo que ejecuta una aplicación de
+evaluación de riesgos financieros. Esta aplicación es intensiva en cálculo, a
+lo que dedica el 90\% del tiempo. El 10\% restante lo dedica a esperar en
+operaciones de entrada/salida a disco.
+
+Del tiempo que la aplicación pasa ejecutando instrucciones de cálculo un 75\%
+del tiempo lo pasa ejecutando operaciones en coma flotante y un 25\% lo pasa
+ejecutando otras instrucciones. La ejecución de una instrucción de coma
+flotante requiere como promedio 12 CPI. El resto de instrucciones requieren
+como promedio 4 CPI.
+
+Se está valorando la migración de esta aplicación a las siguientes
+alternativas, que no incorporan ninguna mejora para el tiempo de las
+operaciones de entrada/salida a disco:
+
+\begin{itemize}
+  \item \textbf{Alternativa A}: Un procesador con un solo núcleo y con una
+frecuencia de reloj un 50\% más alta que la de la máquina original en el que las
+instrucciones de coma flotante requieren un 10\% más de ciclos por instrucción y
+el resto de instrucciones requieren un 25\% más de ciclos por instrucción.
+
+  \item \textbf{Alternativa B}: Un procesador con cuatro núcleos y con una
+frecuencia de reloj un 50\% más baja que la de la máquina original, en el que
+las instrucciones de coma flotante requieren un 20\% menos de ciclos de reloj y
+el resto de instrucciones los mismos ciclos de reloj.  
+\end{itemize}
+
+Se pide responder de forma justificada a las siguientes cuestiones:
+\begin{enumerate}
+
+  \item ¿Cuál será la aceleración/deceleración global de la aplicación en el
+caso A? 
+
+  \item ¿Cuál será la aceleración/deceleración global de la aplicación en el
+caso B si se asume que la parte de cálculo es totalmente paralelizable mientras
+la entrada/salida no admite ningún tipo de paralelización?  \end{enumerate}
+
+
+\begin{acsolution}
+\end{acsolution}
+
+El tiempo dedicado a la ejecución de instrucciones en el computador original será:
+
+\begin{equation}
+T_{orig} = 
+0.75 \times 12 \times IC \times P + 0.25 \times 4 \times IC \times P = 
+(9+1) \times IC \times P
+\end{equation}
+
+\paragraph{Alternativa A}
+
+El tiempo dedicado a la ejecución de instrucciones en el computador A será:
+
+\begin{equation}
+T_{A} =
+(0.75 \times (1,1 \times 12) + 0.25 \times (1.25 \times 4)) \times IC \times \frac{P}{1.5} = 
+\frac{(9.9 + 1.25) \times IC  \times P}{1.5} = 
+\frac{11.15}{1.5} \times IC * P 
+\end{equation}
+
+\begin{equation}
+T_{A} = 7.433 \times IC \times P
+\end{equation}
+
+El Speedup debido a instrucciones será:
+
+\begin{equation}
+S_{A}^{I} = 
+\frac{T_{orig}}{T_{A}} = 
+\frac{10}{7.433} = 
+1.345
+\end{equation}
+
+Aplicando la Ley de Amdahl el speedup global sera:
+
+\begin{equation}
+S_{A} = \frac{1}{0.1 + \frac{0.9}{1.345}} = 1.3
+\end{equation}
+
+\paragraph{Alternativa B}
+
+En este caso, al asumirse paralelización completa de la parte de cálculo se
+puede considerar que el número de instrucciones a ejecutar en cada núcleo es la
+cuarta parte del original.
+
+\begin{equation}
+T_{B} = 
+(0.75 \times 0.8 \times 12 + 0.25 \times 4) \times \frac{IC}{4} \times \frac{P}{0.5} = 
+( 7.2 + 1) \times \frac{2}{4} \times IC \times P = 
+\end{equation}
+
+\begin{equation}
+T_{B} = 4.1 \times IC \times P
+\end{equation}
+
+El Speedup debido a instrucciones sera:
+
+\begin{equation}
+S^{I}_{B} = \frac{T_{orig}}{T_{B}} = \frac{10}{4.1} = 2.439
+\end{equation}
+
+Aplicando la Ley de Amdahl el speedup global sera:
+
+\begin{equation}
+S_{B} = \frac{1}{0.1 + \frac{0.9}{2.439}} = 2.132
+\end{equation}
+

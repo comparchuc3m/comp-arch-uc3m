@@ -1,0 +1,50 @@
+\begin{acexercise}\end{acexercise}
+
+En su organización se dispone de una aplicación con las siguientes características:
+
+\begin{itemize}
+
+\item La aplicación pasa el 80\% del tiempo ejecutando instrucciones y el 20\%
+del tiempo restante esperando a la realización de operaciones de disco.
+
+\item El tiempo que la aplicación pasa ejecutando instrucciones se distribuye
+en un 20\% para instrucciones en coma flotante (que requieren 8 CPI) y un 80\%
+para el resto de instrucciones (que requierens 6 CPI).
+
+\end{itemize}
+
+Se está valorando la migración a una nueva máquina en la que las instrucciones
+requieren un 25\% más de CPI, pero cuya frecuencia de reloj es el doble.
+
+¿Cuál será la aceleración global de la aplicación?
+
+
+\begin{acsolution}\end{acsolution}
+
+\[ 
+T_{inst}(orig) = 
+0.2 \cdot 8 \cdot IC \cdot P+ 0.8 \cdot 6 \cdot IC \cdot P = 
+(1.6 + 4.8) \cdot IC \cdot P = 
+6.4 \cdot IC \cdot P 
+\]
+
+\[ 
+T_{inst}(mej) = 
+0.2 \cdot 10 \cdot IC \cdot \frac{P}{2} + 0.8 \cdot 7.5 IC \cdot \frac{P}{2} = 
+(1 + 3) \cdot IC \cdot P = 
+4 \cdot IC \cdot P 
+\]
+
+\[ 
+S_{inst} = 
+\frac{6.4}{4} = 
+1.6 
+\]
+
+\[ 
+S = 
+\frac{1}{0.2 + \frac{0.8}{1.6}} = 
+\frac{1}{0.2 + 0.5} = 
+\frac{1}{0.7} =1,42 
+\]
+

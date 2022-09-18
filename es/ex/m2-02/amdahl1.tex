@@ -1,0 +1,19 @@
+\begin{acexercise}\end{acexercise}
+
+La ejecución de un programa tiene dos partes. La primera parte requiere un 20\%
+del tiempo total de ejecución y la segunda parte el restante 80\%. La segunda
+parte, se puede paralelizar mediante OpenMP en un multiprocesador. Suponga que
+la aceleración (speedup) es perfecta para cualquier número de procesadores.
+¿Cuál sería la aceleración global de la aplicación cuando se utilizan 10
+procesadores?
+
+
+\begin{acsolution}\end{acsolution}
+
+Para resolver este ejercicio es suficiente con aplicar la Ley de Amdahl con los
+valores $0.2$ en su parte secuencial y $0.8$ en su parte paralela.
+
+\[
+S = \frac{1}{0.2 + \frac{0.8}{10}} = \frac{1}{0.2 + 0.08} = \frac{1}{0.28} =
+3.57
+\]

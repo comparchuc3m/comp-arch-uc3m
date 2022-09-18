@@ -1,0 +1,74 @@
+\begin{acexercise}\end{acexercise}
+
+Una aplicación de generación video en 3D se ejecuta actualmente en un
+computador con 4 núcleos. La aplicación tiene una parte que no está
+paralelizada y que constituye el 25\% del tiempo de ejecución. La aplicación
+pasa un 50\% del tiempo dedicada a procesamiento en memoria y que está
+totalmente paralelizada y un 25\% del tiempo dedicada a operaciones de lectura
+y escritura de disco.
+
+Se están valorando dos opciones:
+
+\begin{itemize}
+\item Sustituir los discos actuales por una nueva tecnología de almacenamiento que requiere la cuarta parte de tiempo de entrada/salida.
+\item Sustituir el procesador por un procesador de 32 núcleos.
+\end{itemize}
+
+Se pide:
+
+\begin{enumerate}
+\item Determine el speedup o aceleración en caso de optar por la sustitución de disco.
+\item Determine el speedup o aceleración en caso de optar por la sustitución del procesador.
+\item Determine para que número de núcleos se obtendría la misma aceleración de con la sustitución de discos.
+\end{enumerate}
+
+
+\begin{acsolution}\end{acsolution}
+
+\paragraph{Apartado 1}
+Si se sustituye el disco se tiene que la fracción mejorable $F$ será $0.25$. Así
+mismo la aceleración de la mejora $S(m)$ será $4$. Por tanto, aplicando la Ley de
+Amdahl, se tiene:
+
+\[
+S = \frac{1}{0.75 + \frac{0.25}{4}} = \frac{1}{0.8125} =  1.2308
+\]
+
+\paragraph{Apartado 2}
+Si se sustituye el procesador la aceleración de la mejora viene dada por la
+razón entre el nuevo número de cores $n_n$ y el número antiguo de cores $n_a$.
+
+\[
+S_m = \frac{n_n}{n_a} = \frac{32}{4} = 8
+\]
+
+La fracción mejorable es en este caso 0.5
+\[
+S = \frac{1}{0.5 + \frac{0.5}{8}} = \frac{1}{0.5 + 0.0625} = \frac{1}{0.5625} = 1.7778
+\]
+
+\paragraph{Apartado 3}
+La aceleración de la mejora par aun número arbitrario de cores $n$, será:
+
+\[
+S_m = \frac{n}{4}
+\]
+
+Y por tanto la aceleración total sería:
+
+\[
+S = \frac{1}{0.5 + 
+\frac{0.5}{\frac{n}{4}}} = 
+\frac{1}{0.5 + \frac{2}{n}}
+\]
+
+Si se hace igual este valor a $\frac{1}{0.8125}$, se tiene:
+\[
+\frac{1}{0.8125} = \frac{1}{0.5+\frac{2}{n}}
+\]
+\[ 0.8125 = 0.5 + \frac{2}{n} \]
+\[ \frac{2}{n} = 0.8125 - 0.5 \]
+\[ n = \frac{2}{0.3125} = 6.4 \]
+
+Por tanto, harían falta como mínimo 7 cores.
+

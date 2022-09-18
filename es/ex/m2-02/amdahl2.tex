@@ -1,0 +1,68 @@
+\begin{acexercise}\end{acexercise}
+
+Se dispone de una aplicación que permite procesar una imagen de muy alta
+resolución de la cuál una cierta fracción es paralelizable y otra parte debe
+ejecutarse secuencialmente. Se asume que no hay límite superior al número de
+procesos en que se puede paralelizar.
+
+Se desea obtener un speedup global de 10 en la versión paralela.  Exprese la
+fracción de código que debe ser paralelizable en función del grado de
+paralelismo (número de procesos en que se paraleliza).
+
+
+\begin{acsolution}\end{acsolution}
+
+\[
+S = \frac{1}{\left(1 - F \right) + \displaystyle \frac{F}{n} }
+\]
+
+\[
+S \times \left( (1-F) + \frac{F}{n} \right) = 1
+\]
+
+\[
+S - S \times F + \frac{S \times F}{n} = 1
+\]
+
+\[
+n \times S - n \times S \times F + S \times F = n
+\]
+
+\[
+n \times S - n = n \times S \times F - S \times F
+\]
+
+\[
+S \times F \times \left( n - 1 \right) = n \times \left( S - 1 \right)
+\]
+
+\[
+F = \frac{n \times (S-1)}{S \times(n-1)}
+\]
+
+Para el caso de $S = 10$
+
+\[
+F = \frac{n \times (10-1)}{10 \times (n-1)} = 
+\frac{9 \times n}{10 \times n - 10}
+\]
+
+Para que tenga sentido F debe ser menor o igual que 1. 
+
+\[
+F \leq 1
+\]
+
+\[
+\frac{9 \times n}{10 \times n -10} \leq 1
+\]
+
+\[
+9 \times n \leq 10 \times n-10
+\]
+
+\[
+n \geq 10
+\]
+
+
