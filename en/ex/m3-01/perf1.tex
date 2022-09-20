@@ -1,0 +1,54 @@
+\begin{acexercise}\end{acexercise}
+
+A computer has a value of 1.0 for CPI in ideal conditions
+(when all accesses are hits).
+
+25\% of instructions are of load/store type.
+There is no other kind of instruction accessing to memory.
+Miss penalty is 50 cycles and miss rate is 5\%.
+
+What is the speedup when there is no miss compared to the case
+when there are misses?
+
+\begin{acsolution}\end{acsolution}
+
+\[
+t_{cpu} = (cycles_cpu + cycles_{stall}) \times t\_{cycle}
+\]
+
+For the ideal case, there are no memory stalls and consequently:
+
+\[
+t_{cpu} = IC \times CPI \times t_{cycle} =
+IC \times t_{cycle}
+\]
+
+For the case with misses, we have:
+
+\[
+cycles_{stall} =
+IC \times acceses_{instr} \times (1 - h) \times {penalty}_{fallo}
+\]
+
+Instrucction acceses are $0.25$ as 25\% of instructions perform a data access.
+The hit rate $h$ is $0.95$.
+Miss penalty is $50$ cycles.
+
+\[
+cycles_{stall} =
+IC \times 0.25 \times 0.05 \times 50 =
+0.625 IC
+\]
+
+Thus, CPU time is:
+
+\[
+t_{cpu} = (IC \times 1.0 + 0.625 \times IC) \times t_{cycle} =
+1.625 \times IC \times t_{cycle}
+\]
+
+And speedup is:
+
+\[
+S = \frac{1.625 \times IC \times t_{cycle}}{IC \times t_{cycle}} = 1.625
+\]

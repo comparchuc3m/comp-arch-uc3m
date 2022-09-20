@@ -1,0 +1,93 @@
+\begin{acexercise}\end{acexercise}
+
+Given a two cache levels architecture with the following characteristics
+
+\begin{tabular}{|l|r|r|}
+\hline
+Memory &
+Access time(ns) &
+Hit rate
+\\
+\hline
+\hline
+
+L1 &
+2 &
+0.8
+\\
+\hline
+
+L2 &
+8 &
+0.9
+\\
+\hline
+
+RAM &
+100 &
+1
+\\
+\hline
+
+\end{tabular}
+
+The computer runs a program completely residing in memory (there is no disk access).
+You are asked:
+
+\begin{enumerate}
+
+  \item Assuming that 100\% of memory acc3esses are write operations,
+        Justify the average access time for:
+    \begin{enumerate}
+      \item A write-through policy.
+      \item A write-back policy for both cache memories L1 and L2. 
+    \end{enumerate}
+
+  \item Consider now both cache memory levels (L1 and L2) as a single global
+        cache memory. 
+        Compute the average access time and the hit rate for this global cache.
+
+\end{enumerate}
+
+\begin{acsolution}\end{acsolution}
+
+\paragraph{Section 1}
+
+For write-through, 100\% of accesses are write operations.
+All accesses aren performed on main memory.
+Thus, access time will be in all cases:
+
+\[
+t = 2 + 8 + 100 = 110 ns
+\]
+
+For write-back, when hit happens, no write is sent to memory.
+Consequently, access time is:
+
+\[
+t= 2 + (1 - 0.8) \cdot (8 + (1-0.9) \cdot 100) =
+2 + 0.2 \cdot (8 + 0.1 \cdot 100) =
+2 + 0.2 \cdot 18 = 
+2 + 3.6 = 5.6 ns
+\]
+
+\paragraph{Section 2}
+
+Average access time is:
+
+\[
+t = 2 + (1 - 0.8) \cdot 8 =
+2 + 0.2 \cdot 8 =
+2 + 1.6 =
+3.6 ns
+\]
+
+And hit rate is:
+\[
+h =
+1 - (1-0.8) \cdot (1-0.9) =
+1-0.2 \cdot 0.1 = 
+1 - 0.02 =
+0.98.
+\]
+
