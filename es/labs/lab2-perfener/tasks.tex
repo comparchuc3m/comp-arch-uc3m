@@ -24,7 +24,9 @@ Tienes las siguientes opciones:
       \item Una vez conectado, debes seleccionar el equipo \textemph{Avignon}.
     \end{itemize}
 
-  \item Conectarte mediante \cppid{ssh} a \cppkey{avignon.lab.inf.uc3m.es}.
+  \item Conectarte mediante \cppid{ssh} a \cppkey{avignon.lab.inf.uc3m.es}. Para ello,
+        desde un terminal deberás usar el mandato \cppid{ssh}, utilizando tu
+        usuario y clave del Laboratorio de Informática.
 \begin{lstlisting}[style=terminal]
 $ ssh -l nombreusuario avignon.lab.inf.uc3m.es
 jdgarcia@avignon.lab.inf.uc3m.es's password: 
@@ -50,71 +52,153 @@ se puede usar el mandato \textmark{lscpu}.
 
 Escribe el siguiente código en un archivo que llamarás \cppid{runlscpu.sh}
 
-\begin{lstlisting}[language=sh]
+\begin{lstlisting}[language=bash,frame=single,title={Archivo: runlscpu.sh}]
 #!/bin/sh
 lscpu
 \end{lstlisting}
 
-Para lanzar el mandato debes usar el mandato \textmark{sbatch}:
+Para lanzar el mandato debes usar el mandato \cppid{sbatch}.
+Debe pasarse como argumento siempre el nombre de un \emph{shell script}:
 
 \begin{lstlisting}[style=terminal]
-$ sbatch runlscpu
+$ sbatch ./runlscpu.sh
 Submitted batch job 408
 $
 \end{lstlisting}
 
 Podrás consultar la lista de trabajos activos con el mandato \textmark{squeue}.
+
 Cuando el trabajo haya terminado, la salida estándar del mismo se habrá guardado
 en un archivo llamado \cppid{slurm-XXX.out}, donde XXX es el número de trabajo.
 
-Compara las características del nodo \emph{front-end} y el nodo de ejecución.
+Compara las características del nodo \emph{front-end} (ejecutando \cppid{lscpu})
+y el nodo de ejecución (ejecutando \cppid{sbatch ./lscpu.sh}).
+
+Presta atención a las siguientes características:
+\begin{itemize}
+  \item Arquitectura.
+  \item Número de CPUs.
+  \item Modelo de CPU.
+  \item Rango de frecuencias de reloj.
+  \item Tamaño de los niveles de caché.
+\end{itemize}
 
 \subsection{Compilación de los programas C++}
 
-En esta tarea vamos a compilar en un nodo de ejecución dos programas:
+Durante este laboratorio, vamos a trabajar con tres versiones de un programa
+que generan una imagen en formato PBM del conjunto de Mandelbrot.
 
 \begin{itemize}
-  \item \cppid{mandel.cpp}: Versión secuencial simplificada.
-  \item \cppid{mandel-par.cpp}: Versión paralela optimizada manualmente.
+  \item \cppid{mandel.py}: Versión en Python.
+  \item \cppid{mandel.cpp}: Versión secuencial simplificada en C++.
+  \item \cppid{mandel-par.cpp}: Versión paralela optimizada manualmente en C++.
 \end{itemize}
 
-Para cada una de estas versiones deberás generar un ejecutable con la versión de 
-\textmark{Debug} y otro con la versión de \textmark{Release}.
+\subsubsection{Transferencia de los archivos}
 
-Para ello, dentro del directoria donde vayas a trabajar, descarga los archivos
-fuente suministrados en un subdirectorio que llamaremos \cppkey{mandel}.
-Deberás ejecutar los siguientes mandatos.
+En aula Global encontrarás un archivo \cppid{mandel.zip} con toda el código que
+necesitas. Coloca este archivo en un directorio en tu máquina local llamado
+\cppkey{lab2}. A continuación descomprime el archivo en un subdirectorio que
+se llamará \cppkey{mandel}:
 
-Para ello desde el directorio raíz del proyecto, deberás ejecutar los siguientes
-mandatos:
+\begin{lstlisting}[style=terminal]
+usuario@maquina:~/lab2$ unzip mandel.zip mandel
+Archive:  mandel.zip
+  inflating: mandel/CMakeLists.txt   
+  inflating: mandel/mandel.cpp       
+  inflating: mandel/mandel.py        
+  inflating: mandel/mandel-par.cpp   
+usuario@maquina:~/lab2$ ls
+mandel  mandel.zip
+\end{lstlisting}
+
+Para transferir los archivos puedes usar el mandato \cppid{scp}.
+
+Primero crea en el directorio remoto un subdirectorio llamado \cppid{mandel}.
+
+\begin{lstlisting}[style=terminal]
+$usuario@avignon-frontened:/~lab2$ mkdir
+$usuario@avignon-frontened:/~lab2$ ls
+mandel  runlscpu.sh  ...
+\end{lstlisting}
+
+Colócate en el directorio donde hayas descargado el archivo \cppid{mandel.zip}
+y usa el siguiente mandato:
+
+\begin{lstlisting}[style=terminal,basicstyle=\tiny\ttfamily,columns=fixed]
+usuario@maquina:~/lab2$ scp mandel/* usuario@avignon.lab.inf.uc3m.es:~/lab2/mandel
+usuario@avignon.lab.inf.uc3m.es password: 
+CMakeLists.txt                            100%  427   166.6KB/s   00:00    
+mandel.cpp                                100% 2193   783.0KB/s   00:00    
+mandel-par.cpp                            100%   11KB   3.0MB/s   00:00    
+mandel.py                                 100% 1692   596.9KB/s   00:00    
+usuario@maquina:~/lab2$ 
+\end{lstlisting}
+
+Con esta orden habrás transferido todos los archivos necesarios al directorio
+remoto \cppid{~/lab2/mandel}.
+
+\subsubsection{Compilación desde línea de mandatos}
+
+Los archivos \cppid{CMake} permiten automatizar la compilación. En esta tarea
+se compilarán dos versiones de cada probrama: una versión de \textmark{Debug}
+y una versión de \textmark{Release}.
+
+Un detalle importante, es que las máquinas del \emph{front-end} y los nodos de
+ejecución son muy diferentes (como habrás observado con \cppid{lscpu}). Por
+tanto es importante que compiles en un nodo de ejecución.
+
+Para ello vamos a crear un script de compilación:
+\begin{lstlisting}[language=bash,frame=single,title={Archivo: runlscpu.sh}]
+#!/bin/sh
+cmake -S mandel -B mandel-debug -DCMAKE_BUILD_TYPE=Debug
+cmake -S mandel -B mandel-release -DCMAKE_BUILD_TYPE=Release
+cmake --build mandel-debug
+cmake --build mandel-release 
+\end{lstlisting}
+
+\textbad{ACLARACIÓN}: A continuación se presenta una pequeña descripción
+de lo que hace cada uno de los mandatos
 
 \begin{itemize}
-  \item Para generar la configuración de CMake para \textmark{Debug}:
 \begin{lstlisting}[style=terminal]
-cmake -S mandel -B debug -DCMAKE_BUILD_TYPE=Debug
+cmake -S mandel -B mandel-debug -DCMAKE_BUILD_TYPE=Debug
 \end{lstlisting}
+  \item Genera una configuración de proyecto en el directorio \cppid{mandel-debug}
+        a partir de los archivos fuente del directorio \cppid{mandel}.
+        Utiliza como opción la variable \cppkey{DCMAKE\_BUILD\_TYPE=Debug},
+        que hace que se utilicen las opciones de compilación de depuración.
 
-  \item Para generar la configuración de CMake para \textmark{Release}:
 \begin{lstlisting}[style=terminal]
-cmake -S mandel -B release -DCMAKE_BUILD_TYPE=Release
+cmake -S mandel -B mandel-release -DCMAKE_BUILD_TYPE=Release
 \end{lstlisting}
+  \item Genera una configuración de proyecto en el directorio \cppid{mandel-release}
+        a partir de los archivos fuente del directorio \cppid{mandel}.
+        Utiliza como opción la variable \cppkey{DCMAKE\_BUILD\_TYPE=Release},
+        que hace que se utilicen las opciones de compilación de depuración.
 
-  \item Para compilar la versión de \textmark{Debug}:
 \begin{lstlisting}[style=terminal]
-cmake --build debug
+cmake --build mandel-debug
 \end{lstlisting}
+  \item Construye el proyecto generado en el directorio \cppid{mandel-debug}.
 
-  \item Para compilar la versión de \textmark{Release}:
 \begin{lstlisting}[style=terminal]
-cmake --build release
+cmake --build mandel-release
 \end{lstlisting}
+  \item Construye el proyecto generado en el directorio \cppid{mandel-release}.
 
 \end{itemize}
 
 \textbad{IMPORTANTE}: No ejecutes estos mandatos en el \emph{front-end}.
 En ese caso generarías código que no es válido para ejecutar en los 
-nodos de cómputo. En su lugar, crea un \emph{shell script} con estas
-órdenes y lánzalo en un nodo de cómputo con \cppid{sbatch}.
+nodos de cómputo. En su lugar, ejecuta el \emph{script} utilizando el mandato.
+
+\begin{lstlisting}[style=terminal]
+sbatch build.sh
+\end{lstlisting}
+
+Recuerda comprobar los archivos generados en los directorios \cppid{mandel-debug}
+y \cppid{mandel-release}.
 
 \subsection{Ejecución de los programas}
 
@@ -132,10 +216,15 @@ Para las versiones de C++ ejecutaremos solamente las versiones de \textmark{Rele
       \item Debes redirigir la salida a un archivo con extensión \cppkey{.pbm}.
     \end{itemize}
 
-\begin{lstlisting}[style=terminal,title=runpy.sh]
+\begin{lstlisting}[language=bash,title={Archivo runpy.sh},frame=single]
 #!/bin/sh
 python3.9 -OO mandel/mandel.py 8000 > py-mandel.pbm
+echo "Ejecución de mandel.py finalizada"
 \end{lstlisting}
+
+    \begin{itemize}
+      \item Ejecuta este \emph{scritp} usando el mandato \cppid{sbatch}.
+    \end{itemize}
 
   \item \cppid{mandel}: Para ejecutar este programa invocaremos directamente al
         ejecutable.
@@ -144,10 +233,14 @@ python3.9 -OO mandel/mandel.py 8000 > py-mandel.pbm
       \item El programa toma como segundo parámetro el nombre del archivo de salida.
     \end{itemize}
 
-\begin{lstlisting}[style=terminal,title=run-seq-mandel.sh]
+\begin{lstlisting}[language=bash,title={Archivo run-seq-mandel.sh},frame=single]
 #!/bin/sh
 release/mandel 8000 seq-mandel.pbm
+echo "Ejecución de release/mandel finalizada"
 \end{lstlisting}
+    \begin{itemize}
+      \item Ejecuta este \emph{scritp} usando el mandato \cppid{sbatch}.
+    \end{itemize}
 
   \item \cppid{mandel-par}: Para ejecutar este programa invocaremos directamente al
         ejecutable.
@@ -156,14 +249,21 @@ release/mandel 8000 seq-mandel.pbm
       \item Debes redirigir la salida a un archivo con extensión \cppkey{.pbm}.
     \end{itemize}
 
-\begin{lstlisting}[style=terminal,title=run-par-mandel.sh]
+\begin{lstlisting}[language=bash,title={Archivo run-par-mandel.sh},frame=single]
 #!/bin/sh
 release/mandel 8000 > par-mandel.pbm
+echo "Ejecución de release/mandel-par finalizada"
 \end{lstlisting}
+    \begin{itemize}
+      \item Ejecuta este \emph{scritp} usando el mandato \cppid{sbatch}.
+    \end{itemize}
 \end{enumerate}
+
 
 \textbad{IMPORTANTE}: Recuerda comprobar que los tres archivps \cppkey{.pbm}
 generados son idénticos.
+
+Fíjate que el fichero \cppid{slurm-XXX} debe tener un mensaje de finalización.
 
 \subsection{Medición básica del rendimiento}
 
