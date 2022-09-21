@@ -1,0 +1,391 @@
+\section{Tasks}
+
+\subsection{Lab account}
+
+If you do not have an account in the Computer Science and Engineering Department Lab, 
+you will need one.
+
+You will find all the information in the following page:
+
+\begin{itemize}
+  \item \url{https://www.lab.inf.uc3m.es/en/services/account-opening/}
+\end{itemize}
+
+This is the account you will use to access the cluster from the Computer Science
+and Engineering Department.
+
+\subsection{Access to the cluster}
+
+You have the following options:
+
+
+\begin{itemize}
+  \item Web connection. You will find all the information at:
+    \begin{itemize}
+      \item \url{https://www.lab.inf.uc3m.es/en/services/virtual-classroom/}
+      \item Once connected, you must select the \textemph{Avignon} server.
+    \end{itemize}
+
+  \item Connect through \cppid{ssh} to \cppkey{avignon.lab.inf.uc3m.es}. 
+        From a terminal, you must use the \cppid{ssh} command, with
+        your user name and password from the Computer Science and Engineering Lab.
+\begin{lstlisting}[style=terminal]
+$ ssh -l username avignon.lab.inf.uc3m.es
+username@avignon.lab.inf.uc3m.es's password: 
+Linux avignon-frontend 5.10.0-15-amd64 #1 SMP Debian 5.10.120-1 (2022-06-09) x86_64
+...
+$
+\end{lstlisting}
+
+\end{itemize}
+
+\subsection{Command execution}
+
+Once you have entered your password you will be in the \emph{front-end} node.
+This machine simply gives you access to launch jobs in other machines.
+However you must not run any program directly in tghe \emph{front-end}.
+
+To run a job, you must write a \emph{shell script} with the tasks you want
+to run. Then you will launch the job with the command \cppkey{sbatch}.
+
+You will create a script to know the hardware features form the computing node.
+To know those features you may use the \cppkey{lscpu} command.
+
+Write the following code in a file named \cppid{runlscpu.sh}
+
+\begin{lstlisting}[language=bash,frame=single,title={File: runlscpu.sh}]
+#!/bin/sh
+lscpu
+\end{lstlisting}
+
+To launch the job, you shall use the \cppkey{sbatch} command.
+The name of the \emph{shell script} is an argument.
+
+\begin{lstlisting}[style=terminal]
+$ sbatch ./runlscpu.sh
+Submitted batch job 408
+$
+\end{lstlisting}
+
+You will be able to see the list of active jobs with the \textmark{squeue} command.
+
+When the job has finished, the standard output is saved in a file named
+\cppid{slurm-XXX.out}, where XXX is the job number.
+
+Compare the features from the \emph{front-end} node (running \cppkey{lscpu})
+and the computing node (using \cppkey{sbatch ./lscpu.sh}).
+
+Pay attention to the following:
+\begin{itemize}
+  \item Architecture.
+  \item Number of CPUs.
+  \item CPU model.
+  \item Clock frequency rante.
+  \item Sizes in all cache levels.
+\end{itemize}
+
+\subsection{Compiling C++ programs}
+
+During this lab, three versions of a program will be used.
+Teh program generates an image for the Mandelbrot set in PBM format.
+
+\begin{itemize}
+  \item \cppid{mandel.py}: Python version.
+  \item \cppid{mandel.cpp}: Simplified sequential version in C++.
+  \item \cppid{mandel-par.cpp}: Manually optimized parallel version in C++.
+\end{itemize}
+
+\subsubsection{File transfer}
+
+In Aula Global you will find a file named \cppid{mandel.zip} with all the code you need.
+Place this file in a directory in you local machine named \cppid{lab2}.
+Unzip the file in a subdirectory named \cppid{mandel}:
+
+\begin{lstlisting}[style=terminal]
+username@machine:~/lab2$ unzip mandel.zip mandel
+Archive:  mandel.zip
+  inflating: mandel/CMakeLists.txt   
+  inflating: mandel/mandel.cpp       
+  inflating: mandel/mandel.py        
+  inflating: mandel/mandel-par.cpp   
+username@machine:~/lab2$ ls
+mandel  mandel.zip
+\end{lstlisting}
+
+To transfer the fils you may use the \cppkey{scp} command.
+
+Firstly, create in the remote directoyr a subdirectory named \cppid{mandel}.
+
+\begin{lstlisting}[style=terminal]
+$user@avignon-frontened:/~lab2$ mkdir
+$user@avignon-frontened:/~lab2$ ls
+mandel  runlscpu.sh  ...
+\end{lstlisting}
+
+Go to your local directory where you downloaded the \cppid{mandel.zip} fil and 
+use the following command.
+
+\begin{lstlisting}[style=terminal,basicstyle=\tiny\ttfamily,columns=fixed]
+username@machine:~/lab2$ scp mandel/* user@avignon.lab.inf.uc3m.es:~/lab2/mandel
+user@avignon.lab.inf.uc3m.es password: 
+CMakeLists.txt                            100%  427   166.6KB/s   00:00    
+mandel.cpp                                100% 2193   783.0KB/s   00:00    
+mandel-par.cpp                            100%   11KB   3.0MB/s   00:00    
+mandel.py                                 100% 1692   596.9KB/s   00:00    
+username@machine:~/lab2$ 
+\end{lstlisting}
+
+You will have transfered all the needed files to the remote directory
+\cppid{~/lab2/mandel}.
+
+\subsubsection{Compiling from command line}
+
+\cppid{CMake} files allow you to automate the compilation process.
+In this task you will compile two versions for each program:
+a \textmark{Debug} version and a \textmark{Release} version.
+
+Note that the \emph{front-end} machine and the computin nodes are quite different
+(as you noticed with \cppid{lscpu}).
+It is very important that you compile in a computing node.
+
+To achieve this, you will create a compilation script.
+\begin{lstlisting}[language=bash,frame=single,title={File: runlscpu.sh}]
+#!/bin/sh
+cmake -S mandel -B mandel-debug -DCMAKE_BUILD_TYPE=Debug
+cmake -S mandel -B mandel-release -DCMAKE_BUILD_TYPE=Release
+cmake --build mandel-debug
+cmake --build mandel-release 
+\end{lstlisting}
+
+\textbad{CLARIFICATION}: 
+A small description of the effects of each command is given below.
+
+\begin{itemize}
+\begin{lstlisting}[style=terminal]
+cmake -S mandel -B mandel-debug -DCMAKE_BUILD_TYPE=Debug
+\end{lstlisting}
+  \item Generates a project configuration in directoyr \cppid{madel-debug}
+        from the source files in directory \cppid{mandel}.
+        Use this option with the variable \cppkey{DCMAKE\_BUILD\_TYPE=Debug},
+        to use de debug compiler options.
+
+\begin{lstlisting}[style=terminal]
+cmake -S mandel -B mandel-release -DCMAKE_BUILD_TYPE=Release
+\end{lstlisting}
+  \item Generates a project configuration in directoyr \cppid{madel-release}
+        from the source files in directory \cppid{mandel}.
+        Use this option with the variable \cppkey{DCMAKE\_BUILD\_TYPE=Release},
+        to use de debug compiler options.
+
+\begin{lstlisting}[style=terminal]
+cmake --build mandel-debug
+\end{lstlisting}
+  \item Build the project generated in directoyr \cppid{mandel-debug}.
+
+\begin{lstlisting}[style=terminal]
+cmake --build mandel-release
+\end{lstlisting}
+  \item Build the project generated in directoyr \cppid{mandel-debug}.
+
+\end{itemize}
+
+\textbad{IMPORTANT}: 
+Do not run thos commands in the \emph{front-end}.
+In such case you would generate code that is not valid to be executed
+in the computing nodes.
+Run the script, using the command:
+
+\begin{lstlisting}[style=terminal]
+sbatch build.sh
+\end{lstlisting}
+
+Check the files generated in directories\cppid{mandel-debug}
+and \cppid{mandel-release}.
+
+\subsection{Running the programs}
+
+In this task you will run the programs in a computing node.
+For the C++ versions, you will only use the \textmark{Release} versions.
+
+\begin{enumerate}
+  \item \cppid{mandel.py}: 
+        To run this program you will use the Python interpreter.
+        You have availabe version 3.9.
+
+    \begin{itemize}
+      \item Do not forget to pass the option \cppid{-OO} to Python in order
+            to remove debug information.
+      \item The program takes as a parameter the image size, which is square.
+      \item You must redirect the output to a file with extension \cppkey{.pbm}.
+    \end{itemize}
+
+\begin{lstlisting}[language=bash,title={File: runpy.sh},frame=single]
+#!/bin/sh
+python3.9 -OO mandel/mandel.py 8000 > py-mandel.pbm
+echo "Finished running mandel.py"
+\end{lstlisting}
+
+    \begin{itemize}
+      \item Run this script using the \cppkey{sbatch} command.
+    \end{itemize}
+
+  \item \cppid{mandel}: 
+        To run this program, you shall invoke directly the executable.
+    \begin{itemize}
+      \item It takes as a first argument the size of the image, which is square.
+      \item It takes as a second argument the name of the output file.
+    \end{itemize}
+
+\begin{lstlisting}[language=bash,title={File: run-seq-mandel.sh},frame=single]
+#!/bin/sh
+release/mandel 8000 seq-mandel.pbm
+echo "Finished running release/mandel"
+\end{lstlisting}
+    \begin{itemize}
+      \item Run this script using the \cppkey{sbatch} command.
+    \end{itemize}
+
+  \item \cppid{mandel-par}: 
+        To run this program, you shall invoke directly the executable.
+    \begin{itemize}
+      \item It takes as a first argument the size of the image, which is square.
+      \item You must redirect the output to a file with extension \cppkey{.pbm}.
+    \end{itemize}
+
+\begin{lstlisting}[language=bash,title={Archivo run-par-mandel.sh},frame=single]
+#!/bin/sh
+release/mandel 8000 > par-mandel.pbm
+echo "Finished running release/mandel-par"
+\end{lstlisting}
+    \begin{itemize}
+      \item Run this script using the \cppkey{sbatch} command.
+    \end{itemize}
+\end{enumerate}
+
+
+\textbad{IMPORTANT}: 
+Check that the three generate \cppid{.pbm} are identical.
+
+Look at the \cppid{slurm-XXX} file to check that there is a finalization message.
+
+\subsection{Basic performance measurement}
+
+To carry out a basic peformance measurement, you shall use the \cppkey{perf} tool.
+This is a Linux tool that gives you access to the operating system kernel
+and to processor hardware counters.
+
+The \cppkey{per} toool offers several subcommands.
+In this lab we will use the \cppkey{stat} subcommand to gather
+basic information on the execution of a program.
+
+\begin{lstlisting}[style=terminal,basicstyle=\ttfamily]
+$ perf stat program param1 param2
+
+ Performance counter stats for 'program param1 param2':
+
+         56.050,69 msec task-clock                #    0,992 CPUs utilized          
+             6.851      context-switches          #    0,122 K/sec                  
+                30      cpu-migrations            #    0,001 K/sec                  
+             2.082      page-faults               #    0,037 K/sec                  
+   192.416.969.761      cycles                    #    3,433 GHz                    
+   437.336.887.712      instructions              #    2,27  insn per cycle         
+    46.898.229.743      branches                  #  836,711 M/sec                  
+        94.154.392      branch-misses             #    0,20% of all branches        
+
+      56,521233276 seconds time elapsed
+
+      55,930658000 seconds user
+       0,120151000 seconds sys
+$
+\end{lstlisting}
+
+If you want to gather informatio from all CPUs you must use the option \cppkey{-a}.
+
+\begin{lstlisting}[style=terminal]
+$ perf stat -a program params
+$
+\end{lstlisting}
+
+You may find intersting some provided information.
+We will focus, for now, in basic aspects.
+Other aspects will be covered later in the course.
+
+\begin{itemize}
+  \item Number consumed clock cycles.
+  \item Number of executed instructions.
+  \item Elapsed time during program execution.
+  \item Total user and system time.
+  \item Equivalent number of used CPUs. This valu is higher than 1 when several cores are used
+        at the same time.
+  \item Average clock frequency.
+  \item Number of instructions per cycle.
+\end{itemize}
+
+In this taks you will gather information on the execution parameters for the 
+following versions of the program when a 8000x8000 image is generated.
+
+\begin{enumerate}
+  \item \cppkey{mandel.py}
+  \item \cppkey{debug/mandel}
+  \item \cppkey{release/mandel}
+  \item \cppkey{debug/mandel-par}
+  \item \cppkey{release/mandel-par}
+\end{enumerate}
+
+\textbad{IMPORTANT}: 
+You will have to write the corresponding scritps and launch them with \cppkey{sbatch}.
+For each \cppkey{sbatch} invokation a \cppid{slurm-XXX.out} file is generated
+with the standard output form the execution.
+
+Intenta sacar unas breves conclusiones de los resultados obtenidos.
+
+\subsection{Energy measurement}
+
+The \cppkey{stat} subcommand can also be used to measure certain events.
+
+You can get the full event list that are availabe with the subcommand \cppkey{list}
+
+\begin{lstlisting}[style=terminal]
+$ perf list
+ branch-instructions OR branches                    [Hardware event]
+  branch-misses                                      [Hardware event]
+  bus-cycles                                         [Hardware event]
+  cache-misses                                       [Hardware event]
+  cache-references                                   [Hardware event]
+  cpu-cycles OR cycles                               [Hardware event]
+  instructions                                       [Hardware event]
+  ref-cycles                                         [Hardware event]
+  alignment-faults                                   [Software event]
+  bpf-output                                         [Software event]
+  context-switches OR cs                             [Software event]
+  cpu-clock                                          [Software event]
+  cpu-migrations OR migrations                       [Software event]
+  dummy                                              [Software event]
+  emulation-faults                                   [Software event]
+  major-faults                                       [Software event]
+  minor-faults                                       [Software event]
+  page-faults OR faults                              [Software event]
+...
+$
+\end{lstlisting}
+
+\textbad{ATTENTION}:
+You must run this command in a computing node.
+
+Use \cppkey{perf list} to get thos counters starting with \cppid{power}
+
+Once you find thos event you may pass them to \cppkey{perf} with
+option \cppkey{-e}.
+
+\begin{lstlisting}[style=terminal]
+$ perf stat -a -e 'event1,event2,event3' program params
+...
+$
+\end{lstlisting}
+
+In this task you shall obtain the energy information during the execution of each program.
+
+The counter values that you obtain express the consumed energy in Joules.
+As you also have the total execution time, you may get also the average power in Watts.
+
+Try to draw some briev conclusions from your results.
