@@ -1,0 +1,72 @@
+\begin{acexercise}\end{acexercise}
+
+An application for generating 3D video is run currently in a computer with 4
+cores. The application has a portion that is not parallelized and takes 5\% of
+total execution time. The application spends 50\% of the total time in memory
+processing and is totally parallelized. The remaining 25\% of the total time is
+dedicated to read/write operations on disks.
+
+Two options are being considered.
+
+\begin{itemize}
+\item Replacing the current disks for a new storage technology that requires one fourth of the time for input/output.
+\item Replace the processor by a processor with 32 cores.
+\end{itemize}
+
+You are asked:
+
+\begin{enumerate}
+\item Determine the speedup obtained when replacing the disks.
+\item Determine the speedup when replacing the processor.
+\item Determine the number of cores that would give the same speedup than replacing the disks.
+\end{enumerate}
+
+
+\begin{acsolution}\end{acsolution}
+
+\paragraph{Section 1}
+If the disk is replaced, the improvement fraction $F$ is $0.25$.
+The improvement speedup $S(m)$ will be $4$.
+Consequently, applying Amdahl's Law, we get:
+
+\[
+S = \frac{1}{0.75 + \frac{0.25}{4}} = \frac{1}{0.8125} =  1.2308
+\]
+
+\paragraph{Section 2}
+If the processor is replaced, the improvement speedup is given by the ratio
+between the ne number of cores $n_n$ and the old number of colres $n_o$.
+
+\[
+S_m = \frac{n_n}{n_o} = \frac{32}{4} = 8
+\]
+
+The improvement fraction $F$ is in this case $0.5$.
+\[
+S = \frac{1}{0.5 + \frac{0.5}{8}} = \frac{1}{0.5 + 0.0625} = \frac{1}{0.5625} = 1.7778
+\]
+
+\paragraph{Section 3}
+The improvement speedup for a given number of cores $n$, is:
+
+\[
+S_i = \frac{n}{4}
+\]
+
+Consequently, the total speedup is:
+
+\[
+S = \frac{1}{0.5 + 
+\frac{0.5}{\frac{n}{4}}} = 
+\frac{1}{0.5 + \frac{2}{n}}
+\]
+
+If we make this value equal to $\frac{1}{0.8125}$, we get:
+\[
+\frac{1}{0.8125} = \frac{1}{0.5+\frac{2}{n}}
+\]
+\[ 0.8125 = 0.5 + \frac{2}{n} \]
+\[ \frac{2}{n} = 0.8125 - 0.5 \]
+\[ n = \frac{2}{0.3125} = 6.4 \]
+
+Consequently a minimum of 7 cores are needed.

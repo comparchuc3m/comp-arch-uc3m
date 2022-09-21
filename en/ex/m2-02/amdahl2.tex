@@ -1,0 +1,69 @@
+\begin{acexercise}\end{acexercise}
+
+An application allows to process a very high resolution image where a certain
+fraction can be parallelized, while other part must be run sequentially. 
+
+Assume that there is no upper bound to the number of processes that can be used
+for the parallelization. We need to get a global speedup of at least 10 for
+the parallel version. 
+
+Express the fraction of code that must be parallelized as a function of the
+parallelism degree (number of processes running in parallel).
+
+
+\begin{acsolution}\end{acsolution}
+
+\[
+S = \frac{1}{\left(1 - F \right) + \displaystyle \frac{F}{n} }
+\]
+
+\[
+S \times \left( (1-F) + \frac{F}{n} \right) = 1
+\]
+
+\[
+S - S \times F + \frac{S \times F}{n} = 1
+\]
+
+\[
+n \times S - n \times S \times F + S \times F = n
+\]
+
+\[
+n \times S - n = n \times S \times F - S \times F
+\]
+
+\[
+S \times F \times \left( n - 1 \right) = n \times \left( S - 1 \right)
+\]
+
+\[
+F = \frac{n \times (S-1)}{S \times(n-1)}
+\]
+
+For the case of $S = 10$
+
+\[
+F = \frac{n \times (10-1)}{10 \times (n-1)} = 
+\frac{9 \times n}{10 \times n - 10}
+\]
+
+As $F$ must be less or equal than $1$:
+
+\[
+F \leq 1
+\]
+
+\[
+\frac{9 \times n}{10 \times n -10} \leq 1
+\]
+
+\[
+9 \times n \leq 10 \times n-10
+\]
+
+\[
+n \geq 10
+\]
+
+

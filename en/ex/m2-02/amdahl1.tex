@@ -1,0 +1,18 @@
+\begin{acexercise}\end{acexercise}
+
+The execution of a program has two parts. The first part requires 20\% of the
+total execution time and the second part the remaining 80\%. The second part can
+be parallelized using OpenMP in a multiprocessor. Assume that the speedup is
+perfect for any number of processors. What would be the overall speedup of the
+application when 10 processors are used?
+
+
+\begin{acsolution}\end{acsolution}
+
+It is enough with the application of Amdahl's Law with values
+$0.2$ for the sequential part and $0.8$ for the parallel part.
+
+\[
+S = \frac{1}{0.2 + \frac{0.8}{10}} = \frac{1}{0.2 + 0.08} = \frac{1}{0.28} =
+3.57
+\]
