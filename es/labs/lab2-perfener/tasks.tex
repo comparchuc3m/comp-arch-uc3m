@@ -28,8 +28,8 @@ Tienes las siguientes opciones:
         desde un terminal deberás usar el mandato \cppid{ssh}, utilizando tu
         usuario y clave del Laboratorio de Informática.
 \begin{lstlisting}[style=terminal]
-$ ssh -l nombreusuario avignon.lab.inf.uc3m.es
-jdgarcia@avignon.lab.inf.uc3m.es's password: 
+$ ssh -l usuario avignon.lab.inf.uc3m.es
+usuario@avignon.lab.inf.uc3m.es's password: 
 Linux avignon-frontend 5.10.0-15-amd64 #1 SMP Debian 5.10.120-1 (2022-06-09) x86_64
 ...
 $
@@ -57,7 +57,7 @@ Escribe el siguiente código en un archivo que llamarás \cppid{runlscpu.sh}
 lscpu
 \end{lstlisting}
 
-Para lanzar el mandato debes usar el mandato \cppid{sbatch}.
+Para lanzar el trabajo debes usar el mandato \cppid{sbatch}.
 Debe pasarse como argumento siempre el nombre de un \emph{shell script}:
 
 \begin{lstlisting}[style=terminal]
@@ -96,7 +96,7 @@ que generan una imagen en formato PBM del conjunto de Mandelbrot.
 
 \subsubsection{Transferencia de los archivos}
 
-En aula Global encontrarás un archivo \cppid{mandel.zip} con toda el código que
+En Aula Global encontrarás un archivo \cppid{mandel.zip} con toda el código que
 necesitas. Coloca este archivo en un directorio en tu máquina local llamado
 \cppkey{lab2}. A continuación descomprime el archivo en un subdirectorio que
 se llamará \cppkey{mandel}:
@@ -216,7 +216,7 @@ Para las versiones de C++ ejecutaremos solamente las versiones de \textmark{Rele
       \item Debes redirigir la salida a un archivo con extensión \cppkey{.pbm}.
     \end{itemize}
 
-\begin{lstlisting}[language=bash,title={Archivo runpy.sh},frame=single]
+\begin{lstlisting}[language=bash,title={Archivo: runpy.sh},frame=single]
 #!/bin/sh
 python3.9 -OO mandel/mandel.py 8000 > py-mandel.pbm
 echo "Ejecución de mandel.py finalizada"
@@ -233,7 +233,7 @@ echo "Ejecución de mandel.py finalizada"
       \item El programa toma como segundo parámetro el nombre del archivo de salida.
     \end{itemize}
 
-\begin{lstlisting}[language=bash,title={Archivo run-seq-mandel.sh},frame=single]
+\begin{lstlisting}[language=bash,title={Archivo: run-seq-mandel.sh},frame=single]
 #!/bin/sh
 release/mandel 8000 seq-mandel.pbm
 echo "Ejecución de release/mandel finalizada"
@@ -249,9 +249,9 @@ echo "Ejecución de release/mandel finalizada"
       \item Debes redirigir la salida a un archivo con extensión \cppkey{.pbm}.
     \end{itemize}
 
-\begin{lstlisting}[language=bash,title={Archivo run-par-mandel.sh},frame=single]
+\begin{lstlisting}[language=bash,title={Archivo: run-par-mandel.sh},frame=single]
 #!/bin/sh
-release/mandel 8000 > par-mandel.pbm
+release/mandel-par 8000 > par-mandel.pbm
 echo "Ejecución de release/mandel-par finalizada"
 \end{lstlisting}
     \begin{itemize}
