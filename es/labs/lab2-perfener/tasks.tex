@@ -141,7 +141,7 @@ remoto \cppid{~/lab2/mandel}.
 \subsubsection{Compilación desde línea de mandatos}
 
 Los archivos \cppid{CMake} permiten automatizar la compilación. En esta tarea
-se compilarán dos versiones de cada probrama: una versión de \textmark{Debug}
+se compilarán dos versiones de cada programa: una versión de \textmark{Debug}
 y una versión de \textmark{Release}.
 
 Un detalle importante, es que las máquinas del \emph{front-end} y los nodos de
@@ -149,7 +149,7 @@ ejecución son muy diferentes (como habrás observado con \cppid{lscpu}). Por
 tanto es importante que compiles en un nodo de ejecución.
 
 Para ello vamos a crear un script de compilación:
-\begin{lstlisting}[language=bash,frame=single,title={Archivo: runlscpu.sh}]
+\begin{lstlisting}[language=bash,frame=single,title={Archivo: build.sh}]
 #!/bin/sh
 cmake -S mandel -B mandel-debug -DCMAKE_BUILD_TYPE=Debug
 cmake -S mandel -B mandel-release -DCMAKE_BUILD_TYPE=Release
@@ -235,7 +235,7 @@ echo "Ejecución de mandel.py finalizada"
 
 \begin{lstlisting}[language=bash,title={Archivo: run-seq-mandel.sh},frame=single]
 #!/bin/sh
-release/mandel 8000 seq-mandel.pbm
+mandel-release/mandel 8000 seq-mandel.pbm
 echo "Ejecución de release/mandel finalizada"
 \end{lstlisting}
     \begin{itemize}
@@ -251,7 +251,7 @@ echo "Ejecución de release/mandel finalizada"
 
 \begin{lstlisting}[language=bash,title={Archivo: run-par-mandel.sh},frame=single]
 #!/bin/sh
-release/mandel-par 8000 > par-mandel.pbm
+mandel-release/mandel-par 8000 > par-mandel.pbm
 echo "Ejecución de release/mandel-par finalizada"
 \end{lstlisting}
     \begin{itemize}
@@ -260,7 +260,7 @@ echo "Ejecución de release/mandel-par finalizada"
 \end{enumerate}
 
 
-\textbad{IMPORTANTE}: Recuerda comprobar que los tres archivps \cppkey{.pbm}
+\textbad{IMPORTANTE}: Recuerda comprobar que los tres archivos \cppkey{.pbm}
 generados son idénticos.
 
 Fíjate que el fichero \cppid{slurm-XXX} debe tener un mensaje de finalización.
@@ -297,7 +297,7 @@ $ perf stat program param1 param2
 $
 \end{lstlisting}
 
-Ten en cuenta que si quieres obtener la información de todas las CPUSs
+Ten en cuenta que si quieres obtener la información de todas las CPUs
 debes usar la opción \cppkey{-a}.
 
 \begin{lstlisting}[style=terminal]
@@ -307,7 +307,7 @@ $
 
 Puedes observar alguna información interesante que se puede determinar.
 Nos centraremos por ahora en algunos aspectos básicos. Otros se
-cubriran más adelante en la asignatura.
+cubrirán más adelante en la asignatura.
 
 \begin{itemize}
   \item El número de ciclos de reloj consumidos.
@@ -388,6 +388,6 @@ cinco programas del apartado anterior.
 
 Los contadores obtenidos expresan la energía consumida en Julios. Como además
 dispondrás del tiempo total de ejecución, puedes obtener también la potencia
-media expresada en Watios.
+media expresada en Vatios.
 
 Intenta sacar unas breves conclusiones de los resultados obtenidos.
