@@ -1,0 +1,157 @@
+\begin{acexercise}\end{acexercise}
+
+Sea el siguiente fragmento de código:
+\begin{lstlisting}
+double a[256][256], b[256][256], c[256][256], d[256][256];
+//...
+for (int i=0;i<256;++i)
+  for (int j=0;j<256;++j) {
+    a[i][j] = b[i][j] + c[i][j]
+  }
+}
+for (int i=0;i<256;++i)
+  for (int j=0;j<256;++j) {
+    d[i][j] = b[i][j] - c[i][j]
+  }
+}
+\end{lstlisting}
+
+Se desea ejecutar este código en un computador que tiene una caché de nivel 1
+totalmente asociativa de 16KB y política de sustitución LRU con tamaño de línea
+de 64 bytes. Los fallos de caché de nivel 1 requieren 16 ciclos de reloj. Por
+otra parte la caché de nivel 2 siempre genera aciertos en este código.
+
+Asuma que los fallos de escritura en la caché de nivel 1 se envían directamente
+un búfer de escritura y no generan ningún ciclo de espera.
+
+Se pide
+
+\begin{enumerate}
+  \item Determine la tasa de aciertos del segmento de código, asumiendo que las
+variables \cppid{i} y \cppid{j} se asignan a registros del procesador y que las
+matrices \cppid{a}, \cppid{b}, \cppid{c} y \cppid{d} se encuentran totalmente
+en la caché de nivel 2.
+
+  \item Determine el tiempo acceso a memoria asumiendo que los accesos a la
+caché de nivel 1 requieren un ciclo de reloj.
+
+  \item Proponga una transformación de código de las que puede generar un
+compilador para mejorar la tasa de aciertos, mostrando el código resultante en
+lenguaje C++.
+
+  \item Determine la nueva tasa de aciertos y el tiempo medio de acceso a
+memoria resultantes.
+
+\end{enumerate}
+
+
+\begin{acsolution}\end{acsolution}
+
+\paragraph{Apartado 1}
+
+Como el tamaño de línea es de 64 bytes y todos los arrays contienen valores de 
+tipo \cppkey{double} cada línea de la memoria caché puede almacenar 8 valores. 
+Como la memoria L1 tiene un tamaño de 16 KB, puede almacenar $\frac{2^{14}}{2^6} = 2^8$ líneas.
+
+Cada array almacena $2^8 \dot 2^8 = 2^{16}$ valores, lo que requiere $\frac{2^{16}}{2^3} = 2^{13}$
+entradas de la memoria caché.
+
+En el primer bucle el patrón de accesos es:
+
+\begin{itemize}
+  \item \cppid{b[0][0]}, \cppid{c[0][0]}, \cppid{a[0][0]}
+  \item \cppid{b[0][1]}, \cppid{c[0][1]}, \cppid{a[0][1]}
+  \item \ldots
+  \item \cppid{b[0][7]}, \cppid{c[0][7]}, \cppid{a[0][7]}
+  \item \cppid{b[0][8]}, \cppid{c[0][8]}, \cppid{a[0][8]}
+  \item \ldots
+  \item \cppid{b[0][255]}, \cppid{c[0][255]}, \cppid{a[0][255]}
+  \item \cppid{b[1][0]}, \cppid{c[1][0]}, \cppid{a[1][0]}
+  \item \ldots
+\end{itemize}
+
+Por tanto por cada 8 iteraciones del bucle interior se producen:
+
+\begin{itemize}
+  \item 16 lecturas (8 para \cppid{b} y 8 para \cppid{c}). De estas 2
+        son fallos y las otras 14 son aciertos.
+  \item 8 escrituras en \cppid{a}. Sin embargo al enviarse las escrituras
+        al búfer de escrituras, éstas no generan fallos.
+\end{itemize}
+
+Cuando se inicia el segundo bucle, las entradas de la caché conteniendo los valores de los arrays
+\cppid{b} y \cppid{c} han sido expulsadas de la caché, por lo que la proporciones de fallos y
+aciertos es la misma.
+
+En el caso de las escrituras, todas la escrituras generan fallo de caché. Por tanto:
+
+\[
+h_{escr} = 0
+\]
+
+En el caso de las lecturas, la tasa de aciertos es:
+
+\[
+h_{lect}  = \frac{14}{16} = \frac{7}{8}
+\]
+
+\paragraph{Apartado 2}
+
+Para los accesos de escritura, todos los accesos son un fallo de escritura, y se tratan en el
+búfer de escritura, requiriendo un ciclo de reloj. En total se realizan $2^8 \cdot 2^8$ accesos
+en cada uno de los dos bucles, lo que da un total de $2 \cdot 2^{16} = 2^{17}$ accesos de escritura.
+
+Para los accesos de lectura, el tiempo medio de acceso viene dado por:
+
+\[
+t_{lect} = t_a + (1 - h_{lect}) \cdot t_f
+\]
+
+El tiempo de acceso $t_a$ es 1 ciclo. La penalización por fallo de lectura es de 16 ciclos.
+Por tanto se tiene que el tiempo medio de lectura es:
+
+\[
+t_{lect} =
+1 + \frac{1}{8} \cdot 16 = 
+3
+\]
+
+\paragraph{Apartado 3}
+
+Se puede aplicar la técnica de fusión de bucles:
+
+\begin{lstlisting}
+for (int i=0;i<256;i++) {
+  for (int j=0;j<256;j++) {
+    a[i][j] = b[i][j] + c[i][j];
+    d[i][j] = b[i][j] - c[i][j];
+  }
+}
+\end{lstlisting}
+
+\paragraph{Apartado 4}
+
+En este caso los segundos accesos a \cppid{b} y \cppid{c} siempre generan acierto.
+
+Ahora por cada 8 iteraciones del bucle interior se producen:
+
+\begin{itemize}
+  \item 32 lecturas. De éstas, 30 son aciertos y dos son fallos de lectura.
+  \item 16 escrituras.
+\end{itemize}
+
+Al igual que en el caso anterior la tasa de aciertos de escritura ($h_{escr}$) sigue siendo 0.
+En este caso, la tasa de aciertos de lectura pasa a ser:
+
+\[
+h_{lect} = \frac{30}{32} = \frac{15}{16}
+\]
+
+Para el caso de los accesos de lectura, usando la nueva tasa de aciertos, se tiene:
+
+\[
+t_{lect} =
+1 + \frac{1}{16} \cdot 16 = 
+2
+\]
+

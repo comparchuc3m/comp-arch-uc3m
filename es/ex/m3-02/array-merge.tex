@@ -1,0 +1,212 @@
+\begin{acexercise}\end{acexercise}
+
+Sea la siguiente definición de variables globales:
+\begin{lstlisting}
+const unsigned int max = 1024 * 1024;
+double x[max];
+double y[max];
+double z[max];
+double vx[max];
+double vy[max];
+double vz[max];
+\end{lstlisting}
+
+Y la siguiente función:
+
+\begin{lstlisting}
+void actualiza_posiciones(double dt) {
+  for (unsinged int i=0; i<max; ++i) {
+    x[i] = vx[i] * dt + x[i];
+    y[i] = vy[i] * dt + y[i];
+    z[i] = vz[i] * dt + z[i];
+  }
+}
+\end{lstlisting}
+
+Suponga que se dispone de una caché L1 asociativa por conjuntos de 4 vías con
+un tamaño de 32 KB y un tamaño de línea de 64 bytes. La caché L2 es asociativa
+por conjuntos de 8 vías con un tamaño de 1 MB y un tamaño de línea de 64 bytes.
+La política de remplazo es LRU. Todas las cachés se encuentran inicialmente 
+vacías.
+
+Los arrays se almacenan de forma consecutiva en memoria y el primero ellos se
+encuentra en una dirección múltiplo de 1024. Asuma que el argumento de función
+\cppid{dt} y las variable índice \cppid{i} se encuentran asignadas a registros.
+
+\begin{enumerate}
+  \item Determine la tasa de aciertos de las caché L1 y L2 para la ejecución de
+	la función \cppid{actualiza\_posiciones()}. ¿Cuál será la tasa global
+        de aciertos?
+
+  \item Modifique el código aplicando la optimización de fusión de arrays.
+
+  \item Repita los cálculos del primer apartado para el código resultante del
+        apartado segundo.
+
+  \item Si se asume que un acierto en la caché L1 requiere 4 ciclos, y en la
+	caché L2 requiere 14 ciclos y la penalización por traer un bloque de
+	memoria principal a la caché de nivel 2 es de 80 ciclos ¿cuál será el
+	tiempo medio de acceso en cada uno de los dos casos?  
+
+\end{enumerate}
+
+
+\begin{acsolution}\end{acsolution}
+
+\paragraph{Apartado 1}
+
+El patrón de accesos del bucle es:
+
+\begin{lstlisting}
+vx[i], x[i], x[i], vy[i], y[i], y[i], vz[i], z[i], z[i], ...
+\end{lstlisting}
+
+Cada uno de los arrays tiene $2^{20}$ posiciones de 8 bytes cada una. Lo que da un
+total de 8 MB por array. Cada línea de la caché tiene 64 bytes, lo que permite
+alojar 8 elementos del array.
+
+La caché L1 tiene 4 vías, por lo que cada vía es de 8KB ($2^{13}$ bytes), lo
+que da para $\frac{2^{13}}{2^6}$ = $2^7$ conjuntos.
+
+Como cada array tiene $2^{23}$ bytes (que es múltiplo del tamaño de vía), cada
+posición \cppid{i} de todos los arrays se corresponde con el mismo conjunto de la
+caché. La secuencia de aciertos y fallos en la caché será:
+
+\begin{itemize}
+  \item \cppid{VX[0]} $\rightarrow$ Fallo. Selección de la vía 0.
+  \item \cppid{X[0]} $\rightarrow$ Fallo. Selección de la vía 1.
+  \item \cppid{X[0]} $\rightarrow$ Acierto.
+  \item \cppid{VY[0]} $\rightarrow$ Fallo. Selección de la vía 2.
+  \item \cppid{Y[0]} $\rightarrow$ Fallo. Selección de la vía 3.
+  \item \cppid{Y[0]} $\rightarrow$ Acierto.
+  \item \cppid{VZ[0]} $\rightarrow$ Fallo. Selección de la vía 0. Se expulsa \cppid{vx}.
+  \item \cppid{Z[0]} $\rightarrow$ Fallo. Selección de la vía 1. Se expulsa \cppid{x}.
+  \item \cppid{Z[0]} $\rightarrow$ Acierto.
+\end{itemize}
+
+Al pasar a la posición 1, se repite la misma sucesión de fallos y aciertos. Por
+lo que en total se tienen:
+
+\[
+h_{L1} = \frac{3}{9} = \frac{1}{3}
+\]
+
+Para la caché de nivel 2, se producen solamente accesos para los casos en que
+hay fallo en la caché L1. Para la posición 0, se producen 6 fallos, pero para
+las posiciones de la 1 a la 7 se producen 6 aciertos por cada posición.
+
+\[
+h(L2) = 
+\frac{42}{48} = 
+\frac{7}{8}
+\]
+
+La tasa global de aciertos h es:
+
+\[
+H = 1 - M
+\]
+
+Donde:
+
+\[
+M = 
+m_{h1} \cdot m_{h2} = 
+\frac{2}{3} \cdot \frac{1}{8} = 
+\frac{1}{12}
+\]
+
+\[
+H = \frac{11}{12}
+\]
+
+
+\paragraph{Apartado 2}
+
+Aplicando la optimización requerida el código queda:
+
+\begin{lstlisting}
+const unsigned int max = 1024 * 1024;
+struct part {
+  double x, y, z, vx, vy, vz;
+};
+part vec[max];
+
+void actualiza_posiciones(double dt) {
+  for (unsinged int i=0; i<max; ++i) {
+    vec[i].x = vec[i].vx * dt + vec[i].x;
+    vec[i].y = vec[i].vy * dt + vec[i].y;
+    vec[i].z = vec[i].vz * dt + vec[i].z;
+  }
+}
+\end{lstlisting}
+
+\paragraph{Apartado 3}
+
+El patrón de accesos en este caso es:
+
+\begin{lstlisting}
+vec[i].vx, vec[i].x, vec[i].x, vec[i].vy, vec[i].y, vec[i].y, vec[i]. vz, vec[i].z, vec[i]. z, ...
+\end{lstlisting}
+
+Como cada posición del array ocupa 6 posiciones y una entrada de la caché ocupa
+8 valores, en 3 líneas de la caché cabrán 4 posiciones completas del array.
+
+\begin{itemize}
+  \item La posición 0 produce 1 fallo y 8 aciertos.
+  \item La posición 1 produce 2 aciertos, 1 fallo y 6 aciertos.
+  \item La posición 2 produce 4 aciertos, 1 fallo y 4 aciertos.
+  \item La posición 3 produce 9 aciertos.
+\end{itemize}
+
+Este patrón se repite a lo largo de todo el array. Por tanto:
+
+\[
+h_{L1} = 
+\frac{33}{36} = \frac{11}{12}
+\]
+
+Para la caché L2 se tiene ahora que todos los fallos en la caché de nivel 1,
+son también fallos en la caché de nivel 2. Por tanto:
+
+\[
+h_{L2} = 0
+\]
+
+Y la tasa global:
+
+\[
+H = 1 - M
+\]
+
+\[
+M = m_{h1} \cdot m_{h2} = 
+\frac{1}{12}
+\]
+
+\[
+H = \frac{11}{12}
+\]
+
+\paragraph{Apartado 4}
+
+Para el caso original se tiene
+
+\[
+T = 
+4 + (\frac{2}{3}) \cdot (14 + (\frac{1}{8}) \cdot 80) = 
+4 + (\frac{2}{3}) \cdot 24 = 
+4 +16 = 
+20
+\]
+
+Para el segundo caso se tiene
+
+\[
+T = 
+4 + (\frac{1}{12}) \cdot (14 + 1 \cdot 80) = 
+4 + (\frac{1}{12}) \cdot 94 = 
+4 + 7.83 = 
+11.83
+\]
+

@@ -1,0 +1,183 @@
+\begin{acexercise}\end{acexercise}
+
+Dado el siguiente fragmento de código:
+
+\begin{lstlisting}
+for (i=0; i<64; i++)
+  for (j=0; j<1024; j=j+2 )
+    v[i][j] = v[i][j] * v[i][j+1] +  b[i]
+\end{lstlisting}
+
+Se ejecuta en una arquitectura con una cache de tamaño 256 KB, con tamaño de
+bloque 64 Bytes y de palabra de 8 Bytes en el que la memoria caché es
+totalmente asociativa y utiliza un algoritmo de reemplazo LRU. Siendo \cppid{v}
+y \cppid{b} matrices de números reales de 8 byte almacenadas por filas (estilo
+C) y tamaños $64 \times 1024$ (\cppid{v}), $64$ (\cppid{b}). Se supondrá que
+las variables índice se almacenan en registros y que al empezar el código la
+caché está vacía.
+
+Se pide determinar:
+
+\begin{enumerate}
+  \item El número de fallos de cache. 
+
+  \item La tasa media de fallos.
+
+  \item Razone si se produce alguna vez reemplazo de una línea de cache
+precargada. No es necesario identificar qué reemplazos hay sino razonar la
+existencia o no de reemplazos. 
+
+  \item Razone si la técnica de optimización de intercambio de bucles
+mejoraría la tasa media de fallos de la caché (no es necesario calcularla).
+
+\end{enumerate}
+
+
+\begin{acsolution}\end{acsolution}
+
+\paragraph{Apartado 1}
+
+Cache de 256 KB $\rightarrow$ $2^{15}$ elementos = $2^{12}$  bloques
+
+Bloque de 64B = 8 elementos
+
+La Tabla~\ref{tab:sol-oct-2013b} muestra la secuencia de accesos.
+
+\begin{table}
+\begin{tabular}{|l|p{0.3\textwidth}|l|p{0.3\textwidth}|}
+\hline
+Acceso a \cppid{v} &
+Fallo caché &
+Acceso a \cppid{b} &
+Fallo caché
+\\
+\hline
+\hline
+
+0,0 & SI &
+0 & SI\\
+\hline
+
+0,2 & No. Porque está en la misma línea de cache que \cppid{v[0,0]} &
+0 & No, Porque está en la misma línea de cache que \cppid{b[0]}
+\\
+\hline
+
+
+\ldots & &
+0 & No
+\\
+\hline
+
+0,7 & NO &
+0 & No
+\\
+\hline
+
+0,8 & SI &
+0 & No
+\\
+\hline
+	
+0,10 & NO &
+0 & No
+\\
+\hline
+
+\ldots & & & \\
+
+0,16 & SI & 
+0 & No
+\\
+\hline
+
+\ldots & & & \\
+			
+0,1022 & NO &
+0 & No
+\\
+\hline
+
+1,0 & SI &
+1 & NO\\
+\hline 
+
+1,1 & No porque está en la misma línea de cache que \cppid{v[1,0]} &
+1 & NO\\
+\hline 
+
+\ldots & & & \\
+				
+2,0 & SI & 2 & NO\\
+\hline
+
+\ldots &&&\\
+				
+8,0 & SI & 8 & SI\\
+\hline
+
+\ldots &&&\\
+
+31,0 & SI & 31 & NO\\
+\hline
+
+\end{tabular}
+\caption{Secuencia de accesos del ejercicio~\ref{sol:oct-2013b}.}
+\label{tab:sol-oct-2013b}
+\end{table}
+
+Se  producen fallos de cache al acceder a 
+\cppid{v[0,0]}, \cppid{v[0,8]}, \cppid{v[0,16]}, \ldots 
+\cppid{v[1,0]}, \cppid{v[1,8]}, \cppid{v[0,16]}, \ldots
+\cppid{[2,0]}, \ldots \cppid{v[31,0]}, \ldots 
+y hay aciertos en todas las demás. Como la matriz tiene $64 \times 1024$
+casillas y sólo hay error en una de cada 8 el total de fallos es  $\frac{64
+\cdot 1024}{8}= 8192$ fallos 
+
+En \cppid{b} se producen fallos en las posiciones 1, 8, 16, 24, 32, 40, 48 y 56.
+En total se producen 8 fallos. 
+
+El número total fallos es $8192 + 8 = 8200$ fallos.
+
+\paragraph{Apartado 2}
+
+Accesos totales.
+
+En cada instrucción hay 4 accesos y la instrucción de cálculo se realiza
+$\frac{64 \cdot 1024}{2}$ veces. Por tanto, tenemos $\frac{4 \cdot 64 \cdot 1024}{2} = 131072$ accesos u la tasa de fallos es:
+
+\[
+m = \frac{8200}{131072} = 0.0625 \Rightarrow 6,25 \%
+\] 
+
+\paragraph{Apartado 3}
+
+En la cache caben 256 KB = $2^{15}$ elementos = $2^{12}$ bloques y
+la matriz v tiene $64 \cdot 1024 = 2^{16}$ elementos = $2^{13}$ bloques.
+
+Luego la matriz \cppid{v}  no cabe en la caché. 
+Se producirá un reemplazo de la línea que contiene la posición \cppid{v[0,0]}
+cuando lleguemos, aproximadamente, a la mitad de la matriz \cppid{v}.
+
+Si no existiera la matriz \cppid{b} el reemplazo se produciría al llegar a la mitad de
+la matriz (pues en caché sólo cabe la mitad de la matriz), es decir en la
+posición \cppid{v[32,0]}.
+
+Teniendo en cuenta que la matriz \cppid{b} también ocupa cache y cuando
+llegamos a la posición \cppid{v[32,0]} hemos ocupado 4 líneas de caché con la
+matriz \cppid{b} ( posiciones de la \cppid{b[0]} a la \cppid{b[32]}) podemos concluir que el reemplazo
+se producirá 4 líneas de cache antes de llegar a la \cppid{v[32,0]}. Esto es en la
+posición \cppid{v[$31,8 \cdot \frac{1024}{8}-4$]} = \cppid{v[31,992]}. 
+Este dato no se pide explícitamente en el ejercicio. 
+
+De igual forma se producirá un reemplazo de la línea de caché de \cppid{b[0]} en,
+aproximadamente, el mismo momento. 
+
+También habrá reemplazos sucesivos de \cppid{v[0,8]}, \cppid{v[0,16]}, \ldots
+según se va necesitando sitio para las posiciones de \cppid{v} que están más allá de la
+mitad del recorrido.
+
+\paragraph{Apartado 4}
+
+El intercambio de bucles disminuiría la localidad espacial en los accesos a
+\cppid{v}, aumentando la tasa de fallos.
