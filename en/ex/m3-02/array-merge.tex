@@ -1,0 +1,207 @@
+\begin{acexercise}\end{acexercise}
+
+Consider the following global variables definition:
+
+\begin{lstlisting}
+const unsigned int max = 1024 * 1024;
+double x[max];
+double y[max];
+double z[max];
+double vx[max];
+double vy[max];
+double vz[max];
+\end{lstlisting}
+
+And the following function:
+
+\begin{lstlisting}
+void update_positions(double dt) {
+  for (unsinged int i=0; i<max; ++i) {
+    x[i] = vx[i] * dt + x[i];
+    y[i] = vy[i] * dt + y[i];
+    z[i] = vz[i] * dt + z[i];
+  }
+}
+\end{lstlisting}
+
+Consider a system with a 4 ways set associative L1 cache with a size of 32 KB and a line
+size of 64 bytes. L2 cache is 8 ways set associative with a size of 1 MB and a line size
+of 64 bytes. Replacement policy is LRU.
+
+Arrays are consecutively stored in memory and first of them starts at 1024 multiple address.
+
+\begin{enumerate}
+  \item Determine the hit rate for L1 and L2 caches for running function
+        \cppid{update\_positions()}. What is the global hit rate?
+
+  \item Modify code applying the array merging optimization.
+
+  \item Repeat computations from the first question for the code resulting from
+        the second question.
+
+  \item Assume that a hit at L1 cache requires 4 cycles and that L2 cache requires
+        14 cycles. Also assume that penalty associated to bringing a block from
+        main memory to L2 cache is 80 cycles. Which is the average access time in 
+        each case?
+
+\end{enumerate}
+
+
+\begin{acsolution}\end{acsolution}
+
+\paragraph{Point 1}
+
+The loop access pattern is:
+
+\begin{lstlisting}
+vx[i], x[i], x[i], vy[i], y[i], y[i], vz[i], z[i], z[i], ...
+\end{lstlisting}
+
+Each of the arrays has $2^{20}$ positions of 8 bytes each. This results in a total of 
+8 MB per array. Each line of the cache has 64 bytes, which allows hosting 8 elements of the array.
+
+The L1 cache has 4 ways, so each way is 8KB ($2^{13}$ bytes), which results in 
+$\frac{2^{13}}{2^6}$ = $2^7$ sets.
+
+Due to each array has $2^{23}$ bytes (which is multiple of the way size), each \cppid{i} 
+index of all arrays corresponds to the same cache set. The sequence of hits and misses in 
+the cache will be:
+
+\begin{itemize}
+  \item \cppid{VX[0]} $\rightarrow$ Miss. Selecting way 0.
+  \item \cppid{X[0]} $\rightarrow$ Miss. Selecting way 1.
+  \item \cppid{X[0]} $\rightarrow$ Hit.
+  \item \cppid{VY[0]} $\rightarrow$ Miss. Selecting way 2.
+  \item \cppid{Y[0]} $\rightarrow$ Miss. Selecting way 3.
+  \item \cppid{Y[0]} $\rightarrow$ Hit.
+  \item \cppid{VZ[0]} $\rightarrow$ Miss. Selecting way 0. Evicted \cppid{vx}.
+  \item \cppid{Z[0]} $\rightarrow$ Miss. Selecting way 1. Evicted \cppid{x}.
+  \item \cppid{Z[0]} $\rightarrow$ Hit.
+\end{itemize}
+
+When you move to position 1, the same sequence of misses and hits is repeated. 
+So in total you have:
+
+\[
+h_{L1} = \frac{3}{9} = \frac{1}{3}
+\]
+
+For the L2 cache, only accesses occur in cases where there is a miss in the L1 cache. 
+For position 0, 6 failures occur, but for positions 1 through 7, 6 hits are produced 
+for each element.
+
+\[
+h(L2) = 
+\frac{42}{48} = 
+\frac{7}{8}
+\]
+
+The hit rate will be:
+
+\[
+H = 1 - M
+\]
+
+Where:
+
+\[
+M = 
+m_{h1} \cdot m_{h2} = 
+\frac{2}{3} \cdot \frac{1}{8} = 
+\frac{1}{12}
+\]
+
+\[
+H = \frac{11}{12}
+\]
+
+
+\paragraph{Point 2}
+
+Applying the required optimization, the code is:
+
+\begin{lstlisting}
+const unsigned int max = 1024 * 1024;
+struct part {
+  double x, y, z, vx, vy, vz;
+};
+part vec[max];
+
+void update_postions(double dt) {
+  for (unsinged int i=0; i<max; ++i) {
+    vec[i].x = vec[i].vx * dt + vec[i].x;
+    vec[i].y = vec[i].vy * dt + vec[i].y;
+    vec[i].z = vec[i].vz * dt + vec[i].z;
+  }
+}
+\end{lstlisting}
+
+\paragraph{Point 3}
+
+The access pattern in this case is:
+
+\begin{lstlisting}
+vec[i].vx, vec[i].x, vec[i].x, vec[i].vy, vec[i].y, vec[i].y, vec[i]. vz, vec[i].z, vec[i]. z, ...
+\end{lstlisting}
+
+Since each position of the array needs 6 positions and a cache entry occupies 8 
+values, in 3 lines of cache will fit 4 complete positions of the array.
+
+\begin{itemize}
+  \item Index 0 produces 1 miss and 8 hits.
+  \item Index 1 produces 2 hits, 1 miss and 6 hits.
+  \item Index 2 produces 4 hits, 1 miss and 4 hits.
+  \item Index 3 produces 9 hits.
+\end{itemize}
+
+This pattern is repeated throughout the array. Thus:
+
+\[
+h_{L1} = 
+\frac{33}{36} = \frac{11}{12}
+\]
+
+For L2 cache, all misses in L1 cache are also misses in the L2 cache. Therefore:
+
+
+\[
+h_{L2} = 0
+\]
+
+And the global rate:
+
+\[
+H = 1 - M
+\]
+
+\[
+M = m_{h1} \cdot m_{h2} = 
+\frac{1}{12}
+\]
+
+\[
+H = \frac{11}{12}
+\]
+
+\paragraph{Point 4}
+
+For the original case:
+
+\[
+T = 
+4 + (\frac{2}{3}) \cdot (14 + (\frac{1}{8}) \cdot 80) = 
+4 + (\frac{2}{3}) \cdot 24 = 
+4 +16 = 
+20
+\]
+
+For the second case:
+
+\[
+T = 
+4 + (\frac{1}{12}) \cdot (14 + 1 \cdot 80) = 
+4 + (\frac{1}{12}) \cdot 94 = 
+4 + 7.83 = 
+11.83
+\]
+

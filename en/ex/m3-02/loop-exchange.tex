@@ -1,0 +1,183 @@
+\begin{acexercise}\end{acexercise}
+
+Consider the following code:
+
+\begin{lstlisting}
+for (i=0; i<64; i++)
+  for (j=0; j<1024; j=j+2 )
+    v[i][j] = v[i][j] * v[i][j+1] +  b[i]
+\end{lstlisting}
+
+Assume an architecture with 256 KB size cache and a block size of 64 bytes and
+word size of 8 bytes. Cache memory is fully associative and uses an LRU replacement
+policy. Let \cppid{v} and \cppid{b} be 8 byte real number matrices stored by rows
+(C programming language style) and sizes
+ $64 \times 1024$ (\cppid{v}), $64$ (\cppid{b}). 
+Assume that index variables are stored in processor registers and cache is initially empty.
+
+Your are asked to determine:
+
+\begin{enumerate}
+  \item The number of cache misses.
+
+  \item The average miss rate.
+
+  \item Reason whether there is some time a replacement of a previously loaded cache line.
+        It is not needed to identify the replacements but it is enough to reason
+        whether they could happen or not.
+
+  \item Reason if the loop exchanges optimization technique would improve the
+        average miss rate for the cache (it is not needed to compute it).
+
+\end{enumerate}
+
+
+\begin{acsolution}\end{acsolution}
+
+\paragraph{Point 1}
+
+Cache of 256 KB $\rightarrow$ $2^{15}$ elements = $2^{12}$  blocks
+
+Block if 64B = 8 elements
+
+Table~\ref{tab:sol-oct-2013b} shows the access pattern.
+
+\begin{table}
+\begin{tabular}{|l|p{0.3\textwidth}|l|p{0.3\textwidth}|}
+\hline
+Access to \cppid{v} &
+Misses &
+Access to \cppid{b} &
+Misses
+\\
+\hline
+\hline
+
+0,0 & YES &
+0 & YES
+\\
+\hline
+
+0,2 & No because it is on the same cache line as \cppid{v[0,0]} &
+0 & No because it is on the same cache line as \cppid{b[0,0]}
+\\
+\hline
+
+
+\ldots & &
+0 & No
+\\
+\hline
+
+0,7 & NO &
+0 & No
+\\
+\hline
+
+0,8 & SI &
+0 & No
+\\
+\hline
+	
+0,10 & NO &
+0 & No
+\\
+\hline
+
+\ldots & & 
+ & \\
+
+0,16 & YES & 
+0 & No
+\\
+\hline
+
+\ldots & & 
+ & \\
+			
+0,1022 & NO &
+0 & No
+\\
+\hline
+
+1,0 & YES &
+1 & NO\\
+\hline 
+
+1,1 & No, Because it is on the same cache line as \cppid{v[1,0]} &
+1 & NO\\
+\hline 
+
+\ldots & & & \\
+				
+2,0 & YES & 2 & NO\\
+\hline
+
+\ldots &&&\\
+				
+8,0 & YES & 8 & YES\\
+\hline
+
+\ldots &&&\\
+
+31,0 & YES & 31 & NO\\
+\hline
+
+\end{tabular}
+\caption{Access pattern of the Exercise~\ref{sol:oct-2013b}.}
+\label{tab:sol-oct-2013b}
+\end{table}
+
+Cache misses occur when accessing
+\cppid{v[0,0]}, \cppid{v[0,8]}, \cppid{v[0,16]}, \ldots 
+\cppid{v[1,0]}, \cppid{v[1,8]}, \cppid{v[0,16]}, \ldots
+\cppid{[2,0]}, \ldots \cppid{v[31,0]}, \ldots 
+and there are hits in all the other cases. Since the array has $64 \times 1024$ 
+elements and there is only one miss in 8, the total number of misses is $\frac{64 \cdot 1024}{8} = 8192$.
+
+In \cppid{b}, there are misses at 1, 8, 16, 24, 32, 40, 48 and 56.
+There are 8 misses in total.
+
+The total number of misses is $8192 + 8 = 8200$.
+
+\paragraph{Point 2}
+
+Total accesses.
+
+In each instruction, there are 4 accesses and the calculation instruction is 
+done $\frac{64 \cdot 1024}{2}$ times. Therefore, we have $\frac{4 \cdot 64 \cdot 1024}{2} = 131072$ accesses and the miss rate is:
+
+\[
+m = \frac{8200}{131072} = 0.0625 \Rightarrow 6,25 \%
+\] 
+
+\paragraph{Point 3}
+
+Cache size 256 KB = $2^{15}$ elements = $2^{12}$ and the matrix v 
+has $64 \cdot 1024 = 2^{16}$ elements = $2^{13}$ blocks.
+
+Therefore,  the \cppid{v} array does not fit in the cache. There will be a replacement 
+of the line containing the \cppid{v [0,0]} position when we get approximately 
+to the middle of the \cppid{v} array.
+
+If the matrix \cppid{b} does not exist, the replacement would occur on reaching 
+the middle of the matrix (because only half of the matrix fits in the cache), that is, 
+in the position \cppid{v [32,0]} .
+
+Given that the array \cppid{b} also occupies cache and when we reach the element 
+\cppid{v [32,0]} we have occupied 4 lines of cache with the array \cppid{b} (elements from 
+\cppid{b[0]} to \cppid{b[32]}), we can conclude that the replacement will 
+produce 4 lines of cache before reaching \cppid{v[32,0]}. This is in the position 
+\cppid{v[$31,8 \cdot \frac{1024}{8}-4$]} = \cppid{v[31,992]}.  This number is not 
+explicitly asked in the exercise.
+
+Similarly, a replacement of the \cppid{b [0]} cache line will occur at approximately 
+the same time.
+
+There will also be successive replacements of \cppid{v [0,8]}, \cppid{v [0,16]}, 
+\ldots as space is needed for positions of \cppid{v}.
+
+\paragraph{Point 4}
+
+The loops exchange would decrease the spatial locality in the accesses 
+to \cppid{v}, increasing the miss rate.
