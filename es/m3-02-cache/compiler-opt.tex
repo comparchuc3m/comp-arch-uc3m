@@ -74,7 +74,7 @@
         básicos de las dos alternativas.
     \begin{itemize}
       \item Algunos compiladores definen extensiones para dar pistas al compilador.
-      \item \textmark{Ejemplo}: \textgood{gcc} (\cppkey{\_\_likely\_\_}).
+      \item \textmark{Ejemplo}: \textgood{ISO C++} (\cppkey{[[likely]]}, \cppkey{[[unlikely]]}).
     \end{itemize}
 
 \end{itemize}
@@ -91,7 +91,7 @@ vector<int> val;
 
 for (int i=0;i<max;++i) {
   cout << key[i] << "," 
-       <<  val[i] << endl;
+       << val[i] << "\n";
 }
 \end{lstlisting}
 \end{block}
@@ -108,7 +108,7 @@ vector<entry> v;
 
 for (int i=0;i<max;++i) {
   cout << v[i].key << "," 
-       <<  v[i].val << endl;
+       << v[i].val << "\n";
 }
 \end{lstlisting}
 \end{block}
@@ -207,7 +207,7 @@ for (int i=0; i<rows; ++i) {
 \begin{lstlisting}
 for (int i=0; i<size; ++i) {
   for (int j=0; j<size; ++j) {
-    r=0;
+    double r = 0;
     for (int k=0; k<size; ++k) {
       r+= b[i][k] * c[k][j];
     }
@@ -221,12 +221,12 @@ for (int i=0; i<size; ++i) {
 \column{.6\textwidth}
 \begin{block}{Producto con acceso por bloques}
 \begin{lstlisting}
-for (bj=0; bj<size; bj+=bsize) {
-  for (bk=0; bk<size; bk +=bs) {
-    for (i=0; i<size; ++i) {
-      for (j=bj; j<min(bj+bsize,size); ++j) {
-        r=0;
-        for (k=bk;k<min(bk+bsize,size); ++k) {
+for (int bj=0; bj<size; bj+=bsize) {
+  for (int bk=0; bk<size; bk +=bsize) {
+    for (int i=0; i<size; ++i) {
+      for (int j=bj; j<std::min(bj+bsize,size); ++j) {
+        double r = 0;
+        for (int k=bk; k<std::min(bk+bsize,size); ++k) {
           r +=b[i][k] * c[k][j];
         }
         a[i][j] += r;
