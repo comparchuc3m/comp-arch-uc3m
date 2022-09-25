@@ -1,0 +1,43 @@
+\section{Hardware prefetching}
+
+\begin{frame}[t]{Instruction prefetching}
+\begin{itemize}
+  \item \textmark{Observation}: 
+        Instructions exhibit high spatial locality.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Instruction prefetching}: 
+    \begin{itemize}
+      \item Read two consecutive blocks on miss.
+        \begin{itemize}
+          \item Block causing the miss.
+          \item Next block.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Location}:
+    \begin{itemize}
+      \item Block causing the miss $\rightarrow$ \textmark{instruction cache}.
+      \item Next block $\rightarrow$ \textmark{instruction buffer}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Data prefetching}
+\begin{itemize}
+  \item \textmark{Example}: Pentium 4.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Data prefetching}: 
+        Allows to prefetch a 4KB page to L2 cache.
+
+  \mode<presentation>{\vfill\pause}
+  \item Prefetching is invoked if:
+    \begin{itemize}
+      \item 2 misses in L2 due to the same page.
+      \item Distance between misses lower than 256 bytes.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}

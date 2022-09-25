@@ -1,0 +1,72 @@
+\section{Small and simple caches}
+
+\begin{frame}[t]{Small caches}
+\begin{itemize}
+  \item \textgood{Lookup} procedures:
+    \begin{itemize}
+      \item Select a line using the \textmark{index}.
+      \item Read line \textmark{tag}.
+      \item Compare to \textmark{address tag}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Lookup time is \textbad{increased} as cache size grows.
+  
+  \mode<presentation>{\vfill}
+  \item A \textmark{smaller} cache allows:
+    \begin{itemize}
+      \item Simpler lookup hardware.
+      \item Cache can better fit into processor chip.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{A small cache improves lookup time}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Simple caches}
+\begin{itemize}
+  \item Cache simplification.
+    \begin{itemize}
+      \item Use mapping mechanisms as \textgood{simple} as possible.
+      \item \textgood{Direct mapping}:
+        \begin{itemize}
+          \item Allows to \textmark{parallelize} tag comparison
+                and data transfers.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Observation}:
+        Most modern processors focus more on using small caches
+        than on simplifying them.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Intel Core i7}
+\begin{itemize}
+  \item L1 cache (1 per core)
+    \begin{itemize}
+      \item 32 KB instructions.
+      \item 32 KB data.
+      \item Latency: 3 cycles. 
+      \item Associative 4(i), 8(d) ways. 
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item L2 cache (1 per core)
+    \begin{itemize}
+      \item 256 KB
+      \item Latency: 9 cycles.
+      \item Associative 8 ways.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item L3 cache (shared)
+    \begin{itemize}
+      \item 8 MB
+      \item Latency: 39 cycles.
+      \item Associative 16 ways.
+    \end{itemize}
+\end{itemize}
+\end{frame}

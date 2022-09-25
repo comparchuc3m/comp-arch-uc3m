@@ -1,0 +1,38 @@
+\section{Write buffer merge}
+
+\begin{frame}[t]{Write buffer}
+\begin{itemize}
+  \item A \textmark{write buffer} allows to \textgood{decrease} miss penalty.
+    \begin{itemize}
+      \item When processor writes on buffer, it considers write is completed.
+      \item Simultaneous writes on memory are more efficient than a single write.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Uses}:
+    \begin{itemize}
+      \item \textmark{Write-through}: On every write.
+      \item \textmark{Write-back}: When block is replaced.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Merges in write buffer}
+\begin{itemize}
+  \item If buffer contains modified blocks,
+        addresses are checked and, if it is possible, processor performs overwrite.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Effects}:
+    \begin{itemize}
+      \item Decrease number of \textgood{memory writes}.
+      \item Decrease amount of \textgood{stalls} due to full buffer.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Merges in write buffer}
+\input{int/m3-02-cache/merge-buffer-1.tkz}
+\mode<presentation>{\vfill\pause}
+\input{int/m3-02-cache/merge-buffer-2.tkz}
+\end{frame}

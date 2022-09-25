@@ -1,0 +1,246 @@
+\section{Compiler optimizations}
+
+\begin{frame}[t]{Compiler optimizations}
+\begin{itemize}
+  \item \textmark{Goal}:
+        Generate code with a reduced number of instructions and data misses.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Instructions}: 
+    \begin{enumerate}[1.]
+      \item Procedure reordering.
+      \item Align code blocks to cache line start.
+      \item Branch linearization.
+    \end{enumerate}
+
+  \mode<presentation>{\vfill}
+  \item \textgood{Data}: 
+    \begin{enumerate}[1.]
+      \item Array merge.
+      \item Loop interchange.
+      \item Loop merge.
+      \item Blocked access.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Procedure reordering}
+\begin{columns}
+
+\column{.7\textwidth}
+
+\begin{itemize}
+  \item \textgood{Goal}: Decrease \textbad{conflict misses} due to
+        two concurrent procedures are mapped to the
+        \textmark{same cache line}.
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Technique}: Reorder procedures in memory.
+
+\end{itemize}
+
+\column{.3\textwidth}
+\pause
+\input{int/m3-02-cache/reorder-proc.tkz}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Basic block alignment}
+\begin{itemize}
+  \item \textmark{Definition}: 
+        A \textgood{basic block} is a set of instructions
+        sequentially executed (contains no branches).
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Goal}: Decrease  the
+        \textbad{cache misses} possibility for sequential codes.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Technique}: 
+        Align the \textgood{first instruction} in a basic block
+        with the \textgood{first word} in cache line.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Branch linearization}
+\begin{itemize}
+  \item \textmark{Goal}: 
+        Decrease cache misses due to conditional branches.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Technique}: If the compiler detects a branch is likely
+        to be taken, it may invert condition and interchanges basic blocks
+        in both alternatives.
+    \begin{itemize}
+      \item Some compilers define extensions to hint the compiler.
+      \item \textmark{Example}: \textgood{ISO C++} (\cppkey{[[likely]]}, \cppkey{[[unlikely]]}).
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Array merge}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Parallel arrays}
+\begin{lstlisting}
+vector<int> key;
+vector<int> val;
+
+for (int i=0;i<max;++i) {
+  cout << key[i] << "," 
+       << val[i] << "\n";
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Merged array}
+\begin{lstlisting}
+struct entry {
+  int key;
+  int val;
+};
+vector<entry> v;
+
+for (int i=0;i<max;++i) {
+  cout << v[i].key << "," 
+       <<  v[i].val << "\n";
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\begin{itemize}
+  \item Decrease conflicts.
+  \item Improve spatial locality.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Loop interchange}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Striped accesses}
+\begin{lstlisting}
+for (int j=0; j<100; ++j) {
+  for (int i=0; i<5000; ++i) {
+    v[i][j] = k * v[i][j];
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Sequential accesses}
+\begin{lstlisting}
+for (int i=0; i<5000; ++i) {
+  for (int j=0; j<100; ++j) {
+    v[i][j] = k * v[i][j];
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item \textmark{Goal}: Improve spatial locality.
+  \item Depends on the storage model defined by the programming language.
+    \begin{itemize}
+      \item FOTRAN versus C.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Loop merge}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Independent loops}
+\begin{lstlisting}
+for (int i=0; i<rows; ++i) {
+  for (int j=0; j<cols; ++j) {
+    a[i][j] = b[i][j] * c[i][j];
+  }
+}
+for (int i=0; i<rows; ++i) {
+  for (int j=0; j<cols; ++j) {
+    d[i][j] = a[i][j] + c[i][j];
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Merged loop}
+\begin{lstlisting}
+for (int i=0; i<rows; ++i) {
+  for (int j=0; j<cols; ++j) {
+    a[i][j] = b[i][j] * c[i][j];
+    d[i][j] = a[i][j] + c[i][j];
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item \textmark{Goal}: Improve temporal locality.
+  \item \textbad{Beware}: It may decrease spatial locality.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Blocked access}
+\begin{columns}[T]
+
+\column{.4\textwidth}
+\begin{block}{Original product}
+\begin{lstlisting}
+for (int i=0; i<size; ++i) {
+  for (int j=0; j<size; ++j) {
+    double r = 0;
+    for (int k=0; k<size; ++k) {
+      r += b[i][k] * c[k][j];
+    }
+    a[i][j] = r;
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.6\textwidth}
+\begin{block}{Blocked product}
+\begin{lstlisting}
+for (bj=0; bj<size; bj+=bsize) {
+  for (bk=0; bk<size; bk +=bsize) {
+    for (i=0; i<size; ++i) {
+      for (j=bj; j<std::min(bj+bsize,size); ++j) {
+        double r = 0;
+        for (k=bk; k<std::min(bk+bsize,size); ++k) {
+          r += b[i][k] * c[k][j];
+        }
+        a[i][j] += r;
+      }
+    }
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item \cppid{bsize}: Block factor
+\end{itemize}
+
+\end{frame}

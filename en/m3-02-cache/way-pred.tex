@@ -1,0 +1,21 @@
+\section{Way prediction}
+
+\begin{frame}[t]{Way prediction}
+\begin{itemize}
+  \item \textmark{Problem}:
+    \begin{itemize}
+      \item \textgood{Direct mapping} $\rightarrow$ fast but many misses.
+      \item \textgood{Set associative mapping} $\rightarrow$ less misses but more sets (slower).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Way prediction}
+    \begin{itemize}
+      \item Additional bits stored for predicting the way to be selected in the next access.
+      \item Block prefetching and compare to single tag.
+        \begin{itemize}
+          \item If there is a miss, it is compared with other tags.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}

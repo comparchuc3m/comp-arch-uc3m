@@ -1,0 +1,30 @@
+\section{Non-blocking caches}
+
+\begin{frame}[t]{Non-blocking caches}
+\begin{itemize}
+  \item \textmark{Problem}: 
+        Cache miss leads to a \textbad{stall} until a block is obtained.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Solution}: Out-of-order execution.
+    \begin{itemize}
+      \item \textbad{But}: 
+            How is memory accessed while a miss is resolved?
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Hit during miss}
+    \begin{itemize}
+      \item Allow accesses with hit while waiting.
+      \item Reduces miss penalty.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Hit during several misses / Miss during miss}:
+    \begin{itemize}
+      \item Allow overlapped misses.
+      \item Needs multi-channel memory.
+      \item Highly complex.
+    \end{itemize}
+\end{itemize}
+\end{frame}

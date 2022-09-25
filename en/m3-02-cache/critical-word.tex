@@ -1,0 +1,31 @@
+\section{Critical word first and early restart}
+
+\begin{frame}[t]{Critical word first and early restart}
+\begin{itemize}
+  \item \textmark{Observation}: 
+        Usually processors need a single word to proceed.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Solution}: 
+        Do not wait until the whole block from memory has been transferred.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Alternatives}:
+    \begin{itemize}
+      \item \textmark{Critical word first}: 
+            Reorder blocks so that first word is the word needed by the processor.
+
+      \item \textmark{Early restart}: 
+            Block received without reordering.
+        \begin{itemize}
+          \item As soon as the selected word is received, the processor proceeds.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Effects}:
+        Depends on block size $\rightarrow$ the larger the better.
+
+
+\end{itemize}
+\end{frame}
