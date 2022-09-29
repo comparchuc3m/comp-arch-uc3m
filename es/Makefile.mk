@@ -18,12 +18,16 @@ include es/ex/Makefile.def
 # Labs statements
 include es/labs/Makefile.def
 
+# Projects statements
+include es/proj/Makefile.def
+
 ALL_ES_FINAL_PDF=\
 $(FINAL_DIR) \
 $(ALL_SLIDES_ES_FINAL_PDF) \
 $(ALL_INTRO_ES_FINAL_PDF) \
 $(ALL_EX_ES_FINAL_PDF) \
 $(ALL_LABS_ES_FINAL_PDF) \
+$(ALL_PROJ_ES_FINAL_PDF) \
 
 alles:	$(ALL_ES_FINAL_PDF)
 
@@ -41,3 +45,6 @@ include $(ES_EX_DIR)/Makefile.mk
 
 #Rules for labs
 include ${ES_LABS_DIR}/Makefile.mk
+
+#Rules for projects
+include ${ES_PROJ_DIR}/Makefile.mk

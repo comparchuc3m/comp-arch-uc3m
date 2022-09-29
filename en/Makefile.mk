@@ -18,12 +18,16 @@ include en/ex/Makefile.def
 #include definitions for labs
 include en/labs/Makefile.def
 
+#Project statements
+include en/proj/Makefile.def
+
 ALL_EN_FINAL_PDF=\
 $(FINAL_DIR) \
 $(ALL_SLIDES_EN_FINAL_PDF) \
 $(ALL_INTRO_EN_FINAL_PDF) \
 $(ALL_EX_EN_FINAL_PDF) \
 $(ALL_LABS_EN_FINAL_PDF) \
+$(ALL_PROJ_EN_FINAL_PDF) \
 
 allen:	$(ALL_EN_FINAL_PDF)
 
@@ -41,3 +45,6 @@ include $(EN_EX_DIR)/Makefile.mk
 
 #include rules for labs
 include $(EN_LABS_DIR)/Makefile.mk
+
+#include rues for projects
+include $(EN_PROJ_DIR)/Makefile.mk

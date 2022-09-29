@@ -1,0 +1,185 @@
+\section{Tareas}
+
+\subsection{Desarrollo del software}
+
+
+\subsubsection{Versiones del programa}
+\label{sec:tasks:versions}
+
+Esta tarea consiste en el desarrollo de la versión secuencial de la
+aplicación descrita en C++20. Se prepararán dos programas ejecutables:
+\cppkey{image-soa} y \cppkey{image-aos} que implementarán dos
+estrategias:
+
+\begin{itemize}
+  \item \textmark{SOA -- Structure of Arrays}:
+        Se representará una imagen mediante tres vectores independientes de valores
+        entre \cppid{0} y \cppid{255}.
+  \item \textmark{AOS -- Array of Structures}:
+        Se representará una imagen con un único vector de valores de tipos pixel.
+        Un pixel representa una estructura con tres valores entre \cppid{0} y
+        \cppid{255}.
+\end{itemize}
+
+\subsubsection{Componentes}
+
+Deberá desarrollar los siguientes componentes:
+
+\begin{itemize}
+  \item \cppid{common}: Biblioteca con los archivos fuente comunes
+        a las dos versiones del programa.
+
+  \item \cppid{soa}: Biblioteca con los archivos fuente específicos 
+        a loscomponentes de la versión \textmark{AOS}.
+
+  \item \cppid{aos}: Biblioteca con los archivos fuente específicos 
+        a loscomponentes de la versión \textmark{AOS}.
+
+  \item \cppid{image-soa}: Ejecutable con el programa para la versión \textmark{SOA}.
+
+  \item \cppid{image-aos}: Ejecutable con el programa para la versión \textmark{AOS}.
+
+\end{itemize}
+
+A continuación se describe con más detalle cada uno de los cinco componentes mencionados:
+
+\paragraph{common}: Componentes comunes.
+
+Contendrá como mínimo los siguientes archivos fuente:
+\begin{itemize}
+  \item \cppid{progargs.cpp}: Tratamiento de los argumentos del
+        programa recibidos por \cppid{main}.
+\end{itemize}
+
+\paragraph{soa}: Biblioteca de componentes \textmark{SOA}.
+
+Contendrá como mínimo los siguientes archivos fuente:
+\begin{itemize}
+  \item \cppid{imagesoa.cpp}: Tratamiento de imágenes
+        con una representación \textmark{SOA}.
+\end{itemize}
+
+\paragraph{aos}: Biblioteca de componentes \textmark{AOS}.
+
+Contendrá como mínimo los siguientes archivos fuente:
+
+\begin{itemize}
+  \item \cppid{imageaos.cpp}: Tratamiento de imágenes
+        con una representación \textmark{AOS}.
+\end{itemize}
+
+\paragraph{image-soa}: Programa para la versión \textmark{SOA}.
+
+Contendrá un único archivo fuente:
+\begin{itemize}
+  \item \cppid{imgsoa}: Contendrá exclusivamente la función
+        \cppid{main()} para esta versión.
+        No podrá incluir ninguna función ni tipo adicional.
+\end{itemize}
+
+\paragraph{image-aos}: Programa para la versión \textmark{AOS}.
+
+Contendrá un único archivo fuente:
+\begin{itemize}
+  \item \cppid{imgaos}: Contendrá exclusivamente la función
+        \cppid{main()} para esta versión.
+        No podrá incluir ninguna función ni tipo adicional.
+\end{itemize}
+
+\subsubsection{Compilación del proyecto}
+
+Todos sus archivos fuente deben compilar sin problemas y no deben emitir
+ninguna advertencia del compilador. 
+
+Deberá incluirse un archivo de configuración
+CMake con las siguientes opciones:
+
+\begin{lstlisting}[title={CmakeLists.txt},frame=single]
+cmake_minimum_required(VERSION 3.23)
+project(image LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS_OFF)
+add_compile_options(-Wall -Wextra -Werror -pedantic -pedantic-errors)
+
+set(CMAKE_CXX_FLAGS_RELEASE "-march=native")
+
+add_library(common file1-common.cpp file2-common.cpp file3-common.cpp)
+add_library(aos file1-aos.cpp file2-aos.cpp)
+add_library(soa file1-soa.cpp file2-soa.cpp)
+
+add_executable(image-aos imgaos.cpp)
+target_link_libraries(imgaos common aos)
+add_executable(imgsoa image-soa.cpp)
+target_link_libraries(imgsoa common soa)
+\end{lstlisting}
+
+
+Tenga también en cuenta que deberá realizar todas las evaluaciones con las
+optimizaciones del compilador activadas con la opción de CMake
+\cppid{-DCMAKE\_BUILD\_TYPE=Release}.
+
+
+\textbad{Importante}: No se podrá utilizar ninguna biblioteca externa a la 
+biblioteca estándar de C++.
+
+\subsubsection{Normas de cálidad del código}
+
+El código fuente debe estar bien estructurado y organizado, así como
+apropiadamente documentado. Se recomienda, pero no es de obligado
+cumplimiento, hacer uso de las \textemph{C++ Core Guidelines}
+(\url{http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines}).
+
+En cualquier caso, las siguientes reglas si son de obligado y
+estricto cumplimiento:
+
+\begin{itemize}
+  \item No se podrán utilizar variables globales que no sean constantes.
+  \item No está permitido el uso del patrón \emph{Singleton}.
+  \item No se podrá pasar arrays a una función como parámetros de tipo
+        puntero.
+  \item Ninguna función ni función miembro podrá tener más de cuatro parámetros.
+  \item Ninguna función podrá tener más de 25 líneas estando apropiadamente
+        formateadas.
+  \item Todos los parámetros se pasarán a las funciones
+        por valor, por referencia o por referencia constante.
+  \item No se podrá usar explicitamente las funciones \cppid{malloc()} o
+        \cppid{free()} ni los operadores \cppkey{new} o \cppkey{delete}.
+  \item No se permite el uso de macros, excepto para la definición de
+        guardas de inclusión.
+  \item No se permite ningún cast excepto \cppkey{static\_cast},
+        \cppkey{dynamic\_cast}, \cppkey{const\_cast} o \cppkey{reinterpret\_cast}.
+\end{itemize}
+
+
+\subsubsection{Pruebas unitarias}
+
+Debe definir y entregar un conjunto de pruebas unitarias.
+Se recomienda el uso de GoogleTest (\url{https://github.com/google/googletest}),
+aunque no es imprescindible.
+
+En cualquier caso debe aportar evidencias de haber realizado suficientes
+pruebas unitarias.
+
+
+\subsection{Evaluación del rendimiento y energía}
+
+Esta tarea consiste en realizar una evaluación comparativa del rendimiento
+de las dos estrategias de implementación \cppid{image-aos} e \cppid{image-soa}.
+
+Para evaluar el rendimiento debe medir el tiempo de ejecución de la
+aplicación. También debe medirse el consumo energético de la aplicación
+y derivar el uso de potencia.
+
+Todas las evaluaciones de rendimiento se realizarán en un nodo del
+clúster \cppid{avignon}.
+
+Represente en una gráfica todos los tiempos totales de ejecución, uso de energía y potencia
+obtenidos para imágenes de distinto tamaño. A tal efecto
+se suministrarán imágenes para la evaluación.
+
+\textbf{Incluya en la memoria de esta práctica las conclusiones que pueda inferir de los resultados.}
+No se limite simplemente a describir los datos. Debe buscar también una
+explicación convincente de los resultados.
+

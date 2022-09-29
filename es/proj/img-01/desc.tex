@@ -1,0 +1,292 @@
+\section{Descripción del proyecto}
+
+En este proyecto se construirá una aplicación de procesamiento de imágenes.
+
+En las siguientes secciones se presentan los requisitos que deben cumplir
+con los programas desarrollados.
+
+\subsection{Visión general}
+
+Se desarrollará una aplicación que aplica diversas operaciones
+sobre una imagen en formato BMP.
+
+Para cada imagen se implementarán las siguientes operaciones:
+
+\begin{itemize}
+\item Copia de imágenes.
+\item Obtención del histograma.
+\item Conversión a escala de grises.
+\item Difusión gaussiana (\emph{Gaussian blur}).
+\end{itemize}
+
+La aplicación tomará los siguientes parámetros:
+
+\begin{itemize}
+
+\item Directorio con imágenes de entrada.
+\item Directorio en el que dejar las imágenes de salida.
+\item Operación a ejecutar.
+
+\end{itemize}
+
+La operación a ejecutar será una de las siguientes:
+
+\begin{itemize}
+
+\item \textmark{copy}: No realiza ninguna transformación. Solamente
+copia los archivos.
+\item \textmark{histo}: Genera un archivo de texto con el histograma de cada canal (RGB).
+\item \textmark{mono}: Convierte a tonos de grises.
+\item \textmark{gauss}: Aplica el filtro de suavizado gaussiano.
+
+\end{itemize}
+
+\textbad{NOTA}: Se implementarán dos programas distintos \cppid{image-aos}
+e \cppid{image-soa}. No obstante, por simplicidad en el resto de esta
+sección se utiliza el nombre \cppid{image} para hacer referencia
+indistintamente a los dos programas.
+Para más detalles sobre estos dos programas vaya a la sección~\ref{sec:tasks:versions}.
+
+En cualquiera de los casos, la aplicación leerá todos los archivos
+del directorio de entrada, aplicará las transformaciones
+correspondientes y escribirá los archivos correspondientes con el
+mismo nombre en el directorio de salida.
+
+El programa deberá comprobar que el número de parámetros es 3:
+
+\begin{lstlisting}[style=terminal]
+$image
+Wrong format:
+  image in_path out_path oper
+    operation: copy, histo, mono, gauss
+$
+\end{lstlisting}
+
+Si el tercer argumento no toma un valor adecuado (\cppid{copy}, \cppid{histo}, \cppid{mono} o \cppid{gauss}), 
+se presentará un mensaje de error y se terminará:
+
+\begin{lstlisting}[style=terminal]
+$image indir outdir gaus
+Unexpected operation:gaus
+  image in_path out_path oper
+    operation: copy, histo, mono, gauss
+$
+\end{lstlisting}
+
+Si el directorio de entrada no existe o no puede abrirse, se presentará un mensaje de error y se terminará:
+
+\begin{lstlisting}[style=terminal]
+$image inx outdir copy
+Input path: inx
+Output path: out
+Cannot open directory [inx]
+  image in_path out_path oper
+    operation: copy, histo, mono, gauss
+$
+\end{lstlisting}
+
+Si el directorio de salida no existe, se presentará un mensaje de error y se terminará:
+
+\begin{lstlisting}[style=terminal]
+$image-seq sobel indir outx
+Input path: indir
+Output path: outx
+Output directory [outx] does not exist
+  image in_path out_path oper
+    operation: copy, histo, mono, gauss
+$
+\end{lstlisting}
+
+En cualquier otro caso, se procesarán todos los archivos del directorio de entrada y se dejarán los resultados en el directorio de salida. Para cada archivo procesado se imprimirá la información del tiempo dedicado a cada tarea. Todos los valores de tiempo se expresarán en microsegundos:
+
+\begin{lstlisting}[style=terminal]
+$image-seq indir outdir gauss
+Input path: indir
+Output path: outdir
+File: "indir/62096.bmp"(time: 43994)
+  Load time: 3442
+  Gauss time: 38909
+  Store time: 1642
+File: "indir/169012.bmp"(time: 37209)
+  Load time: 2602
+  Gauss time: 32950
+  Store time: 1655
+$
+\end{lstlisting}
+
+
+\subsection{El formato BMP}
+
+Se utilizará el formato de imágenes BMP. Los ficheros de este tipo
+contienen una cabecera de al menos 54 bytes con la  información
+especificada en el cuadro~\ref{tab:bmp}.
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Comienzo} & \textbf{Longitud} & \textbf{Descripción}\\
+\hline
+\hline
+0 & 2 & Caracteres \cppid{'B'} y \cppid{'M'}.\\
+\hline
+2 & 4 & Tamaño del archivo.\\
+\hline
+6 & 4 & Reservado.\\
+\hline
+10 & 4 & Inicio de datos de imagen.\\
+\hline
+14 & 4 & Tamaño de la cabecera de bitmap.\\
+\hline
+18 & 4 & Anchura en pixeles.\\
+\hline
+22 & 4 & Altura en pixeles.\\
+\hline
+26 & 2 & Número de planos.\\
+\hline 
+28 & 2 & Tamaño de punto en bits.\\
+\hline
+30 & 4 & Compresión.\\
+\hline
+34 & 4 & Tamaño de la imagen.\\
+\hline
+38 & 4 & Resolución horizontal.\\
+\hline
+42 & 4 & Resolución vertical.\\
+\hline
+46 & 4 & Tamaño de la tabla de color.\\
+\hline
+50 & 4 & Contador de colores importantes.\\
+\hline
+\end{tabular}
+\caption{Campos de cabecera para el formato BMP.}
+\label{tab:bmp}
+\end{table}
+
+Se tendrán en cuenta las siguientes restricciones para que un fichero
+se pueda considerar válido.
+
+\begin{itemize}
+\item El número de planos debe ser \cppid{1}.
+\item El tamaño de cada punto debe ser de \cppid{24} bits.
+\item El valor de compresión debe ser \cppid{0}.
+\end{itemize}
+
+Obsérvese que no será necesario utilizar ciertos campos.
+
+Los pixeles se almacenan a partir de la posición indicada por el campo
+\emph{Inicio de datos de imagen}. Cada pixel se representa por 3 bytes
+consecutivos que representan el nivel de azul, verde y rojo para ese
+pixel. Dichos valores estarán siempre en el rango de \cppid{0} a
+\cppid{255}.
+
+Al finalizar los píxeles de una fila se dejarán bytes de relleno, de forma
+que la siguiente fila de píxeles comience al principio de una palabra.
+
+\subsection{Histograma de una imagen}
+
+Por cada imagen se generará un archivo de texto con extensión \cppid{.hst}
+que contendrá consecutivamente la información de los tres histogramas.
+Esto es, se generará un histograma para el canal R, otro histograma para
+el canal G, y un tercer histograma para el canal B.
+
+Un histograma representa la frecuencia absoluta (número de apariciones) de 
+cada valor numérico (de $0$ a $255$).
+
+El archivo de salida será un archivo de texto que contendrá 
+un total de 768 ($256 \times 3$) líneas.
+Las primeras 256 líneas contendrán los valores de frecuencia absoluta de cada
+valor para la componente R. Las siguientes 256 líneas serán para la componente
+G. Las últimas 256 líneas serán para la componente B.
+
+\subsection{Conversión a escala de grises}
+
+Una imagen en escala de grises tiene el mismo valor para los tres valores RGB del pixel.
+
+La transformación se realiza en cuatro pasos:
+
+\begin{enumerate}
+
+\item Normalización: Se normalizan los valores a una escala real de \cppid{0} to \cppid{1}.
+
+\[
+n_r = \frac{R}{255}
+\]
+\[
+n_g = \frac{G}{255}
+\]
+\[
+n_b = \frac{B}{255}
+\]
+
+\item Transformación a intensidad lineal: Para cada color normalizado
+$(n_r, n_g, n_b)$ se obtiene un nuevo color $(c_r, c_g, c_b)$.
+Para ellos se aplica la misma transformación en los tres canales:
+
+\[
+c_i = \frac{n_i}{12.92} \quad\quad \text{si} \quad n_i \leq 0.04045
+\]
+\[
+c_i = \left(\frac{n_i + 0.055}{1.055}\right)^{2.4} \quad\quad \text{si} \quad n_i > 0.04045
+\]
+
+\item Transformación lineal: Se aplica una transformación lineal a cada color.
+\[
+c_l = 0.2126 \cdot c_r + 0.7152 \cdot c_g + 0.0722 \cdot c_b
+\]
+
+\item Corrección gamma: 
+\[
+c_g = 12.92 \cdot c_l \quad\quad \text{si} \quad c_l \leq 0.0031308
+\]
+\[
+c_g = 1.055 \cdot c_l^{\frac{1}{2.4}} - 0.055 \quad\quad \text{si} \quad c_l > 0.0031308
+\]
+
+\item Desnormalización: Se transforma de la escala $[0,1]$ a la escala $[0,255]$
+\[
+g = c_g \cdot 255
+\]
+
+\end{enumerate}
+
+\textbad{NOTA}:
+Tenga en cuenta que debe almacenarse el valor obtenido $g$, para las tres componentes
+(R, G y B) del pixel.
+
+\subsection{Difusión gaussiana}
+
+La difusión gaussiana tiene por objeto disminuir la nitidez de una
+imagen y se utiliza como paso previo a la detección de bordes.
+
+En general, se utiliza una matriz cuadrada que actúa como máscara.
+Para una máscara de $5 \times 5$ la imagen resultado $res$, se obtiene
+a partir de la máscara $m$ y de la imagen original $im$ aplicando 
+la siguiente expresión:
+
+\[
+res(i,j) = \frac{1}{w} \sum_{s=-2}^2 \sum_{t=-2}^2 m(s+3,t+3) \cdot
+im(i+s,j+t)
+\]
+
+donde la matriz de la máscara $m$ y el peso $w$ son:
+
+\[
+m =
+\begin{pmatrix}
+1 & 4 & 7 & 4 & 1\\ 
+4 & 16 & 26 & 16 & 4\\
+7 & 26 & 41 & 26 & 7\\
+4 & 16 & 26 & 16 & 4\\
+1 & 4 & 7 & 4 & 1\\
+\end{pmatrix}
+\qquad
+\qquad
+w = 273
+\]
+
+
+\textbf{Importante}: Tenga en cuenta que al aplicar la máscara en los 
+bordes de la imagen, se considerará que la matriz de la imagen está
+rodeada de pixeles imaginarios de valor \cppid{0}.
+

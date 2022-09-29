@@ -1,0 +1,183 @@
+\section{Task}
+
+\subsection{Software Development}
+
+
+\subsubsection{Program versions}
+\label{sec:tasks:versions}
+
+This task consists of the development of a sequential version
+of the described application using C++20.
+Two executable programs will be prepared:
+\cppkey{image-soa} and \cppkey{image-aos} 
+implementing two strategies:
+
+\begin{itemize}
+  \item \textmark{SOA -- Structure of Arrays}:
+        An image shall be represented by using three independent vectors,
+        each of them with values from \cppid{0} to \cppid{255}.
+  \item \textmark{AOS -- Array of Structures}:
+        An image will be represente by using a single vector of values from pixel type.
+        Each pixel represents a structure with three values from \cppid{0} to \cppid{255}.
+\end{itemize}
+
+\subsubsection{Components}
+
+The following componentes shall be developed:
+
+\begin{itemize}
+  \item \cppid{common}: 
+        Library with source files that are common to both versions.
+
+  \item \cppid{soa}: 
+        Library with source files that are specific to the \textmark{AOS} version.
+
+  \item \cppid{aos}:
+        Library with source files that are specific to the \textmark{AOS} version.
+
+  \item \cppid{image-soa}: 
+        Executable program with the \textmark{SOA} version.
+
+  \item \cppid{image-aos}: 
+        Executable program with the \textmark{AOS} version.
+
+\end{itemize}
+
+Below, the five components are described in more detail:
+
+
+\paragraph{common}: Common components:
+
+It will contain, at least, the following source files:
+\begin{itemize}
+  \item \cppid{progargs.cpp}: 
+        Argument handling for \cppid{main} parameters. 
+\end{itemize}
+
+\paragraph{soa}: Components library for \textmark{SOA}.
+
+It will contain, at least, the following source files:
+\begin{itemize}
+  \item \cppid{imagesoa.cpp}: 
+        Image handling with \textmark{SOA} representation.
+\end{itemize}
+
+\paragraph{aos}: Components library for \textmark{AOS}.
+
+It will contain, at least, the following source files:
+\begin{itemize}
+  \item \cppid{imageaos.cpp}: 
+        Image handling with \textmark{SOA} representation.
+\end{itemize}
+
+\paragraph{image-soa}: Program with \textmark{SOA} version.
+
+It will contain a single source file:
+\begin{itemize}
+  \item \cppid{imgsoa}: 
+        It shall only contain a \cppid{main()} function for this version.
+        It shall not include any additional function.
+\end{itemize}
+
+\paragraph{image-aos}: Program with \textmark{AOS} version.
+
+It will contain a single source file:
+\begin{itemize}
+  \item \cppid{imgaos}: 
+        It shall only contain a \cppid{main()} function for this version.
+        It shall not include any additional function.
+\end{itemize}
+
+\subsubsection{Compiling the project}
+
+All source files must compile without problems and shall no emit no compiler warning.
+A CMake configuration file shall be included with the following options:
+
+\begin{lstlisting}[title={CmakeLists.txt},frame=single]
+cmake_minimum_required(VERSION 3.23)
+project(image LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS_OFF)
+add_compile_options(-Wall -Wextra -Werror -pedantic -pedantic-errors)
+
+set(CMAKE_CXX_FLAGS_RELEASE "-march=native")
+
+add_library(common file1-common.cpp file2-common.cpp file3-common.cpp)
+add_library(aos file1-aos.cpp file2-aos.cpp)
+add_library(soa file1-soa.cpp file2-soa.cpp)
+
+add_executable(image-aos imgaos.cpp)
+target_link_libraries(imgaos common aos)
+add_executable(imgsoa image-soa.cpp)
+target_link_libraries(imgsoa common soa)
+\end{lstlisting}
+
+Keep in mind that all evaluations shall be performed with the compiler optimizations
+enabled with CMake option
+\cppid{-DCMAKE\_BUILD\_TYPE=Release}.
+
+
+\textbad{Important}: 
+The only allowed library is the C++ standard library.
+No external library is allowed.
+
+\subsubsection{Code quality rules}
+
+Source code must be well structured and organized, 
+as well as approppriately documented.
+The \textemph{C++ Core Guidelines}
+(\url{http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines})
+are recommended but not required.
+
+In any case, the following rules must be strictly followed:
+
+\begin{itemize}
+  \item No global variables are allowed, except constants.
+  \item No use of the \emph{Singleton} pattern is allowed.
+  \item No array shall be passed to a function as a pointer.
+  \item No function or member function shall have more than four parameters.
+  \item No function shall have more than 25 lines when appropriately formatted.
+  \item All parameters shall be passed to functions by value,
+        by reference of by const reference.
+  \item No explicit use of the following functions is allowed:
+        \cppid{malloc()} or \cppid{free()} functions,
+        operators \cppkey{new} or \cppkey{delete}.
+  \item No macro use is allowed, except for defining include guards.
+  \item No cast is allowed except 
+        \cppkey{static\_cast}, \cppkey{dynamic\_cast}, 
+        \cppkey{const\_cast} or \cppkey{reinterpret\_cast}.
+\end{itemize}
+
+
+\subsubsection{Unit tests}
+
+A set of unit tests shall be defined and included in the submission.
+You are recommended, but no trequired, to make use of GoogleTest
+(\url{https://github.com/google/googletest}).
+
+In any case, evidence of enough unit tests shall be included in the
+submission.
+
+
+\subsection{Performance and energy evaluation}
+
+This task consists of a comparative performance evaluation of the 
+two implementation strategies.
+\cppid{image-aos} and \cppid{image-soa}.
+
+To conduct the performance evaluation, the total execution time shall be measured.
+In addition, energy use must be alse measured.
+The power use must be derived.
+
+All performance evaluations shall be performed in a node from the
+\cppid{avignon} cluster.
+
+Represent in a graphic all total execution times, energy use and power
+for images with different sizes.
+Evaluation images will be provided.
+
+\textbf{The project report shall include conclusions drawn from results}.
+Please, do not limit to simply describing data.
+Try to find convincing explanations of those results.

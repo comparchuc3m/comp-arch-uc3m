@@ -1,0 +1,308 @@
+\section{Project description}
+
+In this project you will develop an image processing application.
+
+In the following sections, requirements to be fulfilled are presented.
+
+\subsection{General overview}
+
+You will develop an application that applies several operations
+on ain image in BMP format.
+
+For each image the following operations will be implemented:
+
+\begin{itemize}
+\item Image copy.
+\item Histogram computation.
+\item Grayscale transformation.
+\item Gaussian blur.
+\end{itemize}
+
+The application will take the following parameters
+
+\begin{itemize}
+
+\item Directory with input images.
+\item Directory with output images.
+\item Operation to be executed.
+
+\end{itemize}
+
+The operation to be executed will be one of the following:
+
+\begin{itemize}
+
+\item \textmark{copy}: 
+Does not perform any transformation. It only copies files.
+
+\item \textmark{histo}: 
+Generates a text file with the histogram for each channel (RGB).
+
+\item \textmark{mono}: 
+Converts to gray scale.
+
+\item \textmark{gauss}: 
+Applies the gaussian blur filter.
+
+\end{itemize}
+
+\textbad{NOTE}: 
+Two different programs will be implemented: \cppid{image-aos} adn \cppid{image-soa}.
+However, for simplicity, in the rest of this section the generic name \cppid{image}
+is used to refere to any of those two programs.
+
+For details on these two programs, please go to section~\ref{sec:tasks:versions}.
+
+In any case, the application will read all the files in the input directory,
+it will apply the corresponding tansformation, and it will write the 
+corresponding files with the same name in the output directory.
+mismo nombre en el directorio de salida.
+
+The program must check that the number of parameters is 3:
+
+\begin{lstlisting}[style=terminal]
+$image
+Wrong format:
+  image in_path out_path oper
+    operation: copy, histo, mono, gauss
+$
+\end{lstlisting}
+
+If the third argument does not take a valid valu
+(\cppid{copy}, \cppid{histo}, \cppid{mono} or \cppid{gauss}), 
+an error message will presented before terminating:
+
+\begin{lstlisting}[style=terminal]
+$image indir outdir gaus
+Unexpected operation:gaus
+  image in_path out_path oper
+    operation: copy, histo, mono, gauss
+$
+\end{lstlisting}
+
+When the input directory does not exist, or it cannot be opened,
+an error message will be presented before terminating:
+
+\begin{lstlisting}[style=terminal]
+$image inx outdir copy
+Input path: inx
+Output path: out
+Cannot open directory [inx]
+  image in_path out_path oper
+    operation: copy, histo, mono, gauss
+$
+\end{lstlisting}
+
+When the output directory does not exist, 
+an error message will be presented before terminating:
+
+\begin{lstlisting}[style=terminal]
+$image-seq sobel indir outx
+Input path: indir
+Output path: outx
+Output directory [outx] does not exist
+  image in_path out_path oper
+    operation: copy, histo, mono, gauss
+$
+\end{lstlisting}
+
+In any other case, all files in the input directory will be processed
+and results will be stored in the otuput directory.
+For each processed file the time dedicated to each task will be printed.
+All values will be expressed in microseconds:
+
+\begin{lstlisting}[style=terminal]
+$image-seq indir outdir gauss
+Input path: indir
+Output path: outdir
+File: "indir/62096.bmp"(time: 43994)
+  Load time: 3442
+  Gauss time: 38909
+  Store time: 1642
+File: "indir/169012.bmp"(time: 37209)
+  Load time: 2602
+  Gauss time: 32950
+  Store time: 1655
+$
+\end{lstlisting}
+
+
+\subsection{BMP format}
+
+You will be using the BMP image format.
+In this format files have a 54 bytes header with the information specified in
+Table~\ref{tab:bmp}.
+
+\begin{table}[!htb]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Start} & \textbf{Length} & \textbf{Description}\\
+\hline
+\hline
+0 & 2 & Characters \cppid{'B'} and \cppid{'M'}.\\
+\hline
+2 & 4 & File size.\\
+\hline
+6 & 4 & Reserved.\\
+\hline
+10 & 4 & Start of image data.\\
+\hline
+14 & 4 & Size of bitmap header.\\
+\hline
+18 & 4 & Width in pixels.\\
+\hline
+22 & 4 & Height in pixels.\\
+\hline
+26 & 2 & Number of planes.\\
+\hline 
+28 & 2 & Point size in bits.\\
+\hline
+30 & 4 & Compression.\\
+\hline
+34 & 4 & Image size.\\
+\hline
+38 & 4 & Horizontal resolution.\\
+\hline
+42 & 4 & Vertical resolution.\\
+\hline
+46 & 4 & Color table size.\\
+\hline
+50 & 4 & Important color counter.\\
+\hline
+\end{tabular}
+\caption{Header fields for the BMP format.}
+\label{tab:bmp}
+\end{table}
+
+The following constraints need to be considered
+for a file to be considered valid.
+
+\begin{itemize}
+\item The number of plains shall be \cppid{1}.
+\item The size of each point shall be \cppid{24} bits.
+\item The compression value shall be \cppid{0}.
+\end{itemize}
+
+Note that it is not necessary to use certain fields.
+
+Pixels are stored starting from the position specified by the field
+\emph{Start of image data}.
+Each pixel is represented by 3 consecutive bytes representing the
+blue, green and red blue for that pixel.
+Those values are always in the range from \cppid{0} to \cppid{255}.
+
+At the end of the pixels in a row additional padding bytes are added,
+so that the next pixels row starts at the start of a word.
+
+\subsection{Image histogram}
+
+For every image a text file  with extension \cppid{.hst} will be generated
+containing consecutively the information from the three histograms.
+That is, a histogram for R channel, another histogram for the G channel,
+and a third one for the B channel.
+
+A histogram represents the absolute frequency (number of occurrences)
+for each numeric value (from $0$ to $255$).
+
+The output file will be a text file containing a total of 768 ($256 \times 3$) lines.
+The first 256 lines will contain the absolute frequency values for each value of the R component.
+The next 256 lines will be for the G component.
+The last 256 lines will be for the B component.
+
+\subsection{Gray scale conversion}
+
+An image in gray scale has the same value for the three values RGB for each pixel.
+
+The transformation is performed in four stages.
+
+\begin{enumerate}
+
+\item \textmark{Normalization}: Values are normalized to a real scal from \cppid{0} to \cppid{1}.
+
+\item Normalización: Se normalizan los valores a una escala real de \cppid{0} A \cppid{1}.
+
+\[
+n_r = \frac{R}{255}
+\]
+\[
+n_g = \frac{G}{255}
+\]
+\[
+n_b = \frac{B}{255}
+\]
+
+\item Linear intensity transform:
+For each normalized color
+$(n_r, n_g, n_b)$ a new color $(c_r, c_g, c_b)$ is obtained.
+The same transform is applied for the three channels.
+
+\[
+c_i = \frac{n_i}{12.92} \quad\quad \text{if} \quad n_i \leq 0.04045
+\]
+\[
+c_i = \left(\frac{n_i + 0.055}{1.055}\right)^{2.4} \quad\quad \text{if} \quad n_i > 0.04045
+\]
+
+\item Linear transform:
+A linear transform is applied to each color:
+\[
+c_l = 0.2126 \cdot c_r + 0.7152 \cdot c_g + 0.0722 \cdot c_b
+\]
+
+\item Gamma correction: 
+\[
+c_g = 12.92 \cdot c_l \quad\quad \text{if} \quad c_l \leq 0.0031308
+\]
+\[
+c_g = 1.055 \cdot c_l^{\frac{1}{2.4}} - 0.055 \quad\quad \text{if} \quad c_l > 0.0031308
+\]
+
+\item Denormalization: A transformation is performed from scale $[0,1]$ to scale scale $[0,255]$.
+\[
+g = c_g \cdot 255
+\]
+
+\end{enumerate}
+
+\textbad{NOTE}:
+The final value obtained for $g$ in the three componentes (R, G, and B) of the pixel.
+
+\subsection{Gaussian blur}
+
+Gaussian blur has as a goal to decre
+Gaussian blur reduces image noise and also image detail. It is usually
+used as a previous step to edge detection.
+
+In general, a square matrix is used as a mask.
+For a mask of $5 \times 5$ the resulting image $res$, is obtained
+from the mask $m$ and the original image $im$ applying the following
+expression.
+
+
+\[
+res(i,j) = \frac{1}{w} \sum_{s=-2}^2 \sum_{t=-2}^2 m(s+3,t+3) \cdot
+im(i+s,j+t)
+\]
+
+where the mask matrix $m$ and the weight $w$ are:
+
+\[
+m =
+\begin{pmatrix}
+1 & 4 & 7 & 4 & 1\\ 
+4 & 16 & 26 & 16 & 4\\
+7 & 26 & 41 & 26 & 7\\
+4 & 16 & 26 & 16 & 4\\
+1 & 4 & 7 & 4 & 1\\
+\end{pmatrix}
+\qquad
+\qquad
+w = 273
+\]
+
+\textbf{Important}: 
+Note that when applying the mas in image boundaries, the image will be
+considered as it was surrounded by imaginary pixels with value
+\cppid{0}.
+
