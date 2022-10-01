@@ -17,7 +17,7 @@
       \mode<presentation>{\vfill}
       \item \textgood{Aumenta} el \textmark{\emph{throughput}}.
       \mode<presentation>{\vfill}
-      \item \alert{No disminuye} la \textmark{latencia}.
+      \item \textbad{No disminuye} la \textmark{latencia}.
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -51,7 +51,7 @@
   \item Modelo simplificado:
     \begin{itemize}
       \item 5 etapas.
-      \item \alert{Modelos más realistas requieren muchas más etapas}.
+      \item \textbad{Modelos más realistas requieren muchas más etapas}.
     \end{itemize}
   \mode<presentation>{\pause\vfill}
   \item \textgood{Etapas}:
@@ -98,13 +98,23 @@
 
 \begin{frame}[t]{Ejecución}
 \begin{columns}
-\begin{column}{.5\textwidth}
+\begin{column}{.3\textwidth}
 \input{int/m4-01-ilp/exec-design.tkz}
 \end{column}
-\begin{column}{.5\textwidth}
+\begin{column}{.7\textwidth}
 \begin{itemize}
-  \item Operación de ALU sobre registros.
-  \item Alternativamente, cálculo de dirección efectiva.
+  \item Operación de ALU sobre operandos.
+  \item Alternativas:
+    \begin{itemize}
+      \item \textmark{Referencia a memoria}:
+            Cáluclo de dirección efectiva (suma registro base y desplazamiento).
+      \item \textmark{Instrucciones registro/registro}:
+            Operación de ALU sobre registros obtenidos.
+      \item \textmark{Instricciones Registro/dato inemdiato}:
+            Operación de ALU entre registro y dato inmediato.
+      \item \textmark{Bifurcación condicional}:
+            Evaluación de la condición.
+    \end{itemize}
 \end{itemize}
 \end{column}
 \end{columns}
@@ -112,14 +122,21 @@
 
 \begin{frame}[t]{Memoria}
 \begin{columns}
-\begin{column}{.5\textwidth}
+\begin{column}{.3\textwidth}
 \begin{center}
 \input{int/m4-01-ilp/mem-design.tkz}
 \end{center}
 \end{column}
-\begin{column}{.5\textwidth}
+\begin{column}{.7\textwidth}
 \begin{itemize}
   \item Lectura o escritura en memoria.
+    \begin{itemize}
+      \item \textmark{Lectura}:
+            Acceso a memoria usando dirección efectiva calculada en EX.
+      \item \textmark{Escritura}:
+            Escritura a memoria usando dirección efectiva calculada en EX y
+            y valor de segundo registro leido.
+    \end{itemize}
 \end{itemize}
 \end{column}
 \end{columns}
@@ -127,12 +144,18 @@
 
 \begin{frame}[t]{Post-escritura}
 \begin{columns}
-\begin{column}{.5\textwidth}
+\begin{column}{.3\textwidth}
 \input{int/m4-01-ilp/wb-design.tkz}
 \end{column}
-\begin{column}{.5\textwidth}
+\begin{column}{.7\textwidth}
 \begin{itemize}
   \item Escritura de resultado en banco de registros.
+    \begin{itemize}
+      \item \textmark{Operaciones de carga}:
+            Valor leído de memoria.
+      \item \textmark{Instrucciones de ALU}:
+            Valor calculado en etapa EX.
+    \end{itemize}
 \end{itemize}
 \end{column}
 \end{columns}
@@ -144,18 +167,18 @@
 
 \begin{frame}[t]{Efectos del pipeline}
 \begin{itemize}
-  \item Un pipeline de \textmark{profundidad} \alert{n}, 
-  multiplica por \alert{n} el \textmark{ancho de banda} 
+  \item Un pipeline de \textmark{profundidad} \textbad{n}, 
+  multiplica por \textbad{n} el \textmark{ancho de banda} 
   necesario de la versión sin pipeline con la misma frecuencia de reloj.
     \begin{itemize}
       \item Cachés, cachés, ...
     \end{itemize}
   \mode<presentation>{\vfill}
   \item La separación de \textgood{caché} de \textmark{datos} e 
-        \textmark{instrucciones} elimina algunos \alert{conflictos} 
+        \textmark{instrucciones} elimina algunos \textbad{conflictos} 
         de memoria.
   \mode<presentation>{\vfill}
-  \item Las instrucciones que están en el pipeline \alert{no deberían}
+  \item Las instrucciones que están en el pipeline \textbad{no deberían}
         intentar usar el mismo recurso en el mismo momento.
     \begin{itemize}
       \item Introducción de registros de pipeline entre etapas sucesivas.
@@ -179,23 +202,23 @@
 \begin{itemize}
   \item Procesador no segmentado.
     \begin{itemize}
-      \item Ciclo de reloj: 1 ns.
+      \item Frecuencia: 4 GHz.
       \item 40\% operaciones ALU $\rightarrow$ 4 ciclos.
       \item 20\% operaciones de bifurcación $\rightarrow$ 4 ciclos.
       \item 40\% operaciones de memoria $\rightarrow$ 5 ciclos.
-      \item Sobrecoste de segmentación $\rightarrow$ 0.2 ns.
+      \item Sobrecoste de segmentación $\rightarrow$ 0.1 ns.
     \end{itemize}
   \mode<presentation>{\pause}
   \item ¿Qué aceleración se obtiene con la segmentación?
   \mode<presentation>{\pause}
 \end{itemize}
 \[
-t_{orig} = ciclo_{reloj} \times CPI = 1 ns \times (0.6 \times 4 + 0.4 \times 5) = 4.4 ns
+t_{orig} = ciclo_{reloj} \times CPI = 0.25 ns \times (0.6 \times 4 + 0.4 \times 5) = 1.1 ns
 \]
 \[
-t_{nuevo} = 1 ns + 0.2 ns = 1.2 ns
+t_{nuevo} = 0.25 ns + 0.1 ns = 0.35 ns
 \]
 \[
-S = \frac{4.4 ns}{1.2 ns} = 3.7
+S = \frac{1.1 ns}{0.35 ns} = 3.1
 \]
 \end{frame}
