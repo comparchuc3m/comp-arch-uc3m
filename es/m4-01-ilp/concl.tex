@@ -2,12 +2,22 @@
 
 \begin{frame}[t]{Resumen}
 \begin{itemize}[<+->]
+  \item La segmentación aumenta el \emph{throughput} pero no reduce la latencia.
   \item Una arquitectura segmentada requiere mayor ancho de banda de memoria.
+  \item Tres tipos de riesgos.
+    \begin{itemize}
+      \item Riesgos estructurales.
+      \item Riesgos de datos.
+      \item Riesgos de control.
+    \end{itemize}
   \item Los riesgos en el pipeline provocan detenciones.
     \begin{itemize}
       \item Degradación del rendimiento.
     \end{itemize}
-  \item Las detenciones de riesgos de datos se pueden mitigar con técnicas de compilación.
+  \item Tres tipos de riesgos de datos: RAW, WAR, WAW.
+    \begin{itemize}
+      \item Mitigación: Envío adelantado, compilador, planificación dinámica.
+    \end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -15,7 +25,9 @@
 \begin{frame}[t]{Referencias}
 \begin{itemize}
   \item \bibhennessy
-  Secciones C.1 y C.2.
-
+    \begin{itemize}
+      \item Sección C.1 -- \emph{Introduction}.
+      \item Sección C.2 -- \emph{The Major Hurdle of Pipelining -- Pipeline Hazards}
+    \end{itemize}
 \end{itemize}
 \end{frame}
