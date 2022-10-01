@@ -58,11 +58,11 @@
 %
 %
 \node[connpoint,left=1.75cm of top1] (inst0) {};
-\node[instruc,below right=0.75cm and 0cm of inst0] (inst1) {dadd {\color{blue}\$1}, \$2, \$3};
-\node[instruc,below right=0.5cm and 0cm of inst1, anchor=north east] (inst2) {dsub \$4, {\color{red}\$1}, \$5};
-\node[instruc,below right=0.5cm and 0cm of inst2, anchor=north east] (inst3) {and \$6, {\color{red}\$1}, \$7};
-\node[instruc,below right=0.5cm and 0cm of inst3, anchor=north east] (inst4) {or \$8, {\color{green!40!black}\$1}, \$9};
-\node[instruc,below right=0.5cm and 0cm of inst4, anchor=north east] (inst5) {xor \$10, {\color{green!40!black}\$1}, \$11};
+\node[instruc,below right=0.75cm and 0cm of inst0] (inst1) {add {\color{blue}x1}, x2, x3};
+\node[instruc,below right=0.5cm and 0cm of inst1, anchor=north east] (inst2) {sub x4, {\color{red}x1}, x5};
+\node[instruc,below right=0.5cm and 0cm of inst2, anchor=north east] (inst3) {and x6, {\color{red}x1}, x7};
+\node[instruc,below right=0.5cm and 0cm of inst3, anchor=north east] (inst4) {or x8, {\color{green!40!black}x1}, x9};
+\node[instruc,below right=0.5cm and 0cm of inst4, anchor=north east] (inst5) {xor x10, {\color{green!40!black}x1}, x11};
 %
 \node[bloque,below right=0.75cm and 0.25cm of top1] (im1) {Mem};
 \node[border,right=0.1cm of im1] (ifid1) {};

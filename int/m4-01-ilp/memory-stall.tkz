@@ -1,10 +1,10 @@
 \begin{tikzpicture}
 \tikzset{
   etiqueta/.style={text centered, text=orange,font=\footnotesize,minimum width=1cm} ,
-  instruc/.style={font=\tiny\bfseries} ,
-  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny, minimum width=0.75cm},
-  bloqueconflicto/.style={rectangle,draw=black,fill=red!70,text=white,thick, text centered, font=\tiny, minimum width=0.75cm},
-  bloquestall/.style={rectangle,draw=black,fill=blue!30,text=white,thick, text centered, font=\tiny, minimum width=0.75cm},
+  instruc/.style={font=\tiny\bfseries,minimum width=2cm,align=left} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny, minimum width=0.6cm},
+  bloqueconflicto/.style={rectangle,draw=black,fill=red!70,text=white,thick, text centered, font=\tiny, minimum width=0.6cm},
+  bloquestall/.style={rectangle,draw=black,fill=blue!30,text=white,thick, text centered, font=\tiny, minimum width=0.6cm},
   border/.style={rectangle,draw=black,fill=orange!90,minimum width=0.1cm,minimum height=0.5cm,inner sep=0cm},
   stage/.style={rectangle,draw=black,fill=orange,text=white,thick, text centered, font=\tiny},
   flecha/.style={->,thick,draw=black,font=\tiny},
@@ -16,11 +16,11 @@
   minoraxis/.style={thick,draw=red,dashed},
   instrdep/.style={->,very thick,draw=red,font=\small},
 }  
-\node[instruc] (inst1) {dadd {\color{blue}\$1}, \$2, \$3};
-\node[instruc,below right=0.5cm and 0cm of inst1, anchor=north east] (inst2) {dsub \$4, {\color{red}\$1}, \$5};
-\node[instruc,below right=0.5cm and 0cm of inst2, anchor=north east] (inst3) {and \$6, {\color{red}\$1}, \$7};
-\node[instruc,below right=0.5cm and 0cm of inst3, anchor=north east] (inst4) {or \$8, {\color{green!40!black}\$1}, \$9};
-\node[instruc,below right=0.5cm and 0cm of inst4, anchor=north east] (inst5) {xor \$10, {\color{green!40!black}\$1}, \$11};
+\node[instruc] (inst1) {ld {\color{blue}x1}, 0(x2)};
+\node[instruc,below right=0.5cm and 0cm of inst1, anchor=north east] (inst2) {sub x4, {\color{red}x1}, x5};
+\node[instruc,below right=0.5cm and 0cm of inst2, anchor=north east] (inst3) {and x6, {\color{red}x1}, x7};
+\node[instruc,below right=0.5cm and 0cm of inst3, anchor=north east] (inst4) {or x8, {\color{green!40!black}x1}, x9};
+\node[instruc,below right=0.5cm and 0cm of inst4, anchor=north east] (inst5) {xor x10, {\color{green!40!black}x1}, x11};
 %
 \node[bloque,right=0.25cm of inst1] (im1) {IM};
 \node[border,right=0.1cm of im1] (ifid1) {};
@@ -32,21 +32,23 @@
 \node[border,right=0.1cm of dm1] (mwb1) {};
 \node[bloque,right=0.1cm of mwb1] (wreg1) {Reg};
 %
-\node[bloque,below =0.5cm of rreg1] (im2) {IM};
+\node[bloque,below=0.5cm of rreg1] (im2) {IM};
 \node[border,right=0.1cm of im2] (ifid2) {};
 \node[bloque,right=0.1cm of ifid2] (rreg2) {Reg};
 \node[border,right=0.1cm of rreg2] (idex2) {};
-\node[bloque,right=0.1cm of idex2] (alu2) {ALU};
+\node[bloquestall,right=0.1cm of idex2] (i2stall) {stall};
+\node[border,right=0.1cm of i2stall] (i2stallb) {};
+\node[bloque,right=0.1cm of i2stallb] (alu2) {ALU};
 \node[border,right=0.1cm of alu2] (exm2) {};
 \node[bloque,right=0.1cm of exm2] (dm2) {DM};
 \node[border,right=0.1cm of dm2] (mwb2) {};
 \node[bloque,right=0.1cm of mwb2] (wreg2) {Reg};
 %
-\path[instrdep] (exm1) -- (alu2);
-%
 \node[bloque,below=0.5cm of rreg2] (im3) {IM};
 \node[border,right=0.1cm of im3] (ifid3) {};
-\node[bloque,right=0.1cm of ifid3] (rreg3) {Reg};
+\node[bloquestall,right=0.1cm of ifid3] (i3stall) {stall};
+\node[border,right=0.1cm of i3stall] (i3stallb) {};
+\node[bloque,right=0.1cm of i3stallb] (rreg3) {Reg};
 \node[border,right=0.1cm of rreg3] (idex3) {};
 \node[bloque,right=0.1cm of idex3] (alu3) {ALU};
 \node[border,right=0.1cm of alu3] (exm3) {};
@@ -54,8 +56,8 @@
 \node[border,right=0.1cm of dm3] (mwb3) {};
 \node[bloque,right=0.1cm of mwb3] (wreg3) {Reg};
 %
-\path[instrdep] (mwb1) -- (alu3);
-%
+\node[bloquestall,below=0.5cm of i3stall] (i4stall) {stall};
+\node[border,right=0.1cm of i4stall] (i4stallb) {};
 \node[bloque,below=0.5cm of rreg3] (im4) {IM};
 \node[border,right=0.1cm of im4] (ifid4) {};
 \node[bloque,right=0.1cm of ifid4] (rreg4) {Reg};
