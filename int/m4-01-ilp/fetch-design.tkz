@@ -1,0 +1,45 @@
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, font=\tiny} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+  fasesep/.style={-,thick,draw=blue,dashed},
+  faseetiq/.style={text centered, font=\small,text=orange}, 
+}  
+\node[bloque,rotate=90, minimum width=2cm] (addr) {PC ADDR};
+\node[intersec,right=0.5cm of addr,yshift=-1cm] (i1) {};
+\node[bloque,right=0cm of i1,rotate around={90:(1cm,0cm)}, minimum width=2cm, minimum height=1cm,anchor=west] 
+  (mem) {Memory};
+\path[sinflecha] (addr) -- (i1);
+\path[flecha] (i1) -- (mem);
+\node[above=1.75cm of i1,minimum width=0cm,minimum height=0cm,inner sep=0pt] (i2) {};
+\node[right=0.5cm of i2] (i3) {};
+\path[sinflecha] (i1) -- (i2);
+\path[flecha] (i2) -- (i3);
+\node[bloque,above right=-0.25cm and 0.5cm of i2,minimum width=1cm,minimum height=1cm] (sum) {Sum};
+\node[etiqueta,above=0.5em of i2] (add4) {4};
+\node[right=0.3cm of add4,minimum width=0cm,minimum height=0cm,inner sep=0pt] (i4) {};
+\path[flecha] (add4) -- (i4);
+\node[bloque,right=1cm of mem,rotate around={90:(1cm,0cm)},minimum width=2cm,xshift=-1cm,yshift=1cm] (ir) {IR};
+\path[flecha] (mem) -- (ir);
+\node[connpoint,right=0cm of sum] (sumout0) {};
+\node[connpoint,right=1cm of sumout0] (sumout1) {};
+\path[flecha] (sumout0) -- (sumout1);
+\node[connpoint,below=0.3cm of sumout1] (sumout1b) {};
+\node[connpoint,left=0.5cm of sumout1b] (sumout1c) {};
+\path[flecha] (sumout1c) -- (sumout1b);
+\node[bloque,right=0cm of sumout1, minimum height=1cm] (mux) {MUX};
+\node[connpoint,right=0cm of mux] (muxout0) {};
+\node[connpoint,right=0.5cm of muxout0] (muxout1) {};
+\node[connpoint,above=1cm of muxout1] (muxout2) {};
+\path[sinflecha] (muxout0) -- (muxout1) -- (muxout2);
+\node[connpoint,left=5cm of muxout2] (muxout3) {};
+\path[sinflecha] (muxout2) edge node[below] {Next PC} (muxout3);
+\node[connpoint,below=3.1cm of muxout3] (muxout4) {};
+\path[sinflecha] (muxout3) -- (muxout4);
+\node[connpoint,right=0.4cm of muxout4] (muxout5) {};
+\path[flecha] (muxout4) -- (muxout5);
+\end{tikzpicture}

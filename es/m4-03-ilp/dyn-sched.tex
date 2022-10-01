@@ -1,0 +1,62 @@
+\section{Introducción a la planificación dinámica}
+
+\begin{frame}[t]{Planificación dinámica}
+\begin{itemize}
+  \item \textgood{Idea}: El hardware reordena la ejecución de instrucciones para reducir detenciones.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Ventajas}:
+    \begin{itemize}
+      \item Código compilado optimizado para un pipeline ejecuta eficientemente en otro pipeline.
+      \item Gestiona dependencias desconocidas en tiempo de compilación.
+      \item Permite tolerar retrasos no predecibles (ej. Fallo de caché).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Desventaja}:
+    \begin{itemize}
+      \item Mayor complejidad del hardware.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Planificación dinámica}
+\begin{itemize}
+  \item \textgood{Efectos}:
+    \begin{itemize}
+      \item Ejecución fuera de orden (OOO).
+      \item Finalización fuera de orden.
+      \item Puede introducir \textbad{riesgos} WAR y WAW.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item Separación de etapa \textgood{ID} en \textmark{dos etapas}:
+    \begin{itemize}
+      \item \textmark{Emisión}: Decodifica la instrucción y comprueba riesgos estructurales.
+      \item \textmark{Lectura de operandos}: Espera hasta que no haya riesgos de datos y lee operandos.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Etapa de captación} (\textgood{IF}):
+    \begin{itemize}
+      \item Capta en registro de instrucciones o cola de instrucciones.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Técnicas de planificación dinámica}
+\begin{itemize}
+  \item \textmark{Scoreboard}:
+    \begin{itemize}
+      \item Detiene instrucciones emitidas hasta que hay recursos suficientes y no hay riesgos de datos.
+      \item Ejemplos: CDC 6600, ARM A8.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Algoritmo de Tomasulo}:
+    \begin{itemize}
+      \item Elimina dependencias WAR y WAW con renombrado de registros.
+      \item Ejemplos: IBM 360, Intel Core i7.
+    \end{itemize}
+\end{itemize}
+\end{frame}

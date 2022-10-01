@@ -1,0 +1,162 @@
+\section{Paralelismo a nivel de hilo}
+
+\begin{frame}[t]{¿Por qué TLP?}
+\begin{itemize}
+  \item Algunas aplicaciones presentan más \textgood{paralelismo natural} que 
+        el que se puede conseguir con \textmark{ILP}.
+    \begin{itemize}
+      \item Servidores, aplicaciones científicas, \ldots
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Emergen \textgood{dos modelos}:
+    \begin{itemize}
+      \item \textgood{Paralelismo a nivel de hilos (TLP)}:
+        \begin{itemize}
+          \item \textmark{Hilo}: Proceso con sus propias instrucciones y datos.
+          \item Puede ser parte un programa o programa independiente.
+          \item Cada hilo tiene asociado su \textmark{estado} 
+                (instrucciones, datos, PC, registros, \ldots).
+        \end{itemize}
+      \item \textgood{Paralelismo a nivel de datos (DLP)}:
+        \begin{itemize}
+          \item Operaciones idénticas sobre distintos datos.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{TLP}
+\begin{itemize}
+  \item \textgood{ILP} explota paralelismo implícito dentro un bloque básico
+        o en bucles.
+
+  \mode<presentation>{\vfill}
+  \item \textgood{TLP} utiliza múltiples hilos de ejecución que son 
+        inherentemente paralelos.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Objetivo de TLP}:
+    \begin{itemize}
+      \item Utilizar múltiples flujos de instrucciones para mejorar:
+        \begin{itemize}
+          \item \textmark{Tasa de procesamiento} de computadores que ejecutan muchos programas.
+          \item \textmark{Tiempo de ejecución} de programas multi-hilo.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Ejecución multi-hilo}
+\begin{itemize}
+  \item Múltiples hilos comparten las unidades funcionales de un procesador solapando su uso.
+    \begin{itemize}
+      \item Necesidad de replicar n-veces el estado.
+        \begin{itemize}
+          \item Banco de registros, PC, tabla de páginas (si hilos no pertenecen al mismo programa).
+          \item Memoria compartida mediante mecanismos de memoria virtual.
+          \item Hardware para cambio de hilo rápido.
+        \end{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textgood{Tipos}:
+        \begin{itemize}
+          \item \textmark{Grano fino}: Cambio de hilo en cada instrucción.
+          \item \textmark{Grano grueso}: Cambio de hilo en detenciones (ej. Fallo de caché).
+          \item \textmark{Multi-hilo simultáneo}: Grano fino con emisión múltiple y planificación dinámica.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Multi-hilo de grano fino}
+\begin{itemize}
+  \item Se alterna entre hilos en cada instrucción.
+    \begin{itemize}
+      \item Se entrelaza la ejecución de los hilos.
+      \item Normalmente se hace \emph{round-robin}.
+      \item Se excluyen de \emph{round-robin} hilos en detención (\emph{stall}).
+      \item El procesador debe poder cambiar de hilo en cada ciclo de reloj.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Ventaja}:
+    \begin{itemize}
+      \item Puede ocultar detenciones cortas y largas.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textbad{Desventaja}:
+    \begin{itemize}
+      \item Retrasa la ejecución de hilos individuales por reparto.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Ejemplo}: Sun Niagara.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Multi-hilo de grano grueso}
+\begin{itemize}
+  \item Cambia de hilo solamente en detenciones largas.
+    \begin{itemize}
+      \item \textmark{Ejemplo}: Fallo en caché L2.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Ventajas}:
+    \begin{itemize}
+      \item No hace falta cambio de hilo excesivamente rápido.
+      \item No retrasa hilos individuales.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textbad{Desventajas}:
+    \begin{itemize}
+      \item Se debe vaciar o congelar el pipeline.
+      \item Se debe llenar el pipeline con instrucciones del nuevo hilo (latencia).
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item Apropiado cuando rellenado del pipeline tarda mucho menos que tiempo de detención.
+    \begin{itemize}
+      \item \textmark{Ejemplo}: IBM AS/400.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{SMT: Multi-hilo simultáneo}
+\begin{itemize}
+  \item \textgood{Idea}: Procesadores con planificación dinámica 
+        ya tienen muchos mecanismo de soporte para multi-hilo.
+    \begin{itemize}
+      \item Grandes conjuntos de registros virtuales.
+        \begin{itemize}
+          \item Registros para múltiples hilos.
+        \end{itemize}
+      \item Renombrado de registros.
+        \begin{itemize}
+          \item Evita mezcla en acceso a registros de hilos.
+        \end{itemize}
+      \item Finalización fuera de orden.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Modificaciones}:
+    \begin{itemize}
+      \item Tabla de renombrado por hilo.
+      \item Registros PC separados.
+      \item ROB separados.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Ejemplos}: Intel Core i7, IBM Power 7
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{TLP: Resumen}
+\makebox[\textwidth][c]{
+\input{int/m4-03-ilp/tlp-alt.tkz}
+}
+\end{frame}

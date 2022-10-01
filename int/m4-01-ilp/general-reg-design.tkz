@@ -1,0 +1,199 @@
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, font=\tiny} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny},
+  stage/.style={rectangle,draw=black,fill=orange,text=white,thick, text centered, font=\tiny},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+}  
+%ETAPA IF
+\node[bloque,rotate=90, minimum width=2cm] (addr) {PC ADDR};
+\node[intersec,right=0.3cm of addr,yshift=-1cm] (i1) {};
+\node[bloque,right=0cm of i1,rotate around={90:(1cm,0cm)}, minimum width=2cm, minimum height=1cm,yshift=0.25cm] 
+  (mem) {Memory};
+\path[sinflecha] (addr) -- (i1);
+\path[flecha] (i1) -- (mem);
+\node[above=1.75cm of i1,minimum width=0cm,minimum height=0cm,inner sep=0pt] (i2) {};
+\node[right=0.25cm of i2] (i3) {};
+\path[sinflecha] (i1) -- (i2);
+\node[connpoint,left=0.25 of i2] (i2b) {};
+\path[flecha] (i2) -- (i3);
+\node[bloque,above right=-0.25cm and 0.25cm of i2,minimum width=1cm,minimum height=1cm] (sum) {Sum};
+\node[etiqueta,above left=0.5em and 0.25cm of i2] (add4) {4};
+\node[right=0.5cm of add4,minimum width=0cm,minimum height=0cm,inner sep=0pt] (i4) {};
+\path[flecha] (add4) -- (i4);
+\node[connpoint,right=0.5cm of mem,yshift=-1cm] (i5) {};
+% IF/ID
+\node[stage,right=0.5cm of i5, rotate around={90:(0cm,0cm)}, minimum width=5.5cm,xshift=-2.5cm] (ifid) {IF/ID};
+\node[connpoint,right=0.25cm of i5] (i5b) {};
+\path[flecha] (mem) -- (i5b);
+\node[connpoint,above=2.05cm of i5b] (isumout) {};
+\path[flecha] (sum) -- (isumout) {};
+% Etapa ID
+\node[connpoint,right=0.4cm of i5b] (i5c) {};
+\node[intersec,right=0.3cm of i5c] (i6) {};
+\path[sinflecha] (i5c) -- (i6);
+\node[connpoint,above=0.75cm of i6] (i7) {};
+\path[sinflecha] (i6) -- (i7);
+\node[connpoint,below=2.25cm of i6] (i8) {};
+\path[sinflecha] (i6) -- (i8);
+\node[intersec,below=1.5cm of i6] (i9) {};
+\path[sinflecha] (i8) -- (i9);
+\node[connpoint,right=0.5cm of i6] (i10) {};
+\node[connpoint,right=0.55cm of i7] (i11) {};
+\node[connpoint,right=1.6cm of i8] (i12) {};
+\node[connpoint,right=0.45cm of i9] (i13) {};
+\path[flecha] (i7) edge node[above] {R1} (i11);
+\path[flecha] (i6) edge node[above] {R2} (i10);
+\path[flecha] (i8) edge node[above] {RD} (i12);
+\path[flecha] (i9) edge node[above] {Inm} (i13);
+\node[bloque,right=0.75cm of i6,rotate around={90:(1cm,0cm)},minimum width=2cm, minimum height=0.75cm,yshift=0.85cm] (regs) {Registers};
+\node[bloque,right=0cm of i13,align=center] (extsign) {Sign\\Ext};
+%ID/EX
+\node[connpoint,right=0.75cm of i10] (i15) {};
+\node[stage,right=0.5cm of i15, rotate around={90:(0cm,0cm)}, minimum width=5.5cm,xshift=-2.5cm] (ifid) {ID/EX};
+\node[connpoint,above right=0.5cm and 0.4cm of isumout] (isumout2) {};
+\node[connpoint,right=2cm of isumout2] (isumout3) {};
+\path[flecha] (isumout2) edge node[above] {Next PC} (isumout3);
+\node[connpoint,right=0.3cm of i15] (oregs1) {};
+\path[flecha] (i15) -- (oregs1) {};
+\node[connpoint,right=0.4cm of extsign] (iextsign) {};
+\path[flecha] (extsign) -- (iextsign) {};
+%
+% Etapa EX
+%
+\node[connpoint,above right=0.5cm and 0.4cm of oregs1] (imux1a) {};
+\node[intersec,right=0.1cm of imux1a] (imux1b) {};
+\path[sinflecha] (imux1a) -- (imux1b);
+\node[connpoint,below right=0.5cm and 0.4cm of oregs1] (imux2a) {};
+\node[intersec,right=0.1cm of imux2a] (imux2b) {};
+\path[sinflecha] (imux2a) -- (imux2b);
+\node[bloque,right=0.25cm of imux1b, minimum height=0.75cm] (mux1) {MUX};
+\path[flecha] (imux1b) -- (mux1);
+\node[bloque,below right=-0.2cm and 0.25cm of imux2b, minimum height=0.75cm] (mux2) {MUX};
+\node[connpoint,right=0.25cm of imux2b] (imux2c) {};
+\path[flecha] (imux2b) -- (imux2c);
+\node[connpoint,right=0.4cm of iextsign] (oextsign) {};
+\node[connpoint,right=0.25cm of oextsign] (oextsign2) {};
+\path[sinflecha] (oextsign) -- (oextsign2);
+\node[connpoint,above=0.6cm of oextsign2] (oextsign3) {};
+\path[sinflecha] (oextsign2) -- (oextsign3);
+\node[connpoint,right=0.2cm of oextsign3] (imux2d) {};
+\path[flecha] (oextsign3) -- (imux2d);
+\node[bloque,right=0.25cm of mux1,minimum width=0.75cm,minimum height=1.9cm,yshift=-0.55cm] (alu) {ALU};
+\node[connpoint,right=0.25cm of mux1] (i24) {};
+\path[flecha] (mux1) -- (i24);
+\node[connpoint,right=0.25cm of mux2] (i25) {};
+\path[flecha] (mux2) -- (i25);
+\node[connpoint,above=1cm of imux1b] (i27) {};
+\path[sinflecha] (imux1b) -- (i27) {};
+\node[bloque,right=0.55cm of i27,align=center] (zerotest) {CMP\\Zero};
+\node[connpoint,right=0.55cm of i27] (i28) {};
+\path[flecha] (i27) -- (i28);
+%
+% EX/MEM
+%
+\node[connpoint,right=0.4cm of isumout3] (isumout4) {};
+\node[connpoint,right=2.5cm of isumout4] (isumout5) {};
+\path[flecha] (isumout4) edge node[above]{Next PC} (isumout5);
+\node[connpoint,right=0.4cm of i12] (rd2) {};
+\node[connpoint,right=2.5cm of rd2] (rd3) {};
+\path[flecha] (rd2) edge node[above] {RD} (rd3);
+\node[intersec,right=0.2cm of isumout4] (pcex1) {};
+\node[connpoint,below=1.75cm of pcex1] (pcex2) {};
+\node[connpoint,right=0.2cm of pcex2] (pcex3) {};
+\path[sinflecha] (pcex1) -- (pcex2);
+\path[flecha] (pcex2) -- (pcex3);
+\node[connpoint,right=0cm of alu] (aluout) {};
+\node[connpoint,right=0.25cm of aluout] (aluout2) {};
+\path[flecha] (aluout) -- (aluout2);
+\node[stage,right=0.2cm of aluout2, rotate around={90:(0cm,0cm)}, minimum width=5.5cm,xshift=-2.5cm] (ifid) {EX/MEM};
+\node[connpoint,right=1.05cm of zerotest] (ozerotest) {};
+\path[flecha] (zerotest) -- (ozerotest);
+\node[connpoint,below=0.75cm of imux2b] (imux2e) {};
+\path[sinflecha] (imux2b) -- (imux2e) {};
+\node[connpoint,right=2.35cm of imux2e] (imux2f) {};
+\path[flecha] (imux2e) -- (imux2f);
+%
+% MEM
+%
+\node[connpoint,right=0.4cm of isumout5] (isumout6) {};
+\node[connpoint,right=0.4cm of isumout6] (isumout7) {};
+\path[flecha] (isumout6) -- (isumout7);
+\node[connpoint,right=0.4cm of ozerotest] (ozerotest2) {};
+\node[connpoint,right=0.75cm of ozerotest2] (i29) {};
+\path[sinflecha] (ozerotest2) -- (i29);
+\node[connpoint,above=0.5cm of i29] (i30) {};
+\path[flecha] (i29) -- (i30);
+\node[bloque,above=0cm of i30,minimum height=0.75cm] (mux3) {MUX};
+\node[connpoint,right=0.4cm of aluout2] (aluout3){};
+\node[intersec,right=0.1cm of aluout3] (aluout4){};
+\path[sinflecha] (aluout3) -- (aluout4);
+\node[connpoint,above=2.2cm of aluout4] (imux3b) {};
+\path[sinflecha] (aluout4) -- (imux3b);
+\node[connpoint,right=0.2cm of imux3b] (imux3c) {};
+\path[flecha] (imux3b) -- (imux3c);
+\node[connpoint,right=0cm of mux3] (mux3outa) {};
+\node[connpoint,right=0.25cm of mux3] (mux3outb) {};
+\node[connpoint,above=0.75cm of mux3outb] (mux3outc) {};
+\node[connpoint,left=9.6cm of mux3outc] (mux3outd) {};
+\node[connpoint,below=3.25cm of mux3outd] (mux3oute) {};
+\path[sinflecha] (mux3) -- (mux3outb) -- (mux3outc) -- (mux3outd) -- (mux3oute);
+\node[connpoint,right=0.25cm of mux3oute] (mux3outf) {};
+\path[flecha] (mux3oute) -- (mux3outf);
+\node[connpoint,right=0.25cm of aluout4] (memin1) {};
+\path[flecha] (aluout4) -- (memin1);
+\node[bloque,right=0cm of memin1,minimum height=2cm,align=center] (datamem) {Data\\Memory};
+\node[connpoint,right=0.4cm of imux2f] (memin2a) {};
+\node[connpoint,right=0.3cm of memin2a] (memin2b) {};
+\path[sinflecha] (memin2a) -- (memin2b) {};
+\node[connpoint,above=0.5cm of memin2b] (memin2c) {};
+\path[sinflecha] (memin2b) -- (memin2c) {};
+\node[connpoint,right=0.15cm of memin2c] (memin2d) {};
+\path[flecha] (memin2c) -- (memin2d);
+\node[connpoint,below=1.5cm of aluout4] (aluout5) {};
+\path[sinflecha] (aluout4) -- (aluout5) {};
+\node[connpoint,right=1.65cm of aluout5] (aluout6) {};
+\path[flecha] (aluout5) -- (aluout6);
+%
+% MEM/WB
+%
+\node[connpoint,right=0cm of datamem] (memout1) {};
+\node[connpoint,right=0.25cm of memout1] (memout2) {};
+\path[flecha] (memout1) -- (memout2);
+\node[connpoint,right=0.4cm of rd2] (rd3) {};
+\node[connpoint,right=1cm of rd3] (rd4) {};
+\path[flecha] (rd3) edge node[above] {RD} (rd4);
+\node[stage,right=0.2cm of memout2, rotate around={90:(0cm,0cm)}, minimum width=5.5cm,xshift=-2.5cm] (memwb) {MEM/WB};
+\node[connpoint,right=0.4cm of aluout6] (aluout7) {};
+\node[connpoint,right=0.25cm of aluout7] (aluout8) {};
+\node[connpoint,below=1cm of aluout8] (aluout9) {};
+\node[connpoint,left=7.6cm of aluout9] (aluout10) {};
+\node[connpoint,above=2.2cm of aluout10] (aluout11) {};
+\path[sinflecha] (aluout7) -- (aluout8) -- (aluout9) -- (aluout10) -- (aluout11);
+\node[connpoint,right=0.65cm of aluout11] (aluout12) {};
+\path[flecha] (aluout11) -- (aluout12);
+%
+% WB
+%
+\node[connpoint,right=0.4cm of memout2] (memout3a) {};
+\node[connpoint,right=0.25cm of memout3a] (memout4a) {};
+\node[connpoint,below=0.5cm of memout3a] (memout3b) {};
+\node[connpoint,right=0.25cm of memout3b] (memout4b) {};
+\path[flecha] (memout3a) -- (memout4a);
+\path[flecha] (memout3b) -- (memout4b); 
+\node[connpoint,below right=0.25cm and 0.25cm of memout3a] (imux4) {};
+\node[bloque,right=0cm of imux4,minimum height=0.75cm] (mux4) {MUX};
+\node[connpoint,right=0cm of mux4] (wb1) {};
+\node[connpoint,right=0.1cm of wb1] (wb2) {};
+\node[connpoint,below=2.4cm of wb2] (wb3) {};
+\node[connpoint,left=8.55cm of wb3] (wb4) {};
+\node[connpoint,above=2.1cm of wb4] (wb5) {};
+\path[sinflecha] (wb1) -- (wb2) -- (wb3);
+\path[sinflecha] (wb3) edge node[below] {WB data} (wb4);
+\path[sinflecha] (wb4) -- (wb5);
+\node[connpoint,right=0.75cm of wb5] (wb6) {};
+\path[flecha] (wb5) -- (wb6);
+\end{tikzpicture}

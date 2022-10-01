@@ -1,0 +1,168 @@
+\section{Técnicas de emisión múltiple}
+
+\begin{frame}[t]{CPI $<$ 1}
+\begin{itemize}
+  \item CPI $\geq$ 1 $\rightarrow$ Emisión de una instrucción por ciclo.
+
+  \mode<presentation>{\vfill\pause}
+  \item Procesadores de múltiple emisión 
+        (\textmark{CPI} $<$ 1 $\rightarrow$ \textmark{IPC} $>$ 1):
+    \begin{itemize}
+      \mode<presentation>{\vfill}
+      \item Procesadores superescalares planificados \textgood{estáticamente}.
+        \begin{itemize}
+          \item Ejecución en orden.
+          \item Número variable de instrucciones por ciclo.
+        \end{itemize}
+      \mode<presentation>{\vfill}
+      \item Procesadores superescalares planificados \textgood{dinámicamente}.
+        \begin{itemize}
+          \item Ejecución fuera de orden.
+          \item Número variable de instrucciones por ciclo.
+        \end{itemize}
+      \mode<presentation>{\vfill}
+      \item Procesadores \textgood{VLIW} (\emph{Very Long Instruction Word}).
+        \begin{itemize}
+          \item Varias instrucciones empaquetadas en paquete.
+          \item Planificación estática.
+          \item Paralelismo explícito a nivel de instrucción por el compilador.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Enfoques de la emisión múltiple}
+\begin{itemize}
+  \item Varios enfoques posibles con emisión múltiple.
+    \begin{itemize}
+      \item \textmark{Superescalar estático}.
+      \item \textmark{Superescalar dinámico}.
+      \item \textmark{Superescalar especulativo}.
+      \item \textmark{VLIW/LIW}.
+      \item \textmark{EPIC}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Superescalar estático}
+\begin{itemize}
+  \item \textgood{Emisión}: Dinámica.
+  \item \textgood{Detección de riesgos}: Hardware.
+  \item \textgood{Planificación}: Estática.
+  \item \textgood{Propiedad discriminante}:
+    \begin{itemize}
+      \item Ejecución en orden.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill}
+  \item \textmark{Ejemplos}:
+    \begin{itemize}
+      \item MIPS.
+      \item ARM Cortex-A7.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Superescalar dinámico}
+\begin{itemize}
+  \item \textgood{Emisión}: Dinámica.
+  \item \textgood{Detección de riesgos}: Hardware.
+  \item \textgood{Planificación}: Dinámica.
+  \item \textgood{Propiedad discriminante}:
+    \begin{itemize}
+      \item Ejecución fuera de orden sin especulación.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill}
+  \item \textmark{Ejemplos}: Ninguno.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Superescalar especulativo}
+\begin{itemize}
+  \item \textgood{Emisión}: Dinámica.
+  \item \textgood{Detección de riesgos}: Hardware.
+  \item \textgood{Planificación}: Dinámica con especulación.
+  \item \textgood{Propiedad discriminante}:
+    \begin{itemize}
+      \item Ejecución fuera de orden con especulación.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill}
+  \item \textmark{Ejemplos}: 
+    \begin{itemize}
+      \item Intel Core i3, i5, i7. 
+      \item AMD Phenom. 
+      \item IBM Power 7
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{VLIW}
+\begin{itemize}
+  \item Empaquetado de varias operaciones en una instrucción.
+
+  \mode<presentation>{\vfill}
+  \item Instrucción ejemplo en ISA VLIW:
+    \begin{itemize}
+      \item Una instrucción entera o una bifurcación.
+      \item Dos operaciones de coma flotante independientes.
+      \item Dos referencias a memoria independientes.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{IMPORTANTE}: El código debe presentar suficiente paralelismo.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{VLIW / LIW}
+\begin{itemize}
+  \item \textgood{Emisión}: Estática.
+  \item \textgood{Detección de riesgos}: Principalmente software.
+  \item \textgood{Planificación}: Estática.
+  \item \textgood{Propiedad discriminante}:
+    \begin{itemize}
+      \item Todos los riesgos determinados e indicados por el compilador.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill}
+  \item \textmark{Ejemplos}: 
+    \begin{itemize}
+      \item DSPs (p. ej. TI C6x).
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Problemas de VLIW}
+\begin{itemize}
+  \item \textbad{Desventajas} del modelo original \textmark{VLIW}:
+    \begin{itemize}
+      \item Complejidad de encontrar paralelismo estáticamente.
+      \item Tamaño del código generado.
+      \item No tienen hardware de detección de riesgos.
+      \item Problemas de compatibilidad binaria mayores que en superescalares.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textgood{EPIC} intenta resolver la mayoría de estos problemas.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{EPIC}
+\begin{itemize}
+  \item \textgood{Emisión}: Principalmente estática.
+  \item \textgood{Detección de riesgos}: Principalmente software.
+  \item \textgood{Planificación}: Sobre todo estática.
+  \item \textgood{Propiedad discriminante}:
+    \begin{itemize}
+      \item Todos los riesgos determinados e indicados por el compilador.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill}
+  \item \textmark{Ejemplos}: 
+    \begin{itemize}
+      \item Itanium.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+

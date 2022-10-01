@@ -1,0 +1,87 @@
+\section{Operaciones multiciclo}
+
+\begin{frame}[t]{Operaciones de coma flotante}
+\begin{itemize}
+  \item ¿Operaciones de coma flotante en un ciclo?
+    \begin{itemize}
+      \item Tener un ciclo de reloj extremadamente largo.
+        \begin{itemize}
+          \item Impacto en rendimiento global.
+        \end{itemize}
+      \item Lógica de control de FPU muy compleja.
+        \begin{itemize}
+          \item Consumo excesivo de recursos de diseño.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Alternativa}: Segmentación de coma flotante.
+    \begin{itemize}
+      \item La etapa de ejecución se puede repetir varias veces.
+      \item Múltiples unidades funcionales en EX.
+        \begin{itemize}
+          \item Ejemplo: Unidad entera, multiplicador FP y entero, sumador FP, divisor FP y entero.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Segmentación con coma flotante}
+\begin{itemize}
+  \item La etapa EX pasa a tener una duración mayor que 1 ciclo de reloj.
+\end{itemize}
+\makebox[\textwidth][c]{
+\input{es/m4-02-ilp/multicycle.tkz}
+}
+
+\end{frame}
+
+\begin{frame}[t]{Latencia e intervalo de iniciación}
+\begin{itemize}
+  \item \textgood{Latencia}: Número de ciclos entre la instrucción que produce un resultado y la instrucción que usa ese resultado.
+  \item \textgood{Intervalo de iniciación}: Número de ciclos entre la emisión de dos instrucciones que usan la misma unidad funcional. 
+\end{itemize}
+
+\mode<presentation>{\vfill}
+{
+\begin{tabular}[c]{*{3}{|p{.3\textwidth}}|}
+\hline
+Operación & Latencia & Intervalo iniciación 
+\\
+\hline
+\hline
+
+ALU entera  &
+0  &
+1
+\\
+\hline
+
+Instrucciones \emph{load}&
+1 &
+1
+\\
+\hline
+
+Suma FP &
+3 &
+1
+\\
+\hline
+
+Multiplicación FP &
+6 &
+1
+\\
+\hline
+
+División FP &
+24 &
+25
+\\
+\hline
+
+\end{tabular}
+}
+
+\end{frame} 

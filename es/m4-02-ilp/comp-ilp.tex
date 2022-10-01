@@ -1,0 +1,285 @@
+\section{Técnicas de compilación e ILP}
+
+\begin{frame}[t]{Aprovechamiento de ILP}
+\begin{itemize}
+  \item ILP directamente aplicables a bloques básicos.
+    \begin{itemize}
+      \item \textgood{Bloque básico}: secuencia de instrucciones sin saltos.
+      \item Programa \textmark{típico} en MIPS:
+        \begin{itemize}
+          \item Tamaño medio de bloque básico de 3 a 6 instrucciones.
+          \item Poco aprovechamiento de ILP dentro del bloque.
+        \end{itemize}
+      \item Es necesario explotar ILP entre bloques básicos.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}
+
+  \begin{column}{.4\textwidth}
+    \begin{block}{Ejemplo}
+      \lstinputlisting{es/m4-02-ilp/comp-ilp-ex1.cpp}
+    \end{block}
+  \end{column}
+
+  \begin{column}{.6\textwidth}
+    \begin{itemize}
+      \item \textgood{Paralelismo a nivel de bucle}.
+        \begin{itemize}
+          \item Transformable a ILP.
+          \item Por compilador o hardware.
+        \end{itemize}
+      \item \textgood{Alternativa}:
+        \begin{itemize}
+          \item Instrucciones vectoriales.
+          \item Instrucciones SIMD en procesador.
+        \end{itemize}
+    \end{itemize}
+  \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Planificación y desenrollamiento de bucles}
+\begin{itemize}
+  \item \textgood{Aprovechamiento de paralelismo}:
+    \begin{itemize}
+      \item Entrelazar ejecución de instrucciones no relacionadas.
+      \item Rellenar detenciones con instrucciones.
+      \item No alterar los efectos del programa original.
+    \end{itemize}
+
+\mode<presentation>{\vfill\pause}
+  \item El compilador puede usar el conocimiento detallado de la arquitectura.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Aprovechamiento de ILP}
+\begin{columns}
+
+\begin{column}{.4\textwidth}
+\begin{block}{Ejemplo}
+\lstinputlisting{es/m4-02-ilp/comp-ilp-ex2.cpp}
+\end{block}
+\end{column}
+
+\begin{column}{.6\textwidth}
+\begin{itemize}
+  \item Cuerpo de cada iteración es independiente.
+\end{itemize}
+\end{column}
+
+\end{columns}
+
+\mode<presentation>{\vfill}
+\begin{block}{Latencias entre instrucciones}
+{\footnotesize
+\begin{tabular}{|*{2}{p{.3\textwidth}|}p{0.25\textwidth}|}
+
+\hline
+Instrucción que &
+Instrucción que &
+Latencia (ciclos)
+\\
+produce resultado &
+usa resultado &
+\\
+\hline
+\hline
+
+Operación ALU FP & Operación ALU FP & 3\\
+\hline
+
+Operación ALU FP & Almacenar doble & 2\\
+\hline
+
+Cargar doble & Operación ALU FP & 1\\
+\hline
+
+Cargar doble & Almacenar doble & 0\\
+\hline
+
+\end{tabular}
+}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[t]{Código compilado}
+\begin{itemize}
+  \item \textgood{R1} $\rightarrow$ Último elemento de array.
+  \item \textgood{F2} $\rightarrow$ Escalar \cppid{s}.
+  \item \textgood{R2} $\rightarrow$ Precalculado para que \asmlabel{8(R2)} sea primer elemento de array.
+\end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{block}{Código ensamblador}
+\lstinputlisting[language=generalasm]{es/m4-02-ilp/comp-ilp-ex3.asm}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[t]{Detenciones en la ejecución}
+
+\begin{columns}[T]
+
+\begin{column}{.45\textwidth}
+\begin{block}{Original}
+\lstinputlisting[language=generalasm2]{es/m4-02-ilp/comp-ilp-ex4.asm}
+\end{block}
+\end{column}
+
+\pause
+\begin{column}{.45\textwidth}
+\begin{block}{Detenciones}
+\lstinputlisting[language=generalasm2]{es/m4-02-ilp/comp-ilp-ex4b.asm}
+\end{block}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Planificación de bucle}
+
+\begin{columns}[T]
+
+\begin{column}{.45\textwidth}
+\begin{block}{Original}
+\lstinputlisting[language=generalasm2]{es/m4-02-ilp/comp-ilp-ex4b.asm}
+\end{block}
+
+\begin{itemize}
+  \item 9 ciclos por iteración.
+\end{itemize}
+\end{column}
+
+\pause
+\begin{column}{.45\textwidth}
+\begin{block}{Planificado}
+\lstinputlisting[language=generalasm2]{es/m4-02-ilp/comp-ilp-ex4c.asm}
+\end{block}
+\begin{itemize}
+  \item 7 ciclos por iteración.
+\end{itemize}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Desenrollamiento de bucles}
+\begin{itemize}
+  \item \textgood{Idea}:
+    \begin{itemize}
+      \item Replicar varias veces el cuerpo del bucle.
+      \item Ajustar el código de terminación.
+      \item Usa registros distintos para cada réplica para reducir dependencias.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Efecto}:
+    \begin{itemize}
+      \item Aumenta la longitud del bloque básico.
+      \item Incrementa el aprovechamiento ILP disponible.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Desenrollamiento}
+
+\begin{columns}
+
+\begin{column}{.45\textwidth}
+\begin{block}{Desenrollado (x4)}
+\lstinputlisting[language=generalasm2,lastline=7]{es/m4-02-ilp/loop-unroll0.asm}
+\end{block}
+\end{column}
+
+\begin{column}{.45\textwidth}
+\begin{block}{Desenrollado (x4)}
+\lstinputlisting[language=generalasm2,firstline=8]{es/m4-02-ilp/loop-unroll0.asm}
+\end{block}
+\end{column}
+
+\end{columns}
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item 4 iteraciones requieren más registros.
+  \item Este ejemplo asume tamaño de array múltiplo de 4.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Detenciones y desenrollamiento}
+
+\begin{columns}
+
+\begin{column}{.45\textwidth}
+\begin{block}{Desenrollado (x4)}
+\lstinputlisting[language=generalasm2,firstline=1,lastline=14]{es/m4-02-ilp/loop-unroll1.asm}
+\end{block}
+\end{column}
+
+\begin{column}{.45\textwidth}
+\begin{block}{Desenrollado (x4)}
+\lstinputlisting[language=generalasm2,firstline=15]{es/m4-02-ilp/loop-unroll1.asm}
+\end{block}
+\end{column}
+
+\end{columns}
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item 27 ciclos por 4 iteraciones $\rightarrow$ $6.75$ ciclos por iteración.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Planificación y desenrollamiento}
+
+\begin{columns}
+
+\begin{column}{.45\textwidth}
+\begin{block}{Desenrollado (x4)}
+\lstinputlisting[language=generalasm2]{es/m4-02-ilp/loop-unroll2.asm}
+\end{block}
+\end{column}
+
+\begin{column}{.45\textwidth}
+\begin{itemize}
+  \item Reorganización de código.
+    \begin{itemize}
+      \item Respetando dependencias.
+      \item Semánticamente equivalente.
+      \item \textgood{Objetivo}: Aprovechar \emph{stalls}.
+    \end{itemize}
+  \item Actualización de \asmreg{R1} suficientemente separada de
+        \asminst{BNE}.
+  \item 14 ciclos por 4 iteraciones $\rightarrow$ $3.5$ ciclos por iteración.
+\end{itemize}
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t]{Límites del desenrollamiento de bucles}
+\begin{itemize}
+  \item \textgood{Decremento} de la \textmark{ganancia} con cada desenrollamiento.
+    \begin{itemize}
+      \item Ganancia limitada a eliminación de detenciones.
+      \item Sobrecoste se reparte entre iteraciones.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Crecimiento} en \textmark{tamaño} de código.
+    \begin{itemize}
+      \item Puede afectar a la tasa de fallos de la caché de instrucciones.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Presión} sobre \textmark{banco registros}.
+    \begin{itemize}
+      \item Puede generar falta de registros.
+      \item Si no hay registros suficientes se pierden las ventajas.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+

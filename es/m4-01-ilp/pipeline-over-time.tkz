@@ -1,0 +1,90 @@
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, text=orange,font=\footnotesize,minimum width=1cm} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny, minimum width=0.75cm},
+  border/.style={rectangle,draw=black,fill=orange!90,minimum width=0.05cm,minimum height=0.5cm},
+  stage/.style={rectangle,draw=black,fill=orange,text=white,thick, text centered, font=\tiny},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+  point/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+  axis/.style={->,very thick,draw=orange,font=\small},
+  minoraxis/.style={thick,draw=red,dashed},
+}  
+\node[point] (haxis1) {};
+\node[point,right=10cm of haxis1] (haxis2) {};
+\path[axis] (haxis1) edge node[above]{Tiempo (ciclos)} (haxis2);
+\node[point,below=5cm of haxis1] (vaxis2) {};
+\path[axis] (haxis1) edge node[above,rotate=90] {Instr} (vaxis2);
+\node[point,right=0.25cm of haxis1] (top1) {};
+\node[point,below=5cm of top1] (bottom1) {};
+\path[minoraxis] (top1) -- (bottom1);
+\node[point,right=1.25cm of top1] (top2) {};
+\node[point,right=1.25cm of bottom1] (bottom2) {};
+\path[minoraxis] (top2) -- (bottom2);
+\node[point,right=1.25cm of top2] (top3) {};
+\node[point,right=1.25cm of bottom2] (bottom3) {};
+\path[minoraxis] (top3) -- (bottom3);
+\node[point,right=1.25cm of top3] (top4) {};
+\node[point,right=1.25cm of bottom3] (bottom4) {};
+\path[minoraxis] (top4) -- (bottom4);
+\node[point,right=1.25cm of top4] (top5) {};
+\node[point,right=1.25cm of bottom4] (bottom5) {};
+\path[minoraxis] (top5) -- (bottom5);
+\node[point,right=1.25cm of top5] (top6) {};
+\node[point,right=1.25cm of bottom5] (bottom6) {};
+\path[minoraxis] (top6) -- (bottom6);
+\node[point,right=1.25cm of top6] (top7) {};
+\node[point,right=1.25cm of bottom6] (bottom7) {};
+\path[minoraxis] (top7) -- (bottom7);
+\node[point,right=1.25cm of top7] (top8) {};
+\node[point,right=1.25cm of bottom7] (bottom8) {};
+\path[minoraxis] (top8) -- (bottom8);
+\node[etiqueta,below right=0 and 0 of top1] (etiq1) {Ciclo 1};
+\node[etiqueta,below right=0 and 0 of top2] (etiq2) {Ciclo 2};
+\node[etiqueta,below right=0 and 0 of top3] (etiq3) {Ciclo 3};
+\node[etiqueta,below right=0 and 0 of top4] (etiq4) {Ciclo 4};
+\node[etiqueta,below right=0 and 0 of top5] (etiq5) {Ciclo 5};
+\node[etiqueta,below right=0 and 0 of top6] (etiq6) {Ciclo 6};
+\node[etiqueta,below right=0 and 0 of top7] (etiq7) {Ciclo 7};
+\node[bloque,below right=0.75cm and 0.25cm of top1] (im1) {IMem};
+\node[border,right=0.1cm of im1] (ifid1) {};
+\node[bloque,right=0.1cm of ifid1] (rreg1) {Reg};
+\node[border,right=0.1cm of rreg1] (idex1) {};
+\node[bloque,right=0.1cm of idex1] (alu1) {ALU};
+\node[border,right=0.1cm of alu1] (exm1) {};
+\node[bloque,right=0.1cm of exm1] (dm1) {DM};
+\node[border,right=0.1cm of dm1] (mwb1) {};
+\node[bloque,right=0.1cm of mwb1] (wreg1) {Reg};
+%
+\node[bloque,below=0.5cm of rreg1] (im2) {IMem};
+\node[border,right=0.1cm of im2] (ifid2) {};
+\node[bloque,right=0.1cm of ifid2] (rreg2) {Reg};
+\node[border,right=0.1cm of rreg2] (idex2) {};
+\node[bloque,right=0.1cm of idex2] (alu2) {ALU};
+\node[border,right=0.1cm of alu2] (exm2) {};
+\node[bloque,right=0.1cm of exm2] (dm2) {DM};
+\node[border,right=0.1cm of dm2] (mwb2) {};
+\node[bloque,right=0.1cm of mwb2] (wreg2) {Reg};
+%
+\node[bloque,below=0.5cm of rreg2] (im3) {IMem};
+\node[border,right=0.1cm of im3] (ifid3) {};
+\node[bloque,right=0.1cm of ifid3] (rreg3) {Reg};
+\node[border,right=0.1cm of rreg3] (idex3) {};
+\node[bloque,right=0.1cm of idex3] (alu3) {ALU};
+\node[border,right=0.1cm of alu3] (exm3) {};
+\node[bloque,right=0.1cm of exm3] (dm3) {DM};
+\node[border,right=0.1cm of dm3] (mwb3) {};
+\node[bloque,right=0.1cm of mwb3] (wreg3) {Reg};
+%
+\node[bloque,below=0.5cm of rreg3] (im4) {IMem};
+\node[border,right=0.1cm of im4] (ifid4) {};
+\node[bloque,right=0.1cm of ifid4] (rreg4) {Reg};
+\node[border,right=0.1cm of rreg4] (idex4) {};
+\node[bloque,right=0.1cm of idex4] (alu4) {ALU};
+\node[border,right=0.1cm of alu4] (exm4) {};
+\node[bloque,right=0.1cm of exm4] (dm4) {DM};
+\node[border,right=0.1cm of dm4] (mwb4) {};
+\node[bloque,right=0.1cm of mwb4] (wreg4) {Reg};
+\end{tikzpicture}

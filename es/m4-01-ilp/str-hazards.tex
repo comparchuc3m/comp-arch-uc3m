@@ -1,0 +1,111 @@
+\section{Riesgos estructurales}
+
+\begin{frame}[t]{Riesgo estructural}
+\begin{itemize}
+  \item  Se produce cuando el hardware \alert{no puede} soportar
+         todas las posibles secuencias de instrucciones.
+    \begin{itemize} 
+      \item En un mismo ciclo dos etapas de la segmentación
+            necesitan hacer uso del \textmark{mismo recurso}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Razones}:
+    \begin{itemize}
+      \item Unidades funcionales no totalmente segmentadas.
+      \item Unidades funcionales no duplicadas.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item Este tipo de riesgos es evitable pero encarece el
+        hardware.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Speedup de la segmentación}
+\begin{itemize}
+  \item \textmark{Speedup de la segmentación}:
+    \begin{itemize}
+      \item $t_{noseg}$: Tiempo medio de instrucción en arquitectura no segmentada.
+      \item $t_{seg}$: Tiempo medio de instrucción en arquitectura segmentada.
+    \end{itemize}
+\end{itemize}
+\[
+S = 
+\frac{t_{noseg}}{t_{seg}} =
+\frac{CPI_{noseg} \times ciclo_{noseg}}{CPI_{seg} \times ciclo_{seg}}
+\]
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item En el caso ideal el \textgood{CPI} segmentado es 1.
+    \begin{itemize}
+      \item Hay que añadir ciclos de detención por instrucción.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Speedup de la segmentación}
+\begin{itemize}
+  \item En el caso del procesador no segmentado.
+    \begin{itemize}
+      \item $CPI=1$, con $ciclo_{noseg} > ciclo_{seg}$.
+      \item $ciclo_{noseg} = N \times ciclo_{seg}$.
+      \item $N$ $\rightarrow$ \textmark{Profundidad del pipeline}.
+    \end{itemize}
+\end{itemize}
+\mode<presentation>{\vfill}
+\begin{block}{Speedup}
+\[
+S =
+\frac{N}{1 + \text{detenciones por instrucción}}
+\]
+\end{block}
+\end{frame}
+
+\begin{frame}[t]{Riesgos estructurales: ejemplo}
+\makebox[\textwidth][c]{
+\input{es/m4-01-ilp/str-hazard-ex1.tkz}
+}
+\begin{itemize}
+  \item Asumiendo memoria de un único puerto.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Riesgos estructurales: ejemplo}
+\makebox[\textwidth][c]{
+\input{es/m4-01-ilp/str-hazard-ex2.tkz}
+}
+\begin{itemize}
+  \item Asumiendo memoria de un único puerto.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Ejemplo}
+\begin{itemize}
+  \item Se consideran dos diseño alternativos:
+    \begin{itemize}
+      \item \textmark{A}: Sin riesgos estructurales.
+        \begin{itemize}
+          \item Ciclo de reloj $\rightarrow 1 ns$
+        \end{itemize}
+      \item \textmark{B}: Con riesgos estructurales.
+        \begin{itemize}
+          \item Ciclo de reloj $\rightarrow 0.9 ns$
+        \end{itemize}
+      \item Instrucciones de acceso a datos con riesgo $\rightarrow 30\%$.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill}
+  \item ¿Alternativa más rápida?
+\end{itemize}
+\mode<presentation>{\pause}
+\[
+t_{inst}(A) =
+CPI \times ciclo = 1 \times 1 ns = 1 ns
+\]
+\[
+t_{inst}(B) =
+CPI \times ciclo = (0.7 \times 1 + 0.3 \times (1 + 1)) \times 0.9 ns =
+1.17 ns
+\]
+\end{frame}

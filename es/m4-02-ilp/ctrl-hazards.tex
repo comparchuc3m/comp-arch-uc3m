@@ -1,0 +1,455 @@
+\section{Riesgos de control}
+
+\begin{frame}[t]{Riesgos de control}
+\begin{itemize}
+  \item Un \textgood{riesgo de control} se produce en una 
+        instrucción de alteración del PC.
+    \mode<presentation>{\vfill}
+    \begin{itemize}
+      \item \textgood{Terminología}:
+        \begin{itemize}
+          \item \textmark{Bifurcación tomada}: Si se modifica el PC.
+          \item \textmark{Bifurcación no tomada}: Si no se modifica el PC.
+        \end{itemize}
+      \mode<presentation>{\vfill}
+      \item \alert{Problema}:
+        \begin{itemize}
+          \item La segmentación asume que lo bifurcación \textbf{no} se tomará.
+          \item ¿Qué hacer si después de la etapa ID se determina que hay que tomar la bifurcación?
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Alternativas ante riesgos de control}
+\begin{itemize}
+  \item \textgood{Tiempo de compilación}: Prefijadas durante toda la ejecución del programa.
+    \begin{itemize}
+      \item El software puede intentar minimizar su impacto si conoce el comportamiento del hardware.
+      \item El compilador puede hacer este trabajo.
+    \end{itemize}
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Alternativas en tiempo de ejecución}: Comportamiento variable durante la ejecución del programa.
+    \begin{itemize}
+      \item Intentan predecir qué hará el software.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Riesgos de control: soluciones estáticas}
+\begin{enumerate}
+  \item Congelación del \emph{pipeline}.
+  \item Predicción prefijada.
+    \begin{itemize}
+      \item Siempre no tomado.
+      \item Siempre tomado.
+    \end{itemize}
+  \item Bifurcación con retraso.
+\end{enumerate}
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item En muchos casos el compilador necesita saber qué se va a hacer para reducir el impacto.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Congelación del pipeline}
+\begin{itemize}
+  \item \textgood{Idea}: Si la instrucción actual es una bifurcación 
+        $\rightarrow$ parar o eliminar del pipeline instrucciones posteriores 
+        hasta que se conozca el destino.
+    \begin{itemize}
+      \item Penalización en tiempo de ejecución conocida.
+      \item El software (compilador) no puede hacer nada.
+    \end{itemize}
+
+    \mode<presentation>{\vfill}
+    \item El destino de la bifurcación se conoce en la etapa \textmark{ID}.
+      \begin{itemize}
+        \item Repetir el \textmark{FETCH} de la siguiente instrucción.
+      \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Repetición de captación}
+\makebox[\textwidth][c]{
+\input{es/m4-02-ilp/rep-fetch.tkz}
+}
+
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item La repetición de IF equivale a una detención.
+  \item Una detención por bifurcación puede dar lugar a una \textmark{pérdida de rendimiento} de 10\% a 30\%.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Predicción prefijada: no tomada}
+\begin{itemize}
+  \item \textgood{Idea}: Asumir que la bifurcación será \textmark{no tomada}.
+    \begin{itemize}
+      \item Se evita modificar el estado del procesador hasta que 
+            se tiene la confirmación de que la bifurcación no se toma.
+      \item Si la bifurcación se toma, las instrucciones siguientes se 
+            retiran del pipeline y se capta la instrucción en el destino del salto.
+        \begin{itemize}
+          \item Transformar instrucciones en \textmark{NOP}.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Tarea del compilador}:
+    \begin{itemize}
+      \item Organizar código poniendo la opción más frecuente como no tomada e invirtiendo condición si es necesario.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Predicción prefijada: no tomada}
+\makebox[\textwidth][c]{
+\input{es/m4-02-ilp/pred-not-taken.tkz}
+}
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item Cuando se sabe que el salto se tomará se capta la nueva instrucción (\emph{j+1}).
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Predicción prefijada: tomada}
+\begin{itemize}
+  \item \textgood{Idea}: Asumir que la bifurcación será \textmark{tomada}.
+    \begin{itemize}
+      \item Tan pronto como se decodifica la bifurcación y se calcula el destino se comienza a captar instrucciones del destino.
+      \item En pipeline de 5 etapas no aporta ventajas.
+        \begin{itemize}
+          \item No se conoce dirección destino antes que decisión de bifurcación.
+          \item Útil en procesadores con condiciones complejas y lentas.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textgood{Tarea del compilador}:
+    \begin{itemize}
+      \item Organizar código poniendo la opción más frecuente como tomada e invirtiendo condición si es necesario.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Bifurcación retrasada}
+\begin{itemize}
+  \item \textgood{Idea}: La bifurcación se produce después de ejecutar 
+        las \textmark{n} instrucciones posteriores a la propia instrucción 
+        de bifurcación.
+    \begin{itemize}
+      \item \textmark{En pipeline de 5 etapas} $\rightarrow$ 
+            1 ranura de retraso (\emph{delay slot}).
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}
+\begin{column}{.4\textwidth}
+\begin{block}{Ejemplo}
+\begin{lstlisting}[language={generalasm}]
+I0:    bnez $1, etiq
+I1:    addi $2, $2, 1
+I2:    mul  $3, $2, $4
+...
+IN:    sub  $1, $1, 1
+IN+1:  mul  $3, $3, $4
+
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.6\textwidth}
+\begin{itemize}
+  \item Las instrucciones \textmark{I1}, \textmark{I2}, \ldots, \textmark{IN} se
+        ejecutan independientemente del sentido de la condición de bifurcación.
+  \item La instrucción \textmark{IN+1} solamente se ejecuta si no se produce la
+        bifurcación.
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Bifrucación retrasada}
+\makebox[\textwidth][c]{
+\input{es/m4-02-ilp/delayed-branch.tkz}
+}
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item Caso de bifurcación retrasada con una ranura de retraso.
+  \item Se espara siempre una instrucción antes de tomar la bifurcación.
+  \item Es responsabilidad del programador poner código útil en la ranura.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Compilador y ranuras de retraso}
+\mode<presentation>{\vspace{-1.5em}}
+\begin{columns}[T]
+
+\begin{column}{.33\textwidth}
+\begin{block}{Original}
+\begin{lstlisting}[language={generalasm},basicstyle=\scriptsize]
+      add $1, $2, $3
+      beqz $2, etiq
+      nop
+      xor $5, $6, $7
+etiq: and $8, $9, $10
+\end{lstlisting}
+\end{block}
+\mode<presentation>{\vfill\pause}
+\begin{block}{Mejorado}
+\begin{lstlisting}[language={generalasm},basicstyle=\scriptsize]
+      beqz $2, etiq
+      add $1, $2, $3
+      xor $5, $6, $7
+etiq: and $8, $9, $10
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\mode<article>{
+\begin{itemize}
+  \item Esta es la reordenación preferible.
+  \item Se pasa la instrucción anterior a la bifurcación a la ranura
+        porque siempre se ejecuta.
+\end{itemize}
+}
+
+\begin{column}{.33\textwidth}
+\mode<presentation>{\vfill\pause}
+\begin{block}{Original}
+\begin{lstlisting}[language={generalasm},basicstyle=\scriptsize]
+etiq: add $1, $2, $3
+      xor $5, $6, $7
+      beqz $5, etiq
+      nop
+      and $8, $9, $10
+\end{lstlisting}
+\end{block}
+\mode<presentation>{\vfill\pause}
+\begin{block}{Mejorado}
+\begin{lstlisting}[language={generalasm},basicstyle=\scriptsize]
+      add $1, $2, $3
+etiq: xor $5, $6, $7
+      beqz $5, etiq
+      add $1, $2, $3
+      and $8, $9, $10
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\mode<article>{
+\begin{itemize}
+  \item Esta reordenación se aplica cuando otra instrucción no se puede
+        mover a la ranura por dependencia de datos con la bifurcación.
+  \item Se hace necesario repetir la instrucción de la ranura dos veces
+        (una para la primera iteración y otra para el resto).
+\end{itemize}
+}
+
+\begin{column}{.33\textwidth}
+\mode<presentation>{\vfill\pause}
+\begin{block}{Original}
+\begin{lstlisting}[language={generalasm},basicstyle=\scriptsize]
+      add $1, $2, $3
+      beqz $1, etiq
+      nop
+      xor $5, $6, $7
+etiq: and $8, $9, $10
+\end{lstlisting}
+\end{block}
+\mode<presentation>{\vfill\pause}
+\begin{block}{Mejorado}
+\begin{lstlisting}[language={generalasm},basicstyle=\scriptsize]
+      add $1, $2, $3
+      beqz $1, etiq
+      xor $5, $6, $7
+etiq: and $8, $9, $10
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\mode<article>{
+\begin{itemize}
+  \item Esta reordenación se aplica si la instrucción introducida
+        en la ranura no se vuelve a usar después de la dirección
+        de salto.
+\end{itemize}
+}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Bifurcaciones retrasadas}
+\begin{itemize}
+  \item Efectividad del compilador para el caso de 1 ranura:
+    \begin{itemize}
+      \item \textmark{Rellena} alrededor del 60\% de ranuras.
+      \item En torno al 80\% de instrucciones ejecutadas en ranuras \textmark{útiles} para computación.
+      \item En torno al 50\% de ranuras \textmark{rellenados} de forma útil.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item Al usarse pipelines más profundos y emisión múltiple hacen falta más ranuras.
+    \begin{itemize}
+      \item En desuso a favor de enfoque dinámicos.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Rendimiento y predicción prefijada}
+\begin{itemize}
+  \item El número de detenciones de bifurcaciones depende de:
+    \begin{itemize}
+      \item Frecuencia de las bifurcaciones.
+      \item Penalización por bifurcación.
+    \end{itemize}
+\end{itemize}
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item Ciclos de penalización por bifurcación:
+\end{itemize}
+\begin{displaymath}
+ciclos_{bifurc} = frecuencia_{bifurc} \times penaliz_{bifurc}
+\end{displaymath}
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item Aceleración
+\end{itemize}
+\begin{displaymath}
+S =
+\frac{profundidad_{pipeline}}{1 + frecuencia_{bifurc} \times penaliz_{bifurc}}
+\end{displaymath}
+\end{frame}
+
+\begin{frame}[t]{Caso práctico}
+\begin{itemize}
+  \item \textgood{MIPS R4000} (pipeline más profundo).
+    \begin{itemize}
+      \item 3 etapas antes de conocer destino de bifurcación.
+      \item 1 etapa adicional para evaluar condición.
+      \item Asumiendo que no hay detenciones de datos en comparaciones.
+      \item \textgood{Frecuencia de bifurcaciones}:
+        \begin{itemize}
+          \item \textmark{Bifurcación incondicional}: 4\%.
+          \item \textmark{Bifurcación condicional, no-tomada}: 6\%
+          \item \textmark{Bifurcación condicional, tomada}: 10\%
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill}
+{\scriptsize
+\begin{tabular}[c]{|p{.3\textwidth}|*{3}{p{.17\textwidth}|}}
+\hline
+Esquema &  \multicolumn{3}{c|}{Penalización}
+\\
+\cline{2-4}
+bifurcación & incondicional & no-tomada & tomada
+\\
+\hline\hline
+
+Vaciar pipeline &
+\multicolumn{1}{r|}{2} & 
+\multicolumn{1}{r|}{3} & 
+\multicolumn{1}{r|}{3}
+\\
+\hline
+
+Predecir tomada &
+\multicolumn{1}{r|}{2} & 
+\multicolumn{1}{r|}{3} &
+\multicolumn{1}{r|}{2}
+\\
+\hline
+
+Predecir no-tomada &
+\multicolumn{1}{r|}{2} &
+\multicolumn{1}{r|}{0} &
+\multicolumn{1}{r|}{3}
+\\
+
+\hline
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}[t]{Solución}
+
+{\scriptsize
+\begin{tabular}[c]{|p{.2\textwidth}|*{3}{p{.18\textwidth}|}p{.06\textwidth}|}
+\hline
+Esquema &  \multicolumn{3}{c|}{Bifurcación} & \multicolumn{1}{c|}{Total}
+\\
+\cline{2-4}
+bifurcación & incondicional & no-tomada & tomada &
+\\
+\hline\hline
+
+Frecuencia &
+\multicolumn{1}{c|}{4\%} &
+\multicolumn{1}{c|}{6\%} &
+\multicolumn{1}{c|}{10\%} &
+\multicolumn{1}{c|}{20\%} 
+\\
+\hline
+
+Vaciar pipeline &
+$0.04 \times 2 = 0.08$ &
+$0.06 \times 3 = 0.18$ &
+$0.10 \times 3 = 0.30$ &
+$0.56$
+\\
+\hline
+
+Predecir tomada &
+$0.04 \times 2 = 0.08$ &
+$0.06 \times 3 = 0.18$ &
+$0.10 \times 2 = 0.20$ &
+$0.46$
+\\
+\hline
+
+Predecir no-tomada &
+$0.04 \times 2 = 0.08$ &
+$0.06 \times 0 = 0.00$ &
+$0.10 \times 3 = 0.30$ &
+$0.38$
+\\
+\hline
+
+\hline
+\end{tabular}
+}
+\begin{center}
+\textmark{Contribución sobre CPI ideal}
+\end{center}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}
+
+\begin{column}{.49\textwidth}
+{\footnotesize
+\emph{Speedup} de predecir \textmark{tomada} sobre vaciar pipeline
+}
+\begin{displaymath}
+S =
+\frac{1 + 0.56}{1 + 0.46} =
+1.068
+\end{displaymath}
+\end{column}
+
+\begin{column}{.49\textwidth}
+{\footnotesize
+\emph{Speedup} de predecir \textmark{no tomada} sobre vaciar pipeline
+}
+\begin{displaymath}
+S =
+\frac{1 + 0.56}{1 + 0.38} =
+1.130
+\end{displaymath}
+\end{column}
+
+\end{columns}
+
+\end{frame}

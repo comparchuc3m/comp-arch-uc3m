@@ -1,0 +1,56 @@
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, font=\tiny} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny},
+  bloqueout/.style={rectangle,draw=black,fill=gray!70,text=white,thick, text centered, font=\tiny},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+  fasesep/.style={-,thick,draw=blue,dashed},
+  faseetiq/.style={text centered, font=\small,text=orange}, 
+}  
+\node[bloque,rotate around={90:(1cm,0cm)},minimum width=2cm,xshift=-1cm,yshift=1cm] (ir) {IR};
+\node[intersec,right=0.5cm of ir,yshift=-1cm] (i5) {};
+\path[flecha] (ir) -- (i5);
+\node[intersec,above=0.25cm of i5] (i6) {};
+\path[sinflecha] (i5) -- (i6);
+\node[connpoint,above=0.75cm of i5] (i7) {};
+\path[sinflecha] (i6) -- (i7);
+\node[intersec,below=0.25cm of i5] (i8) {};
+\path[sinflecha] (i5) -- (i8);
+\node[connpoint,below=1.5cm of i5] (i9) {};
+\path[sinflecha] (i8) -- (i9);
+\node[connpoint,right=0.5cm of i6] (i10) {};
+\node[connpoint,right=0.55cm of i7] (i11) {};
+\node[connpoint,right=0.5cm of i8] (i12) {};
+\node[connpoint,right=0.5cm of i9] (i13) {};
+\path[flecha] (i7) edge node[above] {R1} (i11);
+\path[flecha] (i6) edge node[above] {R2} (i10);
+\path[flecha] (i8) edge node[above] {RD} (i12);
+\path[flecha] (i9) edge node[above] {Inm} (i13);
+\node[bloque,right=0.75cm of i5,rotate around={90:(1cm,0cm)},minimum width=2cm, minimum height=0.75cm,yshift=0.85cm] (regs) {Registers};
+\node[bloque,right=0cm of i13,align=center] (extsign) {Sign\\Ext};
+\node[bloque,above right=-0.2cm and 1.5cm of i10, minimum height=0.75cm] (mux1) {MUX};
+\node[bloque,below right=-0.2cm and 1.5cm of i12, minimum height=0.75cm] (mux2) {MUX};
+\node[connpoint,right=0.75cm of i10] (i15) {};
+\node[connpoint,right=0.75cm of i15] (i16) {};
+\path[flecha] (i15) -- (i16);
+\node[connpoint,right=0.75cm of i12] (i17) {};
+\node[connpoint,right=0.75cm of i17] (i18) {};
+\path[flecha] (i17) -- (i18);
+\node[connpoint,above=0.35cm of i16] (mux1a) {};
+\node[connpoint,left=0.4cm of mux1a] (mux1b) {};
+\path[flecha] (mux1b) edge node[above,yshift=.2cm]{Next PC} (mux1a) {};
+\node[connpoint,right=0.45cm of extsign] (i21) {};
+\path[sinflecha] (extsign) -- (i21) {};
+\node[connpoint,above=0.85cm of i21] (i22) {};
+\path[sinflecha] (i21) -- (i22);
+\node[connpoint,right=0.35cm of i22] (i23) {};
+\path[flecha] (i22) -- (i23);
+\node[bloqueout,right=0.5cm of mux1,minimum width=0.75cm,minimum height=1.9cm,yshift=-0.55cm] (alu) {ALU};
+\node[connpoint,right=0.5cm of mux1] (i24) {};
+\path[flecha] (mux1) -- (i24);
+\node[connpoint,right=0.5cm of mux2] (i25) {};
+\path[flecha] (mux2) -- (i25);
+\end{tikzpicture}

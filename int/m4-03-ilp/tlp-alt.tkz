@@ -1,0 +1,267 @@
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, text=black,font=\tiny,minimum width=1cm} ,
+  hilo0/.style={rectangle,draw=black,fill=white,minimum width=0.25cm,minimum height=0.25cm},
+  hilo1/.style={rectangle,draw=black,fill=blue!80,minimum width=0.25cm,minimum height=0.25cm},
+  hilo2/.style={rectangle,draw=black,fill=green!80,minimum width=0.25cm,minimum height=0.25cm},
+  hilo3/.style={rectangle,draw=black,fill=orange!80,minimum width=0.25cm,minimum height=0.25cm},
+  hilo4/.style={rectangle,draw=black,fill=yellow!80,minimum width=0.25cm,minimum height=0.25cm},
+  hilo5/.style={rectangle,draw=black,fill=magenta!80,minimum width=0.25cm,minimum height=0.25cm},
+  axis/.style={-,very thick,draw=orange,dashed,font=\small},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+}  
+\node[hilo1] (h11a) {};
+\node[etiqueta,above right=0cm and -0.25cm of h11a] (lsuperscalar) {Superscalar};
+\node[hilo1,right=0.1cm of h11a] (h12a) {};
+\node[hilo0,right=0.1cm of h12a] (h13a) {};
+\node[hilo0,right=0.1cm of h13a] (h14a) {};
+%
+\node[hilo1,below=0.1cm of h11a] (h21a) {};
+\node[hilo1,right=0.1cm of h21a] (h22a) {};
+\node[hilo1,right=0.1cm of h22a] (h23a) {};
+\node[hilo0,right=0.1cm of h23a] (h24a) {};
+%
+\node[hilo1,below=0.1cm of h21a] (h31a) {};
+\node[hilo0,right=0.1cm of h31a] (h32a) {};
+\node[hilo0,right=0.1cm of h32a] (h33a) {};
+\node[hilo0,right=0.1cm of h33a] (h34a) {};
+%
+\node[hilo0,below=0.1cm of h31a] (h41a) {};
+\node[hilo0,right=0.1cm of h41a] (h42a) {};
+\node[hilo0,right=0.1cm of h42a] (h43a) {};
+\node[hilo0,right=0.1cm of h43a] (h44a) {};
+%
+\node[hilo0,below=0.1cm of h41a] (h51a) {};
+\node[hilo0,right=0.1cm of h51a] (h52a) {};
+\node[hilo0,right=0.1cm of h52a] (h53a) {};
+\node[hilo0,right=0.1cm of h53a] (h54a) {};
+%
+\node[hilo1,below=0.1cm of h51a] (h61a) {};
+\node[hilo1,right=0.1cm of h61a] (h62a) {};
+\node[hilo1,right=0.1cm of h62a] (h63a) {};
+\node[hilo0,right=0.1cm of h63a] (h64a) {};
+%
+\node[hilo1,below=0.1cm of h61a] (h71a) {};
+\node[hilo0,right=0.1cm of h71a] (h72a) {};
+\node[hilo0,right=0.1cm of h72a] (h73a) {};
+\node[hilo0,right=0.1cm of h73a] (h74a) {};
+%
+\node[hilo1,below=0.1cm of h71a] (h81a) {};
+\node[hilo1,right=0.1cm of h81a] (h82a) {};
+\node[hilo1,right=0.1cm of h82a] (h83a) {};
+\node[hilo1,right=0.1cm of h83a] (h84a) {};
+%
+\node[hilo1,below=0.1cm of h81a] (h91a) {};
+\node[hilo1,right=0.1cm of h91a] (h92a) {};
+\node[hilo0,right=0.1cm of h92a] (h93a) {};
+\node[hilo0,right=0.1cm of h93a] (h94a) {};
+%
+\node[hilo1,below=1cm of h91a] (h1legend) {};
+\node[hilo2,right=1.25cm of h1legend] (h2legend) {};
+\node[hilo3,right=1.25cm of h2legend] (h3legend) {};
+\node[hilo4,right=1.25cm of h3legend] (h4legend) {};
+\node[hilo5,right=1.25cm of h4legend] (h5legend) {};
+\node[hilo0,right=1.25cm of h5legend] (h6legend) {};
+\node[etiqueta,right=0cm of h1legend] {Thread 1};
+\node[etiqueta,right=0cm of h2legend] {Thread 2};
+\node[etiqueta,right=0cm of h3legend] {Thread 3};
+\node[etiqueta,right=0cm of h4legend] {Thread 4};
+\node[etiqueta,right=0cm of h5legend] {Thread 5};
+\node[etiqueta,right=0cm of h6legend] {stall};
+%
+\pause
+\node[hilo1,right=0.5cm of h14a] (h11b) {};
+\node[etiqueta,above right=0cm and -0.25cm of h11b] (fine) {Fine Grain};
+\node[hilo1,right=0.1cm of h11b] (h12b) {};
+\node[hilo0,right=0.1cm of h12b] (h13b) {};
+\node[hilo0,right=0.1cm of h13b] (h14b) {};
+%
+\node[hilo2,below=0.1cm of h11b] (h21b) {};
+\node[hilo2,right=0.1cm of h21b] (h22b) {};
+\node[hilo0,right=0.1cm of h22b] (h23b) {};
+\node[hilo0,right=0.1cm of h23b] (h24b) {};
+%
+\node[hilo3,below=0.1cm of h21b] (h31b) {};
+\node[hilo3,right=0.1cm of h31b] (h32b) {};
+\node[hilo0,right=0.1cm of h32b] (h33b) {};
+\node[hilo0,right=0.1cm of h33b] (h34b) {};
+%
+\node[hilo4,below=0.1cm of h31b] (h41b) {};
+\node[hilo4,right=0.1cm of h41b] (h42b) {};
+\node[hilo0,right=0.1cm of h42b] (h43b) {};
+\node[hilo0,right=0.1cm of h43b] (h44b) {};
+%
+\node[hilo1,below=0.1cm of h41b] (h51b) {};
+\node[hilo1,right=0.1cm of h51b] (h52b) {};
+\node[hilo1,right=0.1cm of h52b] (h53b) {};
+\node[hilo0,right=0.1cm of h53b] (h54b) {};
+%
+\node[hilo2,below=0.1cm of h51b] (h61b) {};
+\node[hilo0,right=0.1cm of h61b] (h62b) {};
+\node[hilo0,right=0.1cm of h62b] (h63b) {};
+\node[hilo0,right=0.1cm of h63b] (h64b) {};
+%
+\node[hilo3,below=0.1cm of h61b] (h71b) {};
+\node[hilo3,right=0.1cm of h71b] (h72b) {};
+\node[hilo3,right=0.1cm of h72b] (h73b) {};
+\node[hilo0,right=0.1cm of h73b] (h74b) {};
+%
+\node[hilo4,below=0.1cm of h71b] (h81b) {};
+\node[hilo4,right=0.1cm of h81b] (h82b) {};
+\node[hilo0,right=0.1cm of h82b] (h83b) {};
+\node[hilo0,right=0.1cm of h83b] (h84b) {};
+%
+\node[hilo1,below=0.1cm of h81b] (h91b) {};
+\node[hilo1,right=0.1cm of h91b] (h92b) {};
+\node[hilo1,right=0.1cm of h92b] (h93b) {};
+\node[hilo1,right=0.1cm of h93b] (h94b) {};
+%
+\pause
+\node[hilo1,right=0.5cm of h14b] (h11c) {};
+\node[etiqueta,above right=0cm and -0.25cm of h11c] (coarse) {Coarse Grain};
+\node[hilo1,right=0.1cm of h11c] (h12c) {};
+\node[hilo0,right=0.1cm of h12c] (h13c) {};
+\node[hilo0,right=0.1cm of h13c] (h14c) {};
+%
+\node[hilo1,below=0.1cm of h11c] (h21c) {};
+\node[hilo1,right=0.1cm of h21c] (h22c) {};
+\node[hilo1,right=0.1cm of h22c] (h23c) {};
+\node[hilo0,right=0.1cm of h23c] (h24c) {};
+%
+\node[hilo1,below=0.1cm of h21c] (h31c) {};
+\node[hilo0,right=0.1cm of h31c] (h32c) {};
+\node[hilo0,right=0.1cm of h32c] (h33c) {};
+\node[hilo0,right=0.1cm of h33c] (h34c) {};
+%
+\node[hilo1,below=0.1cm of h31c] (h41c) {};
+\node[hilo1,right=0.1cm of h41c] (h42c) {};
+\node[hilo1,right=0.1cm of h42c] (h43c) {};
+\node[hilo1,right=0.1cm of h43c] (h44c) {};
+%
+\node[hilo2,below=0.1cm of h41c] (h51c) {};
+\node[hilo2,right=0.1cm of h51c] (h52c) {};
+\node[hilo2,right=0.1cm of h52c] (h53c) {};
+\node[hilo0,right=0.1cm of h53c] (h54c) {};
+%
+\node[hilo2,below=0.1cm of h51c] (h61c) {};
+\node[hilo2,right=0.1cm of h61c] (h62c) {};
+\node[hilo0,right=0.1cm of h62c] (h63c) {};
+\node[hilo0,right=0.1cm of h63c] (h64c) {};
+%
+\node[hilo3,below=0.1cm of h61c] (h71c) {};
+\node[hilo3,right=0.1cm of h71c] (h72c) {};
+\node[hilo3,right=0.1cm of h72c] (h73c) {};
+\node[hilo3,right=0.1cm of h73c] (h74c) {};
+%
+\node[hilo3,below=0.1cm of h71c] (h81c) {};
+\node[hilo0,right=0.1cm of h81c] (h82c) {};
+\node[hilo0,right=0.1cm of h82c] (h83c) {};
+\node[hilo0,right=0.1cm of h83c] (h84c) {};
+%
+\node[hilo4,below=0.1cm of h81c] (h91c) {};
+\node[hilo4,right=0.1cm of h91c] (h92c) {};
+\node[hilo0,right=0.1cm of h92c] (h93c) {};
+\node[hilo0,right=0.1cm of h93c] (h94c) {};
+% SMT
+\pause
+\node[hilo1,right=0.5cm of h14c] (h11d) {};
+\node[etiqueta,above right=0cm and -0.25cm of h11d] (smt) {SMT};
+\node[hilo1,right=0.1cm of h11d] (h12d) {};
+\node[hilo2,right=0.1cm of h12d] (h13d) {};
+\node[hilo3,right=0.1cm of h13d] (h14d) {};
+%
+\node[hilo1,below=0.1cm of h11d] (h21d) {};
+\node[hilo1,right=0.1cm of h21d] (h22d) {};
+\node[hilo4,right=0.1cm of h22d] (h23d) {};
+\node[hilo0,right=0.1cm of h23d] (h24d) {};
+%
+\node[hilo2,below=0.1cm of h21d] (h31d) {};
+\node[hilo3,right=0.1cm of h31d] (h32d) {};
+\node[hilo4,right=0.1cm of h32d] (h33d) {};
+\node[hilo5,right=0.1cm of h33d] (h34d) {};
+%
+\node[hilo1,below=0.1cm of h31d] (h41d) {};
+\node[hilo3,right=0.1cm of h41d] (h42d) {};
+\node[hilo4,right=0.1cm of h42d] (h43d) {};
+\node[hilo5,right=0.1cm of h43d] (h44d) {};
+%
+\node[hilo1,below=0.1cm of h41d] (h51d) {};
+\node[hilo3,right=0.1cm of h51d] (h52d) {};
+\node[hilo2,right=0.1cm of h52d] (h53d) {};
+\node[hilo4,right=0.1cm of h53d] (h54d) {};
+%
+\node[hilo3,below=0.1cm of h51d] (h61d) {};
+\node[hilo3,right=0.1cm of h61d] (h62d) {};
+\node[hilo2,right=0.1cm of h62d] (h63d) {};
+\node[hilo4,right=0.1cm of h63d] (h64d) {};
+%
+\node[hilo1,below=0.1cm of h61d] (h71d) {};
+\node[hilo2,right=0.1cm of h71d] (h72d) {};
+\node[hilo3,right=0.1cm of h72d] (h73d) {};
+\node[hilo4,right=0.1cm of h73d] (h74d) {};
+%
+\node[hilo5,below=0.1cm of h71d] (h81d) {};
+\node[hilo3,right=0.1cm of h81d] (h82d) {};
+\node[hilo3,right=0.1cm of h82d] (h83d) {};
+\node[hilo4,right=0.1cm of h83d] (h84d) {};
+%
+\node[hilo5,below=0.1cm of h81d] (h91d) {};
+\node[hilo3,right=0.1cm of h91d] (h92d) {};
+\node[hilo3,right=0.1cm of h92d] (h93d) {};
+\node[hilo4,right=0.1cm of h93d] (h94d) {};
+% Multiprocessor
+\pause
+\node[hilo1,right=0.5cm of h14d] (h11e) {};
+\node[etiqueta,above right=0cm and -0.25cm of h11e] (fine) {Multiprocessor};
+\node[hilo1,right=0.1cm of h11e] (h12e) {};
+\node[hilo2,right=0.1cm of h12e] (h13e) {};
+\node[hilo2,right=0.1cm of h13e] (h14e) {};
+%
+\node[hilo1,below=0.1cm of h11e] (h21e) {};
+\node[hilo0,right=0.1cm of h21e] (h22e) {};
+\node[hilo2,right=0.1cm of h22e] (h23e) {};
+\node[hilo2,right=0.1cm of h23e] (h24e) {};
+%
+\node[hilo1,below=0.1cm of h21e] (h31e) {};
+\node[hilo1,right=0.1cm of h31e] (h32e) {};
+\node[hilo2,right=0.1cm of h32e] (h33e) {};
+\node[hilo0,right=0.1cm of h33e] (h34e) {};
+%
+\node[hilo1,below=0.1cm of h31e] (h41e) {};
+\node[hilo0,right=0.1cm of h41e] (h42e) {};
+\node[hilo2,right=0.1cm of h42e] (h43e) {};
+\node[hilo0,right=0.1cm of h43e] (h44e) {};
+%
+\node[hilo0,below=0.1cm of h41e] (h51e) {};
+\node[hilo0,right=0.1cm of h51e] (h52e) {};
+\node[hilo2,right=0.1cm of h52e] (h53e) {};
+\node[hilo2,right=0.1cm of h53e] (h54e) {};
+%
+\node[hilo0,below=0.1cm of h51e] (h61e) {};
+\node[hilo0,right=0.1cm of h61e] (h62e) {};
+\node[hilo2,right=0.1cm of h62e] (h63e) {};
+\node[hilo0,right=0.1cm of h63e] (h64e) {};
+%
+\node[hilo1,below=0.1cm of h61e] (h71e) {};
+\node[hilo1,right=0.1cm of h71e] (h72e) {};
+\node[hilo2,right=0.1cm of h72e] (h73e) {};
+\node[hilo2,right=0.1cm of h73e] (h74e) {};
+%
+\node[hilo1,below=0.1cm of h71e] (h81e) {};
+\node[hilo0,right=0.1cm of h81e] (h82e) {};
+\node[hilo1,right=0.1cm of h82e] (h83e) {};
+\node[hilo0,right=0.1cm of h83e] (h84e) {};
+%
+\node[hilo1,below=0.1cm of h81e] (h91e) {};
+\node[hilo1,right=0.1cm of h91e] (h92e) {};
+\node[hilo0,right=0.1cm of h92e] (h93e) {};
+\node[hilo0,right=0.1cm of h93e] (h94e) {};
+%
+\node[connpoint,above right=0cm and 0.05cm of h12e] (mp1) {};
+\node[connpoint,below=3.25cm of mp1] (mp2) {};
+\path[axis] (mp1) -- (mp2);
+%
+\onslide<1->
+\end{tikzpicture}
+

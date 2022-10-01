@@ -1,0 +1,24 @@
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, font=\tiny} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+  fasesep/.style={-,thick,draw=blue,dashed},
+  faseetiq/.style={text centered, font=\small,text=orange}, 
+}  
+\node[bloque,minimum width=0.75cm,minimum height=0.75cm] (mux) {MUX};
+\node[connpoint,left=0cm of mux] (imux) {};
+\node[connpoint,above=0.25cm of imux] (imux0a) {};
+\node[connpoint,below=0.25cm of imux] (imux0b) {};
+\node[connpoint,left=1cm of imux0a] (imux1a) {};
+\path[flecha] (imux1a) edge node[above,xshift=-0.25cm] {Data Mem.} (imux0a);
+\node[connpoint,left=1cm of imux0b] (imux1b) {};
+\path[flecha] (imux1b) edge node[below,xshift=-0.25cm] {ALU} (imux0b);
+\node[connpoint,right=0cm of mux] (omux0) {};
+\node[connpoint,right=1cm of omux0] (omux1) {};
+\path[flecha] (omux0) -- (omux1);
+\node[bloque,right=0cm of omux1,minimum width=0.75cm,minimum height=0.75cm] (reg) {Regs};
+\end{tikzpicture}

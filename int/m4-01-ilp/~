@@ -1,0 +1,23 @@
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, font=\tiny} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+  fasesep/.style={-,thick,draw=blue,dashed},
+  faseetiq/.style={text centered, font=\small,text=orange}, 
+}  
+\node[bloque,minimum height=2cm,align=center] (datamem) {Data\\Memory};
+\node[connpoint,left=0cm of datamem] (imem) {};
+\node[connpoint,above=0.5cm of imem] (imem1a) {};
+\node[connpoint,left=1cm of imem1a] (imem2a) {};
+\path[flecha] (imem2a) edge node[above] {Dir} (imem1a);
+\node[connpoint,below=0.5cm of imem] (imem1b) {};
+\node[connpoint,left=1cm of imem1b] (imem2b) {};
+\path[flecha] (imem2b) edge node[below] {Data} (imem1b);
+\node[connpoint,right=0cm of datamem] (omem1) {};
+\node[connpoint,right=1cm of omem1] (omem2) {};
+\path[flecha] (omem1) edge node[above] {Data} (omem2);
+\end{tikzpicture}

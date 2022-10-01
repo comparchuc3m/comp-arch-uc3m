@@ -1,0 +1,157 @@
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, font=\tiny} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+  fasesep/.style={-,thick,draw=blue,dashed},
+  faseetiq/.style={text centered, font=\small,text=orange}, 
+}  
+\node[bloque,rotate=90, minimum width=2cm] (addr) {PC ADDR};
+\node[intersec,right=0.3cm of addr,yshift=-1cm] (i1) {};
+\node[bloque,right=0cm of i1,rotate around={90:(1cm,0cm)}, minimum width=2cm, minimum height=1cm,yshift=0.25cm,anchor=west] 
+  (mem) {Memory};
+\path[sinflecha] (addr) -- (i1);
+\path[flecha] (i1) -- (mem);
+\node[above=1.75cm of i1,minimum width=0cm,minimum height=0cm,inner sep=0pt] (i2) {};
+\node[right=0.5cm of i2] (i3) {};
+\path[sinflecha] (i1) -- (i2);
+\path[flecha] (i2) -- (i3);
+\node[bloque,above right=-0.25cm and 0.5cm of i2,minimum width=1cm,minimum height=1cm] (sum) {Sum};
+\node[etiqueta,above=0.5em of i2] (add4) {4};
+\node[right=0.3cm of add4,minimum width=0cm,minimum height=0cm,inner sep=0pt] (i4) {};
+\path[flecha] (add4) -- (i4);
+\node[bloque,right=1cm of mem,rotate around={90:(1cm,0cm)},minimum width=2cm,xshift=-1cm,yshift=1cm] (ir) {IR};
+\path[flecha] (mem) -- (ir);
+\pause
+\node[intersec,right=0.5cm of ir,yshift=-1cm] (i5) {};
+\path[flecha] (ir) -- (i5);
+\node[intersec,above=0.25cm of i5] (i6) {};
+\path[sinflecha] (i5) -- (i6);
+\node[connpoint,above=0.75cm of i5] (i7) {};
+\path[sinflecha] (i6) -- (i7);
+\node[intersec,below=0.25cm of i5] (i8) {};
+\path[sinflecha] (i5) -- (i8);
+\node[connpoint,below=1.5cm of i5] (i9) {};
+\path[sinflecha] (i8) -- (i9);
+\node[connpoint,right=0.5cm of i6] (i10) {};
+\node[connpoint,right=0.55cm of i7] (i11) {};
+\node[connpoint,right=0.5cm of i8] (i12) {};
+\node[connpoint,right=0.5cm of i9] (i13) {};
+\path[flecha] (i7) edge node[above] {R1} (i11);
+\path[flecha] (i6) edge node[above] {R2} (i10);
+\path[flecha] (i8) edge node[above] {RD} (i12);
+\path[flecha] (i9) edge node[above] {Inm} (i13);
+\node[bloque,right=0.75cm of i5,rotate around={90:(1cm,0cm)},minimum width=2cm, minimum height=0.75cm,yshift=0.85cm] (regs) {Registers};
+\node[bloque,right=0cm of i13,align=center] (extsign) {Sign\\Ext};
+\node[intersec,right=2.5cm of sum] (i14) {};
+\path[sinflecha] (sum) edge node[above] {Next PC} (i14);
+\pause
+\node[bloque,above right=-0.2cm and 1.5cm of i10, minimum height=0.75cm] (mux1) {MUX};
+\node[bloque,below right=-0.2cm and 1.5cm of i12, minimum height=0.75cm] (mux2) {MUX};
+\node[connpoint,right=0.75cm of i10] (i15) {};
+\node[connpoint,right=0.75cm of i15] (i16) {};
+\path[flecha] (i15) -- (i16);
+\node[connpoint,right=0.75cm of i12] (i17) {};
+\node[connpoint,right=0.75cm of i17] (i18) {};
+\path[flecha] (i17) -- (i18);
+\node[connpoint,below=1.25cm of i14] (i19) {};
+\path[sinflecha] (i14) -- (i19) {};
+\node[connpoint,right=0.35cm of i19] (i20) {};
+\path[flecha] (i19) -- (i20);
+\node[connpoint,right=0.45cm of extsign] (i21) {};
+\path[sinflecha] (extsign) -- (i21) {};
+\node[connpoint,above=0.85cm of i21] (i22) {};
+\path[sinflecha] (i21) -- (i22);
+\node[connpoint,right=0.35cm of i22] (i23) {};
+\path[flecha] (i22) -- (i23);
+\node[bloque,right=0.5cm of mux1,minimum width=0.75cm,minimum height=1.9cm,yshift=-0.55cm] (alu) {ALU};
+\node[connpoint,right=0.5cm of mux1] (i24) {};
+\path[flecha] (mux1) -- (i24);
+\node[connpoint,right=0.5cm of mux2] (i25) {};
+\path[flecha] (mux2) -- (i25);
+\node[intersec,right=0.1cm of i15] (i26) {};
+\node[connpoint,above=1.25cm of i26] (i27) {};
+\path[sinflecha] (i26) -- (i27) {};
+\node[bloque,right=0.6cm of i27,align=center] (zerotest) {CMP\\Zero};
+\node[connpoint,right=0.6cm of i27] (i28) {};
+\path[flecha] (i27) -- (i28);
+\pause
+\node[connpoint,right=2.25cm of zerotest] (i29) {};
+\path[sinflecha] (zerotest) -- (i29);
+\node[connpoint,above=0.5cm of i29] (i30) {};
+\path[flecha] (i29) -- (i30);
+\node[bloque,above=0cm of i30,minimum height=0.75cm] (mux3) {MUX};
+\node[intersec,right=0.40cm of alu] (i31) {};
+\path[sinflecha] (alu) -- (i31);
+\node[connpoint,above=2.25cm of i31] (i32) {};
+\path[sinflecha] (i31) -- (i32);
+\node[connpoint,right=0.15cm of i32] (i33) {};
+\path[flecha] (i32) -- (i33);
+\node[connpoint,above=0.75cm of i14] (i34) {};
+\path[sinflecha] (i14) -- (i34);
+\node[connpoint,right=3cm of i34] (i35) {};
+\path[flecha] (i34) -- (i35);
+\node[connpoint, right=0.25cm of mux3] (i36) {};
+\path[sinflecha] (mux3) -- (i36);
+\node[connpoint, above=0.5cm of i36] (i37) {};
+\path[sinflecha] (i36) -- (i37);
+\node[connpoint, left=9cm of i37] (i38) {};
+\path[sinflecha] (i37) -- (i38);
+\node[connpoint, below=3.15cm of i38] (i39) {};
+\path[sinflecha] (i38) -- (i39);
+\node[connpoint, right=0.35cm of i39] (i40) {};
+\path[flecha] (i39) -- (i40);
+\node[connpoint,right=0.25cm of i31] (i41) {};
+\path[flecha] (i31) -- (i41);
+\node[bloque,right=0cm of i41,minimum height=2cm,align=center] (datamem) {Data\\Memory};
+\node[intersec,right=0.1cm of i17] (i42) {};
+\node[connpoint,below=0.75cm of i42] (i43) {};
+\path[sinflecha] (i42) -- (i43);
+\node[connpoint,right=2.7cm of i43] (i44) {};
+\path[sinflecha] (i43) -- (i44);
+\node[connpoint,above=0.5cm of i44] (i45) {};
+\path[sinflecha] (i44) -- (i45);
+\node[connpoint,right=0.65cm of i45] (i46) {};
+\path[flecha] (i45) -- (i46);
+\pause
+\node[connpoint,right=1.05cm of i46] (i47) {};
+\node[connpoint,right=0.5cm of i47] (i48) {};
+\path[flecha] (i47) -- (i48);
+\node[bloque,below right=-0.25cm and 0cm of i48,minimum height=0.75cm] (mux4) {MUX};
+\node[connpoint,below=1.25cm of i31] (i49) {};
+\path[sinflecha] (i31) -- (i49);
+\node[connpoint,right=1.5cm of i49] (i50) {};
+\path[sinflecha] (i49) -- (i50);
+\node[connpoint,above=0.25cm of i50] (i51) {};
+\path[sinflecha] (i50) -- (i51);
+\node[connpoint,right=0.35cm of i51] (i52) {};
+\path[flecha] (i51) -- (i52);
+\node[connpoint,right=0.25cm of mux4] (i53) {};
+\node[connpoint,below=1.25cm of i53] (i54) {};
+\node[connpoint,left=7.6cm of i54] (i55) {};
+\node[connpoint,above=1.35cm of i55] (i56) {};
+\node[connpoint,right=0.7cm of i56] (i57) {};
+\path[sinflecha] (mux4) -- (i53) -- (i54) edge [sinflecha] node[below] {Post-escritura} (i55) -- (i55) -- (i56) edge[flecha] (i57);
+\pause
+\node[connpoint,above left=3cm and 0.2cm of i5] (ifline1) {};
+\node[connpoint,below=6cm of ifline1] (ifline2) {};
+\path[fasesep] (ifline1) -- (ifline2);
+\node[connpoint,right=1.65cm of ifline1] (idline1) {};
+\node[connpoint,below=6cm of idline1] (idline2) {};
+\path[fasesep] (idline1) -- (idline2);
+\node[connpoint,right=2.9cm of idline1] (exline1) {};
+\node[connpoint,below=6cm of exline1] (exline2) {};
+\path[fasesep] (exline1) -- (exline2);
+\node[connpoint,right=1.8cm of exline1] (memline1) {};
+\node[connpoint,below=6cm of memline1] (memline2) {};
+\path[fasesep] (memline1) -- (memline2);
+\node[faseetiq,above left=0.1cm and 1cm of ifline2] (ifetiq) {Fetch};
+\node[faseetiq,right=1cm of ifetiq,align=center] (idetiq) {Decode};
+\node[faseetiq,right=0.8cm of idetiq] (exetiq) {Execution};
+\node[faseetiq,right=0.5cm of exetiq] (memetiq) {Memory};
+\node[faseetiq,right=0.3cm of memetiq,align=center] (wbetiq) {Write-\\back};
+\onslide<1->
+\end{tikzpicture}

@@ -1,0 +1,248 @@
+\section{Riesgos de datos}
+
+\begin{frame}[t,fragile]{Riesgo de datos}
+\begin{itemize}
+  \item Se produce un \textgood{riesgo de datos} cuando la segmentación 
+        modifica el orden de accesos de lectura/escritura a los operandos.
+\end{itemize}
+\begin{columns}
+% Left column
+\begin{column}{.45\textwidth}
+\begin{block}{Ejemplo}
+\begin{lstlisting}[language={generalasm},basicstyle=\small]
+I1: dadd $1, $2, $3
+I2: dsub $4, $1, $5
+I3: and  $6, $1, $7
+I4: or   $8, $1, $9
+I5: xor  $10, $1, $11
+\end{lstlisting}
+\end{block}
+\end{column}
+% Right column
+\begin{column}{.55\textwidth}
+\begin{itemize}
+  \item \asmlabel{I2} lee \asmreg{R1} antes que \asmlabel{I1} la modifique.
+  \item \asmlabel{I3} lee \asmreg{R1} antes de que \asmlabel{I1} la modifique.
+  \item \asmlabel{I4} obtiene valor correcto.
+    \begin{itemize}
+      \item Banco de registros leído en segunda mitad de ciclo.
+    \end{itemize}
+  \item \asmlabel{I5} obtiene valor correcto.
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+      
+\begin{frame}[t]{Riesgos de datos}
+\makebox[\textwidth][c]{
+\input{es/m4-01-ilp/data-hazard-ex1.tkz}
+}
+\end{frame}
+
+\begin{frame}[t]{Detenciones en riesgos de datos}
+\makebox[\textwidth][c]{
+\input{es/m4-01-ilp/data-hazard-ex2.tkz}
+}
+\end{frame}
+
+\begin{frame}[t,fragile]{Riesgos de datos: RAW}
+\begin{itemize}
+  \item Lectura después de escritura (\textmark{Read After Write}).
+    \begin{itemize}
+      \item La instrucción \textmark{i+1} trata de leer un dato antes de que la
+            instrucción \textmark{i} lo escriba.
+    \end{itemize}
+\end{itemize}
+\begin{columns}
+\begin{column}{.25\textwidth}
+\begin{block}{Ejemplo}
+\begin{lstlisting}{generalasm}
+i:    add $1, $2, $3
+i+1:  sub $4, $1, $3
+\end{lstlisting}
+\end{block}
+\end{column}
+\begin{column}{.75\textwidth}
+\begin{itemize}
+  \item Si hay dependencia de datos, las instrucciones:
+    \begin{itemize}
+      \item No pueden ejecutarse en paralelo ni solaparse completamente.
+      \item La instrucción \cppkey{sub} necesita el valor de \cppid{\$1}
+            producido por la instrucción \cppkey{add}.
+    \end{itemize}
+\end{itemize}
+\end{column}
+\end{columns}
+\mode<presentation>{\pause\vfill}
+\begin{itemize}
+  \item \textgood{Soluciones}:
+  \begin{itemize}
+    \item \textmark{Detección hardware}.
+    \item \textmark{Control por el compilador}.
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Riesgos de datos: WAR}
+\begin{itemize}
+  \item Escritura después de lectura (\textmark{Write After Read}).
+    \begin{itemize}
+      \item La instrucción \textmark{i+1} modifica operando antes de que la
+            instrucción \textmark{i} lo lea.
+    \end{itemize}
+\end{itemize}
+\begin{columns}
+\begin{column}{.25\textwidth}
+\begin{block}{Ejemplo}
+\begin{lstlisting}{generalasm}
+i:   sub $4, $1, $3
+i+1: add $1, $2, $3
+i+2: mul $6, $1, $7
+\end{lstlisting}
+\end{block}
+\end{column}
+\begin{column}{.75\textwidth}
+\begin{itemize}
+  \item Conocido como \textmark{antidependencia} en compiladores.
+    \begin{itemize}
+      \item Reutilización de nombre
+      \item La instrucción \cppkey{add} modifica \cppid{\$1}
+            antes de \cppkey{sub} la lea.
+    \end{itemize}
+\end{itemize}
+\end{column}
+\end{columns}
+\mode<presentation>{\pause\vfill}
+\begin{itemize}
+  \item \alert{No puede} ocurrir en un MIPS con \textmark{pipeline de 5 etapas}.
+  \begin{itemize}
+    \item Todas las instrucciones de 5 etapas.
+    \item Lecturas siempre en etapa 2.
+    \item Escrituras siempre en etapa 5.
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Riesgos de datos: WAW}
+\begin{itemize}
+  \item Escritura después de escritura (\textmark{Write After Write}).
+    \begin{itemize}
+      \item La instrucción \textmark{i+1} modifica el operando antes de que la
+            instrucción \textmark{i} lo modifica.
+    \end{itemize}
+\end{itemize}
+\begin{columns}
+\begin{column}{.25\textwidth}
+\begin{block}{Ejemplo}
+\begin{lstlisting}{generalasm}
+i:   sub $1, $4, $3
+i+1: add $1, $2, $3
+i+2: mul $6, $1, $7
+\end{lstlisting}
+\end{block}
+\end{column}
+\begin{column}{.75\textwidth}
+\begin{itemize}
+  \item Conocido como \textmark{dependencia de salida} en compiladores.
+    \begin{itemize}
+      \item Reutilización de nombre
+      \item La instrucción \cppkey{add} modifica \cppid{\$1}
+            antes de \cppkey{sub} la modifique.
+    \end{itemize}
+\end{itemize}
+\end{column}
+\end{columns}
+\mode<presentation>{\pause\vfill}
+\begin{itemize}
+  \item \alert{No puede} ocurrir en un MIPS con \textmark{pipeline de 5 etapas}.
+  \begin{itemize}
+    \item Todas las instrucciones de 5 etapas.
+    \item Escrituras siempre en etapa 5.
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Soluciones a los riesgos de datos}
+\begin{itemize}
+  \item \textgood{Dependencias RAW}:
+    \begin{itemize}
+      \item Envío adelantado (\textmark{forwarding}).
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textgood{Dependencias WAR y WAW}:
+    \begin{itemize}
+      \item \textmark{Renombrado de registros}.
+        \begin{itemize}
+          \item Estáticamente por el compilador.
+          \item Dinámicamente por el hardware.
+        \end{itemize}
+    \end{itemize}  
+\end{itemize}
+ \end{frame}
+
+\begin{frame}[t]{Envío adelantado}
+\begin{itemize}
+  \item Técnica para evitar algunas detenciones de datos.
+  \mode<presentation>{\vfill}
+  \item \textgood{Idea básica}:
+    \begin{itemize}
+      \item No hace falta esperar a que el resultado se escriba en el banco de registros. 
+      \item Ya está en los registros de segmentación.
+      \item Se puede usar ese valor en vez del que hay en el banco de registros.
+    \end{itemize}
+  \mode<presentation>{\vfill}
+  \item \textgood{Implantación}:
+    \begin{itemize}
+      \item Los resultados de las fases EX y MEM se escriben en registros de entrada a ALU.
+      \item La lógica de \emph{forwarding} selecciona entre entradas reales y registros de \emph{forwarding}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Forwarding}
+\makebox[\textwidth][c]{
+\input{es/m4-01-ilp/forward.tkz}
+}
+\end{frame}
+
+\begin{frame}[t,fragile]{Limitaciones del \emph{forwarding}}
+\begin{itemize}
+  \item No todos los riesgos se pueden evitar con forwarding.
+    \begin{itemize}
+      \item ¡No se puede viajar hacia atrás en el tiempo!
+    \end{itemize}
+\end{itemize}
+
+\begin{columns}
+
+\begin{column}{.4\textwidth}
+\begin{block}{Ejemplo}
+\begin{lstlisting}[language={generalasm}]
+I1: lw    $1, (0)$2
+I2: dsub  $4, $1, $5 
+I3: and   $6, $1, $7  
+I4: or    $8, $1, $9 
+I5: xor   $10, $1, $11
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.6\textwidth}
+\makebox[\textwidth][c]{
+\input{es/m4-01-ilp/forward-limit.tkz}
+}\end{column}
+
+\end{columns}
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item Si el riesgo no se puede evitar se debe introducir una detención.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[t]{Detenciones en acceso a memoria}
+\makebox[\textwidth][c]{
+\input{es/m4-01-ilp/memory-stall.tkz}
+}
+\end{frame}

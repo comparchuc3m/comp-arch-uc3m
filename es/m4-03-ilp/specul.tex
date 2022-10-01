@@ -1,0 +1,61 @@
+\section{Especulación}
+
+\begin{frame}[t]{Bifurcaciones y límites de paralelismo}
+\begin{itemize}
+  \item Al aumentar el paralelismo conseguido, las \textbad{dependencias de control} se convierten en problema.
+    \begin{itemize}
+      \item La predicción de bifurcaciones no es suficiente.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item El siguiente paso es la \textgood{especulación} sobre el 
+        \textmark{resultado de las bifurcaciones} y la \textgood{ejecución} 
+        asumiendo que la \textmark{especulación fue correcta}.
+    \begin{itemize}
+      \item Se capta, emite y ejecuta instrucciones.
+      \item Se necesita un mecanismo de tratamiento si la especulación no era correcta.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Componentes}
+\begin{itemize}
+  \item \textgood{Ideas}:
+    \begin{itemize}
+      \item \textmark{Predicción dinámica de saltos}: Selecciona las instrucciones a ejecutar.
+      \item \textmark{Especulación}: Ejecución antes de que se resuelvan dependencias de control y capacidad para deshacer.
+      \item \textmark{Planificación dinámica}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Para conseguirlo se debe \textgood{separar}:
+    \begin{itemize}
+      \item El \textmark{paso del resultado} de una instrucción a otra que lo usa.
+      \item La \textmark{finalización} de la instrucción.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{IMPORTANTE}:No se actualiza el estado del procesador 
+        (registros/memoria) hasta que no se tiene confirmación.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Solución}
+\begin{itemize}
+  \item \textgood{Reorder Buffer} (\textmark{ROB}):
+    \begin{itemize}
+      \item Cuando se finaliza una instrucción se escribe en el \textmark{ROB}.
+      \item Cuando se confirma su ejecución se escribe en destino real.
+      \item Las instrucciones leen datos modificados del \textmark{ROB}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Entradas del \textmark{ROB}:
+    \begin{itemize}
+      \item \textmark{Tipo de instrucción}: branch, store, operación de registro.
+      \item \textmark{Destino}: Id de registro o dirección de memoria.
+      \item \textmark{Valor}: Valor del resultado de la instrucción.
+      \item \textmark{Ready}: Indica si la instrucción se ha completado.
+    \end{itemize}
+\end{itemize}
+\end{frame}

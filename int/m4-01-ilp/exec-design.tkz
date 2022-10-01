@@ -1,0 +1,44 @@
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, font=\tiny} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+  fasesep/.style={-,thick,draw=blue,dashed},
+  faseetiq/.style={text centered, font=\small,text=orange}, 
+}  
+\node[bloque,minimum width=0.75cm,minimum height=1.9cm,yshift=-0.55cm] (alu) {ALU};
+\node[connpoint,left=0cm of alu] (ialu0) {};
+\node[connpoint,above=0.25cm of ialu0] (ialua0) {};
+\node[connpoint,left=0.5cm of ialua0] (ialua1) {};
+\path[flecha] (ialua1) edge node[above,xshift=-0.5cm] {Next PC or R1} (ialua0);
+\node[connpoint,below=0.25cm of ialu0] (ialub0) {};
+\node[connpoint,left=0.5cm of ialub0] (ialub1) {};
+\path[flecha] (ialub1) edge node[below,xshift=-0.5cm] {Inm or R2} (ialub0);
+\node[bloque,minimum width=0.75cm,minimum height=0.75cm,above=0.5cm of alu,align=center] (cmp) {CMP\\Zero};
+\node[connpoint,left=0cm of cmp] (icmp0) {};
+\node[connpoint,left=0.5cm of icmp0] (icmp1) {};
+\path[flecha] (icmp1) edge node[above] {R1} (icmp0);
+\node[connpoint,right=0cm of cmp] (ocmp0) {};
+\node[connpoint,right=1.5cm of ocmp0] (ocmp1) {};
+\path[sinflecha] (ocmp0) -- (ocmp1);
+\node[connpoint,above=0.5cm of ocmp1] (ocmp2) {};
+\path[flecha] (ocmp1) -- (ocmp2);
+\node[bloque,above=0cm of ocmp2,minimum width=0.75cm,minimum height=0.75cm] (mux) {MUX};
+\node[connpoint,right=0cm of alu] (oalu0) {};
+\node[intersec,right=0.5cm of oalu0] (oalu1) {};
+\node[connpoint,above=2.5cm of oalu1] (oalu2) {};
+\path[sinflecha] (oalu0) -- (oalu1) -- (oalu2);
+\node[connpoint,right=0.55cm of oalu2] (oalu3) {};
+\path[flecha] (oalu2) -- (oalu3);
+\node[connpoint,above=0.25cm of oalu3] (imux1a) {};
+\node[connpoint,left=0.5cm of imux1a] (imux1b) {};
+\path[flecha] (imux1b) edge node[above,xshift=-0.25cm] {Next PC} (imux1a);
+\node[connpoint,right=0cm of mux] (omux1) {};
+\node[connpoint,right=0.5cm of omux1] (omux2) {};
+\path[flecha] (omux1) edge node[above,xshift=0.25cm] {Next PC} (omux2);
+\node[connpoint,right=0.5cm of oalu1] (oalu4) {};
+\path[flecha] (oalu1) edge node[above,xshift=0.25cm,align=right] {Dir or\\Data} (oalu4);
+\end{tikzpicture}
