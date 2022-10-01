@@ -134,7 +134,7 @@
 \node[connpoint,left=7.6cm of i54] (i55) {};
 \node[connpoint,above=1.35cm of i55] (i56) {};
 \node[connpoint,right=0.7cm of i56] (i57) {};
-\path[sinflecha] (mux4) -- (i53) -- (i54) edge [sinflecha] node[below] {Post-escritura} (i55) -- (i55) -- (i56) edge[flecha] (i57);
+\path[sinflecha] (mux4) -- (i53) -- (i54) edge [sinflecha] node[below] {Write-back} (i55) -- (i55) -- (i56) edge[flecha] (i57);
 \pause
 \node[connpoint,above left=3cm and 0.2cm of i5] (ifline1) {};
 \node[connpoint,below=6cm of ifline1] (ifline2) {};
