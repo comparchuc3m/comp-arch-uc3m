@@ -1,0 +1,111 @@
+\section{Structural hazards}
+
+\begin{frame}[t]{Structural hazard}
+\begin{itemize}
+  \item Happens when hardware \alert{cannot} support
+        all possible instruction sequences.
+    \begin{itemize} 
+      \item In the same cycle two pipeline stages
+            need to use the \textmark{same resource}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Reasons}:
+    \begin{itemize}
+      \item Functional units that are not fully pipelined.
+      \item Functional units which are not duplicated.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item These hazards can be avoided at the cost of a more
+        expensive hardware.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Pipeline speedup}
+\begin{itemize}
+  \item \textmark{Speedup}:
+    \begin{itemize}
+      \item $t_{nonpipelined}$: Average instruction time in non-pipelined architecture.
+      \item $t_{pipelined}$: Average instruction time in pipelined architecture.
+    \end{itemize}
+\end{itemize}
+\[
+S = 
+\frac{t_{nonpipelined}}{t_{pipelined}} =
+\frac{CPI_{nonpipelined} \times cycle_{nonpipelined}}{CPI_{pipelined} \times cycle_{pipelined}}
+\]
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item \textmark{Ideal case}: pipelined \textgood{CPI} is 1.
+    \begin{itemize}
+      \item Need to add stall cycles per instruction.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Pipeline speedup}
+\begin{itemize}
+  \item In case of non-pipelined processor:
+    \begin{itemize}
+      \item $CPI=1$, with $cycle_{nonpipelined} > cycle_{pipelined}$.
+      \item $cycle_{nonpipelined} = N \times cycle_{pipelined}$.
+      \item $N$ $\rightarrow$ \textmark{Pipeline depth}.
+    \end{itemize}
+\end{itemize}
+\mode<presentation>{\vfill}
+\begin{block}{Speedup}
+\[
+S =
+\frac{N}{1 + \text{stall cycles per instruction}}
+\]
+\end{block}
+\end{frame}
+
+\begin{frame}[t]{Structural hazards: example}
+\makebox[\textwidth][c]{
+\input{es/m4-01-ilp/str-hazard-ex2.tkz}
+}
+\begin{itemize}
+  \item Assuming single port memory.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Structural hazards: example}
+\makebox[\textwidth][c]{
+\input{en/m4-01-ilp/str-hazard-ex2.tkz}
+}
+\begin{itemize}
+  \item Assuming single port memory.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Example}
+\begin{itemize}
+  \item Two alternative designs:
+    \begin{itemize}
+      \item \textmark{A}: No structural hazards.
+        \begin{itemize}
+          \item Clock cycle $\rightarrow 1 ns$
+        \end{itemize}
+      \item \textmark{B}: With structural hazards.
+        \begin{itemize}
+          \item Clock cycle $\rightarrow 0.9 ns$
+        \end{itemize}
+      \item Data access instructions with hazards $\rightarrow 30\%$.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill}
+  \item Which one is the fastest alternative?
+\end{itemize}
+\mode<presentation>{\pause}
+\[
+t_{inst}(A) =
+CPI \times cycle = 1 \times 1 ns = 1 ns
+\]
+\[
+t_{inst}(B) =
+CPI \times cycle = (0.7 \times 1 + 0.3 \times (1 + 1)) \times 0.9 ns =
+1.17 ns
+\]
+\end{frame}

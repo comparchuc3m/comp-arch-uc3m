@@ -1,0 +1,225 @@
+\section{Introduction to pipelining}
+
+\begin{frame}[t]{Pipeline}
+\begin{itemize}
+  \item Implementation technique to execute multiple instructions
+        overlapped in time.
+    \begin{itemize}
+      \mode<presentation>{\vfill}
+      \item A \textmark{costly} operation is divided into
+            simple sub-operations.
+      \mode<presentation>{\vfill}
+      \item Sub-operations are executed into stages.
+    \end{itemize}
+  \mode<presentation>{\pause\vfill}
+  \item \textgood{Effects}:
+    \begin{itemize}
+      \mode<presentation>{\vfill}
+      \item \textgood{Increases} \textmark{\emph{throughput}}.
+      \mode<presentation>{\vfill}
+      \item \textmark{Latency} is \textbad{not decreased}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Segmentación}
+\begin{columns}[T]
+\begin{column}{0.6\textwidth}
+\input{es/m4-01-ilp/intro-pipeline.tkz}
+\end{column}
+
+\pause
+\begin{column}[t]{.4\textwidth}
+\begin{itemize}
+  \item \textgood{Latency}:
+    \begin{itemize}
+      \item One instruction requires 5 stages.
+      \item 5 cycles.
+    \end{itemize}
+  \item \textgood{Throughput}:
+    \begin{itemize}
+      \item One instruction finalized per cycle (once pipeline is full).
+      \item 1 instruction per cycle.
+    \end{itemize}
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Pipeline stages}
+\begin{itemize}
+  \item Simplified model:
+    \begin{itemize}
+      \item 5 stages.
+      \item \textbad{More realistic models require more stages}
+    \end{itemize}
+  \mode<presentation>{\pause\vfill}
+  \item \textgood{Stages}:
+    \begin{itemize}
+      \item \textmark{Instruction Fetch}.
+      \item \textmark{Instruction Decode}.
+      \item \textmark{Execution}.
+      \item \textmark{Memory}.
+      \item \textmark{Write-back}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Instruction Fetch}
+\begin{columns}
+\begin{column}{.5\textwidth}
+\input{int/m4-01-ilp/fetch-design.tkz}
+\end{column}
+\begin{column}{.5\textwidth}
+\begin{itemize}
+  \item Send PC to memory.
+  \item Read instruction.
+  \item Update PC.
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Instruction Decode}
+\begin{columns}
+\begin{column}{.5\textwidth}
+\input{int/m4-01-ilp/decode-design.tkz}
+\end{column}
+\begin{column}{.5\textwidth}
+\begin{itemize}
+  \item Decode instruction.
+  \item Read registers.
+  \item Sign extend offsets.
+  \item Compute possible branch address.
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Execution}
+\begin{columns}
+\begin{column}{.3\textwidth}
+\input{int/m4-01-ilp/exec-design.tkz}
+\end{column}
+\begin{column}{.7\textwidth}
+\begin{itemize}
+  \item ALU operation on registers.
+  \item Alternatives:
+    \begin{itemize}
+      \item \textmark{Memory reference}:
+            Compute effective address (add base register and offset).
+      \item \textmark{Register/register instruction}:
+            ALU operation on registers obtained in decode.
+      \item \textmark{Register/Immediate data instruction}:
+            ALU operation betwee register and immediate data.
+      \item \textmark{Branch}:
+            Condition evaluation.
+    \end{itemize}
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Memory}
+\begin{columns}
+\begin{column}{.3\textwidth}
+\begin{center}
+\input{int/m4-01-ilp/mem-design.tkz}
+\end{center}
+\end{column}
+\begin{column}{.7\textwidth}
+\begin{itemize}
+  \item Read from or write into memory.
+    \begin{itemize}
+      \item \textmark{Read}:
+            Memory access using the effective memory address computed in EX.
+      \item \textmark{Write}:
+            Memory write using the effective memory address computed in EX
+            and value of second register obtained in ID.
+    \end{itemize}
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Write back}
+\begin{columns}
+\begin{column}{.3\textwidth}
+\input{int/m4-01-ilp/wb-design.tkz}
+\end{column}
+\begin{column}{.5\textwidth}
+\begin{itemize}
+  \item Write result into register file.
+    \begin{itemize}
+      \item \textmark{Load operation}:
+            Value read from memory.
+      \item \textmark{ALU Instructions}:
+            Value computed in EX stage.
+    \end{itemize}
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{General architecture}
+\input{int/m4-01-ilp/general-design.tkz}
+\end{frame}
+
+\begin{frame}[t]{Pipeline effects}
+\begin{itemize}
+  \item An \textbad{n} \textmark{depth} pipeline 
+  multiplies by \textbad{n} the needed \textmark{bandwidth} 
+  compared to a non-pipelined version with the same  clock rate.
+    \begin{itemize}
+      \item Caching, caching, \ldots
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item Separation among \textmark{data} and \textmark{instructions} 
+        \textgood{caches} suppresses some memory \textbad{conflicts} 
+
+  \mode<presentation>{\vfill}
+  \item Instructions in the pipeline \textbad{should not} try to use
+        the same resource at the same time.
+    \begin{itemize}
+      \item Pipelining registers between successive stages.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Stages communication}
+\input{int/m4-01-ilp/general-reg-design.tkz}
+\end{frame}
+
+\begin{frame}[t]{Pipeline over time}
+\input{es/m4-01-ilp/pipeline-over-time.tkz}
+\begin{itemize}
+  \item Lectura registros segunda mitad de ciclo.
+  \item Escritura registros primera mitad de ciclo.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Example}
+\begin{itemize}
+  \item Non-pipelined processor.
+    \begin{itemize}
+      \item Frecuencia de reloj: 4 GHz.
+      \item 40\% ALU operations $\rightarrow$ 4 cycles.
+      \item 20\% branch operations $\rightarrow$ 4 cycles.
+      \item 40\% memory operations $\rightarrow$ 5 cycles.
+      \item Pipeline overhead $\rightarrow$ 0.1 ns.
+    \end{itemize}
+  \mode<presentation>{\pause}
+  \item Which is the pipeline speedup?
+  \mode<presentation>{\pause}
+\end{itemize}
+\[
+t_{orig} = cycle_{clock} \times CPI = 0.25 ns \times (0.6 \times 4 + 0.4 \times 5) = 1.1 ns
+\]
+\[
+t_{new} = 0.25 ns + 0.1 ns = 0.35 ns
+\]
+\[
+S = \frac{1.1 ns}{0.35 ns} = 3.1
+\]
+\end{frame}

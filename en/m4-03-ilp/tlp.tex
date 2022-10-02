@@ -1,0 +1,168 @@
+\section{Thread level parallelism}
+
+\begin{frame}[t]{Why TLP?}
+\begin{itemize}
+  \item Some applications exhibit more \textgood{natural parallelism} than
+        the achieved with \textmark{ILP}.
+    \begin{itemize}
+      \item Servers, scientific applications, \ldots
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Two models} emerge:
+    \begin{itemize}
+      \item \textgood{Thread level parallelism (TLP)}:
+        \begin{itemize}
+
+          \item \textmark{Thread}: 
+                Process with its own instructions and data.
+          \item May be either part of a program or an independent program.
+          \item Each thread has an associated \textmark{state} 
+                (instructions, data, PC, registers, \ldots).
+        \end{itemize}
+      \item \textgood{Data level parallelism (DLP)}:
+        \begin{itemize}
+          \item Identical operation on different data items.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{TLP}
+\begin{itemize}
+  \item \textgood{ILP} 
+        exploits implicit parallelism within a basic block or a loop.
+
+  \mode<presentation>{\vfill}
+  \item \textgood{TLP} 
+        uses multiple threads of execution inherently parallel.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{TLP Goal}:
+    \begin{itemize}
+      \item Use multiple instruction flows to improve:
+        \begin{itemize}
+          \item \textmark{Throughput} 
+                in computers using many programs.
+          \item \textmark{Execution time} 
+                of multi-threaded programs.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Multi-threaded execution}
+\begin{itemize}
+  \item Multiple threads share processor functional units overlapping its use.
+    \begin{itemize}
+      \item Need to replicate state n-times.
+        \begin{itemize}
+          \item Register file, PC, page table (when threads do note belong to the same program).
+          \item Shared memory through virtual memory mechanisms.
+          \item Hardware for fast thread context switch.
+        \end{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textgood{Kinds}:
+        \begin{itemize}
+          \item \textmark{Fine grain}: Thread switch in every instruction.
+          \item \textmark{Coarse grain}: Thread switch in stalls (e.g. Cache miss).
+          \item \textmark{Simultaneous}: Fine grain with multiple-issue and dynamic scheduling.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Fine-grain multithreading}
+\begin{itemize}
+  \item Switches between threads in each instruction.
+    \begin{itemize}
+      \item Interleaves thread execution.
+      \item Usually does \emph{round-robin}.
+      \item Threads in a \emph{stall} are excluded from \emph{round-robin}.
+      \item Processor must be able to switch every clock cycle.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Advantage}:
+    \begin{itemize}
+      \item Can hide short and long stalls.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textbad{Drawback}:
+    \begin{itemize}
+      \item Delays individual thread execution due to sharing.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Example}: Sun Niagara.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Coarse grain multithreading}
+\begin{itemize}
+  \item Switch thread only on long stalls.
+    \begin{itemize}
+      \item \textmark{Example}: L2 cache miss.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Advantages}:
+    \begin{itemize}
+      \item No need for a highly fast thread switch.
+      \item Does not delay individual threads.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textbad{Drawbacks}:
+    \begin{itemize}
+      \item Must flush or freeze the pipeline.
+      \item Needs to fill pipeline with instructions from the new thread (latency).
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item Appropriate when filling the pipeline takes much shorter than a stall.
+    \begin{itemize}
+      \item \textmark{Example}: IBM AS/400.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{SMT: Simultaneous multithreading}
+\begin{itemize}
+  \item \textgood{Idea}: 
+        Dynamically scheduled processors already have many mechanisms
+        to support multithreading.
+    \begin{itemize}
+      \item Large sets of virtual registers.
+        \begin{itemize}
+          \item Registers for multiple threads.
+        \end{itemize}
+      \item Register renaming.
+        \begin{itemize}
+          \item Avoid conflicts in access to registers from threads.
+        \end{itemize}
+      \item Out-of-order finalization.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Modifications}:
+    \begin{itemize}
+      \item Per thread renaming table.
+      \item Separate PC registers.
+      \item Separate ROB.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Examples}: Intel Core i7, IBM Power 7
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{TLP: Summary}
+\makebox[\textwidth][c]{
+\input{int/m4-03-ilp/tlp-alt.tkz}
+}
+\end{frame}
+

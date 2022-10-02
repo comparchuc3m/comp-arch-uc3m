@@ -1,10 +1,11 @@
 ES_M4_02_ILP_BASE=m4-02-ilp
 ES_M4_02_ILP_DIR=es/$(ES_M4_02_ILP_BASE)
+INT_M4_02_ILP_DIR=int/$(ES_M4_02_ILP_BASE)
 ES_M4_02_ILP_PARTS= \
 $(ES_M4_02_ILP_DIR)/*.tex \
-$(ES_M4_02_ILP_DIR)/*.cpp \
-$(ES_M4_02_ILP_DIR)/*.asm \
 $(ES_M4_02_ILP_DIR)/*.tkz \
+$(INT_M4_02_ILP_DIR)/*.asm \
+$(INT_M4_02_ILP_DIR)/*.cpp \
 
 ES_M4_02_ILP_LECT_PDF=es-$(ES_M4_02_ILP_BASE)-lect.pdf
 ES_M4_02_ILP_HOUT_PDF=es-$(ES_M4_02_ILP_BASE)-hout.pdf

@@ -1,0 +1,64 @@
+\section{Introduction to dynamic scheduling}
+
+\begin{frame}[t]{Dynamic scheduling}
+\begin{itemize}
+  \item \textgood{Idea}: hardware reorders instruction execution to decrease stalls.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Advantages}:
+    \begin{itemize}
+      \item Compiled code optimized for one pipeline runs efficiently in another pipeline.
+      \item Correctly manages dependencies that are unknown at compile time.
+      \item Allows to tolerate unpredictable delays (e.g. cache misses).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Drawback}:
+    \begin{itemize}
+      \item More complex hardware.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Dynamic scheduling}
+\begin{itemize}
+  \item \textgood{Effects}:
+    \begin{itemize}
+      \item Out of Order execution (OoO).
+      \item Out of Order instruction finalization.
+      \item May introduce WAR and WAW \textbad{hazards}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item Separation of \textgood{ID} stage into  \textmark{two} different stages:
+    \begin{itemize}
+      \item \textmark{Issue}: 
+            Decodes instruction and checks for structural hazards.
+      \item \textmark{Operands fetch}: 
+            Waits until there is no data hazard and fetches operands.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Instruction Fetch} (\textgood{IF}):
+    \begin{itemize}
+      \item Fetches into instruction register or instruction queue.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Dynamic scheduling techniques}
+\begin{itemize}
+  \item \textmark{Scoreboard}:
+    \begin{itemize}
+      \item Stalls issued instructions until enough resources are available and there is no data hazard.
+      \item Examples: CDC 6600, ARM A8.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Tomasulo Algorithm}:
+    \begin{itemize}
+      \item Removes WAR and WAW dependencies with register renaming.
+      \item Examples: IBM 360, Intel Core i7.
+    \end{itemize}
+\end{itemize}
+\end{frame}

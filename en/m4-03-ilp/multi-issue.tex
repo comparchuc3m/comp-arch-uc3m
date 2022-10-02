@@ -1,0 +1,169 @@
+\section{Multiple issue techniques}
+
+\begin{frame}[t]{CPI $<$ 1}
+\begin{itemize}
+  \item CPI $\geq$ 1 $\rightarrow$ Issue one instruction per cycle.
+
+  \mode<presentation>{\vfill\pause}
+  \item Multiple issue processors
+        (\textmark{CPI} $<$ 1 $\rightarrow$ \textmark{IPC} $>$ 1):
+    \begin{itemize}
+
+      \mode<presentation>{\vfill}
+      \item \textgood{Statically} scheduled superscalar processors.
+        \begin{itemize}
+          \item In-order execution.
+          \item Variable number of instructions per cycle.
+        \end{itemize}
+      \mode<presentation>{\vfill}
+      \item \textgood{Dynamically} scheduled superscalar processors.
+        \begin{itemize}
+          \item Out-of-order execution.
+          \item Variable number of instructions per cycle.
+        \end{itemize}
+      \mode<presentation>{\vfill}
+      \item \textgood{VLIW} processors (\emph{Very Long Instruction Word}).
+        \begin{itemize}
+          \item Several instructions into a packet.
+          \item Static scheduling.
+          \item Explicit \emph{ILP} by the compiler.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Approaches to multiple issue}
+\begin{itemize}
+  \item Several approaches to multiple issue.
+    \begin{itemize}
+      \item \textmark{Static superscalar}.
+      \item \textmark{Dynamic superscalar}.
+      \item \textmark{Speculative superscalar}.
+      \item \textmark{VLIW/LIW}.
+      \item \textmark{EPIC}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Static superscalar}
+\begin{itemize}
+  \item \textgood{Issue}: Dynamic.
+  \item \textgood{Hazards detection}: Hardware.
+  \item \textgood{Scheduling}: Static.
+  \item \textgood{Discriminating feature}:
+    \begin{itemize}
+      \item In-order execution.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill}
+  \item \textmark{Examples}:
+    \begin{itemize}
+      \item MIPS.
+      \item ARM Cortex-A7.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Dynamic Superscalar}
+\begin{itemize}
+  \item \textgood{Issue}: Dynamic.
+  \item \textgood{Hazards detection}: Hardware.
+  \item \textgood{Scheduling}: Dynamic.
+  \item \textgood{Discriminating feature}:
+    \begin{itemize}
+      \item Out-of-Order execution with no speculation.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill}
+  \item \textmark{Examples}: None.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Speculative superscalar}
+\begin{itemize}
+  \item \textgood{Issue}: Dynamic.
+  \item \textgood{Hazards detection}: Hardware.
+  \item \textgood{Scheduling}: Speculative dynamic.
+  \item \textgood{Discriminating feature}:
+    \begin{itemize}
+      \item Out-of-Order execution with speculation.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill}
+  \item \textmark{Examples}: 
+    \begin{itemize}
+      \item Intel Core i3, i5, i7. 
+      \item AMD Phenom. 
+      \item IBM Power 7
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{VLIW}
+\begin{itemize}
+  \item Packs several operations into a single instruction.
+
+  \mode<presentation>{\vfill}
+  \item Example instruction in ISA VLIW:
+    \begin{itemize}
+      \item One integer instruction or a branch.
+      \item Two independent floating point operations.
+      \item Two independent memory references.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{IMPORTANT}: Code must exhibit enough parallelism.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{VLIW / LIW}
+\begin{itemize}
+  \item \textgood{Issue}: Static.
+  \item \textgood{Hazards detection}: Mostly software.
+  \item \textgood{Scheduling}: Static.
+  \item \textgood{Discriminating feature}:
+    \begin{itemize}
+      \item All hazards determined and specified by the compiler.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill}
+  \item \textmark{Examples}: 
+    \begin{itemize}
+      \item DSPs (e.g. TI C6x).
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Problems with VLIW}
+\begin{itemize}
+  \item \textbad{Drawbacks} from original \textmark{VLIW} model:
+    \begin{itemize}
+      \item Complexity of finding statically enough parallelism.
+      \item Generated code size.
+      \item No hazard detection hardware.
+      \item More binary compatibility problems than in regular superscalar designs.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textgood{EPIC} tries to solve most of this problems.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{EPIC}
+\begin{itemize}
+  \item \textgood{Issue}: Mostly static.
+  \item \textgood{Hazards detection}: Mostly software.
+  \item \textgood{Scheduling}: Mostly static.
+  \item \textgood{Discriminating feature}:
+    \begin{itemize}
+      \item All hazards determined and specified by compiler.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill}
+  \item \textmark{Examples}: 
+    \begin{itemize}
+      \item Itanium.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+

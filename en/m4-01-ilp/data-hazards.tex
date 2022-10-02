@@ -1,0 +1,228 @@
+\section{Data hazards}
+
+\begin{frame}[t,fragile]{Data hazard}
+\begin{itemize}
+  \item A \textgood{data hazard} happens when the pipeline changes
+        the read/write access to operands ordering.
+\end{itemize}
+\begin{columns}
+% Left column
+\begin{column}{.45\textwidth}
+\begin{block}{Example}
+\lstinputlisting[language={generalasm},basicstyle=\small]{int/m4-01-ilp/ex-data-hazard.asm}
+\end{block}
+\end{column}
+% Right column
+\begin{column}{.55\textwidth}
+\begin{itemize}
+  \item \asmlabel{I2} reads \asmreg{x1} before than \asmlabel{I1} modifies it.
+  \item \asmlabel{I3} reads \asmreg{x1} before than \asmlabel{I1} modifies it.
+  \item \asmlabel{I4} gets the right value.
+    \begin{itemize}
+      \item Register file is read in second half of cycle.
+    \end{itemize}
+  \item \asmlabel{I5} gets the right value.
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+      
+\begin{frame}[t]{Data hazards}
+\makebox[\textwidth][c]{
+\input{es/m4-01-ilp/data-hazard-ex1.tkz}
+}
+\end{frame}
+
+\begin{frame}[t]{Stalls in data hazards}
+\makebox[\textwidth][c]{
+\input{es/m4-01-ilp/data-hazard-ex2.tkz}
+}
+\end{frame}
+
+\begin{frame}[t,fragile]{Data hazards: RAW}
+\begin{itemize}
+  \item \textmark{Read After Write}.
+    \begin{itemize}
+      \item Instruction \textmark{i+1} tries to read a datum
+            before instruction \textmark{i} writes it.
+    \end{itemize}
+\end{itemize}
+\begin{columns}
+\begin{column}{.25\textwidth}
+\begin{block}{Example}
+\lstinputlisting[language={generalasm}]{int/m4-01-ilp/raw.asm}
+\end{block}
+\end{column}
+\begin{column}{.75\textwidth}
+\begin{itemize}
+  \item If there is a data dependency, instructions:
+    \begin{itemize}
+      \item Can neither be executed in parallel nor overlap.
+      \item Instruction \cppkey{sub} needs value from \cppid{\$1}
+            produced by instruction \cppkey{add}.
+    \end{itemize}
+\end{itemize}
+\end{column}
+\end{columns}
+\mode<presentation>{\pause\vfill}
+\begin{itemize}
+  \item \textgood{Solutions}:
+  \begin{itemize}
+    \item \textmark{Hardware detection}.
+    \item \textmark{Compiler control}.
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Data hazards: WAR}
+\begin{itemize}
+  \item \textmark{Write After Read}.
+    \begin{itemize}
+      \item Instruction \textmark{i+1} modifies operand before 
+            instruction \textmark{i} reads it.
+    \end{itemize}
+\end{itemize}
+\begin{columns}
+\begin{column}{.25\textwidth}
+\begin{block}{Example}
+\lstinputlisting[language={generalasm}]{int/m4-01-ilp/war.asm}
+\end{block}
+\end{column}
+\begin{column}{.75\textwidth}
+\begin{itemize}
+  \item Also known as \textmark{anti-dependence} in compiler technology.
+    \begin{itemize}
+      \item Name reuse.
+      \item Instruction \cppkey{add} modifies \cppid{\$1}
+            before \cppkey{sub} reads it.
+    \end{itemize}
+\end{itemize}
+\end{column}
+\end{columns}
+\mode<presentation>{\pause\vfill}
+\begin{itemize}
+  \item \alert{Cannot} happen in a \textmark{5-stages pipeline}.
+  \begin{itemize}
+    \item All instructions with 5 stages.
+    \item Reads always happen in stage 2.
+    \item Writes always happen in stage 5.
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Data hazards: WAW}
+\begin{itemize}
+  \item \textmark{Write After Write}.
+    \begin{itemize}
+      \item Instruction \textmark{i+1} modifies operand before
+            instruction \textmark{i} modifies it.
+    \end{itemize}
+\end{itemize}
+\begin{columns}
+\begin{column}{.25\textwidth}
+\begin{block}{Example}
+\lstinputlisting[language={generalasm}]{int/m4-01-ilp/waw.asm}
+\end{block}
+\end{column}
+\begin{column}{.75\textwidth}
+\begin{itemize}
+  \item Also known as \textmark{output dependency} in compiler technology
+    \begin{itemize}
+      \item Name reuse.
+      \item Instruction \cppkey{add} modifies \cppid{\$1}
+            before \cppkey{sub} modifies it.
+    \end{itemize}
+\end{itemize}
+\end{column}
+\end{columns}
+\mode<presentation>{\pause\vfill}
+\begin{itemize}
+  \item \alert{Cannot} happen in a \textmark{5-stages pipeline}.
+  \begin{itemize}
+    \item All instructions with 5 stages.
+    \item Writes always happen in stage 5.
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Solutions to data hazards}
+\begin{itemize}
+  \item \textgood{RAW dependencies}:
+    \begin{itemize}
+      \item \textmark{Forwarding}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textgood{WAR and WAW dependencies}:
+    \begin{itemize}
+      \item \textmark{Register renaming}.
+        \begin{itemize}
+          \item Done statically by compiler.
+          \item Done dynamically by hardware.
+        \end{itemize}
+    \end{itemize}  
+\end{itemize}
+ \end{frame}
+
+\begin{frame}[t]{Forwarding}
+\begin{itemize}
+  \item Technique to avoid some data stalls.
+
+  \mode<presentation>{\vfill}
+  \item \textgood{Basic idea}:
+    \begin{itemize}
+      \item No need to wait until result is written into register file.
+      \item Result is already in pipeline registers.
+      \item Use that value instead of the one from the register file.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textgood{Implementation}:
+    \begin{itemize}
+      \item Results from EX and MEM stages written into ALU input registers.
+      \item \emph{Forwarding} logic selects between real input and \emph{forwarding} register.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Forwarding}
+\makebox[\textwidth][c]{
+\input{int/m4-01-ilp/forward.tkz}
+}
+\end{frame}
+
+\begin{frame}[t,fragile]{\emph{forwarding} limitations}
+\begin{itemize}
+  \item Not every hazard can be avoided with forwarding.
+    \begin{itemize}
+      \item You cannot travel backwards in time!
+    \end{itemize}
+\end{itemize}
+
+\begin{columns}
+
+\begin{column}{.4\textwidth}
+\begin{block}{Example}
+\lstinputlisting[language={generalasm}]{int/m4-01-ilp/load-stall.asm}
+\end{block}
+\end{column}
+
+\begin{column}{.6\textwidth}
+\makebox[\textwidth][c]{
+\input{int/m4-01-ilp/forward-limit.tkz}
+}
+\end{column}
+
+\end{columns}
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item If hazard cannot be avoided, a stall must be introduced.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[t]{Stalls in memory accesses}
+\makebox[\textwidth][c]{
+\input{int/m4-01-ilp/memory-stall.tkz}
+}
+\end{frame}

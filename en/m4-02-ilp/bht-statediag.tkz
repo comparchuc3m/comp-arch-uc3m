@@ -1,0 +1,45 @@
+\begin{tikzpicture}
+\tikzset{
+  nodo/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny, minimum width=2cm,minimum height=0.75cm},
+  point/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+}  
+\node[nodo] (nodo11) {Predecir Tomado(11)};
+\node[point,above=0cm of nodo11] (nodo11north) {};
+\node[point,left=0.5cm of nodo11north] (nodo11northa){};
+\node[point,right=0.5cm of nodo11north] (nodo11northb){};
+\node[point,right=0cm of nodo11] (nodo11west) {};
+\node[point,above=0.25cm of nodo11west] (nodo11westa) {};
+\node[point,below=0.25cm of nodo11west] (nodo11westb) {};
+\path[flecha] (nodo11northa) edge[out=90,in=90] node[auto] {T} (nodo11northb);
+%
+\node[nodo,right=2cm of nodo11] (nodo10) {Predecir Tomado (10)};
+\node[point,left=0cm of nodo10] (nodo10east) {};
+\node[point,above=0.25cm of nodo10east] (nodo10easta) {};
+\node[point,below=0.25cm of nodo10east] (nodo10eastb) {};
+%
+\path[flecha] (nodo11westa) edge node[auto] {NT} (nodo10easta);
+\path[flecha] (nodo10eastb) edge node[auto] {T} (nodo11westb);
+%
+\node[nodo,below=0.5cm of nodo10] (nodo00) {Predecir No Tomado (00)};
+\node[point,left=0cm of nodo00] (nodo00east) {};
+\node[point,above=0.25cm of nodo00east] (nodo00easta) {};
+\node[point,below=0.25cm of nodo00east] (nodo00eastb) {};
+\node[point,below=0cm of nodo00] (nodo00south) {};
+\node[point,left=0.5cm of nodo00south] (nodo00southa){};
+\node[point,right=0.5cm of nodo00south] (nodo00southb){};
+\path[flecha] (nodo00southa) edge[out=270,in=270] node[below] {NT} (nodo00southb);
+%
+\path[flecha] (nodo10) edge node[auto] {NT} (nodo00);
+%
+\node[nodo,below=0.5cm of nodo11] (nodo01) {Predecir No Tomado (01)};
+\node[point,right=0cm of nodo01] (nodo01west) {};
+\node[point,above=0.25cm of nodo01west] (nodo01westa) {};
+\node[point,below=0.25cm of nodo01west] (nodo01westb) {};
+%
+\path[flecha] (nodo01) edge node[auto] {T} (nodo11);
+%
+\path[flecha] (nodo01westa) edge node[auto] {NT} (nodo00easta);
+\path[flecha] (nodo00eastb) edge node[auto] {T} (nodo01westb);
+%
+\end{tikzpicture}

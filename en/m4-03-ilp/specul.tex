@@ -1,0 +1,63 @@
+\section{Speculation}
+
+\begin{frame}[t]{Branches and parallelism limits}
+\begin{itemize}
+  \item As parallelism increases, \textbad{control dependencies} become a harder problem.
+    \begin{itemize}
+      \item Branch prediction is not enough.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item Next step is \textgood{speculation} on 
+        \textmark{branch outcome} and \textgood{execution} 
+        assuming that \textmark{speculation was right}.
+    \begin{itemize}
+      \item Instructions fetched, issued and executed.
+      \item Need of a mechanism to handle wrong speculations.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Components}
+\begin{itemize}
+  \item \textgood{Ideas}:
+    \begin{itemize}
+      \item \textmark{Dynamic branch prediction}: 
+            Selects instructions to be executed.
+      \item \textmark{Speculation}: 
+            Executes before control dependencies are resolved and may eventually undone.
+      \item \textmark{Dynamic scheduling}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item To achieve this, must \textgood{separate}:
+    \begin{itemize}
+      \item \textmark{passing instruction result} to another instruction using it.
+      \item Instruction \textmark{finalization}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{IMPORTANT}:
+        Processor state (register file / memory) \textbad{not updated} until changes are confirmed.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Solution}
+\begin{itemize}
+  \item \textgood{Reorder Buffer} (\textmark{ROB}):
+    \begin{itemize}
+      \item When an instruction is finalized \textmark{ROB} is written.
+      \item When execution is confirmed real target is written.
+      \item Instructions read modified data from \textmark{ROB}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{ROB} entries:
+    \begin{itemize}
+      \item \textmark{Instruction type}: branch, store, register operation.
+      \item \textmark{Target}: Register Id or memory address.
+      \item \textmark{Value}: Instruction result value.
+      \item \textmark{Ready}: Indication of instruction completion.
+    \end{itemize}
+\end{itemize}
+\end{frame}

@@ -1,0 +1,57 @@
+\begin{tikzpicture}
+\tikzset{
+    etiqueta/.style={text centered, font=\tiny} ,
+    etapa/.style={rectangle,draw=black, fill=blue, text=white, thick, inner sep=0.5em, minimum size=0.5cm, text centered, font=\tiny},
+    fase1/.style={rectangle, rotate=90, fill=orange, text centered, minimum height=0.5cm, font=\tiny},
+    fase2/.style={rectangle, rotate=90, fill=green!50!black, text centered, minimum height=0.5cm, font=\tiny}
+}  
+\node[etiqueta] (c1)  {Cycle 1};
+\node[etiqueta, below=0.2cm of c1] (c2) {Cycle 2};
+\node[etiqueta, below=0.2cm of c2] (c3) {Cycle 3};
+\node[etiqueta, below=0.2cm of c3] (c4) {Cycle 4};
+\node[etiqueta, below=0.2cm of c4] (c5) {Cycle 5};
+\node[etiqueta, below=0.2cm of c5] (c6) {Cycle 6};
+\node[etiqueta, below=0.2cm of c6] (c7) {Cycle 7};
+\node[etiqueta, below=0.2cm of c7] (c8) {Cycle 8};
+\node[etapa,right=0.75cm of c1]    (if1) {IF1};
+\pause
+\node[etapa,right=0.75cm of c2]    (if2) {IF2};
+\node[etapa,right=0.1cm of if2]   (id1) {ID1};
+\pause
+\node[etapa,right=0.75cm of c3]    (if3) {IF3};
+\node[etapa,right=0.1cm of if3]   (id2) {ID2};
+\node[etapa,right=0.1cm of id2]   (ex1) {EX1};
+\pause
+\node[etapa,right=0.75cm of c4]    (if4) {IF4};
+\node[etapa,right=0.1cm of if4]   (id3) {ID3};
+\node[etapa,right=0.1cm of id3]   (ex2) {EX2};
+\node[etapa,right=0.1cm of ex2]   (m1)  {M1};
+\pause
+\node[etapa,right=0.75cm of c5]    (if5) {IF5};
+\node[etapa,right=0.1cm of if5]   (id4) {ID4};
+\node[etapa,right=0.1cm of id4]   (ex3) {EX3};
+\node[etapa,right=0.1cm of ex3]   (m2)  {M2};
+\node[etapa,right=0.1cm of m2]    (wb1) {WB1};
+\pause
+\node[etapa,right=0.75cm of c6]    (if6) {IF6};
+\node[etapa,right=0.1cm of if6]   (id5) {ID5};
+\node[etapa,right=0.1cm of id5]   (ex4) {EX4};
+\node[etapa,right=0.1cm of ex4]   (m3)  {M3};
+\node[etapa,right=0.1cm of m3]    (wb2) {WB2};
+\pause
+\node[etapa,right=0.75cm of c7]    (if7) {IF7};
+\node[etapa,right=0.1cm of if7]   (id6) {ID6};
+\node[etapa,right=0.1cm of id6]   (ex5) {EX5};
+\node[etapa,right=0.1cm of ex5]   (m4)  {M4};
+\node[etapa,right=0.1cm of m4]    (wb3) {WB3};
+\pause
+\node[etapa,right=0.75cm of c8]    (if8) {IF8};
+\node[etapa,right=0.1cm of if8]   (id7) {ID7};
+\node[etapa,right=0.1cm of id7]   (ex6) {EX6};
+\node[etapa,right=0.1cm of ex6]   (m5)  {M5};
+\node[etapa,right=0.1cm of m5]    (wb4) {WB4};
+\pause
+\node[fase1, right=0.01cm of c1, minimum width=3.1cm, anchor=north, xshift=-1.25cm] (f1) {Pipeline filling};
+\node[fase2, right=0.01cm of c6, minimum width=1.8cm, anchor=north, xshift=-0.65cm] (f1) {Normal};
+\onslide<1->
+\end{tikzpicture}

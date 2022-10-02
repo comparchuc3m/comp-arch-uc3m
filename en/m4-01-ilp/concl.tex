@@ -1,0 +1,42 @@
+\section{Conclusion}
+
+\begin{frame}[t]{Summary}
+\begin{itemize}
+  \item Pipelining increases \textmark{trhoughput} but does not decrease \textmark{latency}
+
+  \mode<presentation>{\vfill\pause}
+  \item A pipelined architecture requires higher \textmark{memory bandwidth}.
+
+  \mode<presentation>{\vfill\pause}
+  \item Three kinds of \textemph{hazards}:
+    \begin{itemize}
+      \item \textmark{Structural} hazards.
+      \item \textmark{Data} hazards.
+      \item \textmark{Control} hazards.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Pipeline hazards cause \textmark{stalls}.
+    \begin{itemize}
+      \item Performance \textbad{degradation}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Three kinds of data hazards: \textmark{RAW}, \textmark{WAR}, \textmark{WAW}.
+    \begin{itemize}
+      \item \textemph{Mitigations}: Forwarding, compiler, dynamic scheduling.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t]{References}
+\begin{itemize}
+  \item \bibhennessy
+    \begin{itemize}
+      \item Sección C.1 -- \emph{Introduction}.
+      \item Sección C.2 -- \emph{The Major Hurdle of Pipelining -- Pipeline Hazards}
+    \end{itemize}
+\end{itemize}
+\end{frame}

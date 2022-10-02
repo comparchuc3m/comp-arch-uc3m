@@ -1,0 +1,65 @@
+\begin{tikzpicture}
+\tikzset{
+  etiqueta/.style={text centered, text=orange,font=\footnotesize,minimum width=1cm} ,
+  instruc/.style={font=\tiny\bfseries} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny, minimum width=1.8em},
+  bloqueconflicto/.style={rectangle,draw=black,fill=red!70,text=white,thick, text centered, font=\tiny, minimum width=1.8em},
+  bloquestall/.style={rectangle,draw=black,fill=blue!30,text=white,thick, text centered, font=\tiny, minimum width=1.8em},
+  border/.style={rectangle,draw=black,fill=orange!90,minimum width=0.1cm,minimum height=0.5cm,inner sep=0cm},
+  stage/.style={rectangle,draw=black,fill=orange,text=white,thick, text centered, font=\tiny},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+  point/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+  axis/.style={->,very thick,draw=orange,font=\small},
+  minoraxis/.style={thick,draw=red,dashed},
+  instrdep/.style={->,very thick,draw=red,font=\small},
+}  
+\node[instruc] (inst1) {Branch};
+\node[instruc,below right=0.5cm and 0cm of inst1, anchor=north east] (inst2) {Instr i+1};
+\node[instruc,below right=0.5cm and 0cm of inst2, anchor=north east] (inst3) {Instr i+2};
+\node[instruc,below right=0.5cm and 0cm of inst3, anchor=north east] (inst4) {Instr i+3};
+%
+\node[bloque,right=0.25cm of inst1] (im1) {IF};
+\node[border,right=0.1cm of im1] (ifid1) {};
+\node[bloque,right=0.1cm of ifid1] (rreg1) {ID};
+\node[border,right=0.1cm of rreg1] (idex1) {};
+\node[bloque,right=0.1cm of idex1] (alu1) {EX};
+\node[border,right=0.1cm of alu1] (exm1) {};
+\node[bloque,right=0.1cm of exm1] (dm1) {M};
+\node[border,right=0.1cm of dm1] (mwb1) {};
+\node[bloque,right=0.1cm of mwb1] (wreg1) {WB};
+%
+\node[bloque,below =0.5cm of rreg1] (im2) {IF};
+\node[border,right=0.1cm of im2] (ifid2) {};
+\node[bloque,right=0.1cm of ifid2] (im2b) {IF};
+\node[border,right=0.1cm of im2b] (ifid2b) {};
+\node[bloque,right=0.1cm of ifid2b] (rreg2) {ID};
+\node[border,right=0.1cm of rreg2] (idex2) {};
+\node[bloque,right=0.1cm of idex2] (alu2) {EX};
+\node[border,right=0.1cm of alu2] (exm2) {};
+\node[bloque,right=0.1cm of exm2] (dm2) {M};
+\node[border,right=0.1cm of dm2] (mwb2) {};
+\node[bloque,right=0.1cm of mwb2] (wreg2) {WB};
+%
+\node[bloque,below=0.5cm of rreg2] (im3) {IF};
+\node[border,right=0.1cm of im3] (ifid3) {};
+\node[bloque,right=0.1cm of ifid3] (rreg3) {ID};
+\node[border,right=0.1cm of rreg3] (idex3) {};
+\node[bloque,right=0.1cm of idex3] (alu3) {EX};
+\node[border,right=0.1cm of alu3] (exm3) {};
+\node[bloque,right=0.1cm of exm3] (dm3) {M};
+\node[border,right=0.1cm of dm3] (mwb3) {};
+\node[bloque,right=0.1cm of mwb3] (wreg3) {WB};
+%
+\node[bloque,below=0.5cm of rreg3] (im4) {IF};
+\node[border,right=0.1cm of im4] (ifid4) {};
+\node[bloque,right=0.1cm of ifid4] (rreg4) {ID};
+\node[border,right=0.1cm of rreg4] (idex4) {};
+\node[bloque,right=0.1cm of idex4] (alu4) {EX};
+\node[border,right=0.1cm of alu4] (exm4) {};
+\node[bloque,right=0.1cm of exm4] (dm4) {M};
+\node[border,right=0.1cm of dm4] (mwb4) {};
+\node[bloque,right=0.1cm of mwb4] (wreg4) {WB};
+\end{tikzpicture}

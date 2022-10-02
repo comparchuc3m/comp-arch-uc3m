@@ -1,0 +1,285 @@
+\section{Compilation techniques and ILP}
+
+\begin{frame}[t]{Taking advantage of ILP}
+\begin{itemize}
+  \item ILP directly applicable to basic blocks.
+    \begin{itemize}
+      \item \textgood{Basic block}: sequence of instructions without branching.
+      \item \textmark{Typical} program in MIPS:
+        \begin{itemize}
+          \item Basic block average size from 3 to 6 instructions.
+          \item Low ILP exploitation within block.
+        \end{itemize}
+      \item Need to exploit ILP across basic blocks.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}
+
+  \begin{column}{.4\textwidth}
+    \begin{block}{Example}
+      \lstinputlisting{int/m4-02-ilp/comp-ilp-ex1.cpp}
+    \end{block}
+  \end{column}
+
+  \begin{column}{.6\textwidth}
+    \begin{itemize}
+      \item \textgood{Loop level parallelism}.
+        \begin{itemize}
+          \item Can be transformed to ILP.
+          \item By compiler or hardware.
+        \end{itemize}
+      \item \textgood{Alternative}:
+        \begin{itemize}
+          \item Vector instructions.
+          \item SIMD instructions in processor.
+        \end{itemize}
+    \end{itemize}
+  \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Scheduling and loop unrolling}
+\begin{itemize}
+  \item \textgood{Parallelism exploitation}:
+    \begin{itemize}
+      \item Interleave execution of unrelated instructions.
+      \item Fill stalls with instructions.
+      \item Do not alter original program effects.
+    \end{itemize}
+
+\mode<presentation>{\vfill\pause}
+  \item Compiler can do this with detailed knowledge of the architecture.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{ILP exploitation}
+\begin{columns}
+
+\begin{column}{.4\textwidth}
+\begin{block}{Example}
+\lstinputlisting{int/m4-02-ilp/comp-ilp-ex2.cpp}
+\end{block}
+\end{column}
+
+\begin{column}{.6\textwidth}
+\begin{itemize}
+  \item Each iteration body is independent.
+\end{itemize}
+\end{column}
+
+\end{columns}
+
+\mode<presentation>{\vfill}
+\begin{block}{Latencies between instructions}
+{\footnotesize
+\begin{tabular}{|*{2}{p{.3\textwidth}|}p{0.25\textwidth}|}
+
+\hline
+Instruction &
+Instruction &
+Latency (cycles)
+\\
+producing result &
+using result &
+\\
+\hline
+\hline
+
+FP ALU operation & FP ALU operation & 3\\
+\hline
+
+FP ALU operation & Store double & 2\\
+\hline
+
+Load double & FP ALU operation & 1\\
+\hline
+
+Load double & Store double & 0\\
+\hline
+
+\end{tabular}
+}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[t]{Compiled code}
+\begin{itemize}
+  \item \textgood{R1} $\rightarrow$ Last array element.
+  \item \textgood{F2} $\rightarrow$ Scalar \cppid{s}.
+  \item \textgood{R2} $\rightarrow$ Precomputed so that \asmlabel{8(R2)} is the first element in array.
+\end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{block}{Assembler code}
+\lstinputlisting[language=generalasm]{int/m4-02-ilp/comp-ilp-ex3.asm}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[t]{Stalls in execution}
+
+\begin{columns}[T]
+
+\begin{column}{.45\textwidth}
+\begin{block}{Original}
+\lstinputlisting[language=generalasm2]{int/m4-02-ilp/comp-ilp-ex4.asm}
+\end{block}
+\end{column}
+
+\pause
+\begin{column}{.45\textwidth}
+\begin{block}{Stalls}
+\lstinputlisting[language=generalasm2]{int/m4-02-ilp/comp-ilp-ex4b.asm}
+\end{block}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Loop scheduling}
+
+\begin{columns}[T]
+
+\begin{column}{.45\textwidth}
+\begin{block}{Original}
+\lstinputlisting[language=generalasm2]{int/m4-02-ilp/comp-ilp-ex4b.asm}
+\end{block}
+
+\begin{itemize}
+  \item 9 cycles per iteration.
+\end{itemize}
+\end{column}
+
+\pause
+\begin{column}{.45\textwidth}
+\begin{block}{Scheduled}
+\lstinputlisting[language=generalasm2]{int/m4-02-ilp/comp-ilp-ex4c.asm}
+\end{block}
+\begin{itemize}
+  \item 7 cycles per iteration.
+\end{itemize}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Loop unrolling}
+\begin{itemize}
+  \item \textgood{Idea}:
+    \begin{itemize}
+      \item Replicate loop body several times.
+      \item Adjust termination code.
+      \item Use different registers for each iteration replica to reduce dependencies.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Effect}:
+    \begin{itemize}
+      \item Increase basic block length.
+      \item Increase use of available ILP.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Unrolling}
+
+\begin{columns}
+
+\begin{column}{.45\textwidth}
+\begin{block}{Unrolling (x4)}
+\lstinputlisting[language=generalasm2,lastline=7]{int/m4-02-ilp/loop-unroll0.asm}
+\end{block}
+\end{column}
+
+\begin{column}{.45\textwidth}
+\begin{block}{Unrolling (x4)}
+\lstinputlisting[language=generalasm2,firstline=8]{int/m4-02-ilp/loop-unroll0.asm}
+\end{block}
+\end{column}
+
+\end{columns}
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item 4 iterations require more registers.
+  \item This example assumes that array size is multiple of 4.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Stalls and unrolling}
+
+\begin{columns}
+
+\begin{column}{.45\textwidth}
+\begin{block}{Unrolling (x4)}
+\lstinputlisting[language=generalasm2,firstline=1,lastline=14]{int/m4-02-ilp/loop-unroll1.asm}
+\end{block}
+\end{column}
+
+\begin{column}{.45\textwidth}
+\begin{block}{Unrolling (x4)}
+\lstinputlisting[language=generalasm2,firstline=15]{int/m4-02-ilp/loop-unroll1.asm}
+\end{block}
+\end{column}
+
+\end{columns}
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item 27 cycles for every 4 iterations $\rightarrow$ $6.75$ cycles per iteration.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Scheduling and unrolling}
+
+\begin{columns}
+
+\begin{column}{.45\textwidth}
+\begin{block}{Unrolling (x4)}
+\lstinputlisting[language=generalasm2]{int/m4-02-ilp/loop-unroll2.asm}
+\end{block}
+\end{column}
+
+\begin{column}{.45\textwidth}
+\begin{itemize}
+  \item Code reorganization.
+    \begin{itemize}
+      \item Preserve dependencies.
+      \item Semantically equivalent.
+      \item \textgood{Goal}: Make use of \emph{stalls}.
+    \end{itemize}
+  \item Update of \asmreg{R1} at enough distance from
+        \asminst{BNE}.
+  \item 14 cycles for every 4 iterations $\rightarrow$ $3.5$ cycles per iteration.
+\end{itemize}
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t]{Limits of loop unrolling}
+\begin{itemize}
+  \item \textmark{Improvement} is \textgood{decreased} with each additional unrolling.
+    \begin{itemize}
+      \item Improvement limited to stalls removal.
+      \item Overhead amortized among iterations.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Increase} in code \textmark{size}.
+    \begin{itemize}
+      \item May affect to instruction cache miss rate.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Pressure} on \textmark{register file}.
+    \begin{itemize}
+      \item May generate shortage of registers.
+      \item Advantages are lost if there are not enough available registers.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+

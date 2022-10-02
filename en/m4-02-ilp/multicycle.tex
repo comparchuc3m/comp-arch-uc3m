@@ -1,0 +1,90 @@
+\section{Multi-cycle operations}
+
+\begin{frame}[t]{Floating point operations}
+\begin{itemize}
+  \item One-cycle floating point operations?
+    \begin{itemize}
+      \item Having an extremely long clock cycle.
+        \begin{itemize}
+          \item Impact on global performance.
+        \end{itemize}
+      \item Very complex FPU control logic.
+        \begin{itemize}
+          \item Huge amount of resources for FP logic.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Alternative}: Floating point pipelining.
+    \begin{itemize}
+      \item Execution stage may be repeated several times.
+      \item Multiple functional units in EX.
+        \begin{itemize}
+          \item \textmark{Example}: Integer unit, FP and integer multiplier, 
+                FP adder, FP and integer divider.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Floating point pipeline}
+\begin{itemize}
+  \item EX stage now has a duration of more than 1 clock cycle.
+\end{itemize}
+\makebox[\textwidth][c]{
+\input{en/m4-02-ilp/multicycle.tkz}
+}
+
+\end{frame}
+
+\begin{frame}[t]{Latency and initiation interval}
+\begin{itemize}
+  \item \textgood{Latency}: Number of cycles between instruction producing
+        the result and instruction using the result.
+  \item \textgood{Initiation interval}: Number of cycles between issue of two instructions
+        using the same functional units
+\end{itemize}
+
+\mode<presentation>{\vfill}
+{
+\begin{tabular}[c]{*{3}{|p{.3\textwidth}}|}
+\hline
+Operation & Latency & Initiation interval
+\\
+\hline
+\hline
+
+Integer ALU &
+0  &
+1
+\\
+\hline
+
+Loads &
+1 &
+1
+\\
+\hline
+
+FP addition &
+3 &
+1
+\\
+\hline
+
+FP multiplication &
+6 &
+1
+\\
+\hline
+
+FP division &
+24 &
+25
+\\
+
+\hline
+\end{tabular}
+}
+
+\end{frame} 

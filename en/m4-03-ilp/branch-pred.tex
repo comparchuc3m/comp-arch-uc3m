@@ -1,0 +1,158 @@
+\section{Advanced branch prediction techniques}
+
+\begin{frame}[t]{Branch prediction}
+\begin{itemize}
+  \item High impact of \textgood{branches} on programs performance.
+
+  \mode<presentation>{\vfill}
+  \item To \textmark{reduce} impact:
+    \begin{itemize}
+      \item Loop unrolling.
+      \item Branch prediction:
+        \begin{itemize}
+          \item Compile time.
+          \item Each branch handled isolated.
+        \end{itemize}
+      \item Advanced branch prediction:
+        \begin{itemize}
+          \item Correlated predictors.
+          \item Tournament predictors.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Dynamic scheduling}
+\begin{itemize}
+  \item Hardware \textgood{reorders} instructions execution to \emph{reduce} stalls
+        while keeping data flow and exceptions.
+
+  \mode<presentation>{\vfill\pause}
+  \item Able to handle unknown cases at compile time:
+    \begin{itemize}
+      \item Cache misses/hits.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item Code less dependent on a concrete pipeline.
+    \begin{itemize}
+      \item Simplifies compiler.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item Permits the \textmark{hardware speculation}.
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Correlated prediction}
+
+\begin{columns}
+
+\begin{column}{.7\textwidth}
+\begin{itemize}
+  \item If first and second branch are taken, third is NOT-taken.
+\end{itemize}
+\end{column}
+
+\begin{column}{.3\textwidth}
+\begin{block}{example}
+\lstinputlisting{int/m4-03-ilp/branch-pred-ex1.cpp}
+\end{block}
+\end{column}
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item Maintains last branches \textmark{history} to select among several
+        predictors.
+  \item A $(m,n)$ predictor:
+    \begin{itemize}
+      \item Uses the result of $m$ last branches to select among
+            $2^m$ predictors.
+      \item Each predictor has $n$ bits.
+    \end{itemize}
+  \item Predictor $(1,2)$:
+    \begin{itemize}
+      \item Result of last branch to select among 2 predictors.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Size of predictor}
+\begin{itemize}
+  \item A predictor $(m,n)$ has several entries for each branch address.
+
+  \item Total size:
+\[
+S = 2^m \times n \times entries_{\text{address}}
+\]
+
+  \item Examples:
+    \begin{itemize}
+      \item $(0,2)$ with 4K entries $\rightarrow$ 8 Kb
+      \item $(2,2)$ with 4K entries $\rightarrow$ 32 Kb
+      \item $(2,2)$ with 1K entries $\rightarrow$ 8 Kb
+   \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Miss rate}
+\begin{itemize}
+  \item Correlated predictor has less misses that simple predictor with same size.
+  \mode<presentation>{\vfill}
+  \item Correlated predictor has less misses than simple predictor with unlimited number of entries.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[t]{Tournament prediction}
+\begin{itemize}
+  \item \textgood{Combines two predictors}:
+    \begin{itemize}
+      \item \textmark{Global information} based predictor.
+      \item \textmark{Local information} based predictor.
+    \end{itemize}
+  \item Uses a selector to choose between predictors.
+    \begin{itemize}
+      \item Change among two selectors uses a saturation counter (2 bits).
+    \end{itemize}
+  \item \textgood{Advantage}:
+    \begin{itemize}
+      \item Allows different behavior for integer and FP.
+    \end{itemize}
+  \item \textgood{SPEC}:
+    \begin{itemize}
+      \item \textmark{Integer benchmarks} $\rightarrow$ global predictor 40\%
+      \item \textmark{FP benchmarks} $\rightarrow$ global predictor 15\%.
+    \end{itemize}
+  \item \textgood{Uses}: Alpha and AMD Opteron.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t]{Intel Core i7}
+\begin{itemize}
+  \item Predictor with \textgood{two levels}:
+    \begin{itemize}
+      \item Smaller first level predictor.
+      \item Larger second level predictor as backup.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item Each predictor combines \textgood{3 predictors}:
+    \begin{itemize}
+      \item Simple 2-bits predictor.
+      \item Global history predictor.
+      \item Exit-loop predictor (iterations counter).
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item Besides:
+    \begin{itemize}
+      \item \textmark{Indirect jumps} predictor.
+      \item \textmark{Return address} predictor.
+    \end{itemize}
+\end{itemize}
+\end{frame}

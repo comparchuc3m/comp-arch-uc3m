@@ -4,7 +4,8 @@ INT_M4_01_ILP_DIR=int/$(ES_M4_01_ILP_BASE)
 ES_M4_01_ILP_PARTS= \
 $(ES_M4_01_ILP_DIR)/*.tex \
 $(ES_M4_01_ILP_DIR)/*.tkz \
-$(INT_M4_01_ILP_DIR)/*.tkz
+$(INT_M4_01_ILP_DIR)/*.tkz \
+$(INT_M4_01_ILP_DIR)/*.asm
 
 ES_M4_01_ILP_LECT_PDF=es-$(ES_M4_01_ILP_BASE)-lect.pdf
 ES_M4_01_ILP_HOUT_PDF=es-$(ES_M4_01_ILP_BASE)-hout.pdf
