@@ -1,0 +1,51 @@
+\section{Tareas}
+
+Para la realización de este laboratorio se suministra código fuente para un
+conjunto de pequeños programas que se deben evaluar (ver siguientes secciones).
+También se suministra un archivo \textmark{CMakeLists.txt}.
+
+En la raiz de su directorio de trabajo en \cppid{avignon}, cree un
+directorio con el nombre \cppid{lab3}.
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+usuario@avignon-frontend:~$ mkdir lab3
+usuario@avignon-frontend:~$
+\end{lstlisting}
+
+Desde su máquina transfiera todos los archivos de soporte al laboratorio
+que habrá descargado anteriormente:
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+usuario@mimaquina:~/Descargas/lab3$ scp * usuario@avignon.lab.inf.uc3m.es:~/lab3/
+usuario@avignon.lab.inf.uc3m.es password: 
+aos.cpp                                                            100%  237    20.6KB/s   00:00    
+CMakeLists.txt                                                     100%  369    35.7KB/s   00:00    
+loop_merge.cpp                                                     100%  254    22.7KB/s   00:00    
+loop_merge_opt.cpp                                                 100%  216    17.2KB/s   00:00    
+soa.cpp                                                            100%  249    24.1KB/s   00:00    
+usuario@mimaquina:~/Descargas/lab3$ 
+\end{lstlisting}
+
+Para compilar todos los programas a evaluar, se pueden usar los siguiente mandatos
+que puede colocar en un \emph{scritp}:
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cmake -S . -B debug -DCMAKE_BUILD_TYPE=Debug
+cmake --build debug
+\end{lstlisting}
+
+\textbad{NOTA:} 
+A cada grupo de laboratorio se le asignará una de las siguientes configuraciones:
+\begin{itemize}
+\item Configuración 1:
+Tamaño de línea de 32 B y todas las cachés son asociativas de 2 vías.
+\item Configuración 2:
+Tamaño de línea de 32 B y todas las cachés son asociativas de 4 vías.
+\item Configuración 3:
+Tamaño de línea de 64 B y todas las cachés son asociativas de 4 vías.
+\item Configuración 4:
+Tamaño de línea de 64 B y todas las cachés son asociativas de 8 vías.
+\end{itemize}
+
+\input{es/labs/03-cache/task1}
+\input{es/labs/03-cache/task2}

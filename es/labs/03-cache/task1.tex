@@ -1,0 +1,44 @@
+\clearpage
+\subsection{Tarea 1: Fusión de bucles}
+
+En esta tarea se pretende analizar dos programas: \cppid{loop\_merge.cpp} y \cppid{loop\_merge\_opt.cpp}.
+
+\lstinputlisting[caption={loop\_merge.cpp},frame=single,numbers=left,basicstyle=\small]{lab/03-cache/loop_merge.cpp}
+\lstinputlisting[caption={loop\_merge\_opt.cpp},frame=single,numbers=left,basicstyle=\small]{lab/03-cache/loop_merge_opt.cpp}
+
+Ambos programas implementan la misma funcionalidad:
+dados dos vectores $\vec{z}$ y $\vec{t}$, calculan otros dos vectores $\vec{u}$ y $\vec{v}$:
+
+\[
+\vec{u} = \vec{z} + \vec{t}
+\]
+\[
+\vec{v} = \vec{u} + \vec{t}
+\]
+
+Para ello, los programas hacen uso de 4 arrays de tamaño fijo.
+El programa no imprime ningún resultado.
+
+Se pide: 
+
+\begin{enumerate}
+
+\item Ejecute \cppid{loop\_merge} y \cppid{loop\_merge\_opt} con el programa
+\textmark{valgrind} y la herramienta \textmark{cachegrind} para las
+siguientes configuraciones:
+
+\begin{itemize}
+\item Caché de último nivel fijada a 128 KiB.
+\item Evalúe con tamaños de caché L1D de 16 KiB, 32 KiB y 64 KiB.
+\end{itemize}
+
+\item Observe los resultados obtenidos e inspeccione el código con la
+herramienta \textmark{cg\_annotate}. Anote los resultados globales y observe los
+resultados prestando especial atención al cuerpo de los bucles.
+
+\item Compare ambos resultados.
+Discuta en su informe los resultados para Dr, D1mr, DLmr, Dw,
+D1mw y DLmw.
+ 
+\end{enumerate}
+

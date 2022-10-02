@@ -1,0 +1,99 @@
+\section{Descripción de la práctica}
+
+En esta práctica se realizará la evaluación de la ejecución de diversos
+programas en C++ con la herramienta \textmark{cachegrind}, que forma parte de
+las herramientas disponibles dentro de \textmark{valgrind}
+(\textgood{\url{http://valgrind.org/}}).  La herramienta es capaz de simular
+la ejecución de un programa y el impacto que tiene la memoria caché sobre él. 
+
+Si el programa evaluado está compilado con las opciones de depuración
+\textmark{cachegrind} puede además
+indicar cuál es la utilización de la memoria caché con nivel de detalle de
+línea de código fuente.  Para ello, se debe generar primero el código
+ejecutable mediante el comando:
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cmake -S . -B debug -DCMAKE_BUILD_TYPE=Debug
+\end{lstlisting}
+
+\fbox{ \parbox{.9\textwidth}{
+\textbad{ATENCIÓN}: Recuerde que para ejecutar trabajos en el clúster
+\cppid{avignon} debe primero crear un \emph{script} para lanzar
+la compilación.
+}}
+\vspace{1em}
+
+De este modo, se puede obtener la información de ejecución del programa
+utilizando \cppkey{valgrind}:
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+valgrind --tool=cachegrind ./test
+\end{lstlisting}
+
+\fbox{ \parbox{.9\textwidth}{
+\textbad{ATENCIÓN}: Recuerde que para ejecutar trabajos en el clúster
+\cppid{avignon} debe primero crear un \emph{script} para lanzar
+la compilación.
+}}
+\vspace{1em}
+
+Si no se le indica ningún parámetro adicional, \textmark{cachegrind} simula
+la ejecución del código sobre la configuración real de memoria caché del
+procesador de la máquina sobre la que se está ejecutando. Al finalizar la
+ejecución, muestra estadísticas básicas sobre el uso de la memoria caché y
+genera un fichero de nombre \cppid{cachegrind.out.<pid>} donde \cppid{pid} es
+el identificador del proceso. Este fichero contiene información adicional que
+puede ser analizada mediante la utilidad \cppid{cg\_annotate}. (El nombre del
+fichero puede ser modificado mediante la opción
+\cppid{--cachegrind-out-file=<file\_name>}).
+
+Si se desea modificar la configuración de caché se deben utilizar las opciones:
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+--I1=<tamaño>,<asociatividad>,<tamaño línea>
+\end{lstlisting}
+
+Especifica el tamaño (en bytes), la asociatividad (número de vías) y el tamaño
+de línea (en bytes) de la memoria caché de instrucciones de nivel 1.
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+--D1=<tamaño>,<asociatividad>,<tamaño línea>
+\end{lstlisting}
+
+Especifica el tamaño (en bytes), la asociatividad (número de vías) y el tamaño de
+línea (en bytes) de la caché de datos de nivel 1.
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+--LL=<tamaño>,<asociatividad>,<tamaño línea>
+\end{lstlisting}
+
+Especifica el tamaño (en bytes), la asociatividad (número de vías) y el tamaño de
+línea (en bytes) de la caché de último nivel.
+
+La herramienta \cppid{cg\_annotate} recibe por parámetro el fichero que se
+desee analizar y la ruta de los ficheros que se quieren anotar línea por línea.
+Si no se  sabe la ruta o cuáles son los ficheros de interés, se puede utilizar
+la opción \cppid{--auto=yes} para que anote todos los ficheros que puedan ser de
+interés.
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cg_annotate cachegrind.out.XXXXX --auto=yes
+\end{lstlisting}
+
+\fbox{ \parbox{.9\textwidth}{
+\textbad{ATENCIÓN}: Recuerde que para ejecutar trabajos en el clúster
+\cppid{avignon} debe primero crear un \emph{script} para lanzar
+la compilación.
+}}
+\vspace{1em}
+
+Adicionalmente, si sólo se quiere anotar un fichero: 
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cg_annotate cachegrind.out.XXXXX <ruta absoluta al fichero .cpp>
+\end{lstlisting}
+
+Si se desea más información sobre el funcionamiento o la utilización de
+\textmark{cachegrind} y \cppid{cg\_annotate}, se puede visitar la
+documentación en la página web de Valgrind:
+\textgood{\url{http://valgrind.org/docs/manual/cg-manual.html}}.

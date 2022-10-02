@@ -1,0 +1,31 @@
+\clearpage
+\subsection{Tarea 3: Estructuras y arrays}
+
+En esta tarea se pretende analizar dos programas: \cppid{soa.cpp} y
+\cppid{aos.cpp}. Ambos programas implementan la misma funcionalidad: suma de las
+coordenadas de dos conjuntos (\cppid{a} y \cppid{b}) de puntos con coordenadas en el plano.
+Uno de ellos hace uso de tres arrays de estructuras que representan puntos y el otro hace uso de tres estructuras con dos arrays. El programa no imprime resultado.
+
+\lstinputlisting[caption={soa.cpp},frame=single,numbers=left,basicstyle=\small]{lab/03-cache/soa.cpp}
+\lstinputlisting[caption={aos.cpp},frame=single,numbers=left,basicstyle=\small]{lab/03-cache/aos.cpp}
+
+Se pide: 
+
+\begin{enumerate}
+
+\item Ejecute \cppid{soa} y \cppid{aos} con el programa \textmark{valgrind} y la herramienta \textmark{cachegrind} para las siguientes configuraciones:
+
+\begin{itemize}
+\item Caché de último nivel fijada a 256 KiB.
+\item Evalúe con tamaños de caché L1D de 8 KiB, 16 KiB y 32 KiB.
+\end{itemize}
+
+\item Observe los resultados obtenidos e inspeccione el código con la
+herramienta \textmark{cg\_annotate}. Anote los resultados globales y observe
+los resultados prestando especial la cuerpo de los bucles.
+
+\item Compare ambos resultados.
+Discuta en su informe los resultados para Dr, D1mr, DLmr, Dw, D1mw y DLmw
+
+\end{enumerate}
+
