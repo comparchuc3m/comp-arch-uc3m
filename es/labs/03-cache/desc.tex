@@ -24,7 +24,7 @@ la compilación.
 \vspace{1em}
 
 De este modo, se puede obtener la información de ejecución del programa
-utilizando \cppkey{valgrind}:
+utilizando \textemph{valgrind} y \textemph{cachegrind}:
 
 \begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
 valgrind --tool=cachegrind ./test
@@ -33,7 +33,7 @@ valgrind --tool=cachegrind ./test
 \fbox{ \parbox{.9\textwidth}{
 \textbad{ATENCIÓN}: Recuerde que para ejecutar trabajos en el clúster
 \cppid{avignon} debe primero crear un \emph{script} para lanzar
-la compilación.
+la ejecución de \textemph{valgrind}.
 }}
 \vspace{1em}
 
@@ -83,7 +83,7 @@ cg_annotate cachegrind.out.XXXXX --auto=yes
 \fbox{ \parbox{.9\textwidth}{
 \textbad{ATENCIÓN}: Recuerde que para ejecutar trabajos en el clúster
 \cppid{avignon} debe primero crear un \emph{script} para lanzar
-la compilación.
+la ejecución de \textemph{cg\_annotate}.
 }}
 \vspace{1em}
 
