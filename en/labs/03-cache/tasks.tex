@@ -1,0 +1,47 @@
+\section{Tasks}
+
+To complete this laboratory different small programs are given with their
+source code. These programs must be evaluated (see next sections). A
+\textmark{CMakeLists.txt} file for their compilation is also provided. 
+
+Create a directory named \cppid{lab3} in your home directory at \cppid{avignon}.
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+usuario@avignon-frontend:~$ mkdir lab3
+usuario@avignon-frontend:~$
+\end{lstlisting}
+
+From your local machine, transfer all lab support files, 
+that you have previously downloaded:
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+usuario@mimaquina:~/Downloads/lab3$ scp * usuario@avignon.lab.inf.uc3m.es:~/lab3/
+usuario@avignon.lab.inf.uc3m.es password: 
+aos.cpp                                                            100%  237    20.6KB/s   00:00    
+CMakeLists.txt                                                     100%  369    35.7KB/s   00:00    
+loop_merge.cpp                                                     100%  254    22.7KB/s   00:00    
+loop_merge_opt.cpp                                                 100%  216    17.2KB/s   00:00    
+soa.cpp                                                            100%  249    24.1KB/s   00:00    
+usuario@mimaquina:~/Downloads/lab3$ 
+\end{lstlisting}
+
+To compile the programs to be evaluated, 
+you may use the following commands in a script:
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cmake -S . -B debug -DCMAKE_BUILD_TYPE=Debug
+cmake --build debug
+\end{lstlisting}
+
+
+\textbad{NOTE:} Your lab group will be assigned one of the following configurations:
+
+\begin{itemize}
+\item Configuration 1: Line size of 32 B and caches are all 2-way set associative.
+\item Configuration 2: Line size of 32 B and caches are all 4-way set associative.
+\item Configuration 3: Line size of 64 B and caches are all 4-way set associative.
+\item Configuration 4: Line size of 64 B and caches are all 8-way set associative.
+\end{itemize}
+
+\input{en/labs/03-cache/task1}
+\input{en/labs/03-cache/task2}

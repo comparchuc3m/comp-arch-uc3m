@@ -1,0 +1,44 @@
+\clearpage
+\subsection{Task 1: Loop merging}
+
+In this task two programs must be analyzed: \cppid{loop\_merge.cpp} and
+\cppid{loop\_merge-opt.cpp}.
+
+
+\lstinputlisting[caption={loop\_merge.cpp},frame=single,numbers=left,basicstyle=\small]{lab/03-cache/loop_merge.cpp}
+\lstinputlisting[caption={loop\_merge\_opt.cpp},frame=single,numbers=left,basicstyle=\small]{lab/03-cache/loop_merge_opt.cpp}
+
+Both programs implement the same functionality: given two vectors $\vec{z}$ and
+$\vec{t}$, they compute another two vectors $\vec{u}$ y $\vec{v}$:
+
+\[
+\vec{u} = \vec{z} + \vec{t}
+\]
+\[
+\vec{v} = \vec{u} + \vec{t}
+\]
+
+For this purpose the programs use 4 fixed size arrays.  
+The programs do not print any result.
+
+The student is asked to: 
+
+\begin{enumerate}
+
+\item Run \cppid{loop\_merge} and \cppid{loop\_merge\_opt}
+with the program \textmark{valgrind} and
+the tool \textmark{cachegrind} for the following configurations of cache:
+
+\begin{itemize}
+\item Last level cache is fixed to 128 KiB.
+\item Evaluate L1D cache sizes of 16 KiB, 32 KiB and 64 KiB.
+\end{itemize}
+
+\item Get the results obtained and inspect the code with the tool
+\textmark{cg\_annotate}. Annotate the global results and pay special
+attention to the results on loop bodies
+
+
+\item Compare results for both programs. Discuss in your report the results for
+Dr, D1mr, DLmr, Dw, D1mw y DLmw. 
+\end{enumerate}

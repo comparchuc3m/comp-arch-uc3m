@@ -1,0 +1,36 @@
+\clearpage
+\subsection{Task 2: Structures and Arrays}
+
+In this task two programs will be analyzed: \cppid{soa.cpp} and
+\cppid{aos.cpp}. 
+Both programs implement the same functionality: sum of the
+coordinates of two sets of points (\cppid{a} and \cppid{b}) with coordinates in
+a bi-dimensional space.  The second one uses three arrays of structures which
+represent the points and the first one uses three structures with two array
+inside each one. 
+The programs do not print any result.
+
+\lstinputlisting[caption={soa.cpp},frame=single,numbers=left,basicstyle=\small]{lab/03-cache/soa.cpp}
+\lstinputlisting[caption={aos.cpp},frame=single,numbers=left,basicstyle=\small]{lab/03-cache/aos.cpp}
+
+The student is asked to: 
+
+\begin{enumerate}
+
+\item Run \cppid{soa} and \cppid{aos} with the program
+\textmark{valgrind} and the tool \textmark{cachegrind} for the following configurations of cache:
+
+\begin{itemize}
+\item Last level cache is fixed to 256 KiB
+\item Evaluate L1D cache sizes of 8KiB, 16KiB and 32 KiB
+\end{itemize}
+
+\item Get the results obtained and inspect the code with the tool
+\textmark{cg\_annotate}. Annotate the global results and pay special
+attention to the loops.
+
+\item Compare both results.
+ Discuss in your report the results for Dr, D1mr, DLmr, Dw,
+D1mw y DLmw.
+
+\end{enumerate}

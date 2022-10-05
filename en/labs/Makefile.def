@@ -2,3 +2,4 @@ EN_LABS_DIR=en/labs
 
 include $(EN_LABS_DIR)/lab1-cppdev/Makefile.def
 include $(EN_LABS_DIR)/lab2-perfener/Makefile.def
+include $(EN_LABS_DIR)/03-cache/Makefile.def

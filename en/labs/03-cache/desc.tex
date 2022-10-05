@@ -1,0 +1,98 @@
+\section{Description of the laboratory}
+
+In this laboratory the you will evaluate several C++ programs  with
+\textmark{cachegrind} the tool, which is part of the tools available inside
+\textmark{valgrind} (\textgood{\url{http://valgrind.org/}}). This tool is
+capable of simulating the execution of a program and evaluating the impact of
+the cache performance. 
+
+If the evaluated program is compiled with the debugging information flag
+activated(\textmark{-g} in \cppid{gcc}), \textmark{cachegrind} can also
+provide the cache utilization for every line in the source code. For this
+purpose, the executable must be generated using the commands:
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cmake -S . -B debug -DCMAKE_BUILD_TYPE=Debug
+cmake --build debug
+\end{lstlisting}
+
+\fbox{ \parbox{.9\textwidth}{
+\textbad{ATTENTION}: 
+Keep in mind that for executing jobs in the \cppid{avignon} cluster
+you must first create a \emph{script} to launch the compilation.
+}}
+\vspace{1em}
+
+This way, it is possible to obtain the information of the execution of the
+program using \textemph{valgrind} and \textemph{cachegrind}:
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+valgrind --tool=cachegrind ./test
+\end{lstlisting}
+
+\fbox{ \parbox{.9\textwidth}{
+\textbad{ATTENTION}: 
+Keep in mind that for executing jobs in the \cppid{avignon} cluster
+you must first create a \emph{script} to launch \textemph{valgrind} executions.
+}}
+\vspace{1em}
+
+If no additional parameter is provided, \textmark{cachegrind} simulates code
+execution on the real hardware where it is being executed. Otherwise,
+it can be used to evaluate a given cache configuration.
+When the execution finishes it shows basic statistics of cache usage.
+It also generates a file named \cppid{cachegrind.out.<pid>},
+where \cppid{pid} is the process identifier. 
+This file contains additional information that can be analyzed using the 
+\cppid{cg\_annotate} utility. 
+(The name of the file can be modified with the option
+\cppid{--cachegrind-out-file=<file\_name>}).
+
+The following option can be used to simulate a given cache configuration:
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+--I1=<size in bytes>,<associativity>,<line size in bytes>
+\end{lstlisting}
+
+They specify the size (in bytes), the associativity (number of ways) and the
+size of the cache line of the instruction cache of level 1.
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+--D1=<size>,<associativity>,<line size>
+\end{lstlisting}
+
+They specify the size (in bytes), the associativity (number of ways) and the
+size of the cache line for the data cache of level 1.
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+--LL=<size>,<associativity>,<line size>
+\end{lstlisting}
+
+They specify the size (in bytes), the associativity (number of ways) and the
+size of the cache line of the last level cache.
+
+The tool \cppid{cg\_annotate} receives as parameter the file to be analyzed and
+the absolute path of the files that will be annotated line by line.  If the path
+or the files to be annotated are not known the option \cppid{--auto=yes} can be
+used to annotate every file that can be of interest.
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cg_annotate cachegrind.out.XXXXX --auto=yes
+\end{lstlisting}
+
+\fbox{ \parbox{.9\textwidth}{
+\textbad{ATTENTION}: 
+Keep in mind that for executing jobs in the \cppid{avignon} cluster
+you must first create a \emph{script} to launch \textemph{cg\_annotate} executions.
+}}
+\vspace{1em}
+
+Additionally, if only one file is going to be annotated: 
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cg_annotate cachegrind.out.XXXXX <absolute path to file .cpp>
+\end{lstlisting}
+
+For more information about the usage of \textmark{cachegrind} and
+\cppid{cg\_annotate},the documentation can be found in the web-page of Valgrind:
+\textgood{\url{http://valgrind.org/docs/manual/cg-manual.html}}.
