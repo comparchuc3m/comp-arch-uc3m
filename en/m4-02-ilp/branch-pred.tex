@@ -24,7 +24,7 @@
   \mode<presentation>{\vfill}
   \item \textgood{Floating point}:
     \begin{itemize}
-      \item \textgood{Missprediction rate}. 
+      \item \textgood{Miss-prediction rate}. 
         \begin{itemize}
           \item \textmark{Average}: 9\%. 
           \item \textmark{Standard deviation}: 4\%.
@@ -34,7 +34,7 @@
   \mode<presentation>{\vfill}
   \item \textgood{Integer}:
     \begin{itemize}
-      \item \textgood{Missprediction rate}. 
+      \item \textgood{Miss-prediction rate}. 
         \begin{itemize}
           \item \textmark{Average}: 15\%. 
           \item \textmark{Standard deviation}: 5\%.
@@ -59,7 +59,7 @@
     \begin{itemize}
       \item We don't know if the prediction is correct.
         \begin{itemize}
-          \item Might come from another instrucciton located at different
+          \item Might come from another instruction located at different
                 address with same lower bits.
         \end{itemize}
         \item Number of lower bits implies size of the buffer
@@ -99,7 +99,7 @@
 
 \begin{frame}[t,shrink=10]{BHT: Precision}
 \begin{itemize}
-  \item Missprediction rate:
+  \item Miss-prediction rate:
     \begin{itemize}
       \item Wrong prediction in branch outcome.
       \item History of different branch in table entry.
