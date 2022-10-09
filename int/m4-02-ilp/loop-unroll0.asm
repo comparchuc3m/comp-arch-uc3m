@@ -1,15 +1,15 @@
-Bucle:	L.D F0, 0(R1)
-	ADD.D F4, F0, F2
-	S.D F4, 0(R1)
-	L.D F6, -8(R1)
-	ADD.D F8, F6, F2
-	S.D F8, -8(R1)
-	L.D F10, -16(R1)
-	ADD.D F12, F10, F2
-	S.D F12, -16(R1)
-	L.D F14, -24(R1)
-	ADD.D F16, F14, F2
-	S.D F16, -24(R1)
-	DADDUI R1, R1, #-32
-	BNE R1, R2, Bucle	
+loop:	fld f0, 0(x1)
+	fadd.d f4, f0, f2
+	fsd f4, 0(x1)
+	fld f6, -8(x1)
+	fadd.d f8, f6, f2
+	fsd f8, -8(x1)
+	fld f10, -16(x1)
+	fadd.d f12, f10, f2
+	fsd f12, -16(x1)
+	fld f14, -24(x1)
+	fadd.d f16, f14, f2
+	fsd f16, -24(x1)
+	addi x1, x1, -32
+	bne x1, x2, loop	
 

@@ -1,0 +1,368 @@
+\section{Control hazards}
+
+\begin{frame}[t]{Control hazard}
+\begin{itemize}
+  \item A \textgood{control hazard} happens in a \textmark{PC}
+        modification instruction.
+
+    \mode<presentation>{\vfill}
+    \begin{itemize}
+      \item \textgood{Terminology}:
+        \begin{itemize}
+          \item \textmark{Taken branch}: If PC is modified.
+          \item \textmark{Not-taken branch}: if PC is not modified.
+        \end{itemize}
+
+      \mode<presentation>{\vfill}
+      \item \textbad{Problem}:
+        \begin{itemize}
+          \item Pipelining assumes that branch will \textbad{not} be taken.
+        \end{itemize}
+
+      \mode<presentation>{\vfill}
+      \item If branch is taken $\Rightarrow$ \textemph{PC} updated at the end of \textmark{ID}.
+        \begin{itemize}
+          \item \textgood{Effective address computation}: Adder at \textmark{ID}.
+          \item \textgood{Condition evaluation}: Comparator at \textmark{ID}.
+        \end{itemize}
+
+      \mode<presentation>{\vfill}
+      \item What if, after ID, we find out that branch \textgood{needs} to be taken?
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Alternatives in control hazards}
+\begin{itemize}
+  \item \textgood{Compile time}: Fixed asumption for the full program execution.
+    \begin{itemize}
+      \item Software may try to minimize impact if hardware behavior is known.
+      \item Compiler can do this job.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Run-time}: Variable behavior during program execution.
+    \begin{itemize}
+      \item Hardware tries to predict what software will do.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Control hazards: static solutions}
+\begin{enumerate}
+  \item Pipeline freezing.
+  \item Fixed prediction.
+    \begin{itemize}
+      \item Always not taken.
+      \item Always taken.
+    \end{itemize}
+  \item Delayed branching.
+\end{enumerate}
+
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item In many cases, compilers need to know what will be done to reduce impact.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Pipeline freezing}
+\begin{itemize}
+  \item \textgood{Idea}: If current instruction is a branch
+        $\rightarrow$ 
+        stop or flush subsequent instructions from pipeline
+        until target is known.
+    \begin{itemize}
+      \item Run-time penalty is known.
+      \item Software (compiler) cannot do anything.
+    \end{itemize}
+
+    \mode<presentation>{\vfill}
+    \item Branch target is known at \textmark{ID} stage.
+      \begin{itemize}
+        \item Repeat next instruction \textmark{FETCH}.
+      \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Repeating FETCH}
+\makebox[\textwidth][c]{
+\input{en/m4-02-ilp/rep-fetch.tkz}
+}
+
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item Repeating \textmark{IF} is equivalent to a stall.
+  \item A branch stall may lead to a \textmark{performance loss} from 10\% to 30\%.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Fixed prediction: not taken}
+\begin{itemize}
+  \item \textgood{Idea}: Assume branch will be \textmark{not taken}.
+    \begin{itemize}
+      \item Avoid updating processor state until branch not taken
+            is confirmed.
+      \item If branch is finally taken, subsequent instructions are retired
+            from pipeline and instruction from target address is fetched.
+        \begin{itemize}
+          \item Transform instructions into \textmark{NOP}s.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Compiler task}:
+    \begin{itemize}
+      \item Organize code setting most frequent option as not-taken and inverting condition if needed.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Fixed prediction: not taken}
+\makebox[\textwidth][c]{
+\input{en/m4-02-ilp/pred-not-taken.tkz}
+}
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item When hardware knows the branch will be taken  the new instruction is fetched.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Fixed prediction: taken}
+\begin{itemize}
+  \item \textgood{Idea}: Assume branch will be \textmark{taken}.
+    \begin{itemize}
+      \item As soon as branch instruction is decoded and target address
+            is computed, target instruction starts to be fetched.
+      \item In a 5-stages pipeline does not provide improvements.
+        \begin{itemize}
+          \item Target address is not known before branch outcome is known.
+          \item Useful in processors with complex and slow conditions.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textgood{Compiler task}:
+    \begin{itemize}
+      \item Organize code setting the most frequent option as taken
+            and inverting condition if needed.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Delayed branching}
+\begin{itemize}
+  \item \textgood{Idea}: Branch happens after executing
+        \textmark{n} subsequent instructions to branch instruction.
+    \begin{itemize}
+      \item \textmark{In a 5-stages pipeline} $\rightarrow$ 1 delay slot.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}
+\begin{column}{.4\textwidth}
+\begin{block}{Example}
+\lstinputlisting[language={generalasm}]{int/m4-02-ilp/delay-slot.asm}
+\end{block}
+\end{column}
+
+\begin{column}{.6\textwidth}
+\begin{itemize}
+  \item Instructions \textmark{I1}, \textmark{I2}, \ldots, \textmark{IN} are
+        executed independently of the branch condition outcome.
+  \item Instruction \textmark{IN+1} is only executed if branch is not taken.
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Delayed branching}
+\makebox[\textwidth][c]{
+\input{en/m4-02-ilp/delayed-branch.tkz}
+}
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item Case with \textmark{delayed branch} and one \textmark{delay slot}.
+  \item One instruction is always executed before taking the branch.
+  \item Programmer are responsible for putting useful code in the slot.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Delayed branching}
+\begin{itemize}
+  \item Compiler effectiveness for the case of 1 slot.
+    \begin{itemize}
+      \item \textmark{Fills} around 60\% of slots.
+      \item Around 80\% of executed instructions in slots \textmark{useful} for computations.
+      \item Around 50\% of slots usefully \textmark{filled}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item used in first pipelines (short and simple):
+    \begin{itemize}
+      \item \textmark{Reason}: Hardware prediction was costly.
+      \item Complicates implementation when combined with dynamic branch prediction.
+      \item Not included in RISC-V.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Performance and fixed prediction}
+\begin{itemize}
+  \item Number of stalls depends on:
+    \begin{itemize}
+      \item Branch frequency.
+      \item Branch penalty.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item Penalty cycles per branch:
+\end{itemize}
+\begin{displaymath}
+cycles_{branch} = frequency_{branch} \times penalty_{branch}
+\end{displaymath}
+
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item Speedup:
+\end{itemize}
+\begin{displaymath}
+S =
+\frac{depth_{pipeline}}{1 + frequency_{branch} \times penalty_{branch}}
+\end{displaymath}
+\end{frame}
+
+\begin{frame}[t]{Practical case}
+\begin{itemize}
+  \item \textgood{MIPS R4000} (deeper pipeline).
+    \begin{itemize}
+      \item 3 stages before knowing branch target.
+      \item 1 additional stage to evaluate condition.
+      \item Assuming no data stalls in comparisons.
+      \item \textgood{Branch frequency}:
+        \begin{itemize}
+          \item \textmark{Unconditional branching}: 4\%.
+          \item \textmark{Conditional branching, not-taken}: 6\%
+          \item \textmark{Conditional branching, taken}: 10\%
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill}
+{\scriptsize
+\begin{tabular}[c]{|p{.3\textwidth}|*{3}{p{.17\textwidth}|}}
+\hline
+branch &  \multicolumn{3}{c|}{Penalty}
+\\
+\cline{2-4}
+scheme & unconditional & not-taken & taken
+\\
+\hline\hline
+
+Flush pipeline &
+\multicolumn{1}{r|}{2} & 
+\multicolumn{1}{r|}{3} & 
+\multicolumn{1}{r|}{3}
+\\
+\hline
+
+Predict taken &
+\multicolumn{1}{r|}{2} & 
+\multicolumn{1}{r|}{3} &
+\multicolumn{1}{r|}{2}
+\\
+\hline
+
+Predict not-taken &
+\multicolumn{1}{r|}{2} &
+\multicolumn{1}{r|}{0} &
+\multicolumn{1}{r|}{3}
+\\
+
+\hline
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}[t]{Solution}
+
+{\scriptsize
+\begin{tabular}[c]{|p{.2\textwidth}|*{3}{p{.18\textwidth}|}p{.06\textwidth}|}
+\hline
+branch &  \multicolumn{3}{c|}{Branch} & \multicolumn{1}{c|}{Total}
+\\
+\cline{2-4}
+scheme & unconditional & not-taken & taken &
+\\
+\hline\hline
+
+Frequency &
+\multicolumn{1}{c|}{4\%} &
+\multicolumn{1}{c|}{6\%} &
+\multicolumn{1}{c|}{10\%} &
+\multicolumn{1}{c|}{20\%} 
+\\
+\hline
+
+Flush pipeline &
+$0.04 \times 2 = 0.08$ &
+$0.06 \times 3 = 0.18$ &
+$0.10 \times 3 = 0.30$ &
+$0.56$
+\\
+\hline
+
+Predict taken &
+$0.04 \times 2 = 0.08$ &
+$0.06 \times 3 = 0.18$ &
+$0.10 \times 2 = 0.20$ &
+$0.46$
+\\
+\hline
+
+Predict not-taken &
+$0.04 \times 2 = 0.08$ &
+$0.06 \times 0 = 0.00$ &
+$0.10 \times 3 = 0.30$ &
+$0.38$
+\\
+\hline
+
+\hline
+\end{tabular}
+}
+\begin{center}
+\textmark{Contribution over ideal CPI}
+\end{center}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}
+
+\begin{column}{.49\textwidth}
+{\footnotesize
+\emph{Speedup} of predicting \textmark{taken} over flushing pipeline
+}
+\begin{displaymath}
+S =
+\frac{1 + 0.56}{1 + 0.46} =
+1.068
+\end{displaymath}
+\end{column}
+
+\begin{column}{.49\textwidth}
+{\footnotesize
+\emph{Speedup} of predicting \textmark{not taken} over flushing pipeline
+}
+\begin{displaymath}
+S =
+\frac{1 + 0.56}{1 + 0.38} =
+1.130
+\end{displaymath}
+\end{column}
+
+\end{columns}
+
+\end{frame}

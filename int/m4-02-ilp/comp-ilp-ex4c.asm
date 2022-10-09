@@ -1,7 +1,7 @@
-Bucle:	L.D F0, 0(R1)
-	DADDUI R1, R1, #-8
-	ADD.D F4, F0, F2
+loop:	fld f0, 0(x1)
+	addi x1, x1, -8
+	fadd.d f4, f0, f2
 	<stall>
 	<stall>
-	S.D F4, 8(R1)
-	BNE R1, R2, Bucle
+	fsd f4, 8(x1)
+	bne x1, x2, loop

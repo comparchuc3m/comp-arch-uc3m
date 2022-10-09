@@ -33,7 +33,7 @@
 %
 \node[bloque,below =0.5cm of rreg1] (im2) {IF};
 \node[border,right=0.1cm of im2] (ifid2) {};
-\node[bloque,right=0.1cm of ifid2] (im2b) {IF};
+\node[bloqueconflicto,right=0.1cm of ifid2] (im2b) {IF};
 \node[border,right=0.1cm of im2b] (ifid2b) {};
 \node[bloque,right=0.1cm of ifid2b] (rreg2) {ID};
 \node[border,right=0.1cm of rreg2] (idex2) {};

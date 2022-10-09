@@ -1,12 +1,19 @@
 \section{Conclusión}
 
 \begin{frame}[t]{Resumen}
-\begin{itemize}[<+->]
+\begin{itemize}
   \item Riesgos de control:
     \begin{itemize}
       \item Alternativas en tiempo de compilación.
       \item Alternativas en tiempo de ejecución.
     \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Las operaciones multi-ciclo permiten mantener ciclos de reloj cortos.
+
+  \mode<presentation>{\vfill\pause}
+  \item El desenrollamiento de bucles permite ocultar las latencias de detenciones, pero da una ganancia limitada.
+
 \end{itemize}
 \end{frame}
 
@@ -14,7 +21,12 @@
 \begin{frame}[t]{Referencias}
 \begin{itemize}
   \item \bibhennessy
-  Secciones C.1 y C.2.
+    \begin{itemize}
+      \item C.2: The Major Hurdle of Pipelining -- Pipeline Hazards (pág C-18 -- C-26).
+      \item C.5: Extending the RISC V Integer Pipeline to Handle Multicycle Operations (pág C-45 -- C-55).
+      \item 3.1: Instruction-Level Parallelism: Concepts and Challenges (pág 168 -- 176).
+      \item 3.2: Basic Compiler Techniques for Exposing ILP (pág 176 --182).
+    \end{itemize}
 
 \end{itemize}
 \end{frame}

@@ -1,6 +1,5 @@
-Bucle:	L.D F0, 0(R1)		; F0 <- x[i]
-	ADD.D F4, F0, F2	; F4 <- F0 + s
-	S.D F4, 0(R1)		; x[i] <- F4
-	DADDUI R1, R1, #-8	; i--
-	BNE R1, R2, Bucle	; Bifurcar Si R1!=R2
-
+loop:	fld f0, 0(x1)		// f0 <- x[i]
+	fadd.d f4, f0, f2	// f4 <- f0 + s
+	fsd f4, 0(x1)		// x[i] <- f4
+	addi x1, x1, -8		// - -i
+	bne x1, x2, loop	// x1!=x2 => loop

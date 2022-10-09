@@ -4,6 +4,7 @@
 \begin{itemize}
   \item Un \textgood{riesgo de control} se produce en una 
         instrucción de alteración del PC.
+
     \mode<presentation>{\vfill}
     \begin{itemize}
       \item \textgood{Terminología}:
@@ -11,12 +12,23 @@
           \item \textmark{Bifurcación tomada}: Si se modifica el PC.
           \item \textmark{Bifurcación no tomada}: Si no se modifica el PC.
         \end{itemize}
-      \mode<presentation>{\vfill}
-      \item \alert{Problema}:
+
+      \mode<presentation>{\pause\vfill}
+      \item \textbad{Problema}:
         \begin{itemize}
-          \item La segmentación asume que lo bifurcación \textbf{no} se tomará.
-          \item ¿Qué hacer si después de la etapa ID se determina que hay que tomar la bifurcación?
+          \item La segmentación asume que lo bifurcación \textbad{no} se tomará.
         \end{itemize}
+
+      \mode<presentation>{\pause\vfill}
+      \item Si se toma la bifurcación $\Rightarrow$ actualización de \textemph{PC} al final de \textmark{ID}.
+        \begin{itemize}
+          \item \textgood{Cálculo de dirección efectiva}: Sumador en \textmark{ID}.
+          \item \textgood{Evaluación de condición}: Comparador en \textmark{ID}.
+        \end{itemize}
+
+      \mode<presentation>{\pause\vfill}
+      \item ¿Qué hacer si después de la etapa \textmark{ID} se determina que 
+            \textgood{SI} hay que tomar la bifurcación?
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -109,7 +121,7 @@
 }
 \mode<presentation>{\vfill}
 \begin{itemize}
-  \item Cuando se sabe que el salto se tomará se capta la nueva instrucción (\emph{j+1}).
+  \item Cuando se sabe que el salto se tomará se capta la nueva instrucción.
 \end{itemize}
 \end{frame}
 
@@ -148,15 +160,7 @@
 \begin{columns}
 \begin{column}{.4\textwidth}
 \begin{block}{Ejemplo}
-\begin{lstlisting}[language={generalasm}]
-I0:    bnez $1, etiq
-I1:    addi $2, $2, 1
-I2:    mul  $3, $2, $4
-...
-IN:    sub  $1, $1, 1
-IN+1:  mul  $3, $3, $4
-
-\end{lstlisting}
+\lstinputlisting[language={generalasm}]{int/m4-02-ilp/delay-slot.asm}
 \end{block}
 \end{column}
 
@@ -178,106 +182,9 @@ IN+1:  mul  $3, $3, $4
 \mode<presentation>{\vfill}
 \begin{itemize}
   \item Caso de bifurcación retrasada con una ranura de retraso.
-  \item Se espara siempre una instrucción antes de tomar la bifurcación.
+  \item Se espera siempre una instrucción antes de tomar la bifurcación.
   \item Es responsabilidad del programador poner código útil en la ranura.
 \end{itemize}
-\end{frame}
-
-\begin{frame}[t,fragile]{Compilador y ranuras de retraso}
-\mode<presentation>{\vspace{-1.5em}}
-\begin{columns}[T]
-
-\begin{column}{.33\textwidth}
-\begin{block}{Original}
-\begin{lstlisting}[language={generalasm},basicstyle=\scriptsize]
-      add $1, $2, $3
-      beqz $2, etiq
-      nop
-      xor $5, $6, $7
-etiq: and $8, $9, $10
-\end{lstlisting}
-\end{block}
-\mode<presentation>{\vfill\pause}
-\begin{block}{Mejorado}
-\begin{lstlisting}[language={generalasm},basicstyle=\scriptsize]
-      beqz $2, etiq
-      add $1, $2, $3
-      xor $5, $6, $7
-etiq: and $8, $9, $10
-\end{lstlisting}
-\end{block}
-\end{column}
-
-\mode<article>{
-\begin{itemize}
-  \item Esta es la reordenación preferible.
-  \item Se pasa la instrucción anterior a la bifurcación a la ranura
-        porque siempre se ejecuta.
-\end{itemize}
-}
-
-\begin{column}{.33\textwidth}
-\mode<presentation>{\vfill\pause}
-\begin{block}{Original}
-\begin{lstlisting}[language={generalasm},basicstyle=\scriptsize]
-etiq: add $1, $2, $3
-      xor $5, $6, $7
-      beqz $5, etiq
-      nop
-      and $8, $9, $10
-\end{lstlisting}
-\end{block}
-\mode<presentation>{\vfill\pause}
-\begin{block}{Mejorado}
-\begin{lstlisting}[language={generalasm},basicstyle=\scriptsize]
-      add $1, $2, $3
-etiq: xor $5, $6, $7
-      beqz $5, etiq
-      add $1, $2, $3
-      and $8, $9, $10
-\end{lstlisting}
-\end{block}
-\end{column}
-
-\mode<article>{
-\begin{itemize}
-  \item Esta reordenación se aplica cuando otra instrucción no se puede
-        mover a la ranura por dependencia de datos con la bifurcación.
-  \item Se hace necesario repetir la instrucción de la ranura dos veces
-        (una para la primera iteración y otra para el resto).
-\end{itemize}
-}
-
-\begin{column}{.33\textwidth}
-\mode<presentation>{\vfill\pause}
-\begin{block}{Original}
-\begin{lstlisting}[language={generalasm},basicstyle=\scriptsize]
-      add $1, $2, $3
-      beqz $1, etiq
-      nop
-      xor $5, $6, $7
-etiq: and $8, $9, $10
-\end{lstlisting}
-\end{block}
-\mode<presentation>{\vfill\pause}
-\begin{block}{Mejorado}
-\begin{lstlisting}[language={generalasm},basicstyle=\scriptsize]
-      add $1, $2, $3
-      beqz $1, etiq
-      xor $5, $6, $7
-etiq: and $8, $9, $10
-\end{lstlisting}
-\end{block}
-\end{column}
-
-\mode<article>{
-\begin{itemize}
-  \item Esta reordenación se aplica si la instrucción introducida
-        en la ranura no se vuelve a usar después de la dirección
-        de salto.
-\end{itemize}
-}
-\end{columns}
 \end{frame}
 
 \begin{frame}[t]{Bifurcaciones retrasadas}
@@ -290,9 +197,11 @@ etiq: and $8, $9, $10
     \end{itemize}
 
   \mode<presentation>{\vfill}
-  \item Al usarse pipelines más profundos y emisión múltiple hacen falta más ranuras.
+  \item Usada en primeros en pipelines cortos y simples:
     \begin{itemize}
-      \item En desuso a favor de enfoque dinámicos.
+      \item \textmark{Razón}: Predicción hardware era muy costosa.
+      \item Complica la implementación en presencia de predicción dinámica de saltos.
+      \item No incluida en RISC-V.
     \end{itemize}
 \end{itemize}
 \end{frame}

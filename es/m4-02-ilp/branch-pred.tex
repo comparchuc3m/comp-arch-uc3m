@@ -20,6 +20,8 @@
 \begin{frame}[t]{Predicciones con perfil de ejecución}
 \begin{itemize}
   \item SPEC92: Frecuencia de bifurcaciones 3\% a 24\%
+ 
+  \mode<presentation>{\vfill}
   \item \textgood{Coma flotante}:
     \begin{itemize}
       \item \textgood{Fallo de predicción}. 
@@ -28,6 +30,8 @@
           \item \textmark{Desviación estándar}: 4\%.
         \end{itemize}
     \end{itemize}
+ 
+  \mode<presentation>{\vfill}
   \item \textgood{Enteros}:
     \begin{itemize}
       \item \textgood{Fallo de predicción}. 
@@ -36,32 +40,11 @@
           \item \textmark{Desviación estándar}: 5\%.
         \end{itemize}
     \end{itemize}
-\end{itemize}
-\end{frame}
 
-\begin{frame}[t]{Predicciones con perfil de ejecución}
-\begin{tikzpicture}
-  \begin{axis}[
-    xbar,
-    xlabel={Tasa de fallo de predicción},
-    symbolic y coords={compress,eqntott,espresso,gcc,li,doduc,ear,hydro2d,mdljdp,su2cor},
-    ytick=data,
-    nodes near coords, nodes near coords align={horizontal},
-    ]
-    \addplot coordinates {
-(12,compress) 
-(22,eqntott)
-(18,espresso)
-(11,gcc)
-(12,li)
-(4,doduc)
-(6,ear)
-(9,hydro2d)
-(10,mdljdp)
-(15,su2cor)
-};
-  \end{axis}
-\end{tikzpicture}
+  \mode<presentation>{\vfill}
+  \item La predicción basada en perfil de ejecución suele funcionar mejor
+        con aplicaciones intensivas en coma flotante.
+\end{itemize}
 \end{frame}
 
 \begin{frame}[t]{Predicción dinámica: BHT}
@@ -120,29 +103,7 @@
     \end{itemize}
 \item Resultados BHT de 2 bits y 4K entradas:
 \end{itemize}
-\begin{tikzpicture}
-  \begin{axis}[
-    xbar,
-    width=\textwidth, height=0.7\textheight,
-    xlabel={Tasa de fallo de predicción},
-    symbolic y coords={li,eqntott,espresso,gcc,fpppp,spice,doduc,tomcatv,matrix300,nasa7},
-    ytick=data,
-    nodes near coords, nodes near coords align={horizontal},
-    ]
-    \addplot coordinates {
-(10,li)
-(18,eqntott)
-(5,espresso)
-(12,gcc)
-(9,fpppp)
-(9,spice)
-(5,doduc)
-(1,tomcatv)
-(0,matrix300)
-(1,nasa7)
-};
-  \end{axis}
-\end{tikzpicture}
+\input{int/m4-02-ilp/bht-misspred.tkz}
 \end{frame}
 
 \begin{frame}[t]{Predicción dinámica de bifurcación}

@@ -5,7 +5,7 @@
   \item ILP directly applicable to basic blocks.
     \begin{itemize}
       \item \textgood{Basic block}: sequence of instructions without branching.
-      \item \textmark{Typical} program in MIPS:
+      \item \textmark{Typical} program in RISC processors:
         \begin{itemize}
           \item Basic block average size from 3 to 6 instructions.
           \item Low ILP exploitation within block.
@@ -107,14 +107,14 @@ Load double & Store double & 0\\
 
 \begin{frame}[t]{Compiled code}
 \begin{itemize}
-  \item \textgood{R1} $\rightarrow$ Last array element.
-  \item \textgood{F2} $\rightarrow$ Scalar \cppid{s}.
-  \item \textgood{R2} $\rightarrow$ Precomputed so that \asmlabel{8(R2)} is the first element in array.
+  \item \asmreg{x1} $\rightarrow$ Last array element.
+  \item \asmreg{f2} $\rightarrow$ Scalar \cppid{s}.
+  \item \asmreg{x2} $\rightarrow$ Precomputed so that \asmlabel{8(R2)} is the first element in array.
 \end{itemize}
 
 \mode<presentation>{\vfill}
 \begin{block}{Assembler code}
-\lstinputlisting[language=generalasm]{int/m4-02-ilp/comp-ilp-ex3.asm}
+\lstinputlisting[language=generalasm2]{int/m4-02-ilp/comp-ilp-ex3.asm}
 \end{block}
 
 \end{frame}
@@ -149,7 +149,7 @@ Load double & Store double & 0\\
 \end{block}
 
 \begin{itemize}
-  \item 9 cycles per iteration.
+  \item 8 cycles per element.
 \end{itemize}
 \end{column}
 
@@ -159,7 +159,7 @@ Load double & Store double & 0\\
 \lstinputlisting[language=generalasm2]{int/m4-02-ilp/comp-ilp-ex4c.asm}
 \end{block}
 \begin{itemize}
-  \item 7 cycles per iteration.
+  \item 7 cycles per element.
 \end{itemize}
 \end{column}
 
@@ -227,7 +227,7 @@ Load double & Store double & 0\\
 \end{columns}
 \mode<presentation>{\vfill}
 \begin{itemize}
-  \item 27 cycles for every 4 iterations $\rightarrow$ $6.75$ cycles per iteration.
+  \item 27 cycles for every 4 iterations $\rightarrow$ $6.75$ cycles per element.
 \end{itemize}
 \end{frame}
 

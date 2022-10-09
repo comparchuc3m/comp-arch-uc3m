@@ -5,7 +5,7 @@
   \item ILP directamente aplicables a bloques básicos.
     \begin{itemize}
       \item \textgood{Bloque básico}: secuencia de instrucciones sin saltos.
-      \item Programa \textmark{típico} en MIPS:
+      \item Programa \textmark{típico} en procesadores RISC:
         \begin{itemize}
           \item Tamaño medio de bloque básico de 3 a 6 instrucciones.
           \item Poco aprovechamiento de ILP dentro del bloque.
@@ -107,14 +107,14 @@ Cargar doble & Almacenar doble & 0\\
 
 \begin{frame}[t]{Código compilado}
 \begin{itemize}
-  \item \textgood{R1} $\rightarrow$ Último elemento de array.
-  \item \textgood{F2} $\rightarrow$ Escalar \cppid{s}.
-  \item \textgood{R2} $\rightarrow$ Precalculado para que \asmlabel{8(R2)} sea primer elemento de array.
+  \item \asmreg{x1} $\rightarrow$ Último elemento de array.
+  \item \asmreg{f2} $\rightarrow$ Escalar \cppid{s}.
+  \item \asmreg{x2} $\rightarrow$ Precalculado para que \asmlabel{8(x2)} sea primer elemento de array.
 \end{itemize}
 
 \mode<presentation>{\vfill}
 \begin{block}{Código ensamblador}
-\lstinputlisting[language=generalasm]{int/m4-02-ilp/comp-ilp-ex3.asm}
+\lstinputlisting[language=generalasm2]{int/m4-02-ilp/comp-ilp-ex3.asm}
 \end{block}
 
 \end{frame}
@@ -149,7 +149,7 @@ Cargar doble & Almacenar doble & 0\\
 \end{block}
 
 \begin{itemize}
-  \item 9 ciclos por iteración.
+  \item 8 ciclos por elemento.
 \end{itemize}
 \end{column}
 
@@ -159,7 +159,7 @@ Cargar doble & Almacenar doble & 0\\
 \lstinputlisting[language=generalasm2]{int/m4-02-ilp/comp-ilp-ex4c.asm}
 \end{block}
 \begin{itemize}
-  \item 7 ciclos por iteración.
+  \item 7 ciclos por elemento.
 \end{itemize}
 \end{column}
 
@@ -208,9 +208,10 @@ Cargar doble & Almacenar doble & 0\\
 \end{itemize}
 \end{frame}
 
-\begin{frame}[t]{Detenciones y desenrollamiento}
+\begin{frame}[t,shrink=10]{Detenciones y desenrollamiento}
 
-\begin{columns}
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}[T]
 
 \begin{column}{.45\textwidth}
 \begin{block}{Desenrollado (x4)}
@@ -227,7 +228,7 @@ Cargar doble & Almacenar doble & 0\\
 \end{columns}
 \mode<presentation>{\vfill}
 \begin{itemize}
-  \item 27 ciclos por 4 iteraciones $\rightarrow$ $6.75$ ciclos por iteración.
+  \item 27 ciclos por 4 iteraciones $\rightarrow$ $6.75$ ciclos por elemento.
 \end{itemize}
 \end{frame}
 
@@ -249,9 +250,9 @@ Cargar doble & Almacenar doble & 0\\
       \item Semánticamente equivalente.
       \item \textgood{Objetivo}: Aprovechar \emph{stalls}.
     \end{itemize}
-  \item Actualización de \asmreg{R1} suficientemente separada de
+  \item Actualización de \asmreg{x1} suficientemente separada de
         \asminst{BNE}.
-  \item 14 ciclos por 4 iteraciones $\rightarrow$ $3.5$ ciclos por iteración.
+  \item 14 ciclos por 4 iteraciones $\rightarrow$ $3.5$ ciclos por elemento.
 \end{itemize}
 \end{column}
 

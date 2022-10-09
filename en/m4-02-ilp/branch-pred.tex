@@ -20,6 +20,8 @@
 \begin{frame}[t]{Predictions with execution profile}
 \begin{itemize}
   \item SPEC92: Branch frequency 3\% to 24\%
+
+  \mode<presentation>{\vfill}
   \item \textgood{Floating point}:
     \begin{itemize}
       \item \textgood{Missprediction rate}. 
@@ -28,6 +30,8 @@
           \item \textmark{Standard deviation}: 4\%.
         \end{itemize}
     \end{itemize}
+
+  \mode<presentation>{\vfill}
   \item \textgood{Integer}:
     \begin{itemize}
       \item \textgood{Missprediction rate}. 
@@ -36,32 +40,11 @@
           \item \textmark{Standard deviation}: 5\%.
         \end{itemize}
     \end{itemize}
-\end{itemize}
-\end{frame}
 
-\begin{frame}[t]{Predictions with execution profile}
-\begin{tikzpicture}
-  \begin{axis}[
-    xbar,
-    xlabel={Missprediction rate (\%)},
-    symbolic y coords={compress,eqntott,espresso,gcc,li,doduc,ear,hydro2d,mdljdp,su2cor},
-    ytick=data,
-    nodes near coords, nodes near coords align={horizontal},
-    ]
-    \addplot coordinates {
-(12,compress) 
-(22,eqntott)
-(18,espresso)
-(11,gcc)
-(12,li)
-(4,doduc)
-(6,ear)
-(9,hydro2d)
-(10,mdljdp)
-(15,su2cor)
-};
-  \end{axis}
-\end{tikzpicture}
+  \mode<presentation>{\vfill}
+  \item Profile guided branch prediction usually works better
+        in floating point intensive applications.
+\end{itemize}
 \end{frame}
 
 \begin{frame}[t]{Dynamic prediction: BHT}
@@ -123,29 +106,7 @@
     \end{itemize}
   \item BHT results of 2 bits and 4K entries:
 \end{itemize}
-\begin{tikzpicture}
-  \begin{axis}[
-    xbar,
-    width=\textwidth, height=0.7\textheight,
-    xlabel={Missprediction rate},
-    symbolic y coords={li,eqntott,espresso,gcc,fpppp,spice,doduc,tomcatv,matrix300,nasa7},
-    ytick=data,
-    nodes near coords, nodes near coords align={horizontal},
-    ]
-    \addplot coordinates {
-(10,li)
-(18,eqntott)
-(5,espresso)
-(12,gcc)
-(9,fpppp)
-(9,spice)
-(5,doduc)
-(1,tomcatv)
-(0,matrix300)
-(1,nasa7)
-};
-  \end{axis}
-\end{tikzpicture}
+\input{int/m4-02-ilp/bht-misspred.tkz}
 \end{frame}
 
 \begin{frame}[t]{Dynamic branch prediction}
