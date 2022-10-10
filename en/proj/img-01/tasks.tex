@@ -108,11 +108,33 @@ add_library(common file1-common.cpp file2-common.cpp file3-common.cpp)
 add_library(aos file1-aos.cpp file2-aos.cpp)
 add_library(soa file1-soa.cpp file2-soa.cpp)
 
-add_executable(image-aos imgaos.cpp)
+add_executable(imgaos image-aos.cpp)
 target_link_libraries(imgaos common aos)
 add_executable(imgsoa image-soa.cpp)
 target_link_libraries(imgsoa common soa)
 \end{lstlisting}
+
+This rules are an example. Keep in mind the following:
+
+\begin{itemize}
+
+  \item The library \cppkey{common} consists of all the \cppid{.cpp} files
+        that are considered needed (names of choice by designers) and
+        which offer common functionality to both versions of the program.
+
+  \item The library \cppkey{aos} consists of all the \cppid{.cpp} files
+        that are considered needed (names of choice by designers) and
+        which offer functionality which is exclusive of the
+        \textemph{array of structures} implementation.
+
+  \item The library \cppkey{soa} consists of all the \cppid{.cpp} files
+        that are considered needed (names of choice by designers) and
+        which offer functionality which is exclusive of the
+        \textemph{structure of arrays} implementation.
+
+\end{itemize}
+
+
 
 Keep in mind that all evaluations shall be performed with the compiler optimizations
 enabled with CMake option

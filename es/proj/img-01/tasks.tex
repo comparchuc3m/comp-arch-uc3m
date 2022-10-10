@@ -109,11 +109,28 @@ add_library(common file1-common.cpp file2-common.cpp file3-common.cpp)
 add_library(aos file1-aos.cpp file2-aos.cpp)
 add_library(soa file1-soa.cpp file2-soa.cpp)
 
-add_executable(image-aos imgaos.cpp)
+add_executable(imgaos image-aos.cpp)
 target_link_libraries(imgaos common aos)
 add_executable(imgsoa image-soa.cpp)
 target_link_libraries(imgsoa common soa)
 \end{lstlisting}
+
+Estas reglas son un ejemplo. Tenga en cuenta lo siguiente:
+\begin{itemize}
+
+  \item A la biblioteca \cppkey{common} se añadirán todos los archivos \cppid{.cpp}
+        que se se considere necesario (nombres a elegir por el equipo) y que ofrezcan
+        funcinalidad común a las dos versiones del programa.
+
+  \item A la biblioteca \cppkey{aos} se añadirán todos los archivos \cppid{.cpp}
+        que se consideren necesarios (nombres a elegir por el equipo) y que ofrezcan 
+        funcionalidad exclusiva para la implementación \textemph{array of structures}.
+
+  \item A la biblioteca \cppkey{soa} se añadirán todos los archivos \cppid{.cpp}
+        que se consideren necesarios (nombres a elegir por el equipo) y que ofrezcan 
+        funcionalidad exclusiva para la implementación \textemph{structure of arrays}.
+
+\end{itemize}
 
 
 Tenga también en cuenta que deberá realizar todas las evaluaciones con las
