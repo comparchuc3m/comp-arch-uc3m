@@ -1,0 +1,106 @@
+\begin{acexercise}\end{acexercise}
+\label{ex:m4-01:instr-01}
+
+Dado el siguiente fragmento de código:
+
+\begin{lstlisting}[language=generalasm2]
+loop: 	lw t1, 1000(s0)
+	lw t2, 2000(s0)
+	add t2, t1, t2
+	sw t2, 3000(s0)
+	addi s0, s0, 4
+	bne s0, s1, loop
+\end{lstlisting}
+
+Se considera la ejecución en un pipeline de 5 etapas.
+Para las instrucciones de bifurcación tanto la dirección de salto como el
+sentido del salto se conocen al final de la etapa de decodificación y se
+predicen todos los saltos a no tomado.
+
+Se pide:
+\begin{enumerate}
+  \item Identifique los riesgos de tipo RAW en el código.
+
+  \item Presente una temporización (cronograma) cuando no hay hardware de envio adelantado
+        (\emph{forwarding}). Determine cuántos ciclos se requieren por iteración,
+        asumiendo que el bucle se ejecuta durante 100 iteraciones.
+
+  \item Presente una temporización cuando si hay hardware de envío adelantado
+        (\emph{forwarding}). Determine cuántos ciclos se requieren por iteración,
+        asumiendo que el bucle se ejecuta durante 100 iteraciones.
+
+  \item Presente una temporización (cronograma) asumiendo ahora que todos los accesos 
+        a la caché de datos requieren dos ciclos para lecturas y 3 para escrituras,
+        y que las lecturas de la caché de instrucciones siempre requieren dos ciclos.
+        Evalúe los casos con y sin envío adelantado.
+\end{enumerate}
+
+
+\begin{acsolution}\end{acsolution}
+
+Si se numeran las instrucciones, se tiene:
+
+\begin{lstlisting}[language=generalasm2]
+loop: 	lw t1, 1000(s0)    // I1
+	lw t2, 2000(s0)    // I2
+	add t2, t1, t2     // I3
+	sw t2, 3000(s0)    // I4
+	addi s0, s0, 4     // I5
+	bne s0, s1, loop   // I6
+\end{lstlisting}
+
+\paragraph{Cuestión 1}: Se tienen los siguientes riesgos:
+
+\begin{enumerate}
+  \item \asmreg{t1}: \asmlabel{I1} $\rightarrow$ \asmlabel{I3}
+  \item \asmreg{t2}: \asmlabel{I2} $\rightarrow$ \asmlabel{I3}
+  \item \asmreg{t2}: \asmlabel{I3} $\rightarrow$ \asmlabel{I4}
+  \item \asmreg{s0}: \asmlabel{I5} $\rightarrow$ \asmlabel{I6}
+\end{enumerate}
+
+\paragraph{Cuestión 2}: El cronograma se presenta en la tabla ~\ref{ex:m4-01:instr-01:chrono:noforward}.
+
+\begin{table}[htb]
+\input{int/ex/m4-01/instr1-noforward}
+\caption{Diagrama de tiempos del ejercicio~\ref{ex:m4-01:instr-01} sin envío adelantado.}
+\label{ex:m4-01:instr-01:chrono:noforward}
+\end{table}
+
+Para determinar el número de ciclos de una iteración se debe calcular cuantos ciclos
+pasan desde que comienza la primera instrucción de una iteración hasta que se comienza
+la primera instrucción de la siguiente iteración.
+
+Para todas las iteraciones menos la última esto será hasta que se capta la
+instrucción \asmlabel{I1}. Para la última iteración será hasta que se capta la
+instrucción \asmlabel{I7}.
+
+\[
+ciclos_{iteracion} = \frac{10 + 13 \cdot 99}{100} = \frac{1297}{100} = 12.97
+\]
+
+\paragraph{Cuestión 3}: El cronograma se presenta en la tabla ~\ref{ex:m4-01:instr-01:chrono:forward}.
+
+\begin{table}[htb]
+\input{int/ex/m4-01/instr1-forward}
+\caption{Diagrama de tiempos del ejercicio~\ref{ex:m4-01:instr-01} con envío adelantado.}
+\label{ex:m4-01:instr-01:chrono:forward}
+\end{table}
+
+\[
+ciclos_{iteracion} = \frac{7 + 9 \cdot 99}{100} = \frac{898}{100} = 8.98
+\]
+
+Por tanto el speedup debido al envío adelantado es:
+
+\[
+S = \frac{12.97}{8.98} = 1.44
+\]
+
+\paragraph{Cuestión 4}: En este caso se deben repetir los cronogramas de los apartados anteriores
+con las siguientes modificaciones:
+\begin{itemize}
+  \item Deben realizarse siempre dos ciclos para la etapa IF.
+  \item La etapa M de las intrucciones que no acceden a memoria será siempre de un ciclo.
+  \item La etapa M de las instrucciones de carga (como \asmreg{lw}) será siempre de dos ciclos.
+  \item La etapa M de las instrucciones de almacenamiento (como \asmreg{sw}) será siempre de tres ciclos.
+\end{itemize}

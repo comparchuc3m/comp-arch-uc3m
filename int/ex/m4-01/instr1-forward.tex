@@ -1,0 +1,65 @@
+\begin{tabular}{|l|l|*{12}{>{\footnotesize}c|}}
+\hline
+\# &
+\textbf{Instr.} &
+1 & 2 & 3 & 4 & 5 &
+6 & 7 & 8 & 9 & 10 &
+11 & 12 
+\\
+\hline
+\hline
+
+I1 &
+\asminst{lw} \asmreg{t1}, \asmlabel{1000}(\asmreg{s0}) &
+IF & ID & EX & M & WB 
+\\
+\hline
+
+I2 &
+\asminst{lw} \asmreg{t2}, \asmlabel{2000}(\asmreg{s0}) &
+& IF & ID & EX & M & WB 
+\\
+\hline
+
+I3 &
+\asminst{add} \asmreg{t2}, \asmreg{t1}, \asmreg{t2} &
+& 
+& IF & ID & -- & EX & M & WB
+\\
+\hline
+
+I4 &
+\asminst{sw} \asmreg{t2}, 3000(\asmreg{s0}) &
+& & &
+IF & -- & ID & EX & M & WB
+\\
+\hline
+
+I5 &
+\asminst{addi} \asmreg{s0}, \asmreg{s0}, 4 &
+& & & &
+& IF & ID & EX & M & WB
+\\
+\hline
+
+I6 &
+\asminst{bne} \asmreg{s0}, \asmreg{s1}, \asmlabel{loop} &
+& & & & &
+& IF & ID & -- & EX & M & WB 
+\\
+\hline
+
+I7 &
+\asmlabel{instr} &
+& & & & & &
+& IF & -- & ID/--
+\\
+\hline
+
+I1 &
+\asminst{lw} \asmreg{t1}, \asmlabel{1000}(\asmreg{s0}) &
+& & & & & & &
+& & IF
+\\
+\hline
+\end{tabular}

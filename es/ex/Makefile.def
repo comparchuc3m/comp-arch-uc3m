@@ -1,6 +1,8 @@
 ES_EX_DIR=es/ex
+INT_EX_DIR=int/ex
 
 include $(ES_EX_DIR)/m2-01/Makefile.def
 include $(ES_EX_DIR)/m2-02/Makefile.def
 include $(ES_EX_DIR)/m3-01/Makefile.def
 include $(ES_EX_DIR)/m3-02/Makefile.def
+include $(ES_EX_DIR)/m4-01/Makefile.def
