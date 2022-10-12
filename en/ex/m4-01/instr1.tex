@@ -1,0 +1,93 @@
+\begin{acexercise}\end{acexercise}
+\label{ex:m4-01:instr-01}
+
+Given the following code fragment:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-01/instr1-code-question.asm}
+
+Assume a 5 stages pipeline.
+For branch instructions both branch target address and branch outcome are known
+at the end of instruction decode stage. All branches are predicted to not taken.
+
+Answer the following questions:
+\begin{enumerate}
+  \item Identify the RAW hazards in the given code.
+
+  \item Provide a timing table (chronogram) when there is no forwarding hardware.
+        Determine how many cycles per iteration are required assuming that the loop
+        will be executed during 100 iterations.
+
+  \item Provide a timing table (chronogram) when there is forwarding hardware.
+        Determine how many cycles per iteration are required assuming that the loop
+        will be executed during 100 iterations.
+
+  \item Provide a timing table (chronogram) assuming now that all cache accesses
+        require 2 cycles for reading and 3 cycles for writing, and that instruction
+        cache read accesses always require two cycles. Evaluate the cases with and
+        without forwarding.
+\end{enumerate}
+
+
+\begin{acsolution}\end{acsolution}
+
+Numbering the instructions, we get:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-01/instr1-code-num.asm}
+
+\paragraph{Question 1}: 
+We find the following RAW hazards:
+
+\begin{enumerate}
+  \item \asmreg{t1}: \asmlabel{I1} $\rightarrow$ \asmlabel{I3}
+  \item \asmreg{t2}: \asmlabel{I2} $\rightarrow$ \asmlabel{I3}
+  \item \asmreg{t2}: \asmlabel{I3} $\rightarrow$ \asmlabel{I4}
+  \item \asmreg{s0}: \asmlabel{I5} $\rightarrow$ \asmlabel{I6}
+\end{enumerate}
+
+\paragraph{Question 2}: Chronogram is presented in table~\ref{ex:m4-01:instr-01:chrono:noforward}.
+
+\begin{table}[htb]
+\input{int/ex/m4-01/instr1-noforward}
+\caption{Time diagram for exercise~\ref{ex:m4-01:instr-01} without forwarding.}
+\label{ex:m4-01:instr-01:chrono:noforward}
+\end{table}
+
+To determine the number of cycles per interation, we compute the number of cycles
+from the first instruction in an iteration to the first instruction in next iteration.
+
+For all iterations except the las one, this will be untile instruction \asmlabel{I1}
+is fetched. For the last iteration, it will be until instruction \asmlabel{I7} 
+is fetched.
+
+\[
+cycles_{iteration} = \frac{10 + 13 \cdot 99}{100} = \frac{1297}{100} = 12.97
+\]
+
+\paragraph{Question 3}: 
+The chronogram is presented in table~\ref{ex:m4-01:instr-01:chrono:forward}.
+
+\begin{table}[htb]
+\input{int/ex/m4-01/instr1-forward}
+\caption{Time diagram for exercise~\ref{ex:m4-01:instr-01} with forwarding.}
+\label{ex:m4-01:instr-01:chrono:forward}
+\end{table}
+
+\[
+cycles_{iteration} = \frac{7 + 9 \cdot 99}{100} = \frac{898}{100} = 8.98
+\]
+
+Consequently, the speedup due to forwarding is:
+
+\[
+S = \frac{12.97}{8.98} = 1.44
+\]
+
+\paragraph{Question 4}: 
+In this case, time diagrams from previous sections must be repeated with the
+following modifications:
+\begin{itemize}
+  \item Two cycles must always be used for \textemph{IF}.
+  \item Stage \textemph{M} for instructions no performing memory accesses will take one cycle.
+  \item Stage \textemph{M} for load instructions (like \asminst{lw}) will take always two cycles.
+  \item State \textemph{M} for store instructions (like \asminst{sw}) will take always three cycles.
+\end{itemize}
