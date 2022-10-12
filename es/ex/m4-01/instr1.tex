@@ -3,14 +3,7 @@
 
 Dado el siguiente fragmento de código:
 
-\begin{lstlisting}[language=generalasm2]
-loop: 	lw t1, 1000(s0)
-	lw t2, 2000(s0)
-	add t2, t1, t2
-	sw t2, 3000(s0)
-	addi s0, s0, 4
-	bne s0, s1, loop
-\end{lstlisting}
+\lstinputlisting[language=generalasm2]{int/ex/m4-01/instr1-code-question.asm}
 
 Se considera la ejecución en un pipeline de 5 etapas.
 Para las instrucciones de bifurcación tanto la dirección de salto como el
@@ -30,7 +23,7 @@ Se pide:
         asumiendo que el bucle se ejecuta durante 100 iteraciones.
 
   \item Presente una temporización (cronograma) asumiendo ahora que todos los accesos 
-        a la caché de datos requieren dos ciclos para lecturas y 3 para escrituras,
+        a la caché de datos requieren 2 ciclos para lecturas y 3 para escrituras,
         y que las lecturas de la caché de instrucciones siempre requieren dos ciclos.
         Evalúe los casos con y sin envío adelantado.
 \end{enumerate}
@@ -40,16 +33,9 @@ Se pide:
 
 Si se numeran las instrucciones, se tiene:
 
-\begin{lstlisting}[language=generalasm2]
-loop: 	lw t1, 1000(s0)    // I1
-	lw t2, 2000(s0)    // I2
-	add t2, t1, t2     // I3
-	sw t2, 3000(s0)    // I4
-	addi s0, s0, 4     // I5
-	bne s0, s1, loop   // I6
-\end{lstlisting}
+\lstinputlisting[language=generalasm2]{int/ex/m4-01/instr1-code-num.asm}
 
-\paragraph{Cuestión 1}: Se tienen los siguientes riesgos:
+\paragraph{Cuestión 1}: Se identifican los siguientes riesgos RAW:
 
 \begin{enumerate}
   \item \asmreg{t1}: \asmlabel{I1} $\rightarrow$ \asmlabel{I3}
@@ -90,7 +76,7 @@ ciclos_{iteracion} = \frac{10 + 13 \cdot 99}{100} = \frac{1297}{100} = 12.97
 ciclos_{iteracion} = \frac{7 + 9 \cdot 99}{100} = \frac{898}{100} = 8.98
 \]
 
-Por tanto el speedup debido al envío adelantado es:
+Por tanto, el \emph{speedup} debido al envío adelantado es:
 
 \[
 S = \frac{12.97}{8.98} = 1.44
@@ -101,6 +87,6 @@ con las siguientes modificaciones:
 \begin{itemize}
   \item Deben realizarse siempre dos ciclos para la etapa IF.
   \item La etapa M de las intrucciones que no acceden a memoria será siempre de un ciclo.
-  \item La etapa M de las instrucciones de carga (como \asmreg{lw}) será siempre de dos ciclos.
-  \item La etapa M de las instrucciones de almacenamiento (como \asmreg{sw}) será siempre de tres ciclos.
+  \item La etapa M de las instrucciones de carga (como \asminst{lw}) será siempre de dos ciclos.
+  \item La etapa M de las instrucciones de almacenamiento (como \asminst{sw}) será siempre de tres ciclos.
 \end{itemize}
