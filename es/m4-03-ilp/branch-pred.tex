@@ -1,6 +1,6 @@
-\section{Técnicas avanzadas de predicción de salto}
+\section{Técnicas avanzadas de predicción de bifurcación}
 
-\begin{frame}[t]{Predicción de saltos}
+\begin{frame}[t]{Predicción de bifuración}
 \begin{itemize}
   \item Las \textgood{bifurcaciones} tienen un alto impacto sobre 
         el rendimiento de los programas.
@@ -14,7 +14,7 @@
           \item Tiempo de compilación.
           \item Comportamiento de cada bifurcación de forma aislada.
         \end{itemize}
-      \item Predicción avanzada de saltos:
+      \item Predicción avanzada de bifurcación:
         \begin{itemize}
           \item Predictores con correlación.
           \item Predictores por turnos.
@@ -23,13 +23,14 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}[t]{Predicción con correlación}
+\begin{frame}[t]{Dependencia entre bifurcaciones}
 
-\begin{columns}
+\begin{columns}[T]
 
-\begin{column}{.7\textwidth}
+\begin{column}{.4\textwidth}
 \begin{itemize}
-  \item Si la primera y la segunda bifurcación se toman, la tercer NO se toma.
+  \item Si la primera y la segunda bifurcación se toman, la tercera 
+        \textbad{NO} se toma.
 \end{itemize}
 \end{column}
 
@@ -38,18 +39,39 @@
 \lstinputlisting{int/m4-03-ilp/branch-pred-ex1.cpp}
 \end{block}
 \end{column}
+
+\pause
+\begin{column}{.3\textwidth}
+\begin{block}{Código generado}
+\lstinputlisting[language=generalasm2,basicstyle=\tiny]{int/m4-03-ilp/branch-pred-ex1.asm}\end{block}
+\end{column}
 \end{columns}
 
 \mode<presentation>{\vfill\pause}
 \begin{itemize}
+  \item La predicción aislada para cada salto no aporta ventajas.
+    \begin{itemize}
+      \item Es necesaria predecir dependiendo de lo ocurrido en otras bifurcaciones.
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[t]{Predicción con correlación}
+\begin{itemize}
   \item Se mantiene la \textmark{historia} de las últimas bifurcaciones 
         para seleccionar entre varios predictores.
+
+  \mode<presentation>{\vfill\pause}
   \item Un predictor $(m,n)$:
     \begin{itemize}
       \item Usa el resultado de las $m$ últimas bifurcaciones para seleccionar 
             entre $2^m$ predictores.
       \item Cada predictor de $n$ bits.
     \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
   \item Predictor $(1,2)$:
     \begin{itemize}
       \item Resultado de última bifurcación para elegir entre 2 predictores.

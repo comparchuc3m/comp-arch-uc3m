@@ -3,7 +3,7 @@ ES_M4_03_ILP_DIR=es/$(ES_M4_03_ILP_BASE)
 INT_M4_03_ILP_DIR=int/$(ES_M4_03_ILP_BASE)
 ES_M4_03_ILP_PARTS= \
 $(ES_M4_03_ILP_DIR)/*.tex \
-$(ES_M4_03_ILP_DIR)/*.cpp \
+$(INT_M4_03_ILP_DIR)/*.cpp \
 $(INT_M4_03_ILP_DIR)/*.tkz
 
 ES_M4_03_ILP_LECT_PDF=es-$(ES_M4_03_ILP_BASE)-lect.pdf

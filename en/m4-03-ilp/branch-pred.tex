@@ -22,33 +22,55 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}[t]{Correlated prediction}
+\begin{frame}[t]{Branch dependence}
 
-\begin{columns}
+\begin{columns}[T]
 
-\begin{column}{.7\textwidth}
+\begin{column}{.4\textwidth}
 \begin{itemize}
-  \item If first and second branch are taken, third is NOT-taken.
+  \item If first and second branch are taken, third is \textbad{NOT-taken}.
 \end{itemize}
 \end{column}
 
 \begin{column}{.3\textwidth}
-\begin{block}{example}
+\begin{block}{Example}
 \lstinputlisting{int/m4-03-ilp/branch-pred-ex1.cpp}
 \end{block}
 \end{column}
+
+\pause
+\begin{column}{.3\textwidth}
+\begin{block}{Example}
+\lstinputlisting[language=generalasm2,basicstyle=\tiny]{int/m4-03-ilp/branch-pred-ex1.asm}
+\end{block}
+\end{column}
+
 \end{columns}
 
 \mode<presentation>{\vfill\pause}
 \begin{itemize}
+  \item Isolated prediction per individual branch does not give advantages.
+    \begin{itemize}
+      \item Need to predict depending on past history.
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[t]{Correlated prediction}
+\begin{itemize}
   \item Maintains last branches \textmark{history} to select among several
         predictors.
+
+  \mode<presentation>{\vfill\pause}
   \item A $(m,n)$ predictor:
     \begin{itemize}
       \item Uses the result of $m$ last branches to select among
             $2^m$ predictors.
       \item Each predictor has $n$ bits.
     \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
   \item Predictor $(1,2)$:
     \begin{itemize}
       \item Result of last branch to select among 2 predictors.
