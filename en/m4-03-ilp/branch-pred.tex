@@ -98,11 +98,25 @@ S = 2^m \times n \times entries_{\text{address}}
 
 \begin{frame}[t]{Miss rate}
 \begin{itemize}
-  \item Correlated predictor has less misses that simple predictor with same size.
-  \mode<presentation>{\vfill}
-  \item Correlated predictor has less misses than simple predictor with unlimited number of entries.
-\end{itemize}
+  \item \textbad{Activity}
+    \begin{enumerate}
+      \item \emph{Read} \textmark{Section 3.3} -- 
+            Reducing Branch Costs With Advanced Branch Prediction.\\
+            \textbad{Only} subsection \emph{Correlating Branch Predictors}. 
+            (pg. 182--184 and Fig. 3.3).
+        \begin{itemize}
+          \item \bibhennessy
+        \end{itemize}
 
+      \mode<presentation>{\vfill}
+      \item \textgood{Key aspects}:
+        \begin{itemize}
+          \item How do correlated predictors compare to simple predictors with the same size?
+          \item How do correlated predictors to simple predictors with unlimited number of entries?
+          \item What are the properties of \textmark{gshare} predictor?
+        \end{itemize}
+    \end{enumerate}
+\end{itemize}
 \end{frame}
 
 
@@ -133,25 +147,16 @@ S = 2^m \times n \times entries_{\text{address}}
 
 \begin{frame}[t]{Intel Core i7}
 \begin{itemize}
-  \item Predictor with \textgood{two levels}:
-    \begin{itemize}
-      \item Smaller first level predictor.
-      \item Larger second level predictor as backup.
-    \end{itemize}
-
-  \mode<presentation>{\vfill}
-  \item Each predictor combines \textgood{3 predictors}:
-    \begin{itemize}
-      \item Simple 2-bits predictor.
-      \item Global history predictor.
-      \item Exit-loop predictor (iterations counter).
-    \end{itemize}
-
-  \mode<presentation>{\vfill}
-  \item Besides:
-    \begin{itemize}
-      \item \textmark{Indirect jumps} predictor.
-      \item \textmark{Return address} predictor.
-    \end{itemize}
+  \item \textbad{Activity}
+    \begin{enumerate}
+      \item \emph{Read} \textmark{Section 3.3} -- 
+            Reducing Branch Costs With Advanced Branch Prediction.\\
+            \textbad{Only} subsection 
+            \emph{The Evolution of Intel Core i7 Branch Predictor}
+            (pg. 190--191).
+        \begin{itemize}
+          \item \bibhennessy
+        \end{itemize}
+    \end{enumerate}
 \end{itemize}
 \end{frame}

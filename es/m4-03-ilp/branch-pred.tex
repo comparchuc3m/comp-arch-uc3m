@@ -100,10 +100,27 @@ T = 2^m \times n \times entradas_{\text{dirección}}
 
 \begin{frame}[t]{Tasa de fallos}
 \begin{itemize}
-  \item Predictor con correlación tiene menos fallos que predictor simple de mismo tamaño.
-  \item Predictor con correlación tiene menos fallos que predictor simple con número ilimitado de entradas.
-\end{itemize}
+  \item \textbad{Actividad}
+    \begin{enumerate}
+      \item \emph{Lee} \textmark{Section C.3} -- 
+            Reducing Branch Costs With Advanced Branch Prediction.\\
+            \textbad{Solamente} subsección \emph{Correlating Branch Predictors}
+            (pág. 182--184 y fig. 3.3).
+        \begin{itemize}
+          \item \bibhennessy
+        \end{itemize}
 
+      \mode<presentation>{\vfill}
+      \item \textgood{Aspectos clave}:
+        \begin{itemize}
+          \item ¿Cómo se diferencian los predictores correlados de los predictores simples
+                con el mismo tamaño?
+          \item ¿Cómo se diferencias los predictores correlados de los predictores simples
+                con número ilimitado de entradas?
+          \item ¿Cuáles son las propiedades de un predictor \textmark{gshare}?
+        \end{itemize}
+    \end{enumerate}
+\end{itemize}
 \end{frame}
 
 
@@ -131,28 +148,18 @@ T = 2^m \times n \times entradas_{\text{dirección}}
 \end{itemize}
 \end{frame}
 
-
 \begin{frame}[t]{Intel Core i7}
 \begin{itemize}
-  \item Predictor de \textgood{dos niveles}:
-    \begin{itemize}
-      \item Predictor de primer nivel más pequeño.
-      \item Segundo predictor más grande como \emph{backup}.
-    \end{itemize}
-
-  \mode<presentation>{\vfill}
-  \item Cada predictor combina \textgood{3 predictores}:
-    \begin{itemize}
-      \item Predictor simple de 2 bits.
-      \item Predictor de historia global.
-      \item Predictor de salida de bucle (contador de iteraciones).
-    \end{itemize}
-
-  \mode<presentation>{\vfill}
-  \item Además:
-    \begin{itemize}
-      \item Predicción de \textmark{saltos indirectos}.
-      \item Predicción de \textmark{direcciones de retorno}.
-    \end{itemize}
+  \item \textbad{Actividad}
+    \begin{enumerate}
+      \item \emph{Lee} \textmark{Section 3.3} -- 
+            Reducing Branch Costs With Advanced Branch Prediction.\\
+            \textbad{Solamente} subsecciónn 
+            \emph{The Evolution of Intel Core i7 Branch Predictor}
+            (pg. 190--191).
+        \begin{itemize}
+          \item \bibhennessy
+        \end{itemize}
+    \end{enumerate}
 \end{itemize}
 \end{frame}
