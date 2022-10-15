@@ -2,12 +2,16 @@
 
 \begin{frame}[t]{Dynamic scheduling}
 \begin{itemize}
-  \item \textgood{Idea}: hardware reorders instruction execution to decrease stalls.
+  \item Hardware \textgood{reorders} instructions execution to \emph{reduce} stalls
+        while keeping data flow and exceptions.
 
   \mode<presentation>{\vfill\pause}
   \item \textgood{Advantages}:
     \begin{itemize}
       \item Compiled code optimized for one pipeline runs efficiently in another pipeline.
+        \begin{itemize}
+          \item Compiler simplification.
+        \end{itemize}
       \item Correctly manages dependencies that are unknown at compile time.
       \item Allows to tolerate unpredictable delays (e.g. cache misses).
     \end{itemize}
@@ -17,6 +21,10 @@
     \begin{itemize}
       \item More complex hardware.
     \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Permits the \textmark{hardware speculation}.
+
 \end{itemize}
 \end{frame}
 

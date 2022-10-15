@@ -22,29 +22,6 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}[t]{Dynamic scheduling}
-\begin{itemize}
-  \item Hardware \textgood{reorders} instructions execution to \emph{reduce} stalls
-        while keeping data flow and exceptions.
-
-  \mode<presentation>{\vfill\pause}
-  \item Able to handle unknown cases at compile time:
-    \begin{itemize}
-      \item Cache misses/hits.
-    \end{itemize}
-
-  \mode<presentation>{\vfill}
-  \item Code less dependent on a concrete pipeline.
-    \begin{itemize}
-      \item Simplifies compiler.
-    \end{itemize}
-
-  \mode<presentation>{\vfill}
-  \item Permits the \textmark{hardware speculation}.
-
-\end{itemize}
-\end{frame}
-
 \begin{frame}[t]{Correlated prediction}
 
 \begin{columns}

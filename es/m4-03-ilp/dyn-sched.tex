@@ -1,15 +1,21 @@
 \section{Introducción a la planificación dinámica}
-
 \begin{frame}[t]{Planificación dinámica}
 \begin{itemize}
-  \item \textgood{Idea}: El hardware reordena la ejecución de instrucciones para reducir detenciones.
+  \item El hardware \textgood{reordena} la ejecución de instrucciones para
+        \textmark{reducir} detenciones manteniendo el comportamiento de flujo de
+        datos y excepciones.
 
   \mode<presentation>{\vfill\pause}
   \item \textgood{Ventajas}:
     \begin{itemize}
-      \item Código compilado optimizado para un pipeline ejecuta eficientemente en otro pipeline.
+      \item Código compilado optimizado para un pipeline ejecuta eficientemente 
+            en otro pipeline.
+        \begin{itemize}
+          \item Simplificación del compilador.
+        \end{itemize}
       \item Gestiona dependencias desconocidas en tiempo de compilación.
-      \item Permite tolerar retrasos no predecibles (ej. Fallo de caché).
+      \item Permite tolerar retrasos no predecibles en tiempo de compilación
+            (ej. Fallo de caché).
     \end{itemize}
 
   \mode<presentation>{\vfill\pause}
@@ -17,8 +23,13 @@
     \begin{itemize}
       \item Mayor complejidad del hardware.
     \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Permite la \textmark{especulación hardware}.
+
 \end{itemize}
 \end{frame}
+
 
 \begin{frame}[t]{Planificación dinámica}
 \begin{itemize}
