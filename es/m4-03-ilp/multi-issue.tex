@@ -25,7 +25,7 @@
         \begin{itemize}
           \item Varias instrucciones empaquetadas en paquete.
           \item Planificación estática.
-          \item Paralelismo explícito a nivel de instrucción por el compilador.
+          \item Detección de riesgos por el compilador.
         \end{itemize}
     \end{itemize}
 \end{itemize}
@@ -36,133 +36,38 @@
   \item Varios enfoques posibles con emisión múltiple.
     \begin{itemize}
       \item \textmark{Superescalar estático}.
+            Planificación estática con ejecución en orden.
+
+      \mode<presentation>{\vfill\pause}
       \item \textmark{Superescalar dinámico}.
+            Planificación dinámica con ejecución fuera de orden.
+
+      \mode<presentation>{\vfill\pause}
       \item \textmark{Superescalar especulativo}.
-      \item \textmark{VLIW/LIW}.
-      \item \textmark{EPIC}.
+            Planificación dinámica con ejecución fuera de orden y especulación.
+
+      \mode<presentation>{\vfill\pause}
+      \item \textmark{LIW/VLIW/EPIC}.
+            Planificación principalmente estática con apoyo del compilador.
     \end{itemize}
 \end{itemize}
 \end{frame}
 
-\begin{frame}[t]{Superescalar estático}
-\begin{itemize}
-  \item \textgood{Emisión}: Dinámica.
-  \item \textgood{Detección de riesgos}: Hardware.
-  \item \textgood{Planificación}: Estática.
-  \item \textgood{Propiedad discriminante}:
+\begin{frame}[t]{Procesadores superescalares}
+\begin{enumerate}
+  \item \textbad{Lee} la sección \textmark{3.7} --
+        Exploiting ILP using Multiple Issue and Static Scheduling
+        (pág. 218--222).
     \begin{itemize}
-      \item Ejecución en orden.
+      \item \bibhennessy
     \end{itemize}
-  
-  \mode<presentation>{\vfill}
-  \item \textmark{Ejemplos}:
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Aspectos clave}:
     \begin{itemize}
-      \item MIPS.
-      \item ARM Cortex-A7.
+      \item ¿Cuáles son las diferencias clave para cada categoría de procesador superescalar?
+      \item ¿Dónde se usan principalmente los procesadores VLIW?
+      \item ¿Qué diferencias hay entre VLIW y EPIC?
     \end{itemize}
-\end{itemize}
+\end{enumerate}
 \end{frame}
-
-\begin{frame}[t]{Superescalar dinámico}
-\begin{itemize}
-  \item \textgood{Emisión}: Dinámica.
-  \item \textgood{Detección de riesgos}: Hardware.
-  \item \textgood{Planificación}: Dinámica.
-  \item \textgood{Propiedad discriminante}:
-    \begin{itemize}
-      \item Ejecución fuera de orden sin especulación.
-    \end{itemize}
-  
-  \mode<presentation>{\vfill}
-  \item \textmark{Ejemplos}: Ninguno.
-\end{itemize}
-\end{frame}
-
-\begin{frame}[t]{Superescalar especulativo}
-\begin{itemize}
-  \item \textgood{Emisión}: Dinámica.
-  \item \textgood{Detección de riesgos}: Hardware.
-  \item \textgood{Planificación}: Dinámica con especulación.
-  \item \textgood{Propiedad discriminante}:
-    \begin{itemize}
-      \item Ejecución fuera de orden con especulación.
-    \end{itemize}
-  
-  \mode<presentation>{\vfill}
-  \item \textmark{Ejemplos}: 
-    \begin{itemize}
-      \item Intel Core i3, i5, i7. 
-      \item AMD Phenom. 
-      \item IBM Power 7
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}[t]{VLIW}
-\begin{itemize}
-  \item Empaquetado de varias operaciones en una instrucción.
-
-  \mode<presentation>{\vfill}
-  \item Instrucción ejemplo en ISA VLIW:
-    \begin{itemize}
-      \item Una instrucción entera o una bifurcación.
-      \item Dos operaciones de coma flotante independientes.
-      \item Dos referencias a memoria independientes.
-    \end{itemize}
-
-  \mode<presentation>{\vfill}
-  \item \textmark{IMPORTANTE}: El código debe presentar suficiente paralelismo.
-\end{itemize}
-\end{frame}
-
-\begin{frame}[t]{VLIW / LIW}
-\begin{itemize}
-  \item \textgood{Emisión}: Estática.
-  \item \textgood{Detección de riesgos}: Principalmente software.
-  \item \textgood{Planificación}: Estática.
-  \item \textgood{Propiedad discriminante}:
-    \begin{itemize}
-      \item Todos los riesgos determinados e indicados por el compilador.
-    \end{itemize}
-  
-  \mode<presentation>{\vfill}
-  \item \textmark{Ejemplos}: 
-    \begin{itemize}
-      \item DSPs (p. ej. TI C6x).
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}[t]{Problemas de VLIW}
-\begin{itemize}
-  \item \textbad{Desventajas} del modelo original \textmark{VLIW}:
-    \begin{itemize}
-      \item Complejidad de encontrar paralelismo estáticamente.
-      \item Tamaño del código generado.
-      \item No tienen hardware de detección de riesgos.
-      \item Problemas de compatibilidad binaria mayores que en superescalares.
-    \end{itemize}
-
-  \mode<presentation>{\vfill}
-  \item \textgood{EPIC} intenta resolver la mayoría de estos problemas.
-\end{itemize}
-\end{frame}
-
-\begin{frame}[t]{EPIC}
-\begin{itemize}
-  \item \textgood{Emisión}: Principalmente estática.
-  \item \textgood{Detección de riesgos}: Principalmente software.
-  \item \textgood{Planificación}: Sobre todo estática.
-  \item \textgood{Propiedad discriminante}:
-    \begin{itemize}
-      \item Todos los riesgos determinados e indicados por el compilador.
-    \end{itemize}
-  
-  \mode<presentation>{\vfill}
-  \item \textmark{Ejemplos}: 
-    \begin{itemize}
-      \item Itanium.
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
