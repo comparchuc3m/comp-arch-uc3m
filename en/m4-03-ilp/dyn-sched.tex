@@ -37,7 +37,7 @@
       \item May introduce WAR and WAW \textbad{hazards}.
     \end{itemize}
 
-  \mode<presentation>{\vfill}
+  \mode<presentation>{\vfill\pause}
   \item Separation of \textgood{ID} stage into  \textmark{two} different stages:
     \begin{itemize}
       \item \textmark{Issue}: 
@@ -46,12 +46,34 @@
             Waits until there is no data hazard and fetches operands.
     \end{itemize}
 
-  \mode<presentation>{\vfill}
+  \mode<presentation>{\vfill\pause}
   \item \textmark{Instruction Fetch} (\textgood{IF}):
     \begin{itemize}
       \item Fetches into instruction register or instruction queue.
     \end{itemize}
 \end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Ideas behind dyanmic scheduling}
+  \begin{enumerate}
+    \item \textbad{Read} \textmark{Section 3.4} --
+          Overcoming Data Hazards with Dynamic Scheduling.
+          \textbad{Only} subsection \emph{Dynamic Scheduling: The idea}
+          (pg. 193--195).
+      \begin{itemize}
+        \item \bibhennessy
+      \end{itemize}
+
+    \mode<presentation>{\vfill}
+    \item \textgood{Key aspects}:
+      \begin{itemize}
+        \item What is the difference between order of issue and order of execution?
+        \item Why does out-of-order execution introduced new data hazards? Which?
+        \item What are the interactions between out-of-order completion and hardware exceptions?
+        \item What is an imprecise exception?
+        \item What are the requirements derived from having multiple instructions in execution?
+      \end{itemize}
+  \end{enumerate}
 \end{frame}
 
 \begin{frame}[t]{Dynamic scheduling techniques}
@@ -62,7 +84,7 @@
       \item Examples: CDC 6600, ARM A8.
     \end{itemize}
 
-  \mode<presentation>{\vfill}
+  \mode<presentation>{\vfill\pause}
   \item \textmark{Tomasulo Algorithm}:
     \begin{itemize}
       \item Removes WAR and WAW dependencies with register renaming.

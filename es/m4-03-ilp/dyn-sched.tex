@@ -35,25 +35,48 @@
 \begin{itemize}
   \item \textgood{Efectos}:
     \begin{itemize}
-      \item Ejecución fuera de orden (OOO).
+      \item Ejecución fuera de orden (OoO).
       \item Finalización fuera de orden.
       \item Puede introducir \textbad{riesgos} WAR y WAW.
     \end{itemize}
 
-  \mode<presentation>{\vfill}
+  \mode<presentation>{\vfill\pause}
   \item Separación de etapa \textgood{ID} en \textmark{dos etapas}:
     \begin{itemize}
       \item \textmark{Emisión}: Decodifica la instrucción y comprueba riesgos estructurales.
       \item \textmark{Lectura de operandos}: Espera hasta que no haya riesgos de datos y lee operandos.
     \end{itemize}
 
-  \mode<presentation>{\vfill}
+  \mode<presentation>{\vfill\pause}
   \item \textmark{Etapa de captación} (\textgood{IF}):
     \begin{itemize}
       \item Capta en registro de instrucciones o cola de instrucciones.
     \end{itemize}
 \end{itemize}
 \end{frame}
+
+\begin{frame}[t]{Ideas de la planificación dinámica}
+  \begin{enumerate}
+    \item \textbad{Lee} la sección \textmark{3.4} --
+          Overcoming Data Hazards with Dynamic Scheduling.
+          \textbad{Solamente} la subsección \emph{Dynamic Scheduling: The idea}
+          (pág. 193--195).
+      \begin{itemize}
+        \item \bibhennessy
+      \end{itemize}
+
+    \mode<presentation>{\vfill}
+    \item \textgood{Aspectos clave}:
+      \begin{itemize}
+        \item ¿Cuál es la diferencia entre orden de emisión y orden de ejecución?
+        \item ¿Por qué la ejecución fuera de orden introduce nuevos riesgos de datos? ¿Cuáles?
+        \item ¿Cuáles son las interacciones entre finalización fuera de orden y las excepciones hardware?
+        \item ¿Qué es una excepción imprecisa?
+        \item ¿Cuáles son los requisitos derivados de tener múltiples instrucciones en ejecución?
+      \end{itemize}
+  \end{enumerate}
+\end{frame}
+
 
 \begin{frame}[t]{Técnicas de planificación dinámica}
 \begin{itemize}
