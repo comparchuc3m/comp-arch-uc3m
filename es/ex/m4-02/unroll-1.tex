@@ -1,0 +1,187 @@
+\begin{acexercise}\end{acexercise}
+
+Un procesador tipo RISC-V tiene un banco de registros de aritmética de 32 registros con los siguientes
+registros:
+
+\begin{itemize}
+  \item \asmreg{zero}: Siempre cero.
+  \item \asmreg{t0}--\asmreg{t6}: Registros temporales.
+  \item \asmreg{s0}--\asmreg{s11}: Registros guardados.
+  \item \asmreg{a0}--\asmreg{a1}: Argumentos / resultado.
+  \item \asmreg{a2}--\asmreg{a7}: Argumentos.
+  \item \asmreg{ra}: Dirección de retorno.
+  \item \asmreg{sp}: Puntero de pila.
+  \item \asmreg{gp}: Puntero global.
+  \item \asmreg{tp}: Puntero de hilo.
+\end{itemize}
+
+Así mismo, dispone de un banco de registros para valores en coma flotante. Todos los registros
+se pueden usar tanto para valores en simple como doble precisión.
+
+\begin{itemize}
+  \item \asmreg{ft0}--\asmreg{ft11}: Registros temporales.
+  \item \asmreg{fs0}--\asmreg{fs11}: Registros guardados.
+  \item \asmreg{fa0}--\asmreg{fa1}: Argumentos / resultado.
+  \item \asmreg{fa2}--\asmreg{fa7}: Argumentos.
+\end{itemize}
+
+Se asume que en este procesador en concreto se tienen las latencias entre instrucciones
+expresadas en la tabla~\ref{tab:unroll-1:latencies}. Asuma que no hay otras detenciones
+que las derivadas de las latencias por dependencia de datos y que el procesador puede
+captar una instrucción en cada ciclo de reloj.
+
+\begin{table}[htb]
+\begin{tabular}{|l|l|c|}
+\hline
+\textbf{Instrucción productora} &
+\textbf{Intrucción consumidora} &
+\textbf{Latencia}
+\\
+\hline
+
+Operación FP & Operación FP & 6\\
+\hline
+
+Operación FP & Escritura en memoria & 3\\
+\hline
+
+Lectura de memoria & Operación FP & 2\\
+\hline
+
+Lectura de memoria & Escritura en memoria & 0\\
+\hline
+
+\end{tabular}
+\caption{Latencias entre instrucciones}
+\label{tab:unroll-1:latencies}
+\end{table}
+
+En este procesador se desea ejecutar el siguiente fragmento de código.
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-1-ex.asm}
+
+En este programa los registros \asmreg{t1}, \asmreg{t2} y \asmreg{t3} contienen
+las direcciones de comienzo de tres arrays de valores numéricos en doble
+precisión. El registro \asmreg{t4} contiene el valor \asmreg{t1}\cppid{+4000}.
+
+Se pide responder a las siguientes cuestiones:
+
+\begin{enumerate}
+
+  \item Determine cuántos ciclos de reloj se requiren para ejecutar todas
+        las iteraciones del bucle.
+
+  \item Determine cuántos ciclos de reloj se requieren para ejecutar todas
+        las iteraciones del bucle, si se realiza planificación de las instrucciones
+        por el compilador. 
+        Determine el factor de aceleración con respecto a la versión inicial.
+
+  \item Determine cuántos ciclos de reloj se requieren para ejecutar todas
+        las iteraciones del bucle, si se aplica un desenrrollamiento para cada dos iteraciones
+        y se realiza planificación de las instrucciones por el compilador.
+        Determine el factor de aceleración con respecto a la versión inicial.
+
+  \item Determine cuántos ciclos de reloj se requieren para ejecutar todas
+        las iteraciones del bucle, si se aplica un desenrrollamiento para cada cuatro iteraciones
+        y se realiza planificación de las instrucciones por el compilador.
+        Determine el factor de aceleración con respecto a la versión inicial.
+
+\end{enumerate}
+
+\begin{acsolution}\end{acsolution}
+
+\paragraph{Ejecución inicial}. 
+El código suministrado recorre un espacio de \cppid{4000} bytes.
+Como en cada iteración se avanzan \cppid{8} posiciones, se tiene
+un total de $\frac{4000}{8} = 500$ iteraciones.
+
+Al ejecutar el código se identifican detenciones:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-1-stalls.asm}
+
+En total, se necesitan 13 ciclos por iteración.
+Por tanto el número total de ciclos será:
+
+\[
+ciclos = 13 \times 500 = 6500
+\]
+
+\paragraph{Planificación de instrucciones}.
+Para planificar las instrucciones del fragmento de código se busca aprovecar los
+huecos generados por las detenciones.
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-1-sched.asm}
+
+En total, se necesitan 10 ciclos por iteración.
+Por tanto, el número total de ciclos será:
+
+\[
+ciclos = 10 \times 500 = 5000
+\]
+\[
+S = \frac{6500}{5000} = 1.3
+\]
+
+\paragraph{Desenrollamiento con factor 2}.
+Partiendo del código no planificado se obtiene una primera
+version de bucle desenrrollado.
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-1-unrollx2.asm}
+
+En esta primera versión, se repite el cuerpo del bucle ajustado los
+desplazamientos y utilizando registros distintos del banco de registros,
+cuando procede.
+
+En total, se necesitan 22 ciclos por cada dos iteraciones originales.
+Teniendo en cuenta, que el número de iteraciones del nuevo bucle es ahora 250,
+el número total de cilos será:
+
+\[
+ciclos = 22 \times 250 = 5500
+\]
+
+Planificando estas instrucciones, se tiene:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-1-unrollx2-sched.asm}
+
+En total, se necesitan 12 ciclos para cado dos iteraciones originales.
+Teniendo en cuenta, que el número de iteraciones del nuevo bucle es 250.
+
+\[
+ciclos = 12 \times 250 = 3000
+\]
+\[
+S = \frac{6500}{3000} = 2.17
+\]
+
+\paragraph{Desenrollamiento con factor 4}.
+Partiendo del código no planificado se obtiene una primera
+version de bucle desenrrollado.
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-1-unrollx4.asm}
+
+En esta primera versión, se repite el cuerpo del bucle ajustado los
+desplazamientos y utilizando registros distintos del banco de registros,
+cuando procede.
+
+En total, se necesitan 40 ciclos por cada cuatro iteraciones originales.
+Teniendo en cuenta, que el número de iteraciones del nuevo bucle es ahora 125,
+el número total de cilos será:
+
+\[
+ciclos = 40 \times 125 = 5000
+\]
+
+Planificando estas instrucciones, se tiene:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-1-unrollx2-sched.asm}
+
+En total, se necesitan 20 ciclos para cado cuatro iteraciones originales.
+Teniendo en cuenta, que el número de iteraciones del nuevo bucle es 125.
+
+\[
+ciclos = 20 \times 125 = 2500
+\]
+\[
+S = \frac{6500}{2500} = 2.6
+\]
