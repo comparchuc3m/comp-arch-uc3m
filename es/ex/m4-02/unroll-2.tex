@@ -1,0 +1,163 @@
+\begin{acexercise}\end{acexercise}
+
+Un procesador tipo RISC-V tiene un banco de registros de aritmética entera de 32 registros.
+También dispone de otro banco de registros de coma flotante con otros 32 registros.
+
+Se supone que se dispone de suficiente ancho de banda de captación y
+decodificación como para que no se generen detenciones por esta causa y que se
+puede iniciar la ejecución de una instrucción en cada ciclo, excepto en los
+casos de detenciones debidas a dependencias de datos.
+
+La siguiente tabla muestra las latencias adicionales de algunas categorías de
+instrucciones, en caso de que haya dependencia de datos. Si no hay dependencia
+de datos la latencia adicional no es aplicable.
+
+\begin{table}[htb]
+\begin{tabular}{|l|r|}
+
+\hline
+\textbf{Instrucción} &
+\textbf{Latencia adicional}
+\\
+\hline
+
+\asminst{fld} & +2\\
+\hline
+
+\asminst{fsd} & +2\\
+\hline
+
+\asminst{fadd.d} & +4\\
+\hline
+
+\asminst{fmul.d} & +6\\
+\hline
+
+\asminst{addi} & +0\\
+\hline
+
+\asminst{subi} & +0\\
+\hline
+
+\asminst{bnez} & +1\\
+\hline
+
+\end{tabular}
+
+\end{table}
+
+La instrucción \asminst{bnez} usa bifurcación retrasada con una ranura de
+retraso (\emph{delay slot}).
+
+Se desea ejecutar en esta máquina el siguiente fragmento de código:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-2-ex.asm}
+
+Inicialmente se tienen los siguientes valores en los registros:
+
+\begin{itemize}
+  \item \asmreg{t1}: \asmlabel{0x00100000}.
+  \item \asmreg{t2}: \asmlabel{0x00140000}.
+  \item \asmreg{t3}: \asmlabel{0x00180000}.
+  \item \asmreg{t4}: \asmlabel{0x00000100}.
+\end{itemize}
+
+Responda a las siguientes cuestions:
+
+\begin{enumerate}
+
+\item ¿Cuántas iteraciones se ejecuta el bucle?
+
+\item Identifique las dependencias RAW que pueda encontrar en el código
+anterior.
+
+\item Identifique todas las detenciones que se producen en el fragmento de código.
+      Calcule el número de ciclos por iteración y el número total de ciclos
+      para todas las iteraciones.
+
+\item Modifique el bucle usando planificación de instrucciones.
+      Calcule el número de ciclos por iteración y el número total de ciclos
+      para todas las iteraciones.
+
+\item Aplique un desenrrollamiento de bucle procesando dos elementos por
+      iteración y usando además planificación de instrucciones.
+      Calcule el número de ciclos por iteración y el número total de ciclos
+      para todas las iteraciones.
+      Determine el factor de aceleración.
+
+\item Si se desease aplicar un factor de desenrrollamiento procesando cuatro
+      elementos por iteración ¿Qué compliación podría encontrarse?
+
+\end{enumerate}
+
+\begin{acsolution}\end{acsolution}
+
+\paragraph{Número de iteraciones}.
+El bucle se repite hasta que el registro \asmreg{t4} alcanza el valor
+\asmlabel{0}. Dicho registro se decrementa en una unidad en cada iteración.
+El valor inicial de dicho registro es $2^8 = 256$. Por tanto, se ejecutan
+un total de asmlabel{256} iteraciones.
+
+\paragraph{Dependencias RAW}.
+En el fragmento original se identifican las siguientes 
+dependencias:
+
+\begin{enumerate}
+
+\item \asmreg{ft0}: \asmlabel{I1} $\rightarrow$ \asmlabel{I3}.
+\item \asmreg{ft1}: \asmlabel{I2} $\rightarrow$ \asmlabel{I3}.
+\item \asmreg{ft2}: \asmlabel{I3} $\rightarrow$ \asmlabel{I4}.
+\item \asmreg{ft2}: \asmlabel{I4} $\rightarrow$ \asmlabel{I5}.
+\item \asmreg{t4}: \asmlabel{I8} $\rightarrow$ \asmlabel{I9}.
+\end{enumerate}
+
+\paragraph{Ejecución de fragmento original}.
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-2-stalls.asm}
+
+En total se requieren 22 ciclos por iteración.
+
+Para ejecutar 256 iteraciones se requieren:
+
+\[
+ciclos = 256 \times 22 = 5632
+\]
+
+\paragraph{Planificación de bucle}.
+Si se reordenan las instrucciones se tiene:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-2-sched.asm}
+
+En total se requieren 19 ciclos.
+
+Para ejecutar 256 iteraciones se requieren:
+
+\[
+ciclos = 256 \times 19 = 4864
+\]
+\[
+S = \frac{5632}{4864} = 1.16
+\]
+
+\paragraph{Desenrrollamiento de bucle}
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-2-unrollx2.asm}
+
+En total se requieren 21 ciclos por cada dos elementos
+
+Para ejecutar las 128 iteraciones que se necesitan (2 elementos por iteración)
+se requieren:
+
+\[
+ciclos = 128 \times 21 = 2688
+\]
+\[
+S = \frac{5632}{2688} = 2.1
+\]
+
+\paragraph{Desenrrollamiento de bucle con factor 4}
+
+En este caso se requerirían un mayor número de registros de coma flotante y
+no habría registros suficientes con los registros temporales (\asmreg{ft}),
+por lo que habría que guardar algún registro en la pila y posteriormente
+restaurarlo.
