@@ -1,0 +1,111 @@
+\begin{tabular}{|l|l|*{15}{>{\footnotesize}c|}}
+\hline
+\# &
+\textbf{Instr.} &
+1 & 2 & 3 & 4 & 5 &
+6 & 7 & 8 & 9 & 10 &
+11 & 12 & 13 & 14 & 15 
+\\
+\hline
+\hline
+
+I1 &
+lw t4, 0(t1)
+& IF & ID & EX & M & M & WB
+\\
+\hline
+
+I2 &
+lw t5, 0(t2)
+& 
+& IF & ID & EX & -- & M & M & WB
+\\
+\hline
+
+I3 &
+mul t5, t4, t5
+& &
+& IF & ID & -- & -- & -- & EX & M & WB
+\\
+\hline
+
+I4 &
+sw t5, 0(t3)
+& & &
+& IF & -- & -- & -- & ID & EX & M & M & M & WB
+\\
+\hline
+
+I5 &
+addi t1, t1, 4
+& & & & & & &
+& IF & ID & EX & -- & -- & M & WB
+\\
+\hline
+
+I6 &
+addi t2, t2, 4
+& & & & & & & &
+& IF & ID & -- & --& EX & M & WB
+\\
+\hline
+
+I7 &
+addi t3, t3, 4
+& & & & & & & & &
+& IF & -- & -- & ID & EX & M
+\\
+\hline
+
+I8 &
+bne t3, zero, loop
+& & & & & & & & & & & &
+& IF & ID & EX
+\\
+\hline
+
+I9 & 
+--
+& & & & & & & & & & & & &
+& IF & ID
+\\
+\hline
+
+\end{tabular}
+
+\vspace{1em}
+
+\begin{tabular}{|l|l|*{5}{>{\footnotesize}c|}}
+\hline
+\# &
+\textbf{Instr.} &
+16 & 17 & 18 & 19 & 20
+\\
+\hline
+\hline
+
+I7 &
+addi t3, t3, 4
+& WB
+\\
+\hline
+
+I8 &
+bne t3, zero, loop
+& M & WB
+\\
+\hline
+
+I9 &
+--
+& --
+\\
+\hline
+
+I1 &
+lw t4, 0(t1)
+& IF & ID & EX & M & WB
+\\
+\hline
+
+\end{tabular}

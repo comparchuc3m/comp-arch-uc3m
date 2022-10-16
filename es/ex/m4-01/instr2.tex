@@ -1,0 +1,78 @@
+\begin{acexercise}\end{acexercise}
+
+Dado el siguiente fragmento de código:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-01/instr2-question.asm}
+
+Se considera la ejecución en un pipeline de 5 etapas con hardarware envío adelantado
+(o \emph{forwarding}). Las lecturas a la caché de instrucciones requieren un ciclo de
+memoria. Las lecturas a la caché de datos requieren dos ciclos de memoria y las
+escrituras requieren 3 ciclos de memoria. Para las instrucciones de bifurcación
+tanto la dirección de salto como el sentido del salto se conocen al final de la
+etapa de ejecución y se predicen todos los saltos siempre a no tomados.
+
+Presente la temporización (cronograma) de la primera iteración completa (incluyendo la captación o fetch
+de la primera instrucción de la siguiente iteración).
+
+\begin{acsolution}\end{acsolution}
+
+En el código estudiado se identifican las siguientes dependencias RAW:
+\begin{itemize}
+  \item \asmreg{t4}: \asmlabel{I1} $\rightarrow$ \asmlabel{I3}.
+  \item \asmreg{t5}: \asmlabel{I2} $\rightarrow$ \asmlabel{I3}.
+  \item \asmreg{t5}: \asmlabel{I3} $\rightarrow$ \asmlabel{I4}.
+\end{itemize}
+
+La solución se presenta en la tabla~\ref{ex:m4-01:instr-02:chrono:forward}.
+
+Observaciones:
+
+\begin{enumerate}
+
+\item La etapa \textmark{M} ocupa de la instrucción \asmlabel{I1}
+      dos ciclos por tratarse de una lectura de memoria.
+
+\item Se produce una detención en la instrucción \asmlabel{I2}, 
+      por estar ocupada la etapa de memoria.
+
+\item La etapa \textmark{M} ocupa de la instrucción \asmlabel{I2}
+      dos ciclos por tratarse de una lectura de memoria.
+
+\item Se produce una detención en la instrucción \asmlabel{I3},
+      hasta que se dispone del nuevo valor de \asmreg{t5}.
+      El valor se pasa a la etapa \textmark{EX},
+      mediante envío adelantado una vez que se ha obtenido 
+      en la etapa \textmark{M} de la instrucción \asmlabel{I2}.
+
+\item Se produce una detención en la instrucción \asmlabel{I4},
+      por estar ocupada la etapa \textmark{ID}.
+
+\item La etapa \textmark{M} ocupa de la instrucción \asmlabel{I4}
+      tres ciclos por tratarse de una escritura de memoria.
+
+\item Se produce una detención en la instrucción \asmlabel{I5},
+      por estar ocupada la etapa \textmark{M}.
+
+\item Se produce una detención en la instrucción \asmlabel{I6},
+      por estar ocupada la etapa \textmark{EX}.
+
+\item Se produce una detención en la instrucción \asmlabel{I7},
+      por estar ocupada la etapa \textmark{ID}.
+
+\item La instrucción \asmlabel{I8} no puede empezar hasta el ciclo
+      13 por estar ocupada la etapa \textmark{IF}.
+
+\item Se capta la instrucción \asmlabel{I9} (siguiente instrucción)
+      en el ciclo 14, al predecirse el salto a no tomado.
+
+\item Al final del ciclo 15, se determina que el salto debe tomarse
+      por lo que se retira del \emph{pipeline} la instrucción \asmlabel{I9}
+      y se capta la instrucción \asmlabel{I1}.
+
+\end{enumerate}
+
+\begin{table}[htb]
+\input{int/ex/m4-01/instr2-forward}
+\caption{Diagrama de tiempos del ejercicio~\ref{ex:m4-01:instr-02} con envío adelantado.}
+\label{ex:m4-01:instr-02:chrono:forward}
+\end{table}
