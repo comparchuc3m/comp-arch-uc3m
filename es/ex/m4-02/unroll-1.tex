@@ -100,7 +100,7 @@ Al ejecutar el código se identifican detenciones:
 \lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-1-stalls.asm}
 
 En total, se necesitan 13 ciclos por iteración.
-Por tanto el número total de ciclos será:
+Por tanto, el número total de ciclos será:
 
 \[
 ciclos = 13 \times 500 = 6500
@@ -134,7 +134,7 @@ cuando procede.
 
 En total, se necesitan 22 ciclos por cada dos iteraciones originales.
 Teniendo en cuenta, que el número de iteraciones del nuevo bucle es ahora 250,
-el número total de cilos será:
+el número total de ciclos será:
 
 \[
 ciclos = 22 \times 250 = 5500
@@ -145,7 +145,8 @@ Planificando estas instrucciones, se tiene:
 \lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-1-unrollx2-sched.asm}
 
 En total, se necesitan 12 ciclos para cado dos iteraciones originales.
-Teniendo en cuenta, que el número de iteraciones del nuevo bucle es 250.
+Teniendo en cuenta, que el número de iteraciones del nuevo bucle es 250,
+el número total de ciclos será:
 
 \[
 ciclos = 12 \times 250 = 3000
@@ -166,7 +167,7 @@ cuando procede.
 
 En total, se necesitan 40 ciclos por cada cuatro iteraciones originales.
 Teniendo en cuenta, que el número de iteraciones del nuevo bucle es ahora 125,
-el número total de cilos será:
+el número total de ciclos será:
 
 \[
 ciclos = 40 \times 125 = 5000
@@ -177,7 +178,8 @@ Planificando estas instrucciones, se tiene:
 \lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-1-unrollx2-sched.asm}
 
 En total, se necesitan 20 ciclos para cado cuatro iteraciones originales.
-Teniendo en cuenta, que el número de iteraciones del nuevo bucle es 125.
+Teniendo en cuenta, que el número de iteraciones del nuevo bucle es 125,
+el número total de ciclos será.
 
 \[
 ciclos = 20 \times 125 = 2500
