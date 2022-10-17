@@ -1,0 +1,182 @@
+\begin{acexercise}\end{acexercise}
+
+A RISC-V like processor has an integer register file with the following 32 registers.
+
+\begin{itemize}
+  \item \asmreg{zero}: Always zero.
+  \item \asmreg{t0}--\asmreg{t6}: Temporal registers.
+  \item \asmreg{s0}--\asmreg{s11}: Saved registers.
+  \item \asmreg{a0}--\asmreg{a1}: Arguments / result.
+  \item \asmreg{a2}--\asmreg{a7}: Arguments.
+  \item \asmreg{ra}: Regurn address.
+  \item \asmreg{sp}: Stack pointer.
+  \item \asmreg{gp}: Global pointer.
+  \item \asmreg{tp}: Thread pointer.
+\end{itemize}
+
+Additionally, it has a floating point register file.
+All registers can be used both as single or double precission.
+
+\begin{itemize}
+  \item \asmreg{ft0}--\asmreg{ft11}: Temporal registers.
+  \item \asmreg{fs0}--\asmreg{fs11}: Saved registers.
+  \item \asmreg{fa0}--\asmreg{fa1}: Arguments / result.
+  \item \asmreg{fa2}--\asmreg{fa7}: Arguments.
+\end{itemize}
+
+Assume that in this processor the latencies between instructions are the ones
+give in Table~\ref{tab:unroll-1:latencies}. 
+There are no other stalls that those derived from data dependencies latencies
+and that processor may fetch one instruction in every clock cycle.
+
+\begin{table}[htb]
+\begin{tabular}{|l|l|c|}
+\hline
+\textbf{Producer instruction} &
+\textbf{Consumer instruction} &
+\textbf{Latency}
+\\
+\hline
+
+FP Operation & FP Operation & 6\\
+\hline
+
+FP Operation & Memory write & 3\\
+\hline
+
+Memory read & FP Operation & 2\\
+\hline
+
+Memory read & Memory write & 0\\
+\hline
+
+\end{tabular}
+\caption{Latencies between instructions}
+\label{tab:unroll-1:latencies}
+\end{table}
+
+In this processor, the following code fragment is executed.
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-1-ex.asm}
+
+In this fragment registers \asmreg{t1}, \asmreg{t2}, and \asmreg{t3} 
+contain start addresses for three arrays of double precission vaues.
+Register \asmreg{t4} contains value \asmreg{t1}\cppid{+4000}.
+
+Answer the following questions:
+
+\begin{enumerate}
+
+  \item Determine how many clock cycles are required to execute
+        all loop iterations.
+
+  \item Determine how many clock cycles are required to execute all loop iterations,
+        when the compiler performs instruction scheduling.
+        Calculate the speedup over the initial version.
+
+  \item Determine how many clock cycles are required to execute all loop iterations,
+        when the compiler performs loop unrolling for every two iterations and instruction scheduling.
+        Calculate the speedup over the initial version.
+
+  \item Determine how many clock cycles are required to execute all loop iterations,
+        when the compiler performs loop unrolling for every four iterations and instruction scheduling.
+        Calculate the speedup over the initial version.
+
+\end{enumerate}
+
+\begin{acsolution}\end{acsolution}
+
+\paragraph{Initial execution}. 
+The give code traverses a \cppid{4000} bytes space.
+As each iteration advances \cppid{8} positions, 
+a total of $\frac{4000}{8} = 500$ iterations are executed.
+
+Running the code, the following stalls are identfied:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-1-stalls.asm}
+
+In total, 13 cycles per iteration are needed.
+Thus, the total number of cycles is:
+
+\[
+cycles = 13 \times 500 = 6500
+\]
+
+\paragraph{Instruction scheduling}.
+To schedule instructions, the compiler tries to make use of the unused stall cycles.
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-1-sched.asm}
+
+In total, 10 cycles per iteration are needed.
+Thus, the total number of cycles is:
+
+\[
+cycles = 10 \times 500 = 5000
+\]
+\[
+S = \frac{6500}{5000} = 1.3
+\]
+
+\paragraph{Loop unrolling with factor 2}.
+Starting from the non-scheduled fragment, a first version
+of the unrolled loop is obtained.
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-1-unrollx2.asm}
+
+In this first version, the loop body is repeated adjusting offsets
+and making use of different registers from the register file when approppriate.
+
+In total, 22 cycles per every two original iterations are needed.
+Considering that the number of iterations in the new loop is now 250,
+the total number of cycles is:
+
+\[
+cycles = 22 \times 250 = 5500
+\]
+
+Scheduling those instructions, we get:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-1-unrollx2-sched.asm}
+
+In total, 12 cycles per every two original iterations are needed.
+Considering that the number of iterations in the new loop is 250,
+the total number of cycles is:
+
+\[
+cycles = 12 \times 250 = 3000
+\]
+\[
+S = \frac{6500}{3000} = 2.17
+\]
+
+\paragraph{Loop unrolling with factor 4}.
+Starting from the non-scheduled fragment, a first version
+of the unrolled loop is obtained.
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-1-unrollx4.asm}
+
+In this first version, the loop body is repeated adjusting offsets
+and making use of different registers from the register file when approppriate.
+
+In total, 40 cycles per every four original iterations are needed.
+Considering that the number of iterations in the new loop is now 125,
+the total number of cycles is:
+
+\[
+cycles = 40 \times 125 = 5000
+\]
+
+Scheduling those instructions, we get:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-1-unrollx2-sched.asm}
+
+In total, 20 cycles per every four original iterations are needed.
+Considering that the number of iterations in the new loop is 125,
+the total number of cycles is:
+
+\[
+cycles = 20 \times 125 = 2500
+\]
+\[
+S = \frac{6500}{2500} = 2.6
+\]

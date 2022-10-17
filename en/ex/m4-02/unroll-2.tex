@@ -1,0 +1,158 @@
+\begin{acexercise}\end{acexercise}
+
+A RISC-V like processor has an integer register file with 32 registers.
+It also has another register file with 32 floating point registers.
+
+Assume that there is enough fetch and decode bandwidth so that no stalls are generated
+due to this. A new instruction execution can be initiated in each cycle,
+except whe there are stalls due to data dependency.
+
+The following table shows the additional latencies for some instructions categories,
+when there is a data dependency. If there is no dependency this additional latency
+is not applicable.
+
+\begin{table}[htb]
+\begin{tabular}{|l|r|}
+
+\hline
+\textbf{Instruction} &
+\textbf{Additional latency}
+\\
+\hline
+
+\asminst{fld} & +2\\
+\hline
+
+\asminst{fsd} & +2\\
+\hline
+
+\asminst{fadd.d} & +4\\
+\hline
+
+\asminst{fmul.d} & +6\\
+\hline
+
+\asminst{addi} & +0\\
+\hline
+
+\asminst{subi} & +0\\
+\hline
+
+\asminst{bnez} & +1\\
+\hline
+
+\end{tabular}
+
+\end{table}
+
+Instruction \asminst{bnez} uses delayed branch with one delay slot.
+
+The following code fragment will be executed in this machine:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-2-ex.asm}
+
+Initially registers have the following values:
+
+\begin{itemize}
+  \item \asmreg{t1}: \asmlabel{0x00100000}.
+  \item \asmreg{t2}: \asmlabel{0x00140000}.
+  \item \asmreg{t3}: \asmlabel{0x00180000}.
+  \item \asmreg{t4}: \asmlabel{0x00000100}.
+\end{itemize}
+
+Answer the following questions:
+
+\begin{enumerate}
+
+\item How many iterations does the loop execute?
+
+\item Identify the RAW dependencies in the code.
+
+\item Identify all stalls happening when the code is executed.
+      Compute the number of cycles per iteration and the total number of cycles
+      for all iterations.
+
+\item Modify the loop using instruction scheduling.
+      Compute the number of cycles per iteration and the total number of cycles
+      for all iterations.
+
+\item Apply loop unrolling processing two elements per iteration and using
+      instruction scheduling.
+      Compute the number of cycles per iteration and the total number of cycles
+      for all iterations.
+      Determine the speedup.
+
+\item If we wanted to apply a loop unrolling factor of four elements per iteration,
+      what complication migh we find?
+
+\end{enumerate}
+
+\begin{acsolution}\end{acsolution}
+
+\paragraph{Number of iterations}.
+The loop is repeated until register \asmreg{t4} reaches value \asmlabel{0}. 
+That register is decremented one unit per iteration.
+Initial value for that register is $2^8 = 256$. 
+Consequently, \asmlabel{256} iterations are executed.
+
+\paragraph{RAW Dependencies}.
+The following dependencies are identified in the original fragment:
+
+\begin{enumerate}
+
+\item \asmreg{ft0}: \asmlabel{I1} $\rightarrow$ \asmlabel{I3}.
+\item \asmreg{ft1}: \asmlabel{I2} $\rightarrow$ \asmlabel{I3}.
+\item \asmreg{ft2}: \asmlabel{I3} $\rightarrow$ \asmlabel{I4}.
+\item \asmreg{ft2}: \asmlabel{I4} $\rightarrow$ \asmlabel{I5}.
+\item \asmreg{t4}: \asmlabel{I8} $\rightarrow$ \asmlabel{I9}.
+\end{enumerate}
+
+\paragraph{Original fragment execution}.
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-2-stalls.asm}
+
+In total, 22 cycles per iteration are required.
+
+To execute 256 iterations, we require:
+
+\[
+cycles = 256 \times 22 = 5632
+\]
+
+\paragraph{Loop scheduling}.
+Reordering instructions we get:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-2-sched.asm}
+
+In total, 19 cycles are required.
+
+To execute 256 iterations, we require:
+
+\[
+cycles = 256 \times 19 = 4864
+\]
+\[
+S = \frac{5632}{4864} = 1.16
+\]
+
+\paragraph{Loop unrolling}
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-2-unrollx2.asm}
+
+In total, 21 cycles are required for every two elements.
+
+To execute the 128 needed iterations (2 elements per iteration) we require:
+
+\[
+cycles = 128 \times 21 = 2688
+\]
+\[
+S = \frac{5632}{2688} = 2.1
+\]
+
+\paragraph{Loop unrolling with factor 4}
+
+In this case a higher number of floating point registers are needed and
+temporal registers (\asmreg{ft}) would not be enough.
+Thus, some other register would have to be saved on the stack before using.
+Later, that register would have to be restored.
