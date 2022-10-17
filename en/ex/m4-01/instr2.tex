@@ -1,0 +1,74 @@
+\begin{acexercise}\end{acexercise}
+\label{ex:m4-01:instr-02}
+
+Given the following code fragment:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-01/instr2-question.asm}
+
+A processor with a 5-stage pipeline is considered where hardware implements forwarding.
+Instruction cache reads require one cycle. Data cache reads require two cycles and
+writes require 3 cycles. For branch instructions both branch target address and
+branch outcome are known at the end of execution stage and all branches are
+always predicted to not taken.
+
+Provide a time diagram (chronogram) for the first complete iteration
+(including the fetch of the first instruction for next iteration).
+
+\begin{acsolution}\end{acsolution}
+
+In the given code the following RAW dependencies are identified:
+\input{int/ex/m4-01/instr2-rawdep}
+
+Solution is presented in table~\ref{ex:m4-01:instr-02:chrono:forward}.
+
+Observations:
+
+\begin{enumerate}
+
+\item Stage \textmark{M} from instruction \asmlabel{I1}
+      uses two cycles as it is a memory read.
+
+\item A stall in instruction \asmlabel{I2} happens,
+      as stage \textmark{M} is busy. 
+
+\item Stage \textmark{M} from instruction \asmlabel{I2}
+      uses two cycles as it is a memory read.
+
+\item A stall in instruction \asmlabel{I3} happens,
+      until the new value for \asmreg{t5} is available.
+      The value is passed to stage \textmark{EX},
+      through forwarding once it was obtained in stage \textmark{M} 
+      from instruction \asmlabel{I2}.
+
+\item A stall in instruction \asmlabel{I4} happens,
+      as stage \textmark{ID} is busy. 
+
+\item Stage \textmark{M} from instruction \asmlabel{I4}
+      uses three cycles as it is a memory write.
+
+\item A stall in instruction \asmlabel{I5} happens,
+      as stage \textmark{M} is busy. 
+
+\item A stall in instruction \asmlabel{I6} happens,
+      as stage \textmark{EX} is busy. 
+
+\item A stall in instruction \asmlabel{I7} happens,
+      as stage \textmark{ID} is busy. 
+
+\item A stall in instruction \asmlabel{I8} happens,
+      as stage \textmark{IF} is busy. 
+
+\item Instruction \asmlabel{I9} (next instruction) is fetched
+      in cycle 14, as branch is predicted to not taken.
+
+\item Branch is determined to be taken at the end of cycle 15.
+      Consequently, instruction \asmlabel{I9} is retired from the pipeline
+      and instruction \asmlabel{I1} is fetched.
+
+\end{enumerate}
+
+\begin{table}[htb]
+\input{int/ex/m4-01/instr2-forward}
+\caption{Time diagram for exercise~\ref{ex:m4-01:instr-02} wit forwarding.}
+\label{ex:m4-01:instr-02:chrono:forward}
+\end{table}
