@@ -1,4 +1,5 @@
 \begin{acexercise}\end{acexercise}
+\label{ex:m4-01:instr-02}
 
 Dado el siguiente fragmento de código:
 
@@ -17,11 +18,7 @@ de la primera instrucción de la siguiente iteración).
 \begin{acsolution}\end{acsolution}
 
 En el código estudiado se identifican las siguientes dependencias RAW:
-\begin{itemize}
-  \item \asmreg{t4}: \asmlabel{I1} $\rightarrow$ \asmlabel{I3}.
-  \item \asmreg{t5}: \asmlabel{I2} $\rightarrow$ \asmlabel{I3}.
-  \item \asmreg{t5}: \asmlabel{I3} $\rightarrow$ \asmlabel{I4}.
-\end{itemize}
+\input{int/ex/m4-01/instr2-rawdep}
 
 La solución se presenta en la tabla~\ref{ex:m4-01:instr-02:chrono:forward}.
 
@@ -29,14 +26,14 @@ Observaciones:
 
 \begin{enumerate}
 
-\item La etapa \textmark{M} ocupa de la instrucción \asmlabel{I1}
-      dos ciclos por tratarse de una lectura de memoria.
+\item La etapa \textmark{M} de la instrucción \asmlabel{I1}
+      ocupa dos ciclos por tratarse de una lectura de memoria.
 
 \item Se produce una detención en la instrucción \asmlabel{I2}, 
-      por estar ocupada la etapa de memoria.
+      por estar ocupada la etapa \textmark{M}.
 
-\item La etapa \textmark{M} ocupa de la instrucción \asmlabel{I2}
-      dos ciclos por tratarse de una lectura de memoria.
+\item La etapa \textmark{M} de la instrucción \asmlabel{I2}
+      ocupa dos ciclos por tratarse de una lectura de memoria.
 
 \item Se produce una detención en la instrucción \asmlabel{I3},
       hasta que se dispone del nuevo valor de \asmreg{t5}.
