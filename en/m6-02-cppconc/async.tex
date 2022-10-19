@@ -1,0 +1,50 @@
+\subsection{Asynchronous execution}
+
+\begin{frame}[t]{Asynchronous execution and futures}
+\begin{itemize}
+  \item An asynchronous task allows simple launching of a task execution:
+    \begin{itemize}
+      \item In a different thread of execution.
+      \item As a deferred task.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill\pause}
+  \item A \textgood{future} 
+        is an object allowing that a thread can return a value
+        to the code section that invoked it.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{block}{Asynchronous tasks invocation}
+\begin{lstlisting}
+#include <future>
+#include <iostream>
+
+int main() {
+  std::future<int> r = std::async(task, 1, 10);
+  other_task();
+  std::cout << "Result= " << r.get() << "\n";
+  return 0;
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t]{Using futures}
+\begin{itemize}
+  \item \textgood{General idea}:
+    \begin{itemize}
+      \item When a thread needs to pass a value to another thread it sets the value into a \textgood{promise}.
+      \item Implementation takes care that the value is available in the corresponding \textgood{future}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Access to the \textgood{future} through \cppid{f.get()}:
+    \begin{itemize}
+      \item If a value has been assigned $\rightarrow$ it gets that value.
+      \item In other case $\rightarrow$ calling thread blocks until it is available.
+      \item Allows to transparently transfer exceptions among threads.
+    \end{itemize}
+\end{itemize}
+\end{frame}

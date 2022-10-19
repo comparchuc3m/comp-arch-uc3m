@@ -1,0 +1,497 @@
+\section{La clase \texttt{thread}}
+
+\begin{frame}{La clase \texttt{thread}}
+\begin{itemize}
+  \item La abstracción de hilo representada mediante clase \cppid{thread}.
+  \item Correspondencia uno-a-uno con los hilos del sistema operativo.
+  \item Todos los hilos de una aplicación se ejecutan en el mismo espacio de direcciones.
+  \item Cada hilo tiene su propia pila.
+  \item Peligros:
+    \begin{itemize}
+      \item Pasar un puntero o una referencia no constante a otro hilo.
+      \item Paso de referenica a través de captura en expresiones lambda.
+    \end{itemize}
+  \item \cppid{thread} representa un enlace a un hilo del sistema.
+    \begin{itemize}
+      \item No se pueden copiar.
+      \item Si se pueden mover.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Construcción de hilos}
+\begin{itemize}
+  \item Un hilo se construye con una función y los argumentos que se debe pasar a la función.
+    \begin{itemize}
+      \item Plantilla con número variable de argumentos.
+      \item Seguro en tipos.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+void f();
+void g(int, double);
+
+std::thread t1{f}; // OK
+std::thread t2{f, 1}; // Error: demasiados argumentos.
+
+std::thread t3{g, 1, 0.5}; // OK
+std::thread t4{g}; // Error: faltan argumentos.
+std::thread t5{g, 1, "Hola"}; // Error: tipos incorrectos
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Construcción y referencias}
+\begin{itemize}
+  \item El constructor de \cppid{thread} es una plantilla con argumentos variables.
+\begin{lstlisting}
+template <class F, class ...Args> 
+explicit thread(F&& f, Args&&... args);
+\end{lstlisting}
+  \item El paso de parámetros a un hilo es por valor.
+  \item Para forzar el paso de parámetros por referencia:
+    \begin{itemize}
+      \item Usar una función de ayuda para \cppid{reference\_wrapper}.
+      \item Usar lambdas y capturas por referencia.
+    \end{itemize}
+\end{itemize}
+\begin{block}{}
+\begin{lstlisting}[basicstyle=\tiny]
+void f(registro & r);
+
+void g(registro & s) {
+  std::thread t1{f,s}; // Error si f toma parámetro por referencia
+  std::thread t2{f, std::ref(s)}; // OK. Referencia a s
+  std::thread t3{[&] { f(s); }}; // Referencia a s
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Construcción en dos etapas}
+\begin{itemize}
+  \item La construcción incluye el inicio de la ejecución del hilo.
+    \begin{itemize}
+      \item No hay operación separada para \emph{iniciar} la ejecución.
+    \end{itemize}
+\end{itemize}
+\begin{columns}
+
+\begin{column}{.5\textwidth}
+\begin{block}{Productor/Consumidor}
+\begin{lstlisting}
+struct productor {
+  productor(cola<peticiones> & c);
+  void operator()();
+  // ...
+};
+
+struct consumidor {
+  consumidor(cola<peticiones> & c);
+  void operator()();
+  // ...
+};
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.5\textwidth}
+\begin{block}{Etapas}
+\begin{lstlisting}
+void f() {
+  // Etapa 1: Construcción
+  cola<peticiones> c;
+  productor prod{c};
+  consumidor cons{c};
+
+  // Etapa 2: Arranque
+  std::thread tp{prod};
+  std::thread tc{cons};
+
+  //...
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Hilo vacío}
+\begin{itemize}
+  \item El constructor por defecto crea un hilo sin tarea de ejecución asociada.
+\begin{lstlisting}
+thread() noexcept;
+\end{lstlisting}
+  \item Útil en combinación con el constructor de movimiento.
+\begin{lstlisting}
+thread(thread &&) noexcept;
+\end{lstlisting}
+  \item Se puede mover una tarea de ejecución de un hilo a otro.
+    \begin{itemize}
+      \item El hilo original se queda sin tarea de ejecución asociada.
+    \end{itemize}
+\begin{lstlisting}
+std::thread crea_tarea();
+std::thread t1 = crea_tarea();
+std::thread t2 = std::move(t1); // t1 está vacío ahora
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Identidad de un hilo}
+\begin{itemize}
+  \item Cada hilo tiene un identificador único.
+    \begin{itemize}
+      \item Tipo \cppid{thread::id}.
+      \item Si el \cppid{thread} no está asociado con un hilo \cppid{get\_id()} devuelve \cppid{id\{\}}.
+      \item El identificador del hilo actual se obtiene con \cppid{this\_thread::get\_id()}.
+    \end{itemize}
+  \vfill
+  \item \cppid{t.get\_id()} devuelve \cppid{id\{\}} si:
+    \begin{itemize}
+      \item No se le ha asignado una tarea de ejecución.
+      \item Ha finalizado.
+      \item La tarea se ha movido a otro \cppid{thread}.
+      \item Se desasociado (\cppid{detach()}).
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Operaciones sobre \texttt{thread::id}}
+\begin{itemize}
+  \item Es un tipo dependiente de la implementación, pero debe permitir:
+    \begin{itemize}
+      \item Copia.
+      \item Operadores de comparación (\cppid{==}, \cppid{<}, ...).
+      \item Salida mediante el operador \cppid{<<}.
+      \item Transformación \emph{hash} mediante la especialización \cppid{hash<thread::id>}.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+void imprime_id(std::thread & t) {
+  if (t.get_id() == std::thread::id{}) 
+    cout << "Hilo no válido" << endl;
+  else {
+    cout << "Hilo actual: " << std::this_thread::get_id() << "\n";
+    cout << "Hilo recibido: " << t.get_id() << "\n";
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Unión de tareas}
+\begin{itemize}
+  \item Cuando un hilo desea esperar a que otro hilo finalice puede usar la operación \cppid{join()}.
+    \begin{itemize}
+      \item \cppid{t.join()} $\rightarrow$ espera a que t haya finalizado.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+void f() {
+  std::vector<std::thread> vt;
+  for (int i=0; i< 8; ++i) {
+    vt.push_back(std::thread(f,i));
+  }
+
+  for (auto & t : vt) { // Espera a que todos los hilos terminen
+    t.join();
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Tareas periódicas}
+\begin{block}{Idea inicial}
+\begin{lstlisting}
+void actualiza_barra() {
+  while (!tarea_terminada()) {
+    using namespace std::literals;
+    std::this_thread::sleep_for(1s)
+    update_progress();
+  }
+}
+
+void f() {
+  std::thread t{actualiza_barra};
+  t.join();
+}
+\end{lstlisting}
+\end{block}
+\begin{itemize}
+  \item \textbad{¿Problemas?}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{¿Qué pasa si se olvida \texttt{join}?}
+\begin{itemize}
+  \item Si se sale del alcance donde se define el hilo, se invoca al destructor.
+  \item \alert{Problema}: Se podría perder el vínculo con un hilo del sistema que se seguiría
+        ejecutando y al que no se podría acceder.
+    \begin{itemize}
+      \item Si no se ha hecho \cppid{join()} el destructor llama a \cppid{terminate()}.
+    \end{itemize}
+\end{itemize}
+
+\begin{columns}
+
+\begin{column}{.5\textwidth}
+\begin{block}{Ejemplo}
+\begin{lstlisting}[basicstyle=\tiny]
+void actualiza() {
+  for (;;) {
+    using namespace std::literals;
+    muestra_reloj(steady_clock::now());
+    std::this_thread::sleep_for(1s);
+  }
+}
+
+void f() {
+  std::thread t{actualiza};
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.5\textwidth}
+\begin{itemize}
+  \item Se ejecuta \cppid{terminate()} al abandonar \cppid{f()}.
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Destrucción}
+\begin{itemize}
+  \item Objetivo: Evitar que un hilo sobreviva a su objeto \cppid{thread}.
+  \item Solución: Si un \cppid{thread} es \emph{unible} su destructor invoca \cppid{terminate()}.
+    \begin{itemize}
+      \item Un \cppid{thread} es unible si está asociado a un hilo del sistema.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+void comprueba() {
+  for (;;) {
+    using namespace std::literals;
+    comprueba_estado();
+    std::this_thread::sleep_for(10s);
+  }
+}
+
+void f() {
+  std::thread t{comprueba};
+} // Destrucción sin join() -> Invoca a terminate()
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Problemas con la destrucción}
+\begin{columns}
+
+\begin{column}{.65\textwidth}
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+void f();
+void g();
+
+void ejemplo() {
+  std::thread t1{f}; // Hilo que ejecuta la tarea f
+  std::thread t2; // Hilo vacío
+
+  if (modo == modo1) {
+    std::thread tg {g}; 
+    // ...
+    t2 = std::move(tg); // tg vacía, t2 asociada a g()
+  }
+
+  std::vector<int> v{10000}; // Posibles excepciones
+  t1.join();
+  t2.join();
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.35\textwidth}
+\begin{itemize}
+  \item ¿Qué ocurre si el constructor de \cppid{v} lanza una excepción.
+  \vspace{2em}
+  \item ¿Qué ocurre si se llega al final con \cppid{modo==modo1}?
+\end{itemize}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Hilo automático}
+\begin{itemize}
+  \item Se puede usar el patrón RAII.
+    \begin{itemize}
+      \item Resource Acquisition Is Initialization.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Un hilo que hace join}
+\begin{lstlisting}
+struct hilo_automatico : std::thread {
+  using std::thread::thread; // Todos los constructores de thread
+  ~hilo_automatico() { 
+    if (joinable()) join(); 
+  }
+};
+\end{lstlisting}
+\end{block}
+\begin{itemize}
+  \item El constructor adquire el recurso.
+  \item El destructor libera el recurso.
+  \item Evita el goteo de recursos.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Simplificación con RAII}
+\begin{itemize}
+  \item Simplificación de código y seguridad.
+\end{itemize}
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+void ejemplo() {
+  hilo_automatico t1{f}; // Hilo que ejecuta la tarea f
+  hilo_automatico t2; // Hilo vacío.
+
+  if (modo == modo1) {
+    hilo_automatico tg {g}; 
+    // ...
+    t2 = std::move(tg); // tg vacía, t2 asociada a g()
+  }
+
+  std::vector<int> v{10000}; // Podría lanzar excepciones
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Hilos no asociados}
+\begin{itemize}
+  \item Se puede indicar que un hilo sigue ejecutando después de que el destructor se ejecute con \cppid{detach()}.
+  \item Útil para tareas que se ejecutan como demonios.
+\end{itemize}
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+void actualiza() {
+  for (;;) {
+    using namespace std::literals;
+    muestra_reloj(std::stead_clock::now());
+    std::this_thread::sleep_for(1s);
+  }
+}
+
+void f() {
+  std::thread t{actualiza};
+  t.detach();
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Problemas con hilos no asociados}
+\begin{itemize}
+  \item Incovenientes:
+    \begin{itemize}
+      \item Se pierde el control de qué hilos están activos.
+      \item No se sabe si se puede usar el resultado generado por un hilo.
+      \item No se sabe si un hilo ha liberado sus recursos.
+      \item Se podría acabar accediendo a objetos que han sido destruidos.
+    \end{itemize}
+  \vfill
+  \item Recomendaciones:
+    \begin{itemize}
+      \item Evitar el uso de hilos no asociados.
+      \item Mover los hilos a otro alcance (via valor de retorno).
+      \item Mover los hilos a un contenedor en un alcance mayor.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Un bug difícil de cazar}
+\begin{itemize}
+  \item \alert{Problema}: Cuidado con el acceso a variables locales desde un hilo no asociado despues de su destrucción.
+\end{itemize}
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+void g() {
+  double x = 0;
+  std::thread t{[&x]{ f1(); x = f2();}}; // Si g ha terminado -> Problema
+  t.detach();
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}{Operaciones sobre el hilo actual}
+\begin{itemize}
+  \item Operaciones sobre el hilo actual como funciones globales en sub-espacio de nombres \cppid{this\_thread}.
+    \begin{itemize}
+      \item \cppid{get\_id()}: Obtiene el identificador del hilo actual.
+      \item \cppid{yield()}: Permite que potencialmente se seleccione otro hilo para ejecución.
+      \item \cppid{sleep\_until(t)}: Espera hasta un determinado instante de tiempo.
+      \item \cppid{sleep\_for(d)}: Espera durante una duración determinada de tiempo.
+    \end{itemize}
+  \item Esperas con tiempo:
+    \begin{itemize}
+      \item Si se modifica el reloj, \cppid{wait\_until()} se ve afectado.
+      \item Si se modifica el reloj, \cppid{wait\_for()} \textbf{no} se ve afectado.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Variables locales al hilos}
+\begin{itemize}
+  \item Alternativa a \cppkey{static} como especificador de almacenamiento: \cppkey{thread\_local}.
+    \begin{itemize}
+      \item Una variable \cppkey{static} tiene una única copia compartida por todos los hilos.
+      \item Una variable \cppkey{thread\_local} tiene una copia por cada hilo.
+    \end{itemize}
+  \item Tiempo de vida: duración de almacenamiento de hilo (\emph{thread storage duration}).
+    \begin{itemize}
+      \item Se inicia antes de su primer uso en el hilo.
+      \item Se destruye en la salida del hilo.
+    \end{itemize}
+  \item Razones para usar almacenamiento local al hilo:
+    \begin{itemize}
+      \item Transformar datos de alamacenamiento estático a almacenamiento local al hilo.
+      \item Mantener cachés de datos locales a cada hilo (acceso exclusivo).
+        \begin{itemize}
+          \item Importante en máquinas con caché separada y protocolos de coherencia.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{block}{Una función con caché de cálculos}
+\begin{lstlisting}
+thread_local std::map<int, int> cache;
+
+int calcula_clave(int x) {
+  auto i = cache.find(x);
+  if (i != cache.end()) return i->second;
+  return cache[arg] = algoritmo_complejo_y_lento(arg);
+}
+
+std::vector<int> genera_lista(std::vector<int> v) {
+  std::vector<int> r;
+  for (auto x : v) {
+    r.push_back(calcula_clave(x));
+  }
+}
+\end{lstlisting}
+\end{block}
+\begin{itemize}
+  \item Se evita sincronización.
+  \item Puede que se repita algún cálculo.
+\end{itemize}
+\end{frame}

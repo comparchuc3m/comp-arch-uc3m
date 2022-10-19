@@ -1,0 +1,161 @@
+\section{Utilidades para mutex}
+
+\subsection{Guardas de cerrojos}
+
+\begin{frame}[fragile]{Adquisición y liberación como RAII}
+\begin{itemize}
+  \item Cada adquisición de un cerrojo debe encajar con una liberación del mismo cerrojo.
+  \item Problemas:
+    \begin{itemize}
+      \item Código con excepciones.
+      \item Funciones con múltiples puntos de retorno.
+      \item Orde de adquisición y liberación de cerrojos.
+    \end{itemize}
+\begin{lstlisting}
+void f(mutex & m1, mutex & m2, vector<registro> & v, vector<registro> & w) {
+  m1.lock();
+  m2.lock();
+  
+  if (v.size() == 0) return;
+  procesa(v,w); // Podría lanzar excepciones.
+ 
+  m1.unlock();
+  m2.unlock();
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{\texttt{lock\_guard}}
+\begin{itemize}
+  \item \cppid{lock\_guard<M> l\{m\}}: Construye una guarda que adquiere el \emph{mutex} \cppid{m}.
+  \item \cppid{lock\_guard<M> l\{m, adopt\_lock\}}: Construye una guarda que asume que el \emph{mutex} \cppid{m} ya
+        se encuentra adquirido por el hilo actual.
+  \item \emph{Destructor}: Libera el \emph{mutex} asociado a la guarda.
+\begin{lstlisting}
+void f(mutex & m1, mutex & m2, vector<registro> & v, vector<registro> & w) {
+  lock_guard<mutex> l1{m1};
+  lock_guard<mutex> l2{m2};
+  
+  if (v.size() == 0) return;
+  procesa(v,w); // Podría lanzar excepciones.
+} // m1 y m2 se liberan en el orden correcto
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\subsection{Generalización de cerrojos y RAII}
+
+\begin{frame}{\texttt{unique\_lock}}
+\begin{itemize}
+  \item Gestión de adquisición/liberación más general.
+  \item Construcción:
+    \begin{itemize}
+      \item \cppid{unique\_lock<M> l\{\}}: Construye un cerrojo sin \emph{mutex} asociado.
+      \item \cppid{unique\_lock<M> l\{m\}}: Construye un cerrojo que adquiere el \emph{mutex} \cppid{m}.
+      \item \cppid{unique\_lock<M> l\{m, defer\_lock\}}: Construye un cerrojo asociado al mutex \emph{mutex} \cppid{m}, pero no lo adquiere.
+      \item \cppid{unique\_lock<M> l\{m, try\_lock\}}: Construye un cerrojo asociado al mutex \emph{mutex} \cppid{m}, y ejecuta \cppid{m.try\_lock()}.
+        \begin{itemize}
+          \item Potencialmente puede adquirir \cppid{m}.
+        \end{itemize}
+      \item \cppid{unique\_lock<M> l\{m, adopt\_lock\}}: Construye un cerrojo asociado al mutex \emph{mutex} \cppid{m}, y asume que ya ha sido adquirido por el hilo actual.
+        \begin{itemize}
+          \item El destructor realizará una liberación.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Más formas de iniciación}
+\begin{itemize}
+  \item Operaciones de construcción:
+    \begin{itemize}
+      \item \cppid{unique\_lock<M> l\{m,t\}}: Construye un cerrojo asociado al mutex \emph{mutex} \cppid{m}, y ejecuta \cppid{m.try\_lock\_until(t)}.
+      \item \cppid{unique\_lock<M> l\{m,d\}}: Construye un cerrojo asociado al mutex \emph{mutex} \cppid{m}, y ejecuta \cppid{m.try\_lock\_for(d)}.
+    \end{itemize}
+  \item Movimiento:
+    \begin{itemize}
+      \item \cppid{unique\_lock<M> l\{l2\}}: Mueve el \emph{mutex} del cerrojo \cppid{l2} al nuevo cerrojo \cppid{l}.
+      \item \cppid{l = move(l2)}: Mueve el \emph{mutex} del cerrojo \cppid{l2} al cerrojo \cppid{l}.
+    \end{itemize}
+  \item Destrucción: 
+    \begin{itemize}
+      \item Libera el \emph{mutex} asociado al cerrojo.
+    \end{itemize}
+  \item Intercambio:
+    \begin{itemize}
+      \item \cppid{l1.swap(l2)}.
+      \item \cppid{swap(l1,l2)}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Operaciones}
+\begin{itemize}
+  \item Operaciones de adquisición/liberación absolutas:
+    \begin{itemize}
+      \item \cppid{l.lock()} $\rightarrow$ \cppid{m.lock()}.
+      \item \cppid{l.try\_lock()} $\rightarrow$ \cppid{m.try\_lock()}.
+      \item \cppid{l.try\_unlock()} $\rightarrow$ \cppid{m.try\_unlock()}.
+    \end{itemize}
+  \item Operaciones de adquisición/liberación temporizadas:
+    \begin{itemize}
+      \item \cppid{l.try\_lock\_for(d)} $\rightarrow$ \cppid{m.try\_lock\_for(d)}.
+      \item \cppid{l.try\_lock\_until(t)} $\rightarrow$ \cppid{m.try\_lock\_until(t)}.
+    \end{itemize}
+  \item Operaciones de acceso:
+    \begin{itemize}
+      \item \cppid{pm = l.release()}: \cppid{l} deja de gestionar el \emph{mutex} \cppid{*pm}.
+      \item \cppid{pm = l.mutex()}: Obtiene el\emph{mutex} \cppid{*pm} gestionado por \cppid{l}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\section{Adquisición múltiple}
+
+\begin{frame}[fragile]{Problema de adquisición múltiple}
+\begin{itemize}
+  \item Si varios componentes adquieren un conjunto de cerrojos uno a uno en el mismo orden:
+    \begin{itemize}
+      \item Se puede producri \emph{deadlock}.
+    \end{itemize}
+\begin{lstlisting}
+void f(mutex & m1, mutex & m2, mutex & m3) {
+  unique_lock<mutex> l1{m1};
+  unique_lock<mutex> l2{m2};
+  unique_lock<mutex> l3{m3};
+  // ...
+}
+
+void g() {
+  mutex a, b, c;
+  thread t1{f, ref{m1}, ref{m2}, ref{m3}};
+  thread t2{f, ref{m1}, ref{m2}, ref{m3}};
+  // ...
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Algoritmos de adquisicón múltiple}
+\begin{itemize}
+  \item Algoritmos con argumentos variables para la adquisición de múltiples cerrojos.
+    \begin{itemize}
+      \item \cppid{r = try\_lock(l...)}: Adquiere todos los cerrojos en orden. 
+        \begin{itemize}
+          \item \cppid{r=-1} $\rightarrow$ se tuvo éxito en adquirirlos todos.
+          \item \cppid{r=k} $\rightarrow$ \cppid{k} No se pudo adquirir el \emph{k-ésimo} cerrojo.
+        \end{itemize}
+      \item \cppid{lock(l...)}: Adquiere todos los cerrojos sin posibilidad de \emph{deadlock}.
+    \end{itemize}
+\begin{lstlisting}
+void f(mutex & m1, mutex & m2, mutex & m3) {
+  unique_lock<mutex> l1{m1, defer_lock};
+  unique_lock<mutex> l2{m2, defer_lock};
+  unique_lock<mutex> l3{m3, defer_lock};
+  lock(l1,l2,l3);
+  // ...
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}

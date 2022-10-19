@@ -1,0 +1,512 @@
+\section{Class \texttt{thread}}
+
+\begin{frame}[t]{Class \texttt{thread}}
+\begin{itemize}
+  \item Abstraction of a \emph{thread} represented through class \cppid{thread}.
+  \item One-to-one correspondence with operating system thread.
+  \item All threads in an application run in the same address space.
+  \item Each thread has its own stack.
+  \item \textbad{Dangers}:
+    \begin{itemize}
+      \item Pass a pointer or a non-const reference to another thread.
+      \item Pass a reference through capture in lambda expressions.
+    \end{itemize}
+  \item \cppid{thread} represents a link to a system thread.
+    \begin{itemize}
+      \item Cannot be copied.
+      \item They can be moved.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Thread construction}
+\begin{itemize}
+  \item A thread is constructed from a function and arguments that mast be passed to that function.
+    \begin{itemize}
+      \item Template with variable number of arguments.
+      \item Type safe.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Example}
+\begin{lstlisting}
+void f();
+void g(int, double);
+
+std::thread t1{f}; // OK
+std::thread t2{f, 1}; // Error: Too many arguments
+
+std::thread t3{g, 1, 0.5}; // OK
+std::thread t4{g}; // Error: Missing arguments
+std::thread t5{g, 1, "Hello"}; // Error: Wrong types
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Construction and references}
+\begin{itemize}
+  \item Constructor of \cppid{thread} is a template with variable number of arguments.
+\begin{lstlisting}
+template <class F, class ...Args> 
+explicit thread(F&& f, Args&&... args);
+\end{lstlisting}
+  \item Arguments passing to a thread is by value.
+  \item To force passing by reference:
+    \begin{itemize}
+      \item Use a helper function for \cppid{reference\_wrapper}.
+      \item Use lambdas and reference captures.
+    \end{itemize}
+\end{itemize}
+\begin{block}{}
+\begin{lstlisting}[basicstyle=\tiny]
+void f(record & r);
+
+void g(record & s) {
+  std::thread t1{f,s}; // Error if f takes a reference
+  std::thread t2{f, std::ref(s)}; // OK. Reference to s
+  std::thread t3{[&] { f(s); }}; // Reference to s
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Two-phase construction}
+\begin{itemize}
+  \item Construction includes thread launching.
+    \begin{itemize}
+      \item There is no separate operation to \emph{start} execution.
+    \end{itemize}
+\end{itemize}
+\begin{columns}
+
+\begin{column}{.5\textwidth}
+\begin{block}{Producer/Consumer}
+\begin{lstlisting}
+struct producer {
+  producer(std::queue<request> & q);
+  void operator()();
+  // ...
+};
+
+struct consumer {
+  consumer(std::queue<request> & q);
+  void operator()();
+  // ...
+};
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.5\textwidth}
+\begin{block}{Stages}
+\begin{lstlisting}
+void f() {
+  // Stage 1: Construction
+  std::queue<request> q;
+  producer prod{q};
+  consumer cons{q};
+
+  // Stage 2: Launching
+  std::thread tp{prod};
+  std::thread tc{cons};
+
+  //...
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Empty thread}
+\begin{itemize}
+  \item Default constructor creates a thread without associated execution task.
+\begin{lstlisting}
+thread() noexcept;
+\end{lstlisting}
+  \item Useful in combination with move constructor.
+\begin{lstlisting}
+thread(thread &&) noexcept;
+\end{lstlisting}
+  \item An execution takes can be moved from a thread to another thread.
+    \begin{itemize}
+      \item Original thread remains without associated execution task.
+    \end{itemize}
+\begin{lstlisting}
+std::thread create_task();
+std::thread t1 = create_task();
+std::thread t2 = move(t1); // t1 is empty now
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Thread identity}
+\begin{itemize}
+  \item Each thread has a unique identifier.
+    \begin{itemize}
+      \item Type: \cppid{thread::id}.
+      \item If the \cppid{thread} 
+            is not associated with a thread
+            \cppid{get\_id()} returns \cppid{id\{\}}.
+      \item Current thread identifier is obtained with
+            \cppid{this\_thread::get\_id()}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppid{t.get\_id()} returns \cppid{id\{\}} if:
+    \begin{itemize}
+      \item An execution task has not been assigned to it.
+      \item It has finished.
+      \item Task has been moved to another \cppid{thread}.
+      \item It has been detached (\cppid{detach()}).
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Operations on \texttt{thread::id}}
+\begin{itemize}
+  \item Is an implementation dependent type, but it must allow:
+    \begin{itemize}
+      \item Copying.
+      \item Comparison operators (\cppid{==}, \cppid{<}, ...).
+      \item Output to streams through operator \cppid{<<}.
+      \item \emph{hash} transformation through specialization \cppid{hash<thread::id>}.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Example}
+\begin{lstlisting}
+void print_id(std::thread & t) {
+  if (t.get_id() == id{}) 
+    std::cout << "Invalid thread" << "\n";
+  else {
+    std::cout << "Current thread: " << std::this_thread::get_id() << "\n";
+    std::cout << "Received thread: " << t.get_id() << "\n";
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Joining}
+\begin{itemize}
+  \item When a thread wants to wait for other thread termination, it may use operation \cppid{join()}.
+    \begin{itemize}
+      \item \cppid{t.join()} $\rightarrow$ waits until \cppid{t} has finished.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Example}
+\begin{lstlisting}
+void f() {
+  std::vector<thread> vt;
+  for (int i=0; i< 8; ++i) {
+    vt.push_back(std::thread(f,i));
+  }
+
+  for (auto & t : vt) { // Waits until all threads have finished
+    t.join();
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Periodic tasks}
+\begin{block}{Initial idea}
+\begin{lstlisting}
+void update_bar() {
+  while (!task_has_finished()) {
+    using namespace std::literals;
+    std::this_thread::sleep_for(1s); // 1 second
+    update_progress();
+  }
+}
+
+void f() {
+  std::thread t{update_bar};
+  t.join();
+}
+\end{lstlisting}
+\end{block}
+\begin{itemize}
+  \item Problems?
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{What if I forget \texttt{join}?}
+\begin{itemize}
+  \item When scope where thread was defined is exited, its destructor is invoked.
+  \item \textbad{Problem}: 
+    \begin{itemize}
+      \item Link with operating system thread might be lost. 
+      \item System thread goes on running but cannot be accessed.
+    \end{itemize}
+  \mode<presentation>{\pause}
+  \item If \cppid{join()} was not called, destructor invokes \cppid{terminate()}.
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}
+
+\begin{column}{.5\textwidth}
+\begin{block}{Example}
+\begin{lstlisting}[basicstyle=\tiny]
+void update() {
+  for (;;) {
+    using namespace std::chrono;
+    show_clock(steady_clock::now());
+    std::this_thread::sleep_for(1s);
+  }
+}
+
+void f() {
+  std::thread t{update};
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.5\textwidth}
+\begin{itemize}
+  \item \cppid{terminate()} is called when exiting \cppid{f()}.
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Destruction}
+\begin{itemize}
+  \item \textgood{Goal}: 
+        Avoid a thread to survive its \cppid{thread} object.
+  \item \textgood{Solution}: If a \cppid{thread} is \emph{joinable} its destructor invokes \cppid{terminate()}.
+    \begin{itemize}
+      \item A \cppid{thread} is joinable if it is linked to a system thread.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Example}
+\begin{lstlisting}
+void check() {
+  for (;;) {
+    check_state();
+    using namespace std::literals;
+    std::this_thread::sleep_for(100ms);
+  }
+}
+
+void f() {
+  std::thread t{check};
+} // Destruction without join() -> Invokes terminate()
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Problems with destruction}
+\begin{columns}
+
+\begin{column}{.65\textwidth}
+\begin{block}{Example}
+\begin{lstlisting}
+void f();
+void g();
+
+void example() {
+  std::thread t1{f}; // Thread running task f
+  std::thread t2; // Empty thread
+
+  if (mode == mode1) {
+    std::thread tg {g}; 
+    // ...
+    t2 = std::move(tg); // tg empty, t2 running g()
+  }
+
+  std::vector<int> v{10000}; // Might throw exceptions
+  t1.join();
+  t2.join();
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.35\textwidth}
+\begin{itemize}
+  \item What if constructor of \cppid{v} throws an exception?
+  \mode<presentation>{\vfill}
+  \item What if end of example is reached with \cppid{mode==mode1}?
+\end{itemize}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Automatic thread}
+\begin{itemize}
+  \item RAII pattern can be used.
+    \begin{itemize}
+      \item Resource Acquisition Is Initialization.
+    \end{itemize}
+\end{itemize}
+\begin{block}{A joining thread}
+\begin{lstlisting}
+struct auto_thread : std::thread {
+  using thread::thread; // All thread constructors
+  ~auto_thread() { 
+    if (joinable()) join(); 
+  }
+};
+\end{lstlisting}
+\end{block}
+\begin{itemize}
+  \item Constructor acquires resource.
+  \item Destructor releases resource.
+  \item Avoids resource leakage.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Simplifying with RAII}
+\begin{itemize}
+  \item Simpler code and higher safety.
+\end{itemize}
+\begin{block}{Example}
+\begin{lstlisting}
+void example() {
+  auto_thread t1{f}; // Thread running task f
+  auto_thread t2; // Empty thread
+
+  if (modo == mode1) {
+    auto_thread tg {g}; 
+    // ...
+    t2 = move(tg); // tg empty, t2 running g()
+  }
+
+  vector<int> v{10000}; // Might throw exceptions
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Detached threads}
+\begin{itemize}
+  \item A thread can be specified to go on running after destructor, with \cppid{detach()}.
+  \item Useful for task running as daemons.
+\end{itemize}
+\begin{block}{Example}
+\begin{lstlisting}
+void update() {
+  for (;;) {
+    show_clock(steady_clock::now());
+    using namespace::std::literals;
+    std::this_thread::sleep_for(1s);
+  }
+}
+
+void f() {
+  std::thread t{update};
+  t.detach();
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Problems with detached threads}
+\begin{itemize}
+  \item \textbad{Drawbacks}:
+    \begin{itemize}
+      \item Control of active threads is lost.
+      \item Uncertain whether the result generated by a thread can be used.
+      \item Uncertain whether a thread has released its resources.
+      \item Access to objects that might have already been destroyed.
+    \end{itemize}
+  \vfill
+  \item Recommendations:
+    \begin{itemize}
+      \item Avoid using detached threads.
+      \item Move threads to other scope (via return value).
+      \item Move threads to a container in a larger scope.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{A hard to catch bug}
+\begin{itemize}
+  \item \alert{Problem}: 
+        Access to local variables from a detached thread after destruction.
+\end{itemize}
+\begin{block}{Example}
+\begin{lstlisting}
+void g() {
+  double x = 0;
+  std::thread t{
+    [&x]{ 
+      f1(); 
+      x = f2();
+    }
+  }; // If g has finished -> Problem
+  t.detach();
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}{Operations on current thread}
+\begin{itemize}
+  \item Operations on current thread as global functions in name subspace \cppid{this\_thread}.
+    \begin{itemize}
+      \item \cppid{get\_id()}: Gets identifier from current thread.
+      \item \cppid{yield()}: Allows potential selection of another thread for execution.
+      \item \cppid{sleep\_until(t)}: Wait until a certain point in time.
+      \item \cppid{sleep\_for(d)}: Wait for a given duration of time.
+    \end{itemize}
+  \item Timed waits:
+    \begin{itemize}
+      \item If clock can be modified, \cppid{wait\_until()} is affected.
+      \item If clock can be modified, \cppid{wait\_for()} is \textbf{not} affected.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Thread local variables}
+\begin{itemize}
+  \item Alternative to \cppkey{static} as storage specifier: \cppkey{thread\_local}.
+    \begin{itemize}
+      \item A variable \cppkey{static} has a single shared copy for all threads.
+      \item A variable \cppkey{thread\_local} has a per thread copy.
+    \end{itemize}
+  \item Lifetime: \emph{thread storage duration}.
+    \begin{itemize}
+      \item Starts before its first usage in thread.
+      \item Destroyed upon thread exit.
+    \end{itemize}
+  \item Reasons to used thread local storage:
+    \begin{itemize}
+      \item Transform data from static storage to thread local storage.
+      \item Keep data caches to be thread local (exclusive access).
+        \begin{itemize}
+          \item Important in machines with separate caches and coherence protocols.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{block}{A function with computation caching}
+\begin{lstlisting}
+thread_local std::map<int, int> cache;
+
+int compute_key(int x) {
+  auto i = cache.find(x);
+  if (i != cache.end()) return i->second;
+  return cache[x] = slow_and_complex_algorithm(x);
+}
+
+std::vector<int> generate_list(const std::vector<int> & v) {
+  std::vector<int> r;
+  for (auto x : v) {
+    r.push_back(compute_key(x));
+  }
+  return r;
+}
+\end{lstlisting}
+\end{block}
+\begin{itemize}
+  \item Avoids need for synchronization.
+  \item Some computations might be repeated in multiple threads.
+\end{itemize}
+\end{frame}

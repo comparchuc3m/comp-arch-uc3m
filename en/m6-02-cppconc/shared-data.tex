@@ -1,0 +1,180 @@
+\subsection{Access to shared data}
+
+\begin{frame}[t,fragile]{Mutual exclusion}
+\begin{itemize}
+  \item \cppid{mutex} allows to control access with \textmark{mutual exclusion to a resource}.
+    \begin{itemize}
+      \item \cppid{lock()}: \textmark{Acquires} associated lock.
+      \item \cppid{unlock()}: \textmark{Releases} associated lock.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{columns}[T]
+\begin{column}{.5\textwidth}
+\begin{block}{Use of mutex}
+\begin{lstlisting}
+std::mutex m;
+int x = 0;
+
+void f() {
+  m.lock();
+  ++x;
+  m.unlock();
+}
+
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.5\textwidth}
+\begin{block}{Launching threads}
+\begin{lstlisting}
+void g() {
+  std::thread t1(f); 
+  std::thread t2(f);
+  t1.join(); 
+  t2.join();
+  std::cout << x << "\n";
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Problems with \texttt{lock()}/\texttt{unlock()}}
+\begin{itemize}
+  \item \textgood{Possible problems}:
+    \begin{itemize}
+      \item Forgetting to \textbad{release a lock}.
+      \item \textbad{Exceptions}.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{columns}[T]
+\begin{column}{.5\textwidth}
+\begin{block}{Forgetting unlocking}
+\begin{lstlisting}
+std::mutex m;
+int x = 0;
+
+void f() {
+  m.lock();
+  ++x;
+  // Ouch! Forgot to unlock
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.5\textwidth}
+\begin{block}{Exceptions}
+\begin{lstlisting}
+std::mutex m;
+int x = 0;
+
+void f() {
+  m.lock();
+  g(x); // Exceptions?
+  m.unlock();
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Avoiding problems with \texttt{unique\_lock()}}
+\begin{itemize}
+  \item Solution: \cppid{unique\_lock}.
+    \begin{itemize}
+      \item \textgood{Pattern}: \textmark{RAII} (Resource Acquisition Is Initialization).
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{columns}[T]
+\begin{column}{.5\textwidth}
+\begin{block}{Automatic lock}
+\begin{lstlisting}
+std::mutex m;
+int x = 0;
+
+void f() {
+  // Acquires lock
+  std::unique_lock l{m}; 
+  ++x;
+} // Releases lock
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.5\textwidth}
+\begin{block}{Launching threads}
+\begin{lstlisting}
+void g() {
+  std::thread t1(f); 
+  std::thread t2(f);
+  t1.join(); 
+  t2.join();
+
+  std::cout << x << "\n";
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Acquiring multiple \texttt{mutex}}
+\begin{itemize}
+  \item \cppid{lock()} allows for acquiring simultaneously several \cppid{mutex}.
+    \begin{itemize}
+      \item Acquires all or none.
+      \item If some is blocked it waits releasing all of them.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{block}{Multiple acquisition}
+\begin{lstlisting}
+std::mutex m1, m2, m3;
+
+void f() {
+  std::lock(m1, m2, m3);
+
+  // Access to shared data
+
+  // Beware: Locks are not released
+  m1.unlock();
+  m2.unlock();
+  m3.unlock()
+} 
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Acquiring multiple \texttt{mutex}}
+\begin{itemize}
+  \item Specially useful in cooperation with \cppid{unique\_lock}
+\end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{block}{Multiple automatic acquisition}
+\begin{lstlisting}
+void f() {
+  std::unique_lock l1{m1, defer_lock}; 
+  std::unique_lock l2{m2, defer_lock}; 
+  std::unique_lock l3{m3, defer_lock};
+  
+  lock(l1, l2, l3);
+  // Access to shared data
+
+} // Automatic release
+\end{lstlisting}
+\end{block}
+\end{frame}
+

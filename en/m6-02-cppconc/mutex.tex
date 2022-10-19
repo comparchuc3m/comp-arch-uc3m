@@ -1,0 +1,198 @@
+\section{Mutex objects and condition variables}
+
+\subsection{Mutex objects}
+
+\begin{frame}[t]{\emph{mutex} classification}
+\begin{itemize}
+  \item Represent exclusive access to a resource.
+    \begin{itemize}
+      \item \cppid{mutex}: Basic non-recursive \emph{mutex}.
+      \item \cppid{recursive\_mutex}: A \emph{mutex} that can be acquired more than once from the same thread.
+      \item \cppid{timed\_mutex}: Non-recursive \emph{mutex} with timed operations.
+      \item \cppid{recursive\_timed\_mutex}: Recursive \emph{mutex} with timed operations.
+    \end{itemize}
+  \item Only a thread can own a \emph{mutex} at a given time.
+    \begin{itemize}
+      \item Acquire a \emph{mutex} $\rightarrow$ Get exclusive access to object.
+        \begin{itemize}
+          \item Blocking operation.
+        \end{itemize}
+      \item Release a \emph{mutex} $\rightarrow$ Release exclusive access to object.
+        \begin{itemize}
+          \item Allows another thread to get access.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Operations}
+\begin{itemize}
+  \item Construction and destruction:
+    \begin{itemize}
+      \item Can be default constructed.
+      \item Cannot be neither copied nor moved.
+      \item Destructor may lead to undefined behavior if \emph{mutex} is not free.
+    \end{itemize}
+  \vfill
+  \item Acquire and release:
+    \begin{itemize}
+      \item \cppid{m.lock()}: Acquires \emph{mutex} in a blocking mode.
+      \item \cppid{m.unlock()}: Releases \emph{mutex}.
+      \item \cppid{r = m.try\_lock()}: Tries to acquire \emph{mutex}, returning success indication.
+    \end{itemize}
+  \vfill
+  \item Others:
+    \begin{itemize}
+      \item \cppid{h = m.native\_handle()}: Returns platform dependent identifier of type \cppid{native\_handle\_type}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Example}
+\begin{columns}
+
+\begin{column}{.5\textwidth}
+\begin{block}{Exclusive access}
+\begin{lstlisting}
+mutex mutex_output;
+
+void print(int x) {
+  std::mutex_output.lock();
+  std::cout << x << "\n";
+  std::mutex_output.unlock();
+}
+
+void print(double x) {
+  std::mutex_output.lock();
+  std::cout << x << "\n";
+  std::mutex_output.unlock();
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.5\textwidth}
+\begin{block}{Threads launch}
+\begin{lstlisting}
+void f() {
+  std::thread t1{print, 10};
+  std::thread t2(print, 5.5};
+  std::thread t3(print, 3);
+ 
+  t1.join(); 
+  t2.join(); 
+  t3.join();
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Errors in mutual exclusion}
+\begin{itemize}
+  \item In case of error exception \cppid{system\_error} is thrown.
+  \item Error codes:
+    \begin{itemize}
+      \item \cppid{resource\_deadlock\_would\_occur}.
+      \item \cppid{resource\_unavailable\_try\_again}.
+      \item \cppid{operation\_not\_permitted}.
+      \item \cppid{device\_or\_resource\_busy}.
+      \item \cppid{invalid\_argument}.
+    \end{itemize}
+\begin{lstlisting}
+std::mutex m;
+try {
+  m.lock();
+  // 
+  m.lock();
+}
+catch (std::system_error & e) {
+  std::cerr << e.what() << "\n";
+  std::cerr << e.code() << "\n";
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Deadlines}
+\begin{itemize}
+  \item Operations supported by \cppid{timed\_mutex} and \cppid{recursive\_timed\_mutex}.
+  \vfill
+  \item Add acquire operations with indication of deadlines.
+    \begin{itemize}
+      \item \cppid{r = m.try\_lock\_for(d)}: Try to acquire \emph{mutex} for a duration
+            \cppid{d}, returning success indication.
+      \item \cppid{r = m.try\_lock\_until(t)}: Try to acquire \emph{mutex} until a point in time
+            returning success indication.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsection{Condition variables}
+
+\begin{frame}{Condition variables}
+\begin{itemize}
+  \item Synchronizing operations among threads.
+  \item Optimized for class \cppid{mutex} (alternative \cppid{condition\_variable\_any})).
+  \item Construction and destruction:
+    \begin{itemize}
+      \item \cppid{condition\_variable c\{\}}: Creates a condition variable
+        \begin{itemize}
+          \item Might throw \cppid{system\_error}.
+        \end{itemize}
+      \item Destructor: Destroys condition variable.
+        \begin{itemize}
+         \item Requires no thread is waiting on condition.
+        \end{itemize}
+      \item Cannot be neither copied nor moved.
+      \item Before destruction all threads blocked in variable need to be notified.
+        \begin{itemize}
+          \item Or they could be blocked forever.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Notification/waiting operations}
+\begin{itemize}
+  \item Notification:
+    \begin{itemize}
+      \item \cppid{c.notify\_one()}: Wakes up one of waiting threads.
+      \item \cppid{c.notify\_all()}: Wakes up all waiting threads.
+
+    \end{itemize}
+  \item Unconditional waiting (\cppid{l} of type \cppid{unique\_lock<mutex>}):
+    \begin{itemize}
+      \item \cppid{c.wait(l)}: Blocks until it gets to acquire lock \cppid{l}.
+      \item \cppid{c.wait\_until(l,t)}: Blocks until it gets to acquire lock \cppid{l} or time \cppid{t} is reached.
+      \item \cppid{c.wait\_for(l,t)}: Blocks until it gets to acquire lock \cppid{l} or duration \cppid{d} elapses.
+    \end{itemize}
+  \item Waiting with predicates.
+    \begin{itemize}
+      \item Takes as additional arguments a predicate that must be satisfied.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Revisiting producer/consumer}
+\begin{block}{Predicate injection in wait}
+\begin{lstlisting}
+void consumer() {
+  for (;;) {
+    std::unique_lock l{m};
+
+    cv.wait(l, [this]{return !q.empty();});
+
+    auto r = q.front();
+    q.pop();
+    l.unlock();
+   
+    process(r);
+  };
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+

@@ -1,0 +1,198 @@
+\section{Objetos mutex y variables condición}
+
+\subsection{Objetos mutex}
+
+\begin{frame}{Clasificación de \emph{mutex}}
+\begin{itemize}
+  \item Representan el acceso exclusivo a un recurso.
+    \begin{itemize}
+      \item \cppid{mutex}: \emph{Mutex} básico no recursivo.
+      \item \cppid{recursive\_mutex}: Un \emph{mutex} que puede ser adquirido más de una vez por un mismo hilo.
+      \item \cppid{timed\_mutex}: \emph{Mutex} no recursivo con operaciones con tiempo límite.
+      \item \cppid{recursive\_timed\_mutex}: \emph{Mutex} recursivo con operaciones con tiempo límite.
+    \end{itemize}
+  \item Solamente un hilo puede poseer un \emph{mutex} en un momento dado.
+    \begin{itemize}
+      \item Adquirir un \emph{mutex} $\rightarrow$ obtener acceso exclusivo al objeto.
+        \begin{itemize}
+          \item Operación bloqueante.
+        \end{itemize}
+      \item Liberar un \emph{mutex} $\rightarrow$ Liberar el acceso exclusivo al objeto.
+        \begin{itemize}
+          \item Permite que otro hilo obtenga el acceso.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Operaciones}
+\begin{itemize}
+  \item Construcción y destrucción:
+    \begin{itemize}
+      \item Se puede construir por defecto.
+      \item No se pueden copiar ni mover.
+      \item El destructor puede dar comportamiento no definido si el \emph{mutex} no está libre.
+    \end{itemize}
+  \vfill
+  \item Adquisición y liberación:
+    \begin{itemize}
+      \item \cppid{m.lock()}: Adquiere el \emph{mutex} de forma bloqueante.
+      \item \cppid{m.unlock()}: Libera el \emph{mutex}.
+      \item \cppid{r = m.try\_lock()}: Intenta adquirir el \emph{mutex}, devolviendo indicación de éxito.
+    \end{itemize}
+  \vfill
+  \item Otras:
+    \begin{itemize}
+      \item \cppid{h = m.native\_handle()}: Devuelve el identificador dependiente de la plataforma de tipo
+            \cppid{native\_handle\_type}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Ejemplo}
+\begin{columns}
+
+\begin{column}{.5\textwidth}
+\begin{block}{Acceso exclusivo}
+\begin{lstlisting}
+mutex mutex_salida;
+
+void imprime(int x) {
+  std::mutex_salida.lock();
+  std::cout << x << "\n";
+  std::mutex_salida.unlock();
+}
+
+void imprime(double x) {
+  std::mutex_salida.lock();
+  std::cout << x << "\n";
+  std::mutex_salida.unlock();
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.5\textwidth}
+\begin{block}{Lanzamiento de hilos}
+\begin{lstlisting}
+void f() {
+  std::thread t1{imprime, 10};
+  std::thread t2(imprime, 5.5};
+  std::thread t3(imprime, 3);
+ 
+  t1.join(); 
+  t2.join(); 
+  t3.join();
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Errores en exclusión mutua}
+\begin{itemize}
+  \item En caso de error se lanza la excepción \cppid{system\_error}.
+  \item Códigos de error:
+    \begin{itemize}
+      \item \cppid{resource\_deadlock\_would\_occur}.
+      \item \cppid{resource\_unavailabe\_try\_again}.
+      \item \cppid{operation\_not\_permitted}.
+      \item \cppid{device\_or\_resource\_busy}.
+      \item \cppid{invalid\_argument}.
+    \end{itemize}
+\begin{lstlisting}
+std::mutex m;
+try {
+  m.lock();
+  // 
+  m.lock();
+}
+catch (std::system_error & e) {
+  std::cerr << e.what() << "\n";
+  std::cerr << e.code() << "\n";
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Tiempo límite}
+\begin{itemize}
+  \item Operaciones soportadas por \cppid{timed\_mutex} y \cppid{recursive\_timed\_mutex}.
+  \vfill
+  \item Añaden operaciones de adquisión con especificación de tiempo límite.
+    \begin{itemize}
+      \item \cppid{r = m.try\_lock\_for(d)}: Intenta adquirir el \emph{mutex} durante una duración
+            \cppid{d}, devolviendo indicación de éxito.
+      \item \cppid{r = m.try\_lock\_until(t)}: Intenta adquirir el \emph{mutex} hasta un momento
+            en el tiempo, devolviendo indicación de éxito.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsection{Variables condición}
+
+\begin{frame}{Variables condición}
+\begin{itemize}
+  \item Sincronización de operaciones entre hilos.
+  \item Optimizada para la clase \cppid{mutex} (alternativa \cppid{condition\_variable\_any})).
+  \item Construcción y destrucción:
+    \begin{itemize}
+      \item \cppid{condition\_variable c\{\}}: Crea una variable condición.
+        \begin{itemize}
+          \item Puede lanzar \cppid{system\_error}.
+        \end{itemize}
+      \item Destructor: Destruye la variable condición.
+        \begin{itemize}
+         \item Requiere que no haya ningún hilo esperando en condición.
+        \end{itemize}
+      \item No se pueden copiar ni mover.
+      \item Antes de destruirla se debe despertar a todos los hilos bloqueados en la variable.
+        \begin{itemize}
+          \item O se podrían quedar bloquedos para siempre.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Operaciones de notificación/espera}
+\begin{itemize}
+  \item Notificación:
+    \begin{itemize}
+      \item \cppid{c.notify\_one()}: Despierta a uno de los hilos en espera.
+      \item \cppid{c.notify\_all()}: Despierta a todos los hilso en espera.
+    \end{itemize}
+  \item Espera incondicional (\cppid{l} de tipo \cppid{unique\_lock<mutex>}):
+    \begin{itemize}
+      \item \cppid{c.wait(l)}: Se bloquea hasta que consigue adquirir el cerrojo \cppid{l}.
+      \item \cppid{c.wait\_until(l,t)}: Se bloquea hasta que consigue adquirir el cerrojo \cppid{l} o se llega al tiempo \cppid{t}.
+      \item \cppid{c.wait\_for(l,t)}: Se bloquea hasta que consigue adquirir el cerrojo \cppid{l} o pasa la duración \cppid{d}.
+    \end{itemize}
+  \item Espera con predicados.
+    \begin{itemize}
+      \item Admiten como argumento adicional un predicado que debe satisfacerse.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Revisando el producto consumidor}
+\begin{block}{Inyectando el predicado en wait}
+\begin{lstlisting}
+void consumidor() {
+  for (;;) {
+    std::unique_lock<std::mutex> l{m};
+
+    cv.wait(l, [this]{return !cola.empty();});
+
+    auto p = cola.front();
+    cola.pop();
+    l.unlock();
+   
+    procesa(p);
+  };
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+

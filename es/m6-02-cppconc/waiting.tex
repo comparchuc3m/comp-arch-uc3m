@@ -1,0 +1,114 @@
+\subsection{Esperas}
+
+\begin{frame}[t,fragile]{Esperas de tiempo}
+\begin{itemize}
+  \item Acceso al reloj.
+\begin{lstlisting}
+using namespace std::chrono;
+auto t1 = high_resolution_clock::now();
+\end{lstlisting}
+  \item Diferencia de tiempos.
+\begin{lstlisting}
+auto dif = duration_cast<nanoseconds>(t2-t1);
+cout << dif.count() << endl;
+\end{lstlisting}
+  \item Especificación de una espera.
+\begin{lstlisting}
+using namespace std::literals;
+std::this_thread::sleep_for(500ms);
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Variables condición}
+\begin{itemize}
+  \item Mecanismo para sincronizar hilos en acceso a recursos compartidos.
+    \begin{itemize}
+      \item \cppid{wait()}: Espera en un \cppid{mutex}.
+      \item \cppid{notify\_one()}: Despierta a un hilo en espera.
+      \item \cppid{notify\_all()}: Despierta a todos los hilos en espera.
+    \end{itemize}
+\begin{block}{Productor/Consumidor}
+\begin{lstlisting}
+class peticion;
+
+std::queue<peticion> cola; // Cola de peticiones
+std::condition_variable cv; // Variable condición
+std::mutex m;
+
+void productor();
+void consumidor();
+\end{lstlisting}
+\end{block}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{columns}
+
+\begin{column}{.5\textwidth}
+\begin{block}{Consumidor}
+\begin{lstlisting}
+void consumidor() {
+  for (;;) {
+    std::unique_lock l{m};
+
+    while (cola.empty()) {
+      cv.wait(l);
+    }
+
+    auto p = cola.front();
+    cola.pop();
+    l.unlock();
+   
+    procesa(p);
+  };
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.5\textwidth}
+\begin{itemize}
+  \item Efecto de \cppid{wait}:
+    \begin{enumerate}
+      \item Libera el cerrojo y espera una notificación.
+      \item Adquiere el cerrojo al despertarse.
+    \end{enumerate}
+\end{itemize}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{columns}
+\begin{column}{.5\textwidth}
+\begin{block}{Productor}
+\begin{lstlisting}
+void productor() {
+  for (;;) {
+    peticion p = genera();
+
+    unique_lock<mutex> l{m};
+    cola.push(p);
+
+    cv.notify_one();
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.5\textwidth}
+\begin{itemize}
+\item Efecto de \cppid{notify\_one()}:
+  \begin{enumerate}
+    \item Despierta a uno de los hilos esperando en la condición.
+  \end{enumerate}
+\end{itemize}
+\end{column}
+
+\end{columns}
+\end{frame}
+

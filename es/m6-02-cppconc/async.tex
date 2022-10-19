@@ -1,0 +1,49 @@
+\subsection{Tareas asíncronas}
+
+\begin{frame}[t]{Tareas asíncronas y futuros}
+\begin{itemize}
+  \item Una tarea asíncrona permite el lanzamiento simple de la ejecución de una tarea:
+    \begin{itemize}
+      \item En otro hilo de ejecución.
+      \item Como una tarea diferida.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Un \textgood{futuro} es un objeto que permite que un hilo pueda devolver un valor a la 
+    sección de código que lo invocó.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{block}{Invocación de tareas asíncronas}
+\begin{lstlisting}
+#include <future>
+#include <iostream>
+
+int main() {
+  std::future<int> r = std::async(tarea, 1, 10);
+  otra_tarea();
+  std::cout << "Resultado= " << r.get() << "\n";
+  return 0;
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t]{Uso de futuros}
+\begin{itemize}
+  \item \textgood{Idea general}:
+    \begin{itemize}
+      \item Cuando un hilo necesita pasar un valor a otro hilo pone el valor en una \textgood{promesa}.
+      \item La implementación hace que el valor esté disponible en el correspondiente \textgood{futuro}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Acceso al \textgood{futuro} mediante \cppid{f.get()}:
+    \begin{itemize}
+      \item Si se ha asignado un valor $\rightarrow$ obtiene el valor.
+      \item En otro caso $\rightarrow$ el hilo llamante se bloquea hasta que esté disponible.
+      \item Permite la transferencia transparente de excepciones entre hilos.
+    \end{itemize}
+\end{itemize}
+\end{frame}

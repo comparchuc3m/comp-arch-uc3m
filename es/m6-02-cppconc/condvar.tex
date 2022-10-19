@@ -1,0 +1,65 @@
+\section{Variables condición}
+
+\begin{frame}{Operaciones}
+\begin{itemize}
+  \item Sincronización de operaciones entre hilos.
+  \item Optimizada para la clase \cppid{mutex} (alternativa \cppid{condition\_variable\_any})).
+  \item Construcción y destrucción:
+    \begin{itemize}
+      \item \cppid{condition\_variable c\{\}}: Crea una variable condición.
+        \begin{itemize}
+          \item Puede lanzar \cppid{system\_error}.
+        \end{itemize}
+      \item Destructor: Destruye la variable condición.
+        \begin{itemize}
+         \item Requiere que no haya ningún hilo esperando en condición.
+        \end{itemize}
+      \item No se pueden copiar ni mover.
+      \item Antes de destruirla se debe despertar a todos los hilos bloqueados en la variable.
+        \begin{itemize}
+          \item O se podrían quedar bloquedos para siempre.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Operaciones de notificación/espera}
+\begin{itemize}
+  \item Notificación:
+    \begin{itemize}
+      \item \cppid{c.notify\_one()}: Despierta a uno de los hilos en espera.
+      \item \cppid{c.notify\_all()}: Despierta a todos los hilso en espera.
+    \end{itemize}
+  \item Espera incondicional (\cppid{l} de tipo \cppid{unique\_lock<mutex>}):
+    \begin{itemize}
+      \item \cppid{c.wait(l)}: Se bloquea hasta que consigue adquirir el cerrojo \cppid{l}.
+      \item \cppid{c.wait\_until(l,t)}: Se bloquea hasta que consigue adquirir el cerrojo \cppid{l} o se llega al tiempo \cppid{t}.
+      \item \cppid{c.wait\_for(l,t)}: Se bloquea hasta que consigue adquirir el cerrojo \cppid{l} o pasa la duración \cppid{d}.
+    \end{itemize}
+  \item Espera con predicados.
+    \begin{itemize}
+      \item Admiten como argumento adicional un predicado que debe satisfacerse.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Revisando el producto consumidor}
+\begin{block}{Inyectando el predicado en wait}
+\begin{lstlisting}
+void consumidor() {
+  for (;;) {
+    unique_lock<mutex> l{m};
+
+    cv.wait(l, [this]{return !cola.empty();});
+
+    auto p = cola.front();
+    cola.pop();
+    l.unlock();
+   
+    procesa(p);
+  };
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+

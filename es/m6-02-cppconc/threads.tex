@@ -1,0 +1,103 @@
+\subsection{Hilos}
+
+\begin{frame}[fragile]{Lanzamiento de hilos}
+\begin{itemize}
+  \item Un \textgood{hilo} representado por la clase \cppid{std::thread}.
+    \begin{itemize}
+      \item Normalmente representa un hilo del SO.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{block}{Lanzando un hilo a través de una función}
+\begin{lstlisting}
+void f1();
+void f2();
+
+void g() {
+  std::thread t1{f1}; // Lanza un hilo que ejecuta f1()
+  std::thread t2{f2}; // Lanza un hilo que ejecuta f2()
+
+  t1.join(); // Espera a que t1 termine.
+  t2.join(); // Espera a que t2 termine.
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Objetos compartidos}
+\begin{itemize}
+  \item Dos hilos pueden acceder a un \textmark{objeto compartido}.
+  \item Posibilidad de \textbad{carreras de datos}.
+\end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{block}{Acceso a variables compartidas}
+\begin{lstlisting}
+int x = 42;
+
+void f() { ++x; }
+void g() { x=0; }
+void h() { std::cout << "Hola" << "\n"; }
+void i() { std::cout << "Adios" << "\n"; }
+
+void carrera() {
+  std::thread t1{f}; std::thread t2{g};
+  t1.join(); t2.join();
+
+  std::thread t3{h}; std::thread t4{i};
+  t3.join(); t4.join();
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Paso de argumentos}
+\begin{itemize}
+  \item \textgood{Paso de argumentos simplificado} sin necesidad de \textmark{casts}.
+\end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{block}{Paso de argumentos}
+\begin{lstlisting}
+void f1(int x);
+void f2(double x, double y);
+
+void g() {
+  std::thread t1{f1, 10}; // Ejecuta f1(10)
+  std::thread t2{f1}; // Error
+  std::thread t3{f2, 1.0} // Error
+  std::thread t4{f2, 1.0, 1.0}; // Ejecuta f2(1.0,1.0)
+  //...
+  // Joins de hilos
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Hilos y objetos función}
+\begin{itemize}
+  \item \textgood{Objeto función}: Objeto invocable como función.
+  \item Sobrecarga/redefinición del \textmark{operador} \cppid{()}
+\end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{block}{Objeto función en un hilo}
+\begin{lstlisting}
+struct mifunc {
+  mifunc(int val) : x{val} {}
+  void operator()() { haz_algo(x); }
+  int x;
+};
+
+void g() {
+  mifunc f1{10}; // Construye objeto f1
+  f1(); // Invoca operador de llamada f1.operator()
+  std::thread t1{f1}; // Ejecuta f1() en un hilo
+  std::thread t2{mifunc{20}}; // Construye temporal e invoca mifunc{20}.operator()
+  // ...
+  // Joins de hilos
+\end{lstlisting}
+\end{block}
+\end{frame}
+

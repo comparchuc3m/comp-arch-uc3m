@@ -1,0 +1,114 @@
+\subsection{Waiting}
+
+\begin{frame}[t,fragile]{Timed waiting}
+\begin{itemize}
+  \item Access to clock:
+\begin{lstlisting}
+using namespace std::chrono;
+auto t1 = high_resolution_clock::now();
+\end{lstlisting}
+  \item Time difference:
+\begin{lstlisting}
+auto dif = duration_cast<nanoseconds>(t2-t1);
+cout << dif.count() << endl;
+\end{lstlisting}
+  \item Specifying a wait:
+\begin{lstlisting}
+using namespace std::literals;
+this_thread::sleep_for(500ms);
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Condition variables}
+\begin{itemize}
+  \item Mechanism to synchronize threads when accessing shared resources.
+    \begin{itemize}
+      \item \cppid{wait()}: Wait on a \cppid{mutex}.
+      \item \cppid{notify\_one()}: Awakens a waiting thread.
+      \item \cppid{notify\_all()}: Awakens all waiting threads.
+    \end{itemize}
+\begin{block}{Producer/Consumer}
+\begin{lstlisting}
+class request;
+
+std::queue<request> q; // Requests queue
+std::condition_variable cv; //
+std::mutex m;
+
+void producer();
+void consumer();
+\end{lstlisting}
+\end{block}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{columns}
+
+\begin{column}{.5\textwidth}
+\begin{block}{Consumer}
+\begin{lstlisting}
+void consumer() {
+  for (;;) {
+    std::unique_lock l{m};
+
+    while (q.empty()) {
+      cv.wait(l);
+    }
+
+    auto r = q.front();
+    q.pop();
+    l.unlock();
+   
+    process(r);
+  };
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.5\textwidth}
+\begin{itemize}
+  \item Effect of \cppid{wait}:
+    \begin{enumerate}
+      \item Releases lock and waits a notification.
+      \item Acquires the lock when awaken.
+    \end{enumerate}
+\end{itemize}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]
+\begin{columns}
+\begin{column}{.5\textwidth}
+\begin{block}{Producer}
+\begin{lstlisting}
+void producer() {
+  for (;;) {
+    request r = generate();
+
+    std::unique_lock l{m};
+    q.push(r);
+
+    cv.notify_one();
+  }
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.5\textwidth}
+\begin{itemize}
+\item Effects of \cppid{notify\_one()}:
+  \begin{enumerate}
+    \item Awakes to one thread waiting on the condition.
+  \end{enumerate}
+\end{itemize}
+\end{column}
+
+\end{columns}
+\end{frame}
+

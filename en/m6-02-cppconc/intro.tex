@@ -1,0 +1,63 @@
+\section{Introduction to concurrency in C++}
+
+\begin{frame}{Motivation}
+\begin{itemize}
+  \item C++11 (ISO/IEC 14882:2011) offers its own concurrency model.
+    \begin{itemize}
+      \item Later revisions in C++14, C++17, and C++20.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Any compliant implementation must supply it.
+    \begin{itemize}
+      \item Solves inherent problems from \textmark{PThreads}.
+      \item Portable concurrent code: \textmark{Windows}, \textmark{POSIX}, \ldots
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Implications}:
+    \begin{itemize}
+      \item Changes in the \textmark{language}.
+      \item Changes in the \textmark{standard library}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Influence on C11 (ISO/IEC 9899:2011).
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Important}: Concurrency and parallelism are two
+        \textgood{related} but \textbad{distinct} concepts.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Structure}
+\begin{itemize}
+  \item C++ \textmark{language} \textgood{offers}:
+    \begin{itemize}
+      \item A \textmark{memory model}.
+      \item \cppkey{thread\_local} variables.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item C++ \textmark{standard library} \textgood{offers}:
+    \begin{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textgood{Atomic types}.
+        \begin{itemize}
+          \item Useful for portable \textmark{lock free programming}.
+        \end{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textgood{Portable abstractions} for concurrency.
+        \begin{itemize}
+          \item \textmark{Threads}: \cppid{thread}, \cppid{jthread}.
+          \item \textmark{Mutual exclusion}: \cppid{mutex}, \cppid{*\_mutex}, \cppid{\ldots},
+          \item \textmark{Lock management}: \cppid{lock}, \cppid{*\_lock}, \cppid{\ldots},
+          \item \textmark{Condition variables}: \cppid{condition\_variable}, \cppid{condition\_variable\_any}.
+          \item \textmark{Semaphores}: \cppid{counting\_semaphore}, \cppid{binary\_semaphore}.
+          \item \textmark{Communication}: \cppid{packaged\_task}, \cppid{future}, \cppid{promise}.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}

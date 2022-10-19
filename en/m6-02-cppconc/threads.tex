@@ -1,0 +1,103 @@
+\subsection{Threads}
+
+\begin{frame}[fragile]{Thread launching}
+\begin{itemize}
+  \item A \textgood{thread} represented by class \cppid{std::thread}.
+    \begin{itemize}
+      \item Usually represents an OS thread.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{block}{Launching a thread from a function}
+\begin{lstlisting}
+void f1();
+void f2();
+
+void g() {
+  std::thread t1{f1}; // Launches thread executing f1()
+  std::thread t2{f2}; // Launches thread executing f2()
+
+  t1.join(); // Waits until t1 terminates.
+  t2.join(); // Waits until t2 terminates.
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Shared objects}
+\begin{itemize}
+  \item Two threads may access to a \textmark{shared object}.
+  \item Possibility for \textbad{data races}.
+\end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{block}{Access to shared variables}
+\begin{lstlisting}
+int x = 42;
+
+void f() { ++x; }
+void g() { x=0; }
+void h() { std::cout << "Hello" << "\n"; }
+void i() { std::cout << "Bye" << "\n"; }
+
+void race() {
+  std::thread t1{f}; std::thread t2{g};
+  t1.join(); t2.join();
+
+  std::thread t3{h}; std::thread t4{i};
+  t3.join(); t4.join();
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Argument passing}
+\begin{itemize}
+  \item \textgood{Simplified argument passing} without needing any \textmark{casts}.
+\end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{block}{Argument passing}
+\begin{lstlisting}
+void f1(int x);
+void f2(double x, double y);
+
+void g() {
+  std::thread t1{f1, 10}; // Runs f1(10)
+  std::thread t2{f1}; // Error
+  std::thread t3{f2, 1.0} // Error
+  std::thread t4{f2, 1.0, 1.0}; // Runs f2(1.0,1.0)
+  //...
+  // Thread joins 
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Threads and function objects}
+\begin{itemize}
+  \item \textgood{Function object}: Object that can be invoked as a function.
+  \item \textmark{operator} \cppid{()} \emph{overload/redefinition}.
+\end{itemize}
+
+\mode<presentation>{\vfill}
+\begin{block}{Function object in a thread}
+\begin{lstlisting}
+struct myfunc {
+  myfunc(int val) : x{val} {} // Constructor. Initializes object.
+  void operator()() { do_something(x); } // Redefine operator()
+  int x;
+};
+
+void g() {
+  myfunc f1{10}; // Constructs object f1
+  f1(); // Invokes call operator f1.operator()
+  std::thread t1{f1}; // Runs f1() in a thread
+  std::thread t2{myfunc{20}}; // Construct temporal and invokes it
+  // ...
+  // Threads joins
+\end{lstlisting}
+\end{block}
+\end{frame}
+
