@@ -282,7 +282,7 @@ void f() {
     \end{itemize}
 \end{itemize}
 \begin{block}{Example}
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\tiny]
 void check() {
   for (;;) {
     check_state();
@@ -303,7 +303,7 @@ void f() {
 
 \begin{column}{.65\textwidth}
 \begin{block}{Example}
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\tiny]
 void f();
 void g();
 
@@ -388,7 +388,7 @@ void example() {
   \item Useful for task running as daemons.
 \end{itemize}
 \begin{block}{Example}
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\tiny]
 void update() {
   for (;;) {
     show_clock(steady_clock::now());
@@ -459,54 +459,5 @@ void g() {
       \item If clock can be modified, \cppid{wait\_until()} is affected.
       \item If clock can be modified, \cppid{wait\_for()} is \textbf{not} affected.
     \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}[t]{Thread local variables}
-\begin{itemize}
-  \item Alternative to \cppkey{static} as storage specifier: \cppkey{thread\_local}.
-    \begin{itemize}
-      \item A variable \cppkey{static} has a single shared copy for all threads.
-      \item A variable \cppkey{thread\_local} has a per thread copy.
-    \end{itemize}
-  \item Lifetime: \emph{thread storage duration}.
-    \begin{itemize}
-      \item Starts before its first usage in thread.
-      \item Destroyed upon thread exit.
-    \end{itemize}
-  \item Reasons to used thread local storage:
-    \begin{itemize}
-      \item Transform data from static storage to thread local storage.
-      \item Keep data caches to be thread local (exclusive access).
-        \begin{itemize}
-          \item Important in machines with separate caches and coherence protocols.
-        \end{itemize}
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}[t,fragile]
-\begin{block}{A function with computation caching}
-\begin{lstlisting}
-thread_local std::map<int, int> cache;
-
-int compute_key(int x) {
-  auto i = cache.find(x);
-  if (i != cache.end()) return i->second;
-  return cache[x] = slow_and_complex_algorithm(x);
-}
-
-std::vector<int> generate_list(const std::vector<int> & v) {
-  std::vector<int> r;
-  for (auto x : v) {
-    r.push_back(compute_key(x));
-  }
-  return r;
-}
-\end{lstlisting}
-\end{block}
-\begin{itemize}
-  \item Avoids need for synchronization.
-  \item Some computations might be repeated in multiple threads.
 \end{itemize}
 \end{frame}

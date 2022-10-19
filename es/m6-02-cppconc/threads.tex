@@ -34,22 +34,7 @@ void g() {
 
 \mode<presentation>{\vfill}
 \begin{block}{Acceso a variables compartidas}
-\begin{lstlisting}
-int x = 42;
-
-void f() { ++x; }
-void g() { x=0; }
-void h() { std::cout << "Hola" << "\n"; }
-void i() { std::cout << "Adios" << "\n"; }
-
-void carrera() {
-  std::thread t1{f}; std::thread t2{g};
-  t1.join(); t2.join();
-
-  std::thread t3{h}; std::thread t4{i};
-  t3.join(); t4.join();
-}
-\end{lstlisting}
+\lstinputlisting[basicstyle=\tiny]{int/m6-02-cppconc/race.cpp}
 \end{block}
 \end{frame}
 
@@ -75,29 +60,18 @@ void g() {
 \end{block}
 \end{frame}
 
-\begin{frame}[fragile]{Hilos y objetos función}
+\begin{frame}[fragile]{Hilos y expresiones lambda}
 \begin{itemize}
-  \item \textgood{Objeto función}: Objeto invocable como función.
-  \item Sobrecarga/redefinición del \textmark{operador} \cppid{()}
+  \item \textgood{Casos de uso}:
+    \begin{itemize}
+       \item Funciones pequeñas definidas como parámetro.
+       \item Paso simple de argumentos por referencia.
+    \end{itemize}
 \end{itemize}
 
 \mode<presentation>{\vfill}
-\begin{block}{Objeto función en un hilo}
-\begin{lstlisting}
-struct mifunc {
-  mifunc(int val) : x{val} {}
-  void operator()() { haz_algo(x); }
-  int x;
-};
-
-void g() {
-  mifunc f1{10}; // Construye objeto f1
-  f1(); // Invoca operador de llamada f1.operator()
-  std::thread t1{f1}; // Ejecuta f1() en un hilo
-  std::thread t2{mifunc{20}}; // Construye temporal e invoca mifunc{20}.operator()
-  // ...
-  // Joins de hilos
-\end{lstlisting}
+\begin{block}{Uso de expresiones lambda}
+\lstinputlisting[basicstyle=\tiny]{int/m6-02-cppconc/launch_lambda.cpp}
 \end{block}
 \end{frame}
 

@@ -274,7 +274,7 @@ void f() {
     \end{itemize}
 \end{itemize}
 \begin{block}{Ejemplo}
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\tiny]
 void comprueba() {
   for (;;) {
     using namespace std::literals;
@@ -295,7 +295,7 @@ void f() {
 
 \begin{column}{.65\textwidth}
 \begin{block}{Ejemplo}
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\tiny]
 void f();
 void g();
 
@@ -380,7 +380,7 @@ void ejemplo() {
   \item Útil para tareas que se ejecutan como demonios.
 \end{itemize}
 \begin{block}{Ejemplo}
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\tiny]
 void actualiza() {
   for (;;) {
     using namespace std::literals;
@@ -445,53 +445,5 @@ void g() {
       \item Si se modifica el reloj, \cppid{wait\_until()} se ve afectado.
       \item Si se modifica el reloj, \cppid{wait\_for()} \textbf{no} se ve afectado.
     \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Variables locales al hilos}
-\begin{itemize}
-  \item Alternativa a \cppkey{static} como especificador de almacenamiento: \cppkey{thread\_local}.
-    \begin{itemize}
-      \item Una variable \cppkey{static} tiene una única copia compartida por todos los hilos.
-      \item Una variable \cppkey{thread\_local} tiene una copia por cada hilo.
-    \end{itemize}
-  \item Tiempo de vida: duración de almacenamiento de hilo (\emph{thread storage duration}).
-    \begin{itemize}
-      \item Se inicia antes de su primer uso en el hilo.
-      \item Se destruye en la salida del hilo.
-    \end{itemize}
-  \item Razones para usar almacenamiento local al hilo:
-    \begin{itemize}
-      \item Transformar datos de alamacenamiento estático a almacenamiento local al hilo.
-      \item Mantener cachés de datos locales a cada hilo (acceso exclusivo).
-        \begin{itemize}
-          \item Importante en máquinas con caché separada y protocolos de coherencia.
-        \end{itemize}
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]
-\begin{block}{Una función con caché de cálculos}
-\begin{lstlisting}
-thread_local std::map<int, int> cache;
-
-int calcula_clave(int x) {
-  auto i = cache.find(x);
-  if (i != cache.end()) return i->second;
-  return cache[arg] = algoritmo_complejo_y_lento(arg);
-}
-
-std::vector<int> genera_lista(std::vector<int> v) {
-  std::vector<int> r;
-  for (auto x : v) {
-    r.push_back(calcula_clave(x));
-  }
-}
-\end{lstlisting}
-\end{block}
-\begin{itemize}
-  \item Se evita sincronización.
-  \item Puede que se repita algún cálculo.
 \end{itemize}
 \end{frame}
