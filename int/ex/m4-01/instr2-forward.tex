@@ -102,9 +102,11 @@ I9 &
 \\
 \hline
 
+% en RISC-V después de un salto hay que descartar dos instrucciones
+
 I1 &
 lw t4, 0(t1)
-& IF & ID & EX & M & WB
+& IF & ID & EX & M & WB   % al ser lw (acceso a memoria de lectura) debería de tener & M & M
 \\
 \hline
 
