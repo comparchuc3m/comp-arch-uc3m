@@ -1,0 +1,45 @@
+\begin{tikzpicture}
+\tikzset{
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  proc/.style={circle,draw=black,fill=blue!70,text=white,thick, text centered, font=\small, minimum width=1cm},
+  cache/.style={rectangle,draw=black,fill=orange!80!black,text=white,thick, text centered, font=\tiny, minimum width=1cm,
+                minimum height=0.75cm,align=center},
+  llcache/.style={rectangle,draw=black,fill=orange!60!black,text=white,thick, text centered, font=\tiny, minimum width=1cm,
+                minimum height=0.75cm,align=center},
+  memoria/.style={rectangle,draw=black,fill=orange!40!black,text=white,thick, text centered, font=\tiny, minimum width=1cm,
+                minimum height=0.75cm,align=center},
+  etiqueta/.style={text centered, font=\tiny} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+  fasesep/.style={-,thick,draw=blue,dashed},
+  faseetiq/.style={text centered, font=\small,text=orange}, 
+}  
+\node[proc] (p1) {P1};
+\node[proc,right=1cm of p1] (p2) {P2};
+\node[proc,right=1cm of p2] (p3) {P3};
+\node[proc,right=1cm of p3] (p4) {P4};
+\node[cache,below=0.5cm of p1] (cache1) {Caché\\privada};
+\node[cache,below=0.5cm of p2] (cache2) {Caché\\privada};
+\node[cache,below=0.5cm of p3] (cache3) {Caché\\privada};
+\node[cache,below=0.5cm of p4] (cache4) {Caché\\privada};
+\path[sinflecha] (p1) -- (cache1);
+\path[sinflecha] (p2) -- (cache2);
+\path[sinflecha] (p3) -- (cache3);
+\path[sinflecha] (p4) -- (cache4);
+\node[connpoint,below=0.5cm of cache1] (cp1) {};
+\path[sinflecha] (cache1) -- (cp1);
+\node[connpoint,below=0.5cm of cache2] (cp2) {};
+\path[sinflecha] (cache2) -- (cp2);
+\node[connpoint,below=0.5cm of cache3] (cp3) {};
+\path[sinflecha] (cache3) -- (cp3);
+\node[connpoint,below=0.5cm of cache4] (cp4) {};
+\path[sinflecha] (cache4) -- (cp4);
+\node[connpoint,right=1cm of cp2] (cp) {};
+\path[sinflecha] (cp1) -- (cp4);
+\node[llcache,minimum width=7cm,below=0.75cm of cp] (llc) {Caché compartida};
+\path[sinflecha] (cp) -- (llc);
+\node[memoria,minimum width=7cm,minimum height=1cm,below=0.75cm of llc] (mem) {Memoria principal};
+\path[sinflecha] (llc) -- (mem);
+\end{tikzpicture}

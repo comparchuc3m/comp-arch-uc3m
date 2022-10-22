@@ -1,0 +1,48 @@
+\section{Alternativas de coherencia de caché}
+
+\begin{frame}[t]{Multiprocesadores coherentes}
+\begin{itemize}
+  \item Un \textgood{multiprocesador coherente} ofrece:
+    \begin{itemize}
+      
+      \mode<presentation>{\vfill\pause}
+      \item \textmark{Migración} de datos compartidos.
+        \begin{itemize}
+          \item Un dato puede moverse a una caché local y usarse de forma transparente.
+          \item Reduce latencia de acceso a dato remoto y demanda de ancho de banda a la memoria compartida.
+        \end{itemize}
+      
+      \mode<presentation>{\vfill\pause}
+      \item \textmark{Replicación} de datos compartidos leídos simultáneamente.
+        \begin{itemize}
+          \item Se realiza copia del dato en caché local.
+          \item Reduce latencia de acceso y contención de las lecturas.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Propiedades críticas para el rendimiento}:
+    \begin{itemize}
+      \item \textmark{Solución}: Protocolo hardware de mantenimiento de coherencia de caché.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Clases de protocolos de coherencia de caché}
+\begin{itemize}
+  \item Basados en \textgood{directorio}:
+    \begin{itemize}
+      \item El estado de compartición se mantiene en un directorio.
+      \item \textmark{SMP}: Directorio centralizado en memoria o en caché de más alto nivel.
+      \item \textmark{DSM}: Para evitar cuello de botella se usa un directorio distribuido (más complejo).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Snooping} (espionaje):
+    \begin{itemize}
+      \item Cada caché mantiene el estado de compartición de cada bloque que tiene.
+      \item Las cachés accesibles mediante medio de multidifusión (bus).
+      \item Todas las cachés monitorizan el medio de multidifusión para determinar si tienen una copia del bloque.
+    \end{itemize}
+\end{itemize}
+\end{frame}

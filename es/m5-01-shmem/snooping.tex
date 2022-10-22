@@ -1,0 +1,345 @@
+\section{Protocolos de espionaje}
+
+\begin{frame}[t]{Mantenimiento de la coherencia}
+\begin{itemize}
+  \item \textgood{Invalidación de escrituras}:
+    \begin{itemize}
+      \item Garantiza que un procesador tiene \textmark{acceso exclusivo} 
+            a un bloque antes de realizar una escritura.
+      \item \textmark{Invalida} el resto de copias que puedan tener otros procesadores.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Actualización de escrituras} (difusión de escrituras):
+    \begin{itemize}
+      \item Difunde todas las escrituras a \textmark{todas las cachés} para modificar el bloque.
+      \item Consume \textmark{más ancho de banda}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Estrategia más común $\Rightarrow$ \textmark{Invalidación}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Uso del bus de memoria}
+\begin{itemize}
+  \item \textgood{Invalidación}.
+    \begin{itemize}
+      \item El procesador adquiere el bus y difunde la dirección a invalidar.
+      \item Todos los procesadores espían el bus.
+      \item Cada procesador comprueba si tienen en caché la dirección difundida y la invalidan.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item No puede haber dos escrituras simultáneas:
+    \begin{itemize}
+      \item El uso exclusivo del bus serializa las escrituras.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Fallos de caché}:
+    \begin{itemize}
+      \item \textmark{Escritura inmediata} (write through):
+        \begin{itemize}
+          \item La memoria tiene la última escritura realizada.
+        \end{itemize}
+      \item \textmark{Post-escritura} (write back):
+        \begin{itemize}
+          \item Si un procesador tiene una copia modificada, contesta al falló de caché del otro procesador.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Implementación}
+\begin{itemize}
+  \item \textgood{Invalidación}:
+    \begin{itemize}
+      \item Se aprovecha el \textmark{bit de validez} (V) asociado a cada bloque.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Escrituras}:
+    \begin{itemize}
+      \item Necesidad de saber si hay \textmark{otras copias} en caché.
+        \begin{itemize}
+          \item Si no hay otras copias no hay que \textmark{difundir escritura}.
+        \end{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item Se añade \textmark{bit de compartición} (S) asociado a cada bloque.
+
+      \mode<presentation>{\vfill\pause}
+      \item Cuando hay escritura:
+        \begin{itemize}
+          \item Se genera \textmark{invalidación} en bus.
+          \item Se pasa de \textmark{estado compartido} a \textmark{estado exclusivo}.
+          \item No hace falta enviar nuevas invalidaciones.
+        \end{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item Cuando hay \textmark{fallo de caché} en otro procesador:
+        \begin{itemize}
+          \item Se pasa de \textmark{estado exclusivo} a \textmark{estado compartido}.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Protocolo básico}
+\begin{itemize}
+  \item Basado en una \textgood{máquina de estados} para \textmark{cada bloque de caché}:
+    \begin{itemize}
+      \item \textgood{Cambios de estado} generados por:
+        \begin{itemize}
+          \item Peticiones del procesador.
+          \item Peticiones del bus.
+        \end{itemize}
+      \item \textgood{Acciones}:
+        \begin{itemize}
+          \item Cambios de estado.
+          \item Acciones sobre el bus.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Aproximación simple con \textgood{tres estados}:
+    \begin{itemize}
+      \item \textmark{M}: El bloque ha sido modificado.
+      \item \textmark{S}: El bloque está compartido.
+      \item \textmark{I}: El bloque ha sido invalidado.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,shrink=5]{Acciones generadas por el procesador}
+
+{\scriptsize
+\begin{tabular}{l|l|l|l}
+
+Petición & Estado & Acción & Descripción \\
+\hline
+\hline
+
+\pause Acierto de lectura &
+S $\rightarrow$ S &
+Acierto &
+Leer dato de caché local
+\\
+\hline
+
+\pause Acierto de lectura &
+M $\rightarrow$ M &
+Acierto &
+Leer dato de caché local
+\\
+\hline
+
+\pause Fallo de lectura & 
+I $\rightarrow$ S &
+Fallo &
+Difundir fallo de lectura en bus.
+\\
+\hline
+
+\pause Fallo de lectura &
+S $\rightarrow$ S &
+Remplazo &
+Fallo de conflicto de dirección. 
+\\
+
+& & &
+Difundir fallo de lectura en bus. 
+\\
+\hline
+
+\pause Fallo de lectura &
+M $\rightarrow$ S &
+Remplazo &
+Fallo de conflicto de dirección. 
+\\
+
+& & &
+Escribir bloque y difundir fallo de lectura.
+\\
+\hline
+
+\pause Acierto de escritura &
+M $\rightarrow$ M &
+Acierto &
+Escribir dato en caché local.
+\\
+\hline
+
+\pause Acierto de escritura &
+S $\rightarrow$ M &
+Coherencia &
+Invalidación en bus.
+\\
+\hline
+
+\pause Fallo de escritura &
+I $\rightarrow$ M &
+Fallo &
+Difundr fallo de escritura en bus.
+\\
+\hline
+
+\pause Fallo de escritura &
+S $\rightarrow$ M &
+Remplazo &
+Fallo de conflicto de dirección. 
+\\
+
+& & &
+Difundir fallo de escritura en bus.
+\\
+\hline
+
+\pause Fallo de escritura &
+M $\rightarrow$ M &
+Remplazo &
+Fallo de conflicto de dirección. 
+\\
+
+& & &
+Escribir bloque y difundir fallo de escritura.
+\\
+\hline
+
+\end{tabular}
+}
+\end{frame}
+
+
+\begin{frame}[t]{Protocolo MSI: Acciones de procesador}
+\makebox[\textwidth][c]{
+\input{es/m5-01-shmem/msi-proc.tkz}
+}
+\end{frame}
+
+
+\begin{frame}[t,shrink=5]{Acciones generadas por el bus}
+
+{\scriptsize
+\begin{tabular}{l|l|l|l}
+
+Petición & Estado & Acción & Descripción\\
+\hline
+\hline
+
+\pause Fallo de lectura &
+S $\rightarrow$ S &
+-- &
+Memoria compartida sirve el fallo
+\\
+\hline
+
+\pause Fallo de lectura &
+M $\rightarrow$ S &
+Coherencia &
+Intento de compartir dato.
+\\
+
+& & &
+Se coloca bloque en bus.
+\\
+\hline
+
+\pause Invalidar &
+S $\rightarrow$ I &
+Coherencia &
+Intento de escribir bloque compartido.
+\\
+
+& & & 
+Invalidar el bloque.
+\\
+\hline
+
+\pause Fallo de escritura &
+S $\rightarrow$ I &
+Coherencia &
+Intento de escribir bloque compartido.
+\\
+
+& & &
+Invalidar el bloque.
+\\
+\hline
+
+\pause Fallo de escritura &
+M $\rightarrow$ I &
+Coherencia &
+Intento de escribir bloque que es.
+\\
+
+& & &
+exclusivo en algún sitio.
+\\
+
+& & &
+Se escribe (\emph{write-back}) el bloque.
+\\
+\hline
+
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}[t]{Protocolo MSI: Acciones de bus}
+\makebox[\textwidth][c]{
+\input{es/m5-01-shmem/msi-bus.tkz}
+}
+\end{frame}
+
+\begin{frame}[t]{Complejidad del protocolo MSI}
+\begin{itemize}
+  \item El protocolo asume que las operaciones son \textmark{atómicas}.
+    \begin{itemize}
+      \item \textgood{Ejemplo}: Se asume que se puede detectar un fallo de escritura, 
+            adquirir el bus y recibir una respuesta en una única acción sin interrupción.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Si las operaciones \textbad{no son atómicas}:
+    \begin{itemize}
+      \item Posibilidad de deadlock y/o carreras.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Solución}:
+    \begin{itemize}
+      \item El procesador que envía invalidación mantiene 
+            \textmark{propiedad del bus} hasta que la invalidación 
+            llega al resto.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Extensiones a MSI}
+\begin{itemize}
+  \pause
+  \item \textgood{MESI}:
+    \begin{itemize}
+       \item Añade \textmark{estado exclusivo} (E) que indica 
+             que el bloque reside en una única caché pero no está modificado.
+       \item Escritura de un bloque E \textgood{no genera invalidaciones}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{MESIF}:
+    \begin{itemize}
+      \item Añade \textmark{estado forward} (F): Alternativa a S que indica qué nodo debe responder a una petición.
+      \item Usado en Intel Core i7.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{MOESI}:
+    \begin{itemize}
+      \item Añade \textmark{estado poseído} (O) que indica que el bloque está desactualizado en memoria.
+      \item Evita escrituras a memoria.
+      \item Usado en AMD Opteron.
+    \end{itemize}
+\end{itemize}
+\end{frame}

@@ -1,0 +1,41 @@
+\section{Conclusión}
+
+\begin{frame}[t]{Resumen}
+\begin{itemize}
+  \item \textemph{Multiprocesador} como computador con \textmark{procesadores altamente acoplados}
+        con coordinación, uso y compartición de memoria.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textemph{Multiprocesadores} clasificados en 
+        \textmark{SMP} (Symetric multiprocessor) y
+        \textmark{DSM} (Distributed Shared Memory).
+
+  \mode<presentation>{\vfill\pause}
+  \item Dos \textmark{aspectos} a considerar en la jerarquía de memoria: 
+        \textgood{coherencia} y \textgood{consistencia}.
+
+  \mode<presentation>{\vfill\pause}
+  \item Dos alternativas en la \textmark{coherencia de caché}: 
+        \textgood{directorio} y \textgood{espionaje} (\emph{snooping}).
+
+  \mode<presentation>{\vfill\pause}
+  \item Los \textemph{protocolos de espionaje} \textbad{no requieren} un 
+        \textgood{elemento centralizado}.
+    \begin{itemize}
+      \item Pero generan más tráfico de bus.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Referencias}
+\begin{itemize}
+  \item \bibhennessy
+    \begin{itemize}
+      \item Sección 5.1 -- \emph{Introduction}
+      \item Sección 5.2 -- \emph{Centralized Shared-Memory Architectures}
+      \item Sección 5.3 -- \emph{Performance of Symmetric Shared-Memory Multiprocessors}
+            (solamente páginas 393--394).
+    \end{itemize}
+
+\end{itemize}
+\end{frame}

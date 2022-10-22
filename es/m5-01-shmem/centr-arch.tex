@@ -1,0 +1,167 @@
+\section{Arquitecturas de memoria compartida centralizada}
+
+\begin{frame}[t]{SMP y jerarquía de memoria}
+\begin{itemize}
+  \item ¿Por qué usar memoria centralizada?
+    \begin{itemize}
+      \item Cachés grandes multi-nivel reducen la demanda de ancho
+            de banda sobre memoria principal.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Evolución}:
+    \begin{enumerate}[1.]
+      \item Mono-núcleo con memoria en \textmark{bus compartido}.
+      \item Conexión de memoria a \textmark{bus separado} solamente para memoria.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Memoria caché}
+\begin{itemize}
+  \item \textgood{Tipos de datos} en memoria caché:
+    \begin{itemize}
+      \item \textmark{Datos privados}: Datos usados por un único procesador.
+      \item \textmark{Datos compartidos}: Datos usados por varios procesadores.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Problema} con datos compartidos:
+    \begin{itemize}
+      \item \pause El dato puede replicarse en múltiples caché.
+      \item \pause Reduce la contención.
+        \begin{itemize}
+          \item Cada procesador accede a su copia local.
+        \end{itemize}
+      \item \pause Si dos procesadores modifican sus copias \ldots
+        \begin{itemize}
+          \item ¿Coherencia de caché?
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Coherencia de caché}
+
+\begin{columns}[T]
+
+\column{.3\textwidth}
+\begin{block}{Thread 1}
+\begin{lstlisting}[language=generalasm2]
+lw t0, dirx
+addi t0, t0, 1
+sw t0, dirx
+\end{lstlisting}
+\end{block}
+
+\column{.3\textwidth}
+\begin{block}{Thread 2}
+\begin{lstlisting}[language=generalasm2]
+lw t0, dirx
+\end{lstlisting}
+\end{block}
+
+\column{.3\textwidth}
+\begin{itemize}
+\item \asmreg{t0} inicialmente 1.
+\item Asumiendo escritura inmediata.
+\end{itemize}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+{\footnotesize
+\begin{tabular}{l|l|l|l|l}
+
+Proceso &
+Instrucción &
+Caché P1 &
+Caché P2 &
+Memoria principal
+\\
+
+\hline
+\hline
+
+\pause
+T1 & Inicialmente & No presente & No presente & 1 \pause\\
+\hline
+T1 & \asminst{lw} \asmreg{t0}, \asmlabel{dirx} & 1 & No presente & 1 \pause\\
+\hline
+T1 & \asminst{addi} \asmreg{t0}, \asmreg{t0}, \asmlabel{1} & 1 & No presente & 1 \pause\\
+\hline
+T2 & \asminst{lw} \asmreg{t0}, \asmlabel{dirx} & 1 & 1 & 1 \pause\\
+\hline
+T1 & \asminst{sw} \asmreg{t0}, \asmlabel{dirx} & 2 & 1 & 1 \\
+\hline
+
+\end{tabular}
+}
+
+\end{frame}
+
+\begin{frame}[t]{Incoherencia de caché}
+\begin{itemize}
+  \item ¿Por qué se da la incoherencia?
+    \begin{itemize}
+      \item \textgood{Dualidad de estado}:
+        \begin{itemize}
+          \item \textgood{Estado global} $\rightarrow$ \textmark{Memoria principal}.
+          \item \textgood{Estado local}  $\rightarrow$ \textmark{Caché privada}.
+      \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Un sistema de memoria es \textgood{coherente} si cualquier lectura de una posición
+        devuelve el valor más reciente que se haya escrito para esa posición.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Dos aspectos}:
+    \begin{itemize}
+      \item \textmark{Coherencia}: ¿Qué valor devuelve una lectura?
+      \item \textmark{Consistencia}: ¿Cuándo obtiene una lectura un valor escrito?
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Condiciones para la coherencia}
+\begin{itemize}
+  \item \textmark{Preservación de orden de programa}:
+    \begin{itemize}
+      \item Una lectura del procesador P sobre la posición X posterior a una escritura del procesador P sobre la posición X, sin escrituras intermedias de X por otro procesador, siempre devuelve el valor escrito por P.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Vista coherente de la memoria}:
+    \begin{itemize}
+      \item Una lectura de un procesador sobre la posición X posterior a una escritura por otro procesador sobre la posición X, devuelve el valor escrito si las dos operaciones están suficientemente separadas en el tiempo y no hay escrituras intermedias sobre X.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Serialización de escrituras}:
+    \begin{itemize}
+      \item Dos escrituras sobre la misma posición por dos procesadores son vistas en el mismo orden por todos los procesadores.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Consistencia de memoria}
+\begin{itemize}
+  \item Define en qué momento un proceso que lee verá una escritura.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Coherencia} y \textgood{consistencia} son complementarias:
+    \begin{itemize}
+      \item \textmark{Coherencia}: Comportamiento de lecturas y escrituras a una única posición de memoria.
+      \item \textmark{Consistencia}: Comportamiento de lecturas y escrituras con respecto a accesos a otras posiciones de memoria.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Existen distintos modelos de consistencia de memoria.
+    \begin{itemize}
+      \item \textbad{Dedicaremos una sesión específica a este problema}.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}

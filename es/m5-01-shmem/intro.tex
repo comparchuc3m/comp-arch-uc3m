@@ -1,0 +1,201 @@
+\section{Introducción a las arquitecturas multiprocesador}
+
+\begin{frame}[t]{Creciente importancia de multiprocesadores}
+\begin{itemize}
+  \item Caída de la eficiencia en uso de silicio y energía al explotar mayor nivel de ILP.
+    \begin{itemize}
+      \item El coste de silicio y energía crece más rápidamente que el rendimiento.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Interés creciente en servidores de alto rendimiento.
+    \begin{itemize}
+      \item Cloud computing, \emph{software as a service}, \ldots
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Crecimiento de aplicaciones intensivas en datos.
+    \begin{itemize}
+      \item Enormes cantidades de datos en Internet.
+      \item \emph{Big data analytics}.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{TLP: Paralelismo a nivel de hilo}
+\begin{itemize}
+  \item TLP implica la existencia de múltiples contadores de programa.
+
+    \begin{itemize}
+      \mode<presentation>{\vfill}
+      \item Asume MIMD.
+
+      \mode<presentation>{\vfill}
+      \item Uso generalizado de TLP fuera de computación científica relativamente reciente.
+
+      \mode<presentation>{\vfill}
+      \item Nuevas aplicaciones:
+        \begin{itemize}
+          \item Aplicaciones empotradas.
+          \item Desktop.
+          \item Servidores de alta gama.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Multiprocesadores}
+\begin{itemize}
+  \item Un \textgood{multiprocesador} es un computador formado por procesadores altamente acoplados con:
+    \begin{itemize}
+      \item \pause\textgood{Coordinación y uso} típicamente controlados 
+            por un \textmark{sistema operativo único}.
+      \item \textgood{Compartición de memoria} mediante un 
+            \textmark{único espacio de direcciones compartido}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Modelos de software}:
+    \begin{itemize}
+      \item \pause\textmark{Procesamiento paralelo}: Conjunto de hilos acoplados que cooperan.
+      \item \pause\textmark{Procesamiento de peticiones}: Ejecución de procesos independientes originados por usuarios.
+      \item \pause\textmark{Multiprogramación}: Ejecución independiente de múltiples aplicaciones.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]
+\begin{itemize}
+  \item La aproximación más común:
+    \begin{itemize}
+      \item De 2 a decenas de procesadores.
+      \item Memoria compartida.
+        \begin{itemize}
+          \item Implica memoria compartida.
+          \item No necesariamente implica una única memoria física.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Alternativas}:
+    \begin{itemize}
+      \item \textmark{CMP} (\emph{Chip MultiProcessors}) o \emph{multi-core}.
+      \item Múltiples chips.
+        \begin{itemize}
+          \item Cada uno puede ser (o no) \emph{multi-core}.
+        \end{itemize}
+      \item \textmark{Multicomputador}: Procesadores débilmente acoplados que no comparten memoria.
+        \begin{itemize}
+          \item Usados en computación científica de gran escala.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]
+\begin{itemize}
+  \item \textgood{Aprovechamiento} de un multiprocesador:
+    \begin{itemize}
+      \item Con \textmark{n} procesadores se necesitan \textmark{n} hilos o procesos.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Identificación} de hilos:
+    \begin{itemize}
+      \item Identificados explícitamente por programador.
+      \item Creados por el sistema operativo a partir de peticiones.
+      \item Iteraciones de un bucle generadas por compilador paralelo (p. ej. OpenMP).
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\setbeamercolor{blockremark}{bg=cyan!60!black}
+\begin{beamercolorbox}[sep=1em,wd=\textwidth]{blockremark}
+Identificación realizada a alto nivel por el programador o software de sistema
+con hilos con un número \textmark{suficiente} de instrucciones a ejecutar.
+\end{beamercolorbox}
+
+\end{frame}
+
+\begin{frame}[t,shrink=10]{Multiprocesadores y memoria compartida}
+
+\vspace{-1em}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+
+\begin{block}{SMP: Symmetric Multi-Processor}
+\begin{itemize}
+  \item Memoria compartida centralizada.
+  \item Comparten una memoria centralizada única a la que todos acceder por igual.
+  \item Todos los multi-core son SMP.
+  \item \textmark{UMA}: Uniform Memory Access
+    \begin{itemize}
+      \item La latencia de memoria es uniforme.
+      \item Todos los SMP son UMA.
+    \end{itemize}
+  \item textmark{NUCA}: Non-Uniform Cache Access.
+    \begin{itemize}
+      \item Acceso no uniforme a caché LL.
+      \item Ejemplo: IBM Power.
+    \end{itemize}
+\end{itemize}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+
+\begin{block}{DSM: Distributed Shared Memory}
+\begin{itemize}
+  \item Memoria compartida distribuida
+  \item La memoria se distribuye entre los procesadores.
+  \item Necesaria cuando hay muchos procesadores.
+  \item \textmark{NUMA}: Non Uniform Memory Access.
+    \begin{itemize}
+      \item La latencia depende de la ubicación del dato accedido.
+    \end{itemize}
+\end{itemize}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{itemize}
+  \item \textgood{Comunicación} mediante acceso a 
+        \textmark{espacio compartido de direcciones}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{SMP: Symmetric MultiProcessor}
+\makebox[\textwidth][c]{\input{es/m5-01-shmem/smp.tkz}}
+\end{frame}
+
+\begin{frame}[t]{DSM: Distributed Shared Memory}
+\makebox[\textwidth][c]{\input{es/m5-01-shmem/dsm.tkz}}
+\end{frame}
+
+\begin{frame}[t]{Desafíos del procesamiento paralelo}
+\begin{itemize}
+  \item \textbad{Actividad}
+    \begin{enumerate}
+      \item \textemph{Lee} la \textmark{sección 5.1} -- Introduction.
+            Challenges of Parallel Processing (pg. 373--376).
+        \begin{itemize}
+          \item \bibhennessy
+        \end{itemize}
+
+      \mode<presentation>{\vfill}
+      \item \textemph{Presta atención} a los ejemplos numéricos.
+
+      \mode<presentation>{\vfill}
+      \item \textgood{Aspectos clave}:
+        \begin{itemize}
+          \item ¿Cuáles son los dos mayores desafíos de rendimiento para multiprocesadores?
+        \end{itemize}
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+

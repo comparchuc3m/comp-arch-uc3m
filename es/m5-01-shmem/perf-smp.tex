@@ -1,0 +1,22 @@
+\section{Rendimiento en SMPs}
+
+\begin{frame}[t]{Rendimiento}
+\begin{itemize}
+  \item El uso de políticas de coherencia de caché tiene impacto sobre tasa de fallos.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Aparecen fallos de coherencia}:
+    \begin{itemize}
+      \item Fallos de \textmark{compartición verdadera} (true sharing):
+        \begin{itemize}
+          \item Un procesador escribe en bloque compartido en invalida.
+          \item Otro procesador lee de bloque compartido.
+        \end{itemize}
+      \item Fallos de \textmark{compartición falsa} (false sharing):
+        \begin{itemize}
+          \item Un procesador escribe en bloque compartido e invalida.
+          \item Otro procesador lee una palabra distinta del mismo bloque.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
