@@ -2,13 +2,24 @@
 
 \begin{frame}[t]{Summary}
 \begin{itemize}
-  \item Multiprocessor as computer with multiple highly coupled processors with
+  \item \textemph{Multiprocessor} as computer with \textmark{multiple highly coupled processors} with
         coordination, use, and memory sharing.
-  \item Multiprocessors classified into SMP (Symmetric multiprocessors) and
-        DSM (Distributed Shared Memory).
-  \item Two aspects to consider in memory hierarchy: coherence and consistency.
-  \item Two alternatives in cache coherence: directory and snooping.
-  \item Snooping protocols do not require a centralized element.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textemph{Multiprocessors} classified into 
+        \textmark{SMP} (Symmetric multiprocessors) and
+        \textmark{DSM} (Distributed Shared Memory).
+
+  \mode<presentation>{\vfill\pause}
+  \item Two \textmark{aspects} to consider in memory hierarchy: 
+        \textgood{coherence} and \textgood{consistency}.
+
+  \mode<presentation>{\vfill\pause}
+  \item Two alternatives in \textmark{cache coherence}: 
+        \textgood{directory} and \textgood{snooping}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textemph{Snooping protocols} \textbad{do not require} a \textgood{centralized element}.
     \begin{itemize}
       \item But they generate more bus traffic.
     \end{itemize}
@@ -18,15 +29,12 @@
 
 \begin{frame}[t]{References}
 \begin{itemize}
-  \item \textmark{Computer Architecture. A Quantitative Approach}\\
-  6th Ed.\\
-  Hennessy and Patterson.\\
-  \textgood{Sections}: 5.1, 5.2, 5.3.
-
-  \mode<presentation>{\vfill}
-  \item \textgood{Recommended exercises}:
+  \item \bibhennessy
     \begin{itemize}
-      \item 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7.
+      \item Section 5.1 -- \emph{Introduction}
+      \item Section 5.2 -- \emph{Centralized Shared-Memory Architectures}
+      \item Section 5.3 -- \emph{Performance of Symmetric Shared-Memory Multiprocessors}
+            (only pages 393--394).
     \end{itemize}
 
 \end{itemize}
