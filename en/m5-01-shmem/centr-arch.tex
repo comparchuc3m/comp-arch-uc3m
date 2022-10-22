@@ -47,24 +47,23 @@
 
 \column{.3\textwidth}
 \begin{block}{Thread 1}
-\begin{lstlisting}[language=generalasm]
-lw $t0, dirx
-addi $t0, $t0, 1
-sw $t0, dirx
+\begin{lstlisting}[language=generalasm2]
+lw    t0, dirx
+addi  t0, t0, 1
+sw    t0, dirx
 \end{lstlisting}
 \end{block}
 
 \column{.3\textwidth}
 \begin{block}{Thread 2}
-\begin{lstlisting}[language=generalasm]
-lw $t0, dirx
+\begin{lstlisting}[language=generalasm2]
+lw t0, dirx
 \end{lstlisting}
-%$
 \end{block}
 
 \column{.3\textwidth}
 \begin{itemize}
-\item \cppid{\$t0} initially 1.
+\item \asmreg{t0} initially 1.
 \item Assuming write through.
 \end{itemize}
 
@@ -87,13 +86,13 @@ Main memory
 \pause
 T1 & Initially & Not present & Not present & 1 \pause\\
 \hline
-T1 & \asminst{lw} \asmreg{\$t0}, \asmlabel{dirx} & 1 & Not present & 1 \pause\\
+T1 & \asminst{lw} \asmreg{t0}, \asmlabel{dirx} & 1 & Not present & 1 \pause\\
 \hline
-T1 & \asminst{addi} \asmreg{\$t0}, \asmreg{\$t0}, \asmlabel{1} & 1 & Not present & 1 \pause\\
+T1 & \asminst{addi} \asmreg{t0}, \asmreg{t0}, \asmlabel{1} & 1 & Not present & 1 \pause\\
 \hline
-T2 & \asminst{lw} \asmreg{\$t0}, \asmlabel{dirx} & 1 & 1 & 1 \pause\\
+T2 & \asminst{lw} \asmreg{t0}, \asmlabel{dirx} & 1 & 1 & 1 \pause\\
 \hline
-T1 & \asminst{sw} \asmreg{\$t0}, \asmlabel{dirx} & 2 & 1 & 1 \\
+T1 & \asminst{sw} \asmreg{t0}, \asmlabel{dirx} & 2 & 1 & 1 \\
 \hline
 
 \end{tabular}
