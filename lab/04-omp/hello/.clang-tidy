@@ -1,0 +1,6 @@
+Checks: '*,-llvm-*,-llvmlibc-*,
+-modernize-use-trailing-return-type,
+-openmp-use-default-none'
+CheckOptions:
+  - key: readability-identifier-length.IgnoredVariableNames
+    value: ^id|x$

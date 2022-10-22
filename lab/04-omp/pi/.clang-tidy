@@ -1,0 +1,8 @@
+Checks: '*,-altera-*,-llvm-*,-llvmlibc-*,-google-*,
+-modernize-use-trailing-return-type,
+-cppcoreguidelines-avoid-magic-numbers,
+-readability-magic-numbers,
+-openmp-use-default-none'
+CheckOptions:
+  - key: readability-identifier-length.IgnoredVariableNames
+    value: ^id|x$

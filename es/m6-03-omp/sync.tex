@@ -1,0 +1,91 @@
+\section{Sincronización}
+
+\begin{frame}[t]{Mecanismos de sincronización}
+\begin{itemize}
+  \item \textgood{Sincronización}: Mecanismo usado para establecer
+        restricciones sobre el orden de acceso a datos compartidos.
+    \begin{itemize}
+      \item \textmark{Objetivo}: Evitar carreras de datos.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Alternativas}:
+    \begin{itemize}
+      \item \textgood{Alto nivel}: \cppkey{critical}, \cppkey{atomic}, \cppkey{barrier}, \cppkey{ordered}.
+      \item \textgood{Bajo nivel}: \cppkey{flush}, cerrojos.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{\emph{critical}}
+\begin{itemize}
+  \item Garantiza \textmark{exclusión mutua}.
+  \item Solamente un hilo a la vez puede entrar en la región crítica.
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}
+
+\column{.35\textwidth}
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+#pragma omp parallel
+{
+  for (int i=0;i<max;++i) {
+    x = f(i);
+    #pragma omp critical
+    g(x);
+}
+\end{lstlisting}
+\end{block}
+
+\column{.65\textwidth}
+\begin{itemize}
+  \item Las llamadas a \cppid{f()} se realiza en paralelo.
+  \item Solamente un hilo puede entrar a la vez en \cppid{g()}.
+\end{itemize}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{\emph{atomic}}
+\begin{itemize}
+  \item Garantiza la \textmark{actualización atómica} de una posición de memoria.
+  \item Evita carrera de datos en actualización a variable
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}
+
+\column{.35\textwidth}
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+#pragma omp parallel
+{
+  for (int i=0;i<max;++i) {
+    x = f(i);
+    #pragma omp atomic
+    s += g(x)
+}
+\end{lstlisting}
+\end{block}
+
+\column{.65\textwidth}
+\begin{itemize}
+  \item Las llamadas a \cppid{f()} se realiza en paralelo.
+  \item Las actualizaciones a s son \emph{thread-safe}.
+\end{itemize}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Ejercicio 3}
+\begin{itemize}
+  \item Modifique su programa del ejercicio 2.
+  \item Evalúe:
+    \begin{enumerate}[a)]
+      \item Sección crítica.
+      \item Acceso atómico.
+    \end{enumerate}
+\end{itemize}
+\end{frame}

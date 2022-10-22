@@ -1,0 +1,64 @@
+\section{Secciones y planificación}
+
+\begin{frame}[t,fragile]{Secciones}
+\begin{columns}[T]
+
+\column{.6\textwidth}
+\begin{itemize}
+  \item Define un conjunto de secciones de código.
+  \item Cada sección se pasa a un hilo distinto.
+  \item Por defecto hay una barrera al final del bloque \cppkey{sections}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\column{.4\textwidth}
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+#pragma omp parallel
+{
+  #pragma omp sections
+  {
+    #pragma omp section
+    f();
+    #pragma omp section
+    g();
+    #pragma omp section
+    h();
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Planificación de bucles}
+\begin{itemize}
+  \item \cppkey{schedule(static)} | \cppkey{schedule(static,n)}:
+    \begin{itemize}
+      \item Planifica bloques de iteraciones (de tamaño $n$) para cada hilo.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill\pause}
+  \item \cppkey{schedule(dynamic)} | \cppkey{schedule(dynamic,n)}:
+    \begin{itemize}
+      \item Cada hilo toma un bloque de $n$ iteraciones de una cola hasta que se han procesado todas.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill\pause}
+  \item \cppkey{schedule(guided)} | \cppkey{schedule(guided,n)}:
+    \begin{itemize}
+      \item Cada hilo toma un bloque iteraciones hasta que se han procesado todas. Se 
+            comienza con un tamaño de bloque grande y se va reduciendo hasta llegar a
+            un tamaño $n$.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill\pause}
+  \item \cppkey{schedule(runtime)} | \cppkey{schedule(runtime,n)}:
+    \begin{itemize}
+      \item Se usa lo indicado en \cppid{OMP\_SCHEDULE} o por la biblioteca
+            en tiempo de ejecución.
+    \end{itemize}
+  
+\end{itemize}
+\end{frame}

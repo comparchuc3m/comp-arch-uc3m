@@ -1,0 +1,83 @@
+\section{Compartición de datos}
+
+\begin{frame}[t]{Atributos de almacenamiento}
+\begin{itemize}
+  \item Modelo de programación en \textgood{memoria compartida}:
+    \begin{itemize}
+      \item \textgood{Variables compartidas}.
+      \item \textgood{Variables privadas}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Compartidas}:
+    \begin{itemize}
+      \item Variables globales (alcance de fichero y espacio de nombres).
+      \item Variables \cppkey{static}.
+      \item Objetos en memoria dinámica (\cppid{malloc()} y \cppkey{new}).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Privadas}:
+    \begin{itemize}
+      \item Variables locales de funciones invocadas desde una región paralela.
+      \item Variables locales definidas dentro de un bloque.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Modificación de atributos de almacenamiento}
+\begin{itemize}
+  \item Atributos en clausulas paralelas:
+    \begin{itemize}
+      \item \cppkey{shared}.
+      \item \cppkey{private}.
+      \item \cppkey{firstprivate}.
+    \end{itemize}
+
+  \item \cppkey{private} crea una nueva copia local por hilo.
+    \begin{itemize}
+      \item El valor de las copias no se inicializa.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{Ejemplo}
+\begin{lstlisting}[basicstyle=\tiny]
+void f() {
+  int x = 17;
+  #pragma omp parallel for private(x) 
+  for (int i=0;i<max;++i) {
+    x += i;  // x inicialmente vale 17
+  }
+  cout << x << '\n'; // x==17
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{firstprivate}
+\begin{itemize}
+  \item Caso particular de \cppkey{private}.
+    \begin{itemize}
+      \item Cada copia privada se inicia con el valor de la variable en el
+            hilo \textmark{maestro}.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{Ejemplo}
+\lstinputlisting[firstline=6,lastline=13]{int/m6-03-omp/examples/firstprivate/main.cpp}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{lastprivate}
+\begin{itemize}
+  \item Pasa el valor de una variable privada de la última iteración \textmark{secuencial} a la
+        variable global.
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{Ejemplo}
+\lstinputlisting[firstline=6,lastline=13]{int/m6-03-omp/examples/lastprivate/main.cpp}
+\end{block}
+\end{frame}

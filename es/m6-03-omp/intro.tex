@@ -1,0 +1,163 @@
+\section{Introducción}
+
+\begin{frame}[t]{¿Qué es OpenMP?}
+\begin{itemize}
+  \item Es un \textmark{API} (y un conjunto de directivas) para expresar aplicaciones
+        paralelas en sistemas de memoria compartida.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Componentes}:
+    \begin{itemize}
+      \item Directivas de compilador.
+      \item Funciones de biblioteca.
+      \item Variables de entorno.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Simplifica la forma de escribir programas paralelos.
+    \begin{itemize}
+      \item \emph{Mappings} para FORTRAN, C y C++.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Construcciones}
+\begin{itemize}
+  \item Directivas:
+\begin{lstlisting}
+#pragma omp directiva [clausulas]
+\end{lstlisting}
+
+  \begin{itemize}
+    \item \textmark{Ejemplo}: Fijar el número de hilos.
+\begin{lstlisting}
+#pragma omp parallel num_threads(4)
+\end{lstlisting}
+  \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Funciones de biblioteca
+\begin{lstlisting}
+#include <omp.h> // Incluir para llamar funciones OpenMP
+\end{lstlisting}
+    \begin{itemize}
+      \item \textmark{ejemplo}: Obtener el número de hilos usado.
+\begin{lstlisting}
+int n = omp_get_num_threads();
+\end{lstlisting}
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Ejercicio 1: Secuencial}
+\begin{block}{exseq.cpp}
+\lstinputlisting{lab/04-omp/hello/exseq.cpp}
+\end{block}
+\begin{itemize}
+  \item Imprime en salida estándar.
+\end{itemize}
+\begin{lstlisting}[style=terminal]
+Hello(0) world(0)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[t,fragile]{Ejercicio 1: Paralelo}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{exseq.cpp}
+\lstinputlisting{lab/04-omp/hello/expar.cpp}
+\end{block}
+
+\column{.5\textwidth}
+\begin{itemize}
+  \item Imprime en salida estándar.
+\end{itemize}
+\begin{lstlisting}[style=terminal]
+Hello(Hello(10) world(0Hello() world(1)
+3) world(3)
+Hello(2) world(2)
+)
+\end{lstlisting}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Compilación y OpenMP}
+
+\begin{itemize}
+  \item Flags de compilación: 
+    \begin{itemize}
+      \item \textgood{gcc}: \textmark{-fopenmp}
+      \item \textgood{Intel Linux}: \textmark{-openmp}
+      \item \textgood{Intel Windows}: \textmark{/Qopenmp}
+      \item \textgood{Microsft Visual Studio}: \textmark{/openmp}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Usando CMake:
+  \begin{itemize}
+    \item Activar el soporte para \textmark{OpenMP} en CMake.
+\begin{lstlisting}
+find_package(OpenMP REQUIRED)
+\end{lstlisting}
+
+    \item Activar las opciones de compilación y enlace para un ejecutable.
+\begin{lstlisting}
+add_executable(expar expar.cpp)
+target_link_libraries(expar PUBLIC OpenMP::OpenMP_CXX)
+\end{lstlisting}
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Ejercicio 1}
+\begin{itemize}
+  \item \textgood{Objetivo}: Verificar que el entorno funciona.
+  
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Actividades}:
+  \begin{enumerate}
+    \item Compilar la versión secuencial y ejecutar.
+    \item Compilar la versión paralela y ejecutar.
+    \item Introduzca la función \cppid{omp\_get\_num\_threads()} para
+          imprimir el número de hilos:
+      \begin{enumerate}[a)]
+        \item Antes del \cppkey{pragma}.
+        \item Justo después del \cppkey{pragma}.
+        \item Dentro del bloque.
+        \item Antes de salir del programa, pero fuera del bloque.
+      \end{enumerate}
+  \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Observaciones}
+\begin{itemize}
+  \item Modelo de memoria compartida multi-hilo.
+    \begin{itemize}
+      \item Comunicación mediante variables compartidas.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Compartición accidental $\rightarrow$ \textbad{condiciones de carrera}.
+    \begin{itemize}
+      \item Resultado dependiente de la planificación de los hilos.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Evitar condiciones de carrera.
+    \begin{itemize}
+      \item Sincronización para evitar conflictos.
+        \begin{itemize}
+          \item Coste de sincronización.
+        \end{itemize}
+      \item Modificación en patrón de accesos.
+        \begin{itemize}
+          \item Minimizar sincronizaciones necesarias.
+        \end{itemize}
+    \end{itemize}
+
+\end{itemize}
+\end{frame}

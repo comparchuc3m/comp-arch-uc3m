@@ -1,0 +1,204 @@
+\section{Hilos en OpenMP}
+
+\begin{frame}[t,fragile]{Paralelismo \emph{fork-join}}
+\begin{itemize}
+  \item Aplicación secuencial con secciones paralelas:
+    \begin{itemize}
+      \item \textgood{Hilo maestro}: Iniciado con el programa principal.
+      \item En una sección paralela se arranca un conjunto de hilos.
+      \item Se puede \textmark{anidar} el paralelismo.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Una región paralela es un bloque marcado con la directiva \cppkey{parallel}.
+\begin{lstlisting}
+#pragama omp parallel
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Selección del número de hilos}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Función de biblioteca}
+\begin{lstlisting}[basicstyle=\tiny]
+omp_set_num_threads(4);
+#pragma omp parallel
+{
+  // Región paralela
+}
+\end{lstlisting}
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+\column{.5\textwidth}
+\begin{block}{Directiva OpneMP}
+\begin{lstlisting}[basicstyle=\tiny]
+#pragma omp parallel num_threads(4)
+{
+  // Región paralela
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}
+
+\column{.25\textwidth}
+
+\column{.5\textwidth}
+
+\begin{block}{Variable de entorno}
+\begin{lstlisting}[style=terminal,basicstyle=\tiny]
+OMP_NUM_THREADS=8 program
+\end{lstlisting}
+\end{block}
+
+\column{.25\textwidth}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t,shrink=20]{Ejercicio 2: Cálculo de $\pi$}
+\begin{itemize}
+
+  \item Cálculo de $\pi$.
+\[
+\int_{0}^{1} \frac{1}{1+x^2} dx =
+\arctan{1} - \arctan{0} =
+\frac{\pi}{4}
+\]
+
+  \mode<presentation>{\vfill\pause}
+  \item Aproximación:
+\[
+\pi \approx 4 \cdot \sum_{i=0}^{N} f(x_{i} + \frac{\Delta x}{2}) \Delta x =
+4 \cdot \Delta x \sum_{i=0}^{N} \frac{1}{1 + (x_i + \frac{\Delta x}{2} )^2}
+\]
+
+  \mode<presentation>{\vfill\pause}
+    \begin{itemize}
+      \item Suma del área de N rectángulos.
+      \item \textmark{Base}: $\Delta x = \frac{1}{N}$.
+      \item \textmark{Puntos}: $x_i = \Delta x \cdot i$
+      \item \textmark{Altura}: $f(x_i + \frac{\Delta x}{2})$ = $f(\Delta x \cdot i + \frac{\Delta x}{2})$
+            $f(\Delta x (i + \frac{1}{2})$.
+    \end{itemize}
+
+\[
+\pi \approx 
+4 \cdot \Delta x \sum_{i=0}^{N} \frac{1}{1 + (\Delta x \cdot (i + \frac{1}{2} ))^2}
+\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Ejercicio 2: Versión secuencial}
+\begin{block}{Cálculo de $\pi$}
+\lstinputlisting[basicstyle=\tiny]{lab/04-omp/pi/piseq.cpp}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Medición del tiempo en C++11}
+\begin{itemize}
+
+\item Ficheros de \textmark{include}:
+\begin{lstlisting}
+#include <chrono>
+\end{lstlisting}
+
+\item Tipo para el reloj:
+\begin{lstlisting}
+using clk = chrono::high_resolution_clock;
+\end{lstlisting}
+
+\item Obtener un punto del tiempo:
+\begin{lstlisting}
+auto t1 = clk::now();
+\end{lstlisting}
+
+\item Diferencias de tiempo (puede especificar unidad).
+\begin{lstlisting}
+auto diff = duration_cast<microseconds>(t2-t1);
+\end{lstlisting}
+
+\item Obtención del valor de la diferencia.
+\begin{lstlisting}
+cout << diff.count();
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Ejemplo de medida de tiempo}
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+#include <chrono>
+
+void f() {
+  using namespace std::chrono;
+  using clk = high_resolution_clock;
+
+  auto t1 = clk::now();
+
+  g();
+
+  auto t2 = clk::now();
+  auto diff = duration_cast<microseconds>(t2-t1);
+
+  std::cout << "Time= " << diff.count << "microseconds\n";
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Medición de tiempo en OpenMP}
+\begin{itemize}
+
+\item Punto del tiempo.
+\begin{lstlisting}
+double t1 = omp_get_wtime();
+\end{lstlisting}
+
+\item Diferencia de tiempo.
+\begin{lstlisting}
+double t1 = omp_get_wtime();
+double t2 = omp_get_wtime();
+double diff = t2-t1;
+\end{lstlisting}
+
+\item Diferencia de tiempo entre 2 ticks sucesivos:
+\begin{lstlisting}
+double tick = omp_get_wtick();
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Midiendo el tiempo en cálculo de pi}
+\begin{block}{piseqtime.cpp}
+\lstinputlisting[lastline=12]{lab/04-omp/pi/piseqtime.cpp}
+\end{block}
+\end{frame}
+
+\begin{frame}[t]{Midiendo el tiempo en cálculo de pi}
+\begin{block}{piseqtime.cpp}
+\lstinputlisting[firstline=14]{lab/04-omp/pi/piseqtime.cpp}
+\end{block}
+\end{frame}
+
+\begin{frame}[t]{Ejercicio 2}
+\begin{itemize}
+\item Crear una versión paralela del programa de cálculo de $\pi$ usando
+      una clausula \cppkey{parallel}.
+
+\item \textgood{Observaciones}:
+  \begin{itemize}
+    \item Incluya mediciones de tiempo.
+    \item Imprima el número de hilos que se están usando.
+    \item Tenga cuidado con las variables compartidas.
+    \item \textmark{Idea}: Use un array y acumule una suma parcial en cada hilo en la región paralela.
+  \end{itemize}
+\end{itemize}
+\end{frame}

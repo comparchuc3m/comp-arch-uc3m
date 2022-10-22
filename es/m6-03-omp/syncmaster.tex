@@ -1,0 +1,161 @@
+\section{Sincronización con master}
+
+\begin{frame}[t,fragile]{Barreras}
+\mode<presentation>{\vspace{-1em}}
+\begin{itemize}
+  \item Permite sincronizar todos los hilos en un punto.
+    \begin{itemize}
+      \item Se espera hasta que todos los puntos llegan a la \textmark{barrera}.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Ejemplo}
+\begin{lstlisting}[basicstyle=\tiny]
+#pragma omp parallel
+{
+  int id = omp_get_thread_num();
+  v[id] = f(id);
+  #pragma omp barrier
+
+  #pragma omp for
+  for (int i=0;i<max;++i) {
+    w[i] = g(i);
+  } // Barrera implícita
+
+  #pragma omp for nowait
+  for (int i=0;i<max;++i) {
+    w[i] = g(i);
+  } // nowait -> No hay barrera implícita
+
+  v[i] = h(i);
+} // Barrera implícita
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Ejecución única: master}
+\begin{itemize}
+  \item La clausula \cppkey{master} marca un bloque que solamente se ejecuta
+        en el hilo \emph{maestro}.
+\end{itemize}
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+#pragma omp parallel
+{
+  f(); // En todos los hilos
+  #pragma omp master
+  {
+    g(); // Solamente en maestro
+    h(); // Solamente en maestro
+  }
+  i(); // En todos los hilos
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Ejecución única: single}
+\begin{itemize}
+  \item La clausula \cppkey{single} marca un bloque que solamente se ejecuta
+        en un hilo.
+    \begin{itemize}
+      \item No tiene por qué ser el hilo maestro.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+#pragma omp parallel
+{
+  f(); // En todos los hilos
+  #pragma omp single
+  {
+    g(); // Solamente en algún hilo 
+    h(); // Solamente en algún hilo
+  }
+  i(); // En todos los hilos
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Ordenación}
+\begin{itemize}
+  \item Una región \cppkey{ordered} se ejecuta en orden secuencial.
+\end{itemize}
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+#pragma omp parallel
+{
+  #pragma omp for ordered reduction(+:res)
+  for (int i=0;i<max;++i) {
+    double tmp = f(i);
+    #pragma ordered
+    res += g(tmp);
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Cerrojos simples}
+\begin{itemize}
+  \item Cerrojos de la biblioteca OpenMP.
+    \begin{itemize}
+      \item También hay cerrojos anidados.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+omp_lock_t l;
+omp_init_lock(&l);
+
+#pragma omp parallel
+{
+  int id = omp_get_thread_num();
+  double x = f(i);
+  omp_set_lock(&l);
+  cout << "ID=" << id << " tmp= " << tmp << endl;
+  omp_unset_lock(&l);
+}
+omp_destroy_lock(&l);
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t]{Otras funciones de biblioteca}
+\begin{itemize}
+  \item \textgood{Cerrojos anidados}:
+    \begin{itemize}
+      \item
+        \cppid{omp\_init\_nest\_lock()},
+        \cppid{omp\_set\_nest\_lock()},
+        \cppid{omp\_unset\_nest\_lock()},
+        \cppid{omp\_test\_next\_lock()},
+        \cppid{omp\_destroy\_nest\_lock()}.
+    \end{itemize}
+  \item \textgood{Consulta de procesadores}:
+    \begin{itemize}
+      \item
+        \cppid{omp\_num\_procs()}.
+    \end{itemize}
+  \item \textgood{Número de hilos}:
+    \begin{itemize}
+      \item
+        \cppid{omp\_set\_num\_threads()},
+        \cppid{omp\_get\_num\_threads()},
+        \cppid{omp\_get\_thread\_num()},
+        \cppid{omp\_get\_max\_threads()}.
+    \end{itemize}
+  \item \textgood{Comprobación de región paralela}:
+    \begin{itemize}
+      \item
+        \cppid{omp\_in\_parallel()}.
+    \end{itemize}
+  \item \textgood{Selección dinámica de número de hilos}:
+    \begin{itemize}
+      \item
+        \cppid{omp\_set\_dynamic()},
+        \cppid{omp\_get\_dynamic()}.
+    \end{itemize}
+\end{itemize}
+\end{frame}

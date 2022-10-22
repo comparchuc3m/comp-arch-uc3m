@@ -1,0 +1,218 @@
+\section{Bucles paralelos}
+
+\begin{frame}[t,fragile]{Parallel for}
+\begin{itemize}
+  \item \textgood{División de bucle}: Realiza una partición de las iteraciones de
+        un bucle entre los hilos disponible.
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}[T]
+
+\column{.35\textwidth}
+\begin{block}{Sintaxis}
+\begin{lstlisting}
+#pragma omp parallel
+{
+  #pragma omp for
+  for (i=0; i<n; ++i) {
+    f(i);
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.65\textwidth}
+\begin{itemize}
+  \item \cppkey{omp for} $\rightarrow$ División de bucle for.
+  \item Se generar una copia privada de \cppid{i} para cada hilo.
+    \begin{itemize}
+      \item Se puede hacer también con \cppkey{private(}\cppid{i}\cppkey{)}
+    \end{itemize}
+\end{itemize}
+
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Ejemplo}
+\mode<presentation>{\vspace{-1em}}
+\begin{block}{Código secuencial}
+\begin{lstlisting}
+for (i=0;i<max;++i) { u[i] = v[i] + w[i]; }
+\end{lstlisting}
+\end{block}
+
+\mode<presentation>{\vspace{-0.5em}}
+\pause
+\begin{columns}[T]
+
+\column{.5\textwidth}
+
+\begin{block}{Región paralela}
+\begin{lstlisting}[basicstyle=\tiny]
+#pragma omp parallel
+{
+  int id = omp_get_thread_num();  
+  int nthreads = omp_get_num_threads();
+  int istart = id * max / nthreads;
+  int iend = (id==nthreads-1) ? ((id + 1) * max / nthreads):max;
+  for (int i=istart;i<iend;++i) {
+    u[i] = v[i] + w[i]; 
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{Región paralela + Bucle paralelo}
+\begin{lstlisting}
+#pragma omp parallel
+#pragma omp for
+for (i=0;i<max;++i) { 
+  u[i] = v[i] + w[i]; 
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Construcción combinada}
+\begin{itemize}
+  \item Se puede usar una \textmark{forma abreviada} combinando las dos directivas.
+\end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{Dos directivas}
+\begin{lstlisting}
+vector<double> vec(max);
+#pragma omp parallel
+{
+  #pragma omp for
+  for (i=0; i<max; ++i) {
+    vec[i] = generate(i);
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{Directiva combinada}
+\begin{lstlisting}
+vector<double> vec(max);
+#pragma omp parallel for
+for (i=0; i<max; ++i) {
+  vec[i] = generate(i);
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile,shrink=10]{Reducciones}
+\begin{columns}
+
+\column{.4\textwidth}
+
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+double sum = 0.0; 
+vector<double> v(max);
+for (int i=0; i<max; ++i) {
+  suma += v[i];
+}
+\end{lstlisting}
+\end{block}
+
+\column{.6\textwidth}
+\begin{itemize}
+  \item Una \textgood{reducción} es una operación de acumulación
+        en un bucle.
+  \pause
+  \item Clausula de reducción: \cppkey{reduction (op:var)}
+\end{itemize}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}
+
+\column{.4\textwidth}
+
+\pause
+
+\begin{itemize}
+  \item \textgood{Efectos}:
+    \begin{itemize}
+      \item Copia privada de cada variable.
+      \item Actualización de copia local en cada iteración.
+      \item Copias locales combinadas al final.
+    \end{itemize}
+\end{itemize}
+
+\column{.6\textwidth}
+
+\pause
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+double sum = 0.0; 
+vector<double> v(max);
+#pragma omp parallel for reduction(+:suma)
+for (int i=0; i<max; ++i) {
+  suma += v[i];
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t]{Operaciones de reducción}
+\begin{itemize}
+  \item Operaciones que son asociativas.
+\[
+(a \oplus b) \oplus c = a \oplus (b \oplus c)
+\]
+
+  \item Valor inicial definido por la operación.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Operadores básicos}:
+    \begin{itemize}
+      \item \cppkey{+} (valor inicial: \cppid{0}).
+      \item \cppkey{*} (valor inicial: \cppid{1}).
+      \item \cppkey{-} (valor inicial: \cppid{0}).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Operadores avanzados}:
+    \begin{itemize}
+      \item \cppkey{\&} (valor inicial: \cppid{~0}).
+      \item \cppkey{|} (valor inicial: \cppid{0}).
+      \item \cppkey{\^} (valor inicial: \cppid{0}).
+      \item \cppkey{\&\&} (valor inicial: \cppid{1}).
+      \item \cppkey{||} (valor inicial: \cppid{0}).
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Ejercicio 4}
+\begin{itemize}
+  \item Modifique el programa de cálculo de $\pi$.
+  \item Intente que el programa sea lo más parecido posible al programa secuencial
+        con una reducción.
+\end{itemize}
+\end{frame}
