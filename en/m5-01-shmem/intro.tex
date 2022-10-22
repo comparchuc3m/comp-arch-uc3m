@@ -128,7 +128,8 @@ threads having \textmark{enough} number of instructions to execute.
 
 \begin{frame}[t,shrink=10]{Multiprocessors and shared memory}
 
-\begin{columns}
+\vspace{-1em}
+\begin{columns}[T]
 
 \column{.5\textwidth}
 
@@ -140,7 +141,13 @@ threads having \textmark{enough} number of instructions to execute.
   \item \textmark{UMA}: Uniform Memory Access
     \begin{itemize}
       \item Memory latency is uniform.
+      \item All SMPs are UMA.
     \end{itemize}
+  \item \textmark{NUCA}: Non Uniform Cache Access.
+    \begin{itemize}
+      \item Not uniform access to LL cache.
+      \item Example IBM Power.
+    \end{itemize} 
 \end{itemize}
 \end{block}
 
@@ -163,7 +170,7 @@ threads having \textmark{enough} number of instructions to execute.
 \mode<presentation>{\vfill\pause}
 
 \begin{itemize}
-  \item Communication through access to global variables.
+  \item \textgood{Communication} through access to \textmark{shared address space}.
 \end{itemize}
 \end{frame}
 
