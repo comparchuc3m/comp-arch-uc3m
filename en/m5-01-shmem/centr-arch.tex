@@ -1,0 +1,181 @@
+\section{Centralized shared memory architectures}
+
+\begin{frame}[t]{SMP and memory hierarchy}
+\begin{itemize}
+  \item Why using centralized memory?
+    \begin{itemize}
+      \item Multi-level large caches decrease memory bandwidth demand on
+            main memory accesses.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Evolution}:
+    \begin{enumerate}[1.]
+      \item Single-core with memory in \textmark{shared bus}.
+      \item Memory connection in \textmark{separated bus} only for memory.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Cache memory}
+\begin{itemize}
+  \item \textgood{Kinds of data} in cache memory:
+    \begin{itemize}
+      \item \textmark{Private data}: Data used by a single processor.
+      \item \textmark{Shared data}: Data used by multiple processors.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Problem} with shared data:
+    \begin{itemize}
+      \item \pause Datum may be replicated in multiple caches.
+      \item \pause Contention is decreased.
+        \begin{itemize}
+          \item Each processors accesses its local copy.
+        \end{itemize}
+      \item \pause If two processors modify their copies \ldots
+        \begin{itemize}
+          \item Cache coherence?
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Cache coherence}
+
+\begin{columns}[T]
+
+\column{.3\textwidth}
+\begin{block}{Thread 1}
+\begin{lstlisting}[language=generalasm]
+lw $t0, dirx
+addi $t0, $t0, 1
+sw $t0, dirx
+\end{lstlisting}
+\end{block}
+
+\column{.3\textwidth}
+\begin{block}{Thread 2}
+\begin{lstlisting}[language=generalasm]
+lw $t0, dirx
+\end{lstlisting}
+%$
+\end{block}
+
+\column{.3\textwidth}
+\begin{itemize}
+\item \cppid{\$t0} initially 1.
+\item Assuming write through.
+\end{itemize}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+{\footnotesize
+\begin{tabular}{l|l|l|l|l}
+
+Process &
+Instruction &
+P1 Cache &
+P2 Cache &
+Main memory
+\\
+
+\hline
+\hline
+
+\pause
+T1 & Initially & Not present & Not present & 1 \pause\\
+\hline
+T1 & \asminst{lw} \asmreg{\$t0}, \asmlabel{dirx} & 1 & Not present & 1 \pause\\
+\hline
+T1 & \asminst{addi} \asmreg{\$t0}, \asmreg{\$t0}, \asmlabel{1} & 1 & Not present & 1 \pause\\
+\hline
+T2 & \asminst{lw} \asmreg{\$t0}, \asmlabel{dirx} & 1 & 1 & 1 \pause\\
+\hline
+T1 & \asminst{sw} \asmreg{\$t0}, \asmlabel{dirx} & 2 & 1 & 1 \\
+\hline
+
+\end{tabular}
+}
+
+\end{frame}
+
+\begin{frame}[t]{Cache incoherence}
+\begin{itemize}
+  \item Why does incoherence happen?
+    \begin{itemize}
+      \item \textgood{State duality}:
+        \begin{itemize}
+          \item \textgood{Global state} $\rightarrow$ \textmark{Main memory}.
+          \item \textgood{Local state} $\rightarrow$ \textmark{Private cache}.
+      \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item A memory system is \textgood{coherent} 
+        if any read from a location returns the \textmark{most recent value}
+        that has been written to that location.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Two aspects}:
+    \begin{itemize}
+      \item \textmark{Coherence}: 
+            Which value does a read return?
+      \item \textmark{Consistency}: 
+            When does a read get the written value?
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Conditions for coherence}
+\begin{itemize}
+  \item \textmark{Program order preservation}
+    \begin{itemize}
+      \item A read from processor P on location X
+            after a write from processor P on location X,
+            without intermediate writes on X by any other processor Q,
+            always returns the value written by P.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Coherent view of memory}:
+    \begin{itemize}
+      \item A read from processor P on a memory location X,
+            after a write form other processor Q on location X,
+            returns the written value
+            if both operations are separate enough in time and
+            there are no intermediate writes on X.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Writes serialization}:
+    \begin{itemize}
+      \item Two writes on the same memory location by two different processors
+            are seen in the same order by all the processors.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Memory consistency}
+\begin{itemize}
+  \item Defines in which point in time a process reading values will see a written value.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Coherence} y \textgood{consistency} are complementary:
+    \begin{itemize}
+      \item \textmark{Coherence}: 
+            Behavior of reads and writes on a single memory location.
+      \item \textmark{Consistency}: 
+            Behavior of reads and writes with respect to accesses to other memory locations.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item There are different consistency memory models.
+    \begin{itemize}
+      \item \textbad{We will have a specific lecture on this problem}
+    \end{itemize}
+
+\end{itemize}
+\end{frame}

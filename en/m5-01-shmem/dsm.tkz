@@ -1,0 +1,50 @@
+\begin{tikzpicture}
+\tikzset{
+  sinflecha/.style={-,thick,draw=black,font=\tiny},
+  proc/.style={circle,draw=black,fill=blue!70,text=white,thick, text centered, font=\small, minimum width=1cm},
+  cache/.style={rectangle,draw=black,fill=orange!80!black,text=white,thick, text centered, font=\tiny, minimum width=1cm,
+                minimum height=0.75cm,align=center},
+  bus/.style={rectangle,draw=black,fill=green!60!black,text=white,thick, text centered, font=\tiny, minimum width=1cm,
+                minimum height=0.75cm,align=center},
+  memoria/.style={rectangle,draw=black,fill=orange!40!black,text=white,thick, text centered, font=\tiny, minimum width=1cm,
+                minimum height=0.75cm,align=center},
+  etiqueta/.style={text centered, font=\tiny} ,
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny},
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  intersec/.style={fill,shape=circle,minimum size=3pt, inner sep=0pt},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
+  fasesep/.style={-,thick,draw=blue,dashed},
+  faseetiq/.style={text centered, font=\small,text=orange}, 
+}  
+\node[proc] (p1) {P1};
+\node[memoria,below left=0.25 and 0.5cm of p1] (mem1) {Mem};
+\node[memoria,below right=0.25 and 0.5cm of p1] (es1) {I/O};
+\path[sinflecha] (mem1) -- (es1);
+%
+\node[proc,right=3.5cm of p1] (p2) {P2};
+\node[memoria,below left=0.25 and 0.5cm of p2] (mem2) {Mem};
+\node[memoria,below right=0.25 and 0.5cm of p2] (es2) {I/O};
+\path[sinflecha] (mem2) -- (es2);
+%
+\node[proc,below=3.5cm of p1] (p3) {P3};
+\node[memoria,above left=0.25 and 0.5cm of p3] (mem3) {Mem};
+\node[memoria,above right=0.25 and 0.5cm of p3] (es3) {I/O};
+\path[sinflecha] (mem3) -- (es3);
+%
+\node[proc,right=3.5cm of p3] (p4) {P4};
+\node[memoria,above left=0.25 and 0.5cm of p4] (mem4) {Mem};
+\node[memoria,above right=0.25 and 0.5cm of p4] (es4) {I/O};
+\path[sinflecha] (mem4) -- (es4);
+%
+\node[connpoint,below right=1.5cm and 2cm of p1] (cp1) {};
+\node[connpoint,below=1.35cm of p1] (cpp1) {};
+\node[connpoint,below=1.35cm of p2] (cpp2) {};
+\node[connpoint,above=1.35cm of p3] (cpp3) {};
+\node[connpoint,above=1.35cm of p4] (cpp4) {};
+\path[sinflecha] (p1) -- (cpp1) {};
+\path[sinflecha] (p2) -- (cpp2) {};
+\path[sinflecha] (p3) -- (cpp3) {};
+\path[sinflecha] (p4) -- (cpp4) {};
+%
+\node[bus,below=0cm of cp1,minimum width=7cm] (inter) {Interconnection network};
+\end{tikzpicture}

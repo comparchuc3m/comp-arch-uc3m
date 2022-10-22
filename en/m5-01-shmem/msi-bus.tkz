@@ -1,0 +1,48 @@
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3.5cm,
+                    semithick]
+  \tikzstyle{every state}=[fill=blue,draw=none,text=white,font=\tiny,minimum width=1.5cm]
+  \tikzset{every edge/.append style={font=\tiny}}
+
+  \node[state] (invalid) {Invalid (I)};
+
+  \node[state] (shared) [below right=1.5cm and 1.5 cm of invalid] {Shared (S)};
+
+  \node[state] (modified) [below left=1.5cm and 1.5cm of invalid] {Modififed (M)};
+
+  \pause 
+
+% Read miss
+
+  \path (shared) edge[loop right]
+          node{Read miss}
+        (shared);
+
+  \path (modified) edge
+          node[above]{Read miss}
+          node[below]{Write block}
+          node[below=0.5em]{Abort memory access}
+        (shared);
+     
+\pause
+
+% Invalidate
+  \path (shared) edge[bend left=20]
+            node[above,sloped]{Invalidate}
+        (invalid);
+
+\pause
+
+% Write miss
+
+  \path (shared) edge[bend right=20]
+            node[above,sloped]{Write miss}
+        (invalid);
+
+  \path (modified) edge
+            node[above,sloped]{Write miss}
+            node[below,sloped]{Write block}
+            node[below=0.5em,sloped]{Abort memory access}
+        (invalid);
+
+\onslide<1->
+\end{tikzpicture}

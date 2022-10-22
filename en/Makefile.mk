@@ -13,6 +13,7 @@ include en/m3-02-cache/Makefile.def
 include en/m4-01-ilp/Makefile.def
 include en/m4-02-ilp/Makefile.def
 include en/m4-03-ilp/Makefile.def
+include en/m5-01-shmem/Makefile.def
 include en/m6-01-cppintro/Makefile.def
 include en/m6-02-cppconc/Makefile.def
 
@@ -45,6 +46,7 @@ include $(EN_M3_02_CACHE_DIR)/Makefile.mk
 include $(EN_M4_01_ILP_DIR)/Makefile.mk
 include $(EN_M4_02_ILP_DIR)/Makefile.mk
 include $(EN_M4_03_ILP_DIR)/Makefile.mk
+include $(EN_M5_01_SHMEM_DIR)/Makefile.mk
 include $(EN_M6_01_CPPINTRO_DIR)/Makefile.mk
 include $(EN_M6_02_CPPCONC_DIR)/Makefile.mk
 

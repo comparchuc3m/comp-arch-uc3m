@@ -1,0 +1,49 @@
+\section{Cache coherence alternatives}
+
+\begin{frame}[t]{Coherent multiprocessors}
+\begin{itemize}
+  \item A \textgood{coherent multiprocessor} offers:
+    \begin{itemize}
+      
+      \mode<presentation>{\vfill\pause}
+      \item Shared data \textmark{migration}.
+        \begin{itemize}
+          \item A datum may be moved to a local cache and be used transparently.
+          \item Decreases remote data access latency and bandwidth demand to shared memory.
+        \end{itemize}
+      
+      \mode<presentation>{\vfill\pause}
+      \item Shared data \textmark{replication} simultaneously read.
+        \begin{itemize}
+          \item Performs data copy in local cache.
+          \item Decreases access latency and read contention.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Critical properties for performance}:
+    \begin{itemize}
+      \item \textmark{Solution}: 
+            Hardware protocol for keeping cache coherence.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Kinds of cache coherence protocols}
+\begin{itemize}
+  \item \textgood{Directory} based:
+    \begin{itemize}
+      \item Sharing state is kept in a directory.
+      \item \textmark{SMP}: Centralized directory in memory or in LLC (\emph{Last-level cache}).
+      \item \textmark{DSM}: To avoid bottlenecks a distributed directory is used (more complex).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Snooping}:
+    \begin{itemize}
+      \item Each cache keeps the sharing state of each block that it stores.
+      \item Caches accessible through a broadcasting device (bus).
+      \item All caches monitor broadcasting device to determine if they have a copy of the block.
+    \end{itemize}
+\end{itemize}
+\end{frame}

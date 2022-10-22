@@ -1,0 +1,23 @@
+\section{Performance in SMPs}
+
+\begin{frame}[t]{Performance}
+\begin{itemize}
+  \item Use of cache coherence policies has impact on miss rate.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Coherence misses emerge}:
+    \begin{itemize}
+      \item \textmark{True sharing} misses:
+        \begin{itemize}
+          \item A processor writes to a shared block and invalidates.
+          \item A different processor reads a shared block.
+        \end{itemize}
+      \item \textmark{False sharing} misses:
+        \begin{itemize}
+          \item A processor writes a shared block and invalidates it.
+          \item A different processor reads a different word from the same block.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
