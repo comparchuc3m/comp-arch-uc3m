@@ -1,0 +1,63 @@
+\section{Sections and scheduling}
+
+\begin{frame}[t,fragile]{Sections}
+\begin{columns}[T]
+
+\column{.6\textwidth}
+\begin{itemize}
+  \item Defines a set of code sections.
+  \item Each section is passed to a different thread.
+  \item Implicit barrier at the end of the \cppkey{section} block.
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\column{.4\textwidth}
+\begin{block}{Example}
+\begin{lstlisting}
+#pragma omp parallel
+{
+  #pragma omp sections
+  {
+    #pragma omp section
+    f();
+    #pragma omp section
+    g();
+    #pragma omp section
+    h();
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Loop scheduling}
+\begin{itemize}
+  \item \cppkey{schedule(static)} | \cppkey{schedule(static,n)}:
+    \begin{itemize}
+      \item Schedules iteration blocks (size $n$) for each thread.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill\pause}
+  \item \cppkey{schedule(dynamic)} | \cppkey{schedule(dynamic,n)}:
+    \begin{itemize}
+      \item Each thread takes a block of $n$ iterations from a queue until all have been processed.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill\pause}
+  \item \cppkey{schedule(guided)} | \cppkey{schedule(guided,n)}:
+    \begin{itemize}
+      \item Each thread takes an iteration block until all have been processed. 
+            Starts with a large block size and it is decreased until size $n$ is reached.
+    \end{itemize}
+  
+  \mode<presentation>{\vfill\pause}
+  \item \cppkey{schedule(runtime)} | \cppkey{schedule(runtime,n)}:
+    \begin{itemize}
+      \item Uses scheduling specified by \cppid{OMP\_SCHEDULE} or 
+            the runtime library.
+    \end{itemize}
+  
+\end{itemize}
+\end{frame}

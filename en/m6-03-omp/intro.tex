@@ -1,0 +1,167 @@
+\section{Introduction}
+
+\begin{frame}[t]{What is OpenMP?}
+\begin{itemize}
+  \item It is an \textmark{language extension} for expressing parallel applications
+        in shared memory systems.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Components}:
+    \begin{itemize}
+      \item Compiler directives.
+      \item Library functions.
+      \item Environment variables.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Simplifies the way of writing parallel programs.
+    \begin{itemize}
+      \item \emph{Mappings} for FORTRAN, C and C++.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Constructs}
+\begin{itemize}
+  \item Directives:
+\begin{lstlisting}
+#pragma omp directive [clause]
+\end{lstlisting}
+
+  \begin{itemize}
+    \item \textmark{Example}: Setup the number of threads.
+\begin{lstlisting}
+#pragma omp parallel num_threads(4)
+\end{lstlisting}
+  \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Library functions:
+\begin{lstlisting}
+#include <omp.h> // Include to call OpenMP  API functions
+\end{lstlisting}
+    \begin{itemize}
+      \item \textmark{Example}: Get the number of threads in use.
+\begin{lstlisting}
+int n = omp_get_num_threads();
+\end{lstlisting}
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Exercise 1: Sequential}
+\begin{block}{ex1seq.cpp}
+\lstinputlisting{lab/04-omp/hello/exseq.cpp}
+\end{block}
+\begin{itemize}
+  \item Print to standard output.
+\end{itemize}
+
+\begin{lstlisting}[style=terminal]
+Hello(0) world(0)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[t,fragile]{Exercise 1: Parallel}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{ex1par.cpp}
+\lstinputlisting{lab/04-omp/hello/expar.cpp}
+\end{block}
+
+\column{.5\textwidth}
+
+\begin{itemize}
+  \item Print to standard output.
+\end{itemize}
+
+\begin{lstlisting}[style=terminal]
+Hello(Hello(10) world(0Hello() world(1)
+3) world(3)
+Hello(2) world(2)
+)
+\end{lstlisting}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Compiling OpenMP}
+
+\begin{itemize}
+  \item Compiler flags: 
+    \begin{itemize}
+      \item \textgood{gcc}: \textmark{-fopenmp}
+      \item \textgood{Intel Linux}: \textmark{-openmp}
+      \item \textgood{Intel Windows}: \textmark{/Qopenmp}
+      \item \textgood{Microsft Visual Studio}: \textmark{/openmp}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Usando \textemph{CMake}:
+  \begin{itemize}
+    \item Activar el soporte para \textmark{OpenMP} en CMake.
+\begin{lstlisting}
+find_package(OpenMP REQUIRED)
+\end{lstlisting}
+
+    \item Activar las opciones de compilación y enlace para un ejecutable.
+\begin{lstlisting}
+add_executable(expar expar.cpp)
+target_link_libraries(expar PUBLIC OpenMP::OpenMP_CXX)
+\end{lstlisting}
+
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Exercise 1}
+\begin{itemize}
+  \item \textgood{Goal}: Verify you have a working environment.
+  
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Activities}:
+  \begin{enumerate}
+    \item Compile sequential version and run.
+    \item Compile parallel version and run.
+    \item Add a call to function \cppid{omp\_get\_num\_threads()} 
+          to print the number of threads:
+      \begin{enumerate}[a)]
+        \item Before the \cppkey{pragma}.
+        \item Just after \cppkey{pragma}.
+        \item Within the block.
+        \item Before exiting the program, but outside the block.
+      \end{enumerate}
+  \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Observations}
+\begin{itemize}
+  \item A model for multi-threaded shared memory.
+    \begin{itemize}
+      \item Communication through shared variables.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Accidental sharing $\rightarrow$ \textbad{race conditions}.
+    \begin{itemize}
+      \item Result depending on threads scheduling.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Avoiding race conditions.
+    \begin{itemize}
+      \item Synchronize to avoid conflicts.
+        \begin{itemize}
+          \item Cost of synchronizations.
+        \end{itemize}
+      \item Modify access pattern.
+        \begin{itemize}
+          \item Minimize needed synchronizations.
+        \end{itemize}
+    \end{itemize}
+
+\end{itemize}
+\end{frame}

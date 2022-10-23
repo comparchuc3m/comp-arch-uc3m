@@ -1,0 +1,84 @@
+\section{Data sharing}
+
+\begin{frame}[t]{Storage attributes}
+\begin{itemize}
+  \item Programming model in \textgood{shared memory}:
+    \begin{itemize}
+      \item \textgood{Shared variables}.
+      \item \textgood{Private variables}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Shared}:
+    \begin{itemize}
+      \item Global variables (file scope and name space)
+      \item \cppkey{static} variables.
+      \item Objects in dynamic memory (\cppid{malloc()} and \cppkey{new}).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Private}:
+    \begin{itemize}
+      \item Local variables in functions invoked from a parallel region.
+      \item Local variables defined within a block.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Modifying storage attributes}
+\mode<presentation>{\vspace{-1em}}
+\begin{itemize}
+  \item Attributes in parallel clauses:
+    \begin{itemize}
+      \item \cppkey{shared}.
+      \item \cppkey{private}.
+      \item \cppkey{firstprivate}.
+    \end{itemize}
+
+  \item \cppkey{private} creates a new local copy per thread.
+    \begin{itemize}
+      \item Value of copies is not initialized.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{Example}
+\begin{lstlisting}
+void f() {
+  int x = 17;
+  #pragma omp parallel for private(x) 
+  for (int i=0;i<max;++i) {
+    x += i;  // x not initialized
+  }
+  cout << x << '\n'; // x==17
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{firstprivate}
+\begin{itemize}
+  \item Particular case of \cppkey{private}.
+    \begin{itemize}
+      \item Each private copy is initialized with the value of the variable
+            of the \textmark{master} thread.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{Example}
+\lstinputlisting[firstline=6,lastline=13]{int/m6-03-omp/examples/firstprivate/main.cpp}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{lastprivate}
+\begin{itemize}
+  \item Pass the value of the private variable of the last \textmark{sequential} iteration
+        to the global variable.
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{Example}
+\lstinputlisting[firstline=6,lastline=13]{int/m6-03-omp/examples/lastprivate/main.cpp}
+\end{block}
+\end{frame}

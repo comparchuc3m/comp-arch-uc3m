@@ -1,0 +1,93 @@
+\section{Synchronization}
+
+\begin{frame}[t]{Synchronization mechanisms}
+\begin{itemize}
+  \item \textgood{Synchronization}: 
+        Mechanism used to establish constraints on the access order
+        to shared variables.
+    \begin{itemize}
+      \item \textmark{Goal}: Avoid data races.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Alternatives}:
+    \begin{itemize}
+      \item \textgood{High level}: \cppkey{critical}, \cppkey{atomic}, \cppkey{barrier}, \cppkey{ordered}.
+      \item \textgood{Low level}: \cppkey{flush}, lock.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{\emph{critical}}
+\begin{itemize}
+  \item Guarantees \textmark{mutual exclusion}.
+  \item Only a thread at a time can enter the critical region.
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}
+
+\column{.35\textwidth}
+\begin{block}{Example}
+\begin{lstlisting}
+#pragma omp parallel
+{
+  for (int i=0;i<max;++i) {
+    x = f(i);
+    #pragma omp critical
+    g(x);
+}
+\end{lstlisting}
+\end{block}
+
+\column{.65\textwidth}
+\begin{itemize}
+  \item Calls to \cppid{f()} are performed in parallel.
+  \item Only a thread can enter function \cppid{g()} at a time.
+\end{itemize}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{\emph{atomic}}
+\begin{itemize}
+  \item Guarantees \textmark{atomic update} of a single memory location.
+  \item Avoid data races in variable update.
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}
+
+\column{.35\textwidth}
+\begin{block}{Example}
+\begin{lstlisting}
+#pragma omp parallel
+{
+  for (int i=0;i<max;++i) {
+    x = f(i);
+    #pragma omp atomic
+    s += g(x)
+}
+\end{lstlisting}
+\end{block}
+
+\column{.65\textwidth}
+\begin{itemize}
+  \item Calls to \cppid{f()} performed in parallel.
+  \item Updates to \cppid{s} are \emph{thread-safe}.
+\end{itemize}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Exercise 3}
+\begin{itemize}
+  \item Modify program from exercise 2.
+  \item Evaluate:
+    \begin{enumerate}[a)]
+      \item Critical section.
+      \item Atomic access.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+

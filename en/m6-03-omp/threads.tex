@@ -1,0 +1,209 @@
+\section{Threads in OpenMP}
+
+\begin{frame}[t,fragile]{\emph{Fork-join} parallelism}
+\begin{itemize}
+  \item Sequential application with parallel sections:
+    \begin{itemize}
+      \item \textgood{Master thread}: Started with main program.
+      \item A parallel section starts a thread set.
+      \item Parallelism can be \textmark{nested}. 
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item A parallel region is a block marked with the \cppkey{parallel} directive.
+\begin{lstlisting}
+#pragma omp parallel
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Selecting the number of threads}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Library function}
+\begin{lstlisting}[basicstyle=\tiny]
+omp_set_num_threads(4);
+#pragma omp parallel
+{
+  // Parallel region
+}
+\end{lstlisting}
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+\column{.5\textwidth}
+\begin{block}{OpenMP Directive}
+\begin{lstlisting}[basicstyle=\tiny]
+#pragma omp parallel num_threads(4)
+{
+  // Parallel region
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}
+
+\column{.25\textwidth}
+
+\column{.5\textwidth}
+
+\begin{block}{Environment variable}
+\begin{lstlisting}[style=terminal,basicstyle=\tiny]
+OMP_NUM_THREADS=8 program
+\end{lstlisting}
+\end{block}
+
+\column{.25\textwidth}
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,shrink=20]{Exercise 2: Computing $\pi$}
+\begin{itemize}
+
+  \item Computing $\pi$.
+\[
+\int_{0}^{1} \frac{1}{1+x^2} dx =
+\arctan{1} - \arctan{0} =
+\frac{\pi}{4}
+\]
+
+  \mode<presentation>{\vfill\pause}
+  \item Approximation:
+\[
+\pi \approx 4 \cdot \sum_{i=0}^{N} f(x_{i} + \frac{\Delta x}{2}) \Delta x =
+4 \cdot \Delta x \sum_{i=0}^{N} \frac{1}{1 + (x_i + \frac{\Delta x}{2} )^2}
+\]
+
+  \mode<presentation>{\vfill\pause}
+  \item Adding the area of N rectangles:
+    \begin{itemize}
+      \item \textmark{Base}: $\Delta x = \frac{1}{N}$.
+      \item \textmark{Points}: $x_i = \Delta x \cdot i$
+      \item \textmark{Height}: $f(x_i + \frac{\Delta x}{2})$ = $f(\Delta x \cdot i + \frac{\Delta x}{2})$
+            $f(\Delta x (i + \frac{1}{2})$.
+  \end{itemize}
+
+\[
+\pi \approx 
+4 \cdot \Delta x \sum_{i=0}^{N} \frac{1}{1 + (\Delta x \cdot (i + \frac{1}{2} ))^2}
+\]
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Exercise 2: Sequential version}
+\mode<presentation>{\vspace{-1em}}
+\begin{block}{Computing $\pi$}
+\lstinputlisting{lab/04-omp/pi/piseq.cpp}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Measuring time in C++11}
+\begin{itemize}
+
+\item \textmark{include} files:
+\begin{lstlisting}
+#include <chrono>
+\end{lstlisting}
+
+\item Clock type:
+\begin{lstlisting}
+using clk = chrono::high_resolution_clock;
+\end{lstlisting}
+
+\item Get a time point:
+\begin{lstlisting}
+auto t1 = clk::now();
+\end{lstlisting}
+
+\item Time difference (time unit can be specified).
+\begin{lstlisting}
+auto diff = duration_cast<microseconds>(t2-t1);
+\end{lstlisting}
+
+\item Get difference value.
+\begin{lstlisting}
+cout << diff.count();
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Time measurement example}
+\mode<presentation>{\vspace{-1em}}
+\begin{block}{Example}
+\begin{lstlisting}
+#include <chrono>
+
+void f() {
+  using namespace std::chrono;
+
+  using clk = chrono::high_resolution_clock;
+
+  auto t1 = clk::now();
+
+  g();
+
+  auto t2 = clk::now();
+  auto diff = duration_cast<microseconds>(t2-t1);
+
+  std::cout << "Time= " << diff.count << "microseconds\n";
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Time measurement in OpenMP}
+\begin{itemize}
+
+\item Time point:
+\begin{lstlisting}
+double t1 = omp_get_wtime();
+\end{lstlisting}
+
+\item Time difference:
+\begin{lstlisting}
+double t1 = omp_get_wtime();
+double t2 = omp_get_wtime();
+double diff = t2-t1;
+\end{lstlisting}
+
+\item Time difference between two successive ticks:
+\begin{lstlisting}
+double tick = omp_get_wtick();
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Measuring time in $\pi$ computation}
+\begin{block}{piseqtime.cpp}
+\lstinputlisting[lastline=12]{lab/04-omp/pi/piseqtime.cpp}
+\end{block}
+\end{frame}
+
+\begin{frame}[t]{Measuring time in $\pi$ computation}
+\begin{block}{piseqtime.cpp}
+\lstinputlisting[firstline=14]{lab/04-omp/pi/piseqtime.cpp}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[t]{Exercise 2}
+\begin{itemize}
+\item Create a parallel version from the $\pi$ sequential version
+      using a \cppkey{parallel} clause.
+
+\item \textgood{Observations}:
+  \begin{itemize}
+    \item Include time measurements.
+    \item Print the number of threads in use.
+    \item Take special care with shared variables.
+    \item \textmark{Idea}: 
+           Use an array and accumulate partial sum for each thread in the parallel region.
+  \end{itemize}
+\end{itemize}
+\end{frame}

@@ -1,0 +1,161 @@
+\section{Synchronize with master}
+
+\begin{frame}[t,fragile]{Barriers}
+\mode<presentation>{\vspace{-1em}}
+\begin{itemize}
+  \item Allows to synchronize all threads in a point.
+    \begin{itemize}
+      \item Wait until all threads arrive to the \textmark{barriers}.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Example}
+\begin{lstlisting}[basicstyle=\tiny]
+#pragma omp parallel
+{
+  int id = omp_get_thread_num();
+  v[id] = f(id);
+  #pragma omp barrier
+
+  #pragma omp for
+  for (int i=0;i<max;++i) {
+    w[i] = g(i);
+  } // Implicit barrier
+
+  #pragma omp for nowait
+  for (int i=0;i<max;++i) {
+    w[i] = g(i);
+  } // nowait -> No implicit barrier
+
+  v[i] = h(i);
+} // Implicit barrier
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Single execution: master}
+\begin{itemize}
+  \item The \cppkey{master} clause marks a block that is only
+        executed in the \emph{master} thread.
+\end{itemize}
+\begin{block}{Example}
+\begin{lstlisting}
+#pragma omp parallel
+{
+  f(); // In all threads
+  #pragma omp master
+  {
+    g(); // Only in master
+    h(); // Only in master
+  }
+  i(); // In all threads
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Single execution: single}
+\begin{itemize}
+  \item The \cppkey{single} clause marks a block that is only 
+        executed in one thread.
+    \begin{itemize}
+      \item Does not need to be the master thread.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Example}
+\begin{lstlisting}
+#pragma omp parallel
+{
+  f(); // In all threads
+  #pragma omp single
+  {
+    g(); // Only in one thread
+    h(); // Only in one thread
+  }
+  i(); // In all threads
+}
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]{Ordering}
+\begin{itemize}
+  \item An \cppkey{ordered} region is executed in sequential order.
+\end{itemize}
+\begin{block}{Example}
+\begin{lstlisting}
+#pragma omp parallel
+{
+  #pragma omp for ordered reduction(+:res)
+  for (int i=0;i<max;++i) {
+    double tmp = f(i);
+    #pragma ordered
+    res += g(tmp);
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Simple locks}
+\begin{itemize}
+  \item Locks in the OpenMP library.
+    \begin{itemize}
+      \item Also nested locks.
+    \end{itemize}
+\end{itemize}
+\begin{block}{Example}
+\begin{lstlisting}
+omp_lock_t l;
+omp_init_lock(&l);
+
+#pragma omp parallel
+{
+  int id = omp_get_thread_num();
+  double x = f(i);
+  omp_set_lock(&l);
+  cout << "ID=" << id << " tmp= " << tmp << endl;
+  omp_unset_lock(&l);
+}
+omp_destroy_lock(&l);
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[t]{Other library functions}
+\begin{itemize}
+  \item \textgood{Nested locks}:
+    \begin{itemize}
+      \item
+        \cppid{omp\_init\_nest\_lock()},
+        \cppid{omp\_set\_nest\_lock()},
+        \cppid{omp\_unset\_nest\_lock()},
+        \cppid{omp\_test\_next\_lock()},
+        \cppid{omp\_destroy\_nest\_lock()}.
+    \end{itemize}
+  \item \textgood{Processor query}:
+    \begin{itemize}
+      \item
+        \cppid{omp\_num\_procs()}.
+    \end{itemize}
+  \item \textgood{Number of threads}:
+    \begin{itemize}
+      \item
+        \cppid{omp\_set\_num\_threads()},
+        \cppid{omp\_get\_num\_threads()},
+        \cppid{omp\_get\_thread\_num()},
+        \cppid{omp\_get\_max\_threads()}.
+    \end{itemize}
+  \item \textgood{Test for parallel region}:
+    \begin{itemize}
+      \item
+        \cppid{omp\_in\_parallel()}.
+    \end{itemize}
+  \item \textgood{Dynamic selection of number of threads}:
+    \begin{itemize}
+      \item
+        \cppid{omp\_set\_dynamic()},
+        \cppid{omp\_get\_dynamic()}.
+    \end{itemize}
+\end{itemize}
+\end{frame}

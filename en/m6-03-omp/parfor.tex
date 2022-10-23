@@ -1,0 +1,213 @@
+\section{Parallel loops}
+
+\begin{frame}[t,fragile]{Parallel for}
+\begin{itemize}
+  \item \textgood{Loop work-sharing}: 
+        Splits iterations from a loop among available threads.
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}[T]
+
+\column{.35\textwidth}
+\begin{block}{Syntax}
+\begin{lstlisting}
+#pragma omp parallel
+{
+  #pragma omp for
+  for (i=0; i<n; ++i) {
+    f(i);
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.65\textwidth}
+\begin{itemize}
+  \item \cppkey{omp for} $\rightarrow$ For loop work-sharing.
+  \item A private copy of \cppid{i} is generated for each thread.
+    \begin{itemize}
+      \item Can also be done with \cppkey{private(}\cppid{i}\cppkey{)}
+    \end{itemize}
+\end{itemize}
+
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Example}
+\begin{block}{Sequential code}
+\begin{lstlisting}
+for (i=0;i<max;++i) { u[i] = v[i] + w[i]; }
+\end{lstlisting}
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+
+\begin{block}{Parallel region}
+\begin{lstlisting}[basicstyle=\tiny]
+#pragma omp parallel
+{
+  int id = omp_get_thread_num();
+  int nthreads = omp_get_num_threads();
+  int istart = id * max / nthreads;
+  int iend = (id==nthreads-1) ?  ((id + 1) * max / nthreads):max;
+  for (int i=istart;i<iend;++i) { 
+    u[i] = v[i] + w[i]; 
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{Parallel region + parallel loop}
+\begin{lstlisting}
+#pragma omp parallel
+#pragma omp for
+for (i=0;i<max;++i) { 
+  u[i] = v[i] + w[i]; 
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Combined construct}
+\begin{itemize}
+  \item An \textmark{abbreviated form} can be used by combining both directives.
+\end{itemize}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{Two directives}
+\begin{lstlisting}
+vector<double> vec(max);
+#pragma omp parallel
+{
+  #pragma omp for
+  for (i=0; i<max; ++i) {
+    vec[i] = generate(i);
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+
+\mode<presentation>{\vfill\pause}
+\begin{block}{Combined directive}
+\begin{lstlisting}
+vector<double> vec(max);
+#pragma omp parallel for
+for (i=0; i<max; ++i) {
+  vec[i] = generate(i);
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile,shrink=10]{Reductions}
+\begin{columns}
+
+\column{.4\textwidth}
+
+\begin{block}{Example}
+\begin{lstlisting}
+double sum = 0.0; 
+vector<double> v(max);
+for (int i=0; i<max; ++i) {
+  sum += v[i];
+}
+\end{lstlisting}
+\end{block}
+
+\column{.6\textwidth}
+\begin{itemize}
+  \item A \textgood{reduction} performs a reduction on the variables that appear in its list in a parallelized loop.
+  \pause
+  \item Reduction clause: \cppkey{reduction (op1:var1, op2:var2)}
+\end{itemize}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}
+
+\column{.4\textwidth}
+
+\begin{itemize}
+  \item \textgood{Effects}:
+    \begin{itemize}
+      \item Private copy for each variable.
+      \item Local copy updated in each iteration.
+      \item Local copies combined at the end.
+    \end{itemize}
+\end{itemize}
+
+\column{.6\textwidth}
+
+\pause
+\begin{block}{Example}
+\begin{lstlisting}
+double sum = 0.0; 
+vector<double> v(max);
+#pragma omp parallel for reduction(+:sum)
+for (int i=0; i<max; ++i) {
+  sum += v[i];
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t]{Reduction operation}
+\begin{itemize}
+  \item Associative operations.
+\[
+(a \oplus b) \oplus c = a \oplus (b \oplus c)
+\]
+
+  \item Initial value defined by the operation.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Basic operators}:
+    \begin{itemize}
+      \item \cppkey{+} (initial value: \cppid{0}).
+      \item \cppkey{*} (initial value: \cppid{1}).
+      \item \cppkey{-} (initial value: \cppid{0}).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Advanced operators}:
+    \begin{itemize}
+      \item \cppkey{\&} (initial value: \cppid{~0}).
+      \item \cppkey{|} (initial value: \cppid{0}).
+      \item \cppkey{\^} (initial value: \cppid{0}).
+      \item \cppkey{\&\&} (initial value: \cppid{1}).
+      \item \cppkey{||} (initial value: \cppid{0}).
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Exercise 4}
+\begin{itemize}
+  \item Modify the $\pi$ computation program.
+  \item Transform the program for obtaining a similar version to the 
+        original sequential program using a reduction.
+\end{itemize}
+\end{frame}
