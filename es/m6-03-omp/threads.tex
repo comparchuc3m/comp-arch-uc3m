@@ -33,7 +33,7 @@ omp_set_num_threads(4);
 
 \mode<presentation>{\vfill\pause}
 \column{.5\textwidth}
-\begin{block}{Directiva OpneMP}
+\begin{block}{Directiva OpenMP}
 \begin{lstlisting}[basicstyle=\tiny]
 #pragma omp parallel num_threads(4)
 {
@@ -79,8 +79,8 @@ OMP_NUM_THREADS=8 program
 \]
 
   \mode<presentation>{\vfill\pause}
+  \item Suma del área de N rectángulos.
     \begin{itemize}
-      \item Suma del área de N rectángulos.
       \item \textmark{Base}: $\Delta x = \frac{1}{N}$.
       \item \textmark{Puntos}: $x_i = \Delta x \cdot i$
       \item \textmark{Altura}: $f(x_i + \frac{\Delta x}{2})$ = $f(\Delta x \cdot i + \frac{\Delta x}{2})$
@@ -95,8 +95,9 @@ OMP_NUM_THREADS=8 program
 \end{frame}
 
 \begin{frame}[t]{Ejercicio 2: Versión secuencial}
+\mode<presentation>{\vspace{-1em}}
 \begin{block}{Cálculo de $\pi$}
-\lstinputlisting[basicstyle=\tiny]{lab/04-omp/pi/piseq.cpp}
+\lstinputlisting{lab/04-omp/pi/piseq.cpp}
 \end{block}
 \end{frame}
 
@@ -132,6 +133,7 @@ cout << diff.count();
 \end{frame}
 
 \begin{frame}[t,fragile]{Ejemplo de medida de tiempo}
+\mode<presentation>{\vspace{-1em}}
 \begin{block}{Ejemplo}
 \begin{lstlisting}
 #include <chrono>
@@ -176,13 +178,13 @@ double tick = omp_get_wtick();
 \end{itemize}
 \end{frame}
 
-\begin{frame}[t]{Midiendo el tiempo en cálculo de pi}
+\begin{frame}[t]{Midiendo el tiempo en cálculo de $\pi$}
 \begin{block}{piseqtime.cpp}
 \lstinputlisting[lastline=12]{lab/04-omp/pi/piseqtime.cpp}
 \end{block}
 \end{frame}
 
-\begin{frame}[t]{Midiendo el tiempo en cálculo de pi}
+\begin{frame}[t]{Midiendo el tiempo en cálculo de $\pi$}
 \begin{block}{piseqtime.cpp}
 \lstinputlisting[firstline=14]{lab/04-omp/pi/piseqtime.cpp}
 \end{block}

@@ -26,6 +26,7 @@
 \end{frame}
 
 \begin{frame}[t,fragile]{Modificación de atributos de almacenamiento}
+\mode<presentation>{\vspace{-1em}}
 \begin{itemize}
   \item Atributos en clausulas paralelas:
     \begin{itemize}
@@ -42,7 +43,7 @@
 
 \mode<presentation>{\vfill\pause}
 \begin{block}{Ejemplo}
-\begin{lstlisting}[basicstyle=\tiny]
+\begin{lstlisting}
 void f() {
   int x = 17;
   #pragma omp parallel for private(x) 
