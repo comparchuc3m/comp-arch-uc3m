@@ -1,0 +1,8 @@
+Checks: "*,
+-altera-*,
+-android-*,-fuchsia-*,-linuxkernel-*,-darwin-*,-zircon-*,
+-boost-*,-llvm*,-google-*,,-mpi-*,-objc-*
+-cert-msc32-c,-cert-msc51-cpp,
+-modernize-use-trailing-return-type,
+-readability-identifier-length,
+-cppcoreguidelines-avoid-magic-numbers"

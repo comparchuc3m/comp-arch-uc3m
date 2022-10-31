@@ -1,0 +1,42 @@
+\section{Descripción de la práctica}
+
+En esta práctica se realizará la evaluación de la ejecución de diversos
+programas en C++ analizando su rendimiento y estudiando los valores
+obtenidos con contadores hardware.
+
+Recuerda que para compilar un programa con opciones de depuración
+(y sin optimizaciones) debes generar una configuración de depuración.
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cmake -S . -B debug -DCMAKE_BUILD_TYPE=Debug
+\end{lstlisting}
+
+Si quieres generar una configuración que active de forma selectiva alguna optimización,
+puedes utilizar la opción \cppid{CMAKE\_CXX\_FLAGS}. Por ejemplo,
+si quieres compilar en modo depuración, pero activar selectivamente
+la optimización \cppkey{-funroll-loops}, deberás generar una configuración
+como la siguiente:
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cmake -S . -B debug-unroll -DCMAKE_BUILD_TYPE=Debug CMAKE_CXX_FLAGS=-funroll-loops
+\end{lstlisting}
+
+Si quieres generar una una configuración con todas las optimizaciones
+activadas deberás genrar una configuración de \emph{release}.
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cmake -S . -B release -DCMAKE_BUILD_TYPE=Release
+\end{lstlisting}
+
+Además, para compilar una configuración debes invocar a \cppkey{cmake}
+con el nombre de la configuración:
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cmake --build debug-unroll
+\end{lstlisting}
+
+\fbox{ \parbox{.9\textwidth}{
+\textbad{ATENCIÓN}: Recuerda que para ejecutar trabajos en el clúster
+\cppid{avignon} primero debes crear un \emph{script} para lanzar
+la compilación.
+}}

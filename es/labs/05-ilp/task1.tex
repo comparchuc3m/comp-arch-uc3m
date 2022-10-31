@@ -1,0 +1,71 @@
+\clearpage
+\subsection{Impacto de predicción de saltos}
+
+En esta tarea se va a estudiar el impacto de la predicción de saltos.
+
+El programa utiliza una función que genera valores aleatorios en el intervalo
+$[-100.0, 100.0]$. Esta función se suministra en el archivo de cabecera
+\cppid{generate.hpp} y se implementa en el archivo \cppid{generate.cpp}.
+
+\lstinputlisting[frame=single,title={Archivo: generate.hpp}]{lab/05-ilp/generate.hpp}
+
+\lstinputlisting[frame=single,title={Archivo: generate.cpp}]{lab/05-ilp/generate.cpp}
+
+También se suministra un programa principal, calcula el promedio de los números
+positivos de la muestra generada.
+
+\lstinputlisting[frame=single,title={Archivo: bpred1.cpp}]{lab/05-ilp/bpred1.cpp}
+
+El programa calcula el tiempo necesario para imprimir el promedio.
+
+\subsection{Tarea: Ejecución del programa}
+
+Compila y ejecuta el programa original. Determine el tiempo total de ejecución y
+el tiempo de ejecución del cálculo del promedio.
+
+\subsection{Tarea: Saltos y predicción de saltos}
+
+Utiliza la herramienta \cppkey{perf} para determinar el comportamiento de los saltos.
+Consulte la lista de eventos disponibles con la opción \cppkey{perf list}. 
+
+En particular, debe identificar los eventos para:
+\begin{itemize}
+  \item Número total de instrucciones de bifurcación (\emph{branch}) ejecutadas.
+  \item Número de fallos de predicción.
+\end{itemize}
+
+\subsection{Tarea: Impacto en secuencias ordenadas}
+
+Copia el programa \cppid{bpred1.cpp} en un nuevo programa \cppid{bpred2.cpp}.
+
+Antes de entrar en el bloque de medición de tiempos, ordena el vector. Para ello
+puedes optar por una de las siguientes funciones de la biblioteca estándar.
+
+\begin{itemize}
+  \item \cppid{std::sort()}: \url{https://en.cppreference.com/w/cpp/algorithm/sort}.
+  \item \cppid{std::ranges::sort()}: \url{https://en.cppreference.com/w/cpp/algorithm/ranges/sort}.
+\end{itemize}
+
+Repite las mediciones, prestando especial atención al tiempo necesario para
+realizar el cálculo del promedio. 
+
+Busca una explicación a las diferencias de tiempo.
+
+\subsection{Tarea: Eliminación de saltos}
+
+Copia el programa \cppid{bpred1.cpp} en un nuevo programa \cppid{bpred3.cpp}.
+
+Trata de eliminar las bifurcación que hay dentro del bucle de la función \cppid{average\_positive()}. 
+Para ello, puedes hacer uso del operador condicional ternario:
+
+\begin{lstlisting}
+result = (condicion)?expr1:expr2;
+\end{lstlisting}
+
+La evaluación de esta sentencia da lugar a la expresión \cppid{expr1} cuando la condición
+es cierta y la expresión \cppid{expr2} cuando la condición es falsa.
+
+Repite las mediciones, prestando especial atención al tiempo necesario para
+realizar el cálculo del promedio. 
+
+Busca una explicación a las diferencias de tiempo.
