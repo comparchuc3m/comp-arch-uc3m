@@ -22,5 +22,5 @@ int main() {
   auto diff = duration_cast<microseconds>(stop - start);
 
   std::cout << "pi_value = " << std::setprecision(10) << pi_value << "\n";
-  std::cout << "Time = " << diff.count() << "ms\n";
+  std::cout << "Time = " << diff.count() << "us\n";
 }
