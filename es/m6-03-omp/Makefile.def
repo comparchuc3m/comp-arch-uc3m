@@ -1,10 +1,13 @@
 ES_M6_03_OMP_BASE=m6-03-omp
 ES_M6_03_OMP_DIR=es/$(ES_M6_03_OMP_BASE)
 INT_M6_03_OMP_DIR=int/$(ES_M6_03_OMP_BASE)
+LAB_M6_03_OMP_DIR=lab/04-omp
 ES_M6_03_OMP_PARTS=\
   $(ES_M6_03_OMP_DIR)/*.tex \
   $(INT_M6_03_OMP_DIR)/examples/firstprivate/*.cpp \
   $(INT_M6_03_OMP_DIR)/examples/lastprivate/*.cpp \
+  $(LAB_M6_03_OMP_DIR)/hello/*.cpp \
+  $(LAB_M6_03_OMP_DIR)/pi/*.cpp \
 
 ES_M6_03_OMP_LECT_PDF=es-$(ES_M6_03_OMP_BASE)-lect.pdf
 ES_M6_03_OMP_HOUT_PDF=es-$(ES_M6_03_OMP_BASE)-hout.pdf
