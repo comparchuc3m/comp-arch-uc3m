@@ -1,0 +1,141 @@
+\begin{acexercise}\end{acexercise}
+
+Sea un multiprocesador con arquitectura de memoria compartida simétrica basado
+en bus con protocolo de espionaje o snooping. Cada procesador tiene una caché
+privada cuya coherencia se mantiene usando el protocolo MSI. Cada bloque caché
+tiene una única palabra.  
+
+La siguiente tabla muestra el estado inicial de cuatro variables distintas en
+cada una de las cachés. 
+
+\medskip
+
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+&
+\multicolumn{4}{|c|}{Estado inicial de las variables}
+\\
+\hline
+
+\textbf{Procesador} &
+\textbf{A} &
+\textbf{B} &
+\textbf{C} &
+\textbf{D}
+\\
+\hline
+\hline
+
+\textbf{P0} & 
+Shared & Exclusive & Shared & Shared
+\\
+\hline
+
+\textbf{P1} &
+Invalid & Invalid & Invalid & Shared
+\\
+\hline
+
+\textbf{P2} &
+Invalid & Invalid & Shared & Shared
+\\
+\hline
+
+\end{tabular}
+
+\medskip
+
+La siguiente tabla muestra el estado final de estas variables tras realizar una
+serie de accesos a memoria. 
+
+\medskip
+
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+&
+\multicolumn{4}{|c|}{Estado final de las variables}
+\\
+\hline
+
+\textbf{Procesador} &
+\textbf{A} &
+\textbf{B} &
+\textbf{C} &
+\textbf{D}
+\\
+\hline
+\hline
+
+\textbf{P0} & 
+Invalid & Invalid & Invalid & Shared
+\\
+\hline
+
+\textbf{P1} &
+Invalid & Invalid & Shared & Exclusive
+\\
+\hline
+
+\textbf{P2} &
+Exclusive & Exclusive & Invalid & Shared
+\\
+\hline
+
+\end{tabular}
+
+\medskip
+
+Se pide:
+\begin{itemize}
+
+  \item Para cada variable (A, B, C y D) describir de forma justificada el/los
+accesos realizados y el/los procesos involucrados que  han permitido alcanzar
+el estado final. 
+
+    \begin{itemize}
+
+      \item \textbf{Nota1}: para alcanzar el estado final puede ser suficiente
+un solo acceso o una secuencia de accesos. 
+
+      \item \textbf{Nota2}: puede existir un estado final
+que sea inalcanzable (es decir, que no tiene solución).
+
+    \end{itemize}
+
+  \item Para cada caso anterior describir el tráfico de bus generado
+
+\end{itemize}
+
+\begin{acsolution}\end{acsolution}
+
+
+\begin{itemize}
+
+\item Variable \cppid{A}:
+  \begin{itemize}
+    \item \textbf{\textbf{P2}}  escribe \cppid{A} (estado a \emph{exclusive}) invalidando la copia en la caché de \textbf{P0}.
+    \item \textbf{P2} genera un fallo de escritura en el bus que lo captura \textbf{P0} el cual no genera tráfico.
+  \end{itemize}
+
+\item Variable \cppid{B}:
+  \begin{itemize}
+    \item \textbf{P2}  escribe \cppid{B}  (estado a exclusive) invalidando la copia en la caché de \textbf{P0}
+    \item \textbf{P2} genera un write miss en el bus que lo captura \textbf{P0} el cual realiza un write-back del bloque a la caché de \textbf{P2}
+  \end{itemize}
+
+\item Variable \cppid{C}:
+  \begin{itemize}
+    \item \textbf{P1} escribe \cppid{B} (estado a exclusive) invalidando las otras dos copias.
+    \item \textbf{P1} genera un write miss en el bus que lo captura \textbf{P0} y \textbf{P1} los cuales no generan tráfico.
+    \item \textbf{P1} lee o escribe \cppid{D} otra variable cuyo bloque ocupa la misma línea caché que \cppid{C} generando un fallo de conflicto. Esto hace que el bloque de \cppid{C} se reemplace y como ha sido modificado se escribe en memoria. El bloque de \cppid{C} no está presente en caché (equivalente a estado \emph{invalid}).
+    \item Esta acción de \textbf{P1} genera de tráfico realizando el \emph{write-back} del bloque en memoria.
+    \item \textbf{P1} lee \cppid{C}. Genera un fallo de escritura y pasa a estado compartido. 
+  \end{itemize}
+
+\item Variable \cppid{D}:
+  \begin{itemize}
+    \item El estado final no se puede alcanzar porque un bloque no puede estar exclusivo y compartido a la vez.
+  \end{itemize}
+
+\end{itemize}
+

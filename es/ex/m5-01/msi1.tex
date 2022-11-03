@@ -1,0 +1,350 @@
+\begin{acexercise}\end{acexercise}
+\label{ex:m5-01:msi-01}
+
+Sea un multiprocesador con arquitectura de memoria compartida simétrica basado
+en bus con protocolo de espionaje o snooping. Cada procesador tiene una caché
+privada cuya coherencia se mantiene usando el protocolo MSI. Cada caché utiliza
+correspondencia directa y tiene cuatro bloques cada uno con dos palabras. Esta
+caché utiliza como campo de etiqueta la dirección de memoria completa.
+
+Las siguientes tablas muestran el estado de cada memoria, con la palabra menos
+significativa a la izquierda.
+
+\medskip
+
+\begin{tabular}{|l|l|l|l|}
+\hline
+\multicolumn{4}{|c|}{Procesador P0}\\
+\hline
+\textbf{Bloque} &
+\textbf{Estado} &
+\textbf{Etiqueta} &
+\textbf{Datos}
+\\
+\hline
+\hline
+
+B0 & I & 0x00100700 & 0x00000000 0x7FAABB11\\
+\hline
+
+B1 & S & 0x00100708 & 0x00000000 0x00001234\\
+\hline
+
+B2 & M & 0x00100710 & 0x00000000 0x0077AABB\\
+\hline
+
+B3 & I & 0x00100718 & 0x00000000 0x7FAABB11\\
+\hline
+\end{tabular}
+
+\medskip
+
+\begin{tabular}{|l|l|l|l|}
+\hline
+\multicolumn{4}{|c|}{Procesador P1}\\
+\hline
+\textbf{Bloque} &
+\textbf{Estado} &
+\textbf{Etiqueta} &
+\textbf{Datos}
+\\
+\hline
+\hline
+
+B0 & I & 0x00100700 & 0x00000000 0x7FAABB11\\
+\hline
+B1 & M & 0x00100728 & 0x00000000 0xFF000000\\
+\hline
+B2 & I & 0x00100710 & 0x00000000 0xEEEE7777\\
+\hline
+B3 & S & 0x00100718 & 0x00000000 0x7FAABB11\\
+\hline
+\end{tabular}
+
+\medskip
+
+\begin{tabular}{|l|l|l|l|}
+\hline
+\multicolumn{4}{|c|}{Procesador P2}\\
+\hline
+\textbf{Bloque} &
+\textbf{Estado} &
+\textbf{Etiqueta} &
+\textbf{Datos}
+\\
+\hline
+\hline
+
+B0 & S & 0x00100720 & 0x00000000 0x1111AAAA\\
+\hline
+B1 & S & 0x00100708 & 0x00000000 0X00001234\\
+\hline
+B2 & I & 0x00100710 & 0x00000000 0x7FAABB11\\
+\hline
+B3 & I & 0x00100718 & 0x00001234 0x1111AABB\\
+\hline
+
+\end{tabular}
+
+\medskip
+
+Para cada uno de los apartados que a continuación se presentan, parta de la
+situación inicial del problema, sin tener en cuenta los cambios de los
+apartados anteriores. Indique los cambios que se producen en las cachés. En el
+caso de las lecturas, indique además cuál es el valor efectivamente leído.
+
+\begin{enumerate}
+  \item P2: write 0x00100708, 0xFFFFFFFF
+  \item P2: read 0x00100708
+  \item P2: read 0x00100718
+\end{enumerate}
+
+En cada apartado deberá rellenar una tabla con el siguiente formato,
+justificando la respuesta: 
+
+\begin{tabular}{|l|l|l|l|l|l|p{2cm}|p{2cm}|}
+
+\hline
+\textbf{Procesador} &
+\textbf{Bloque} &
+\textbf{Estado} &
+\textbf{Estado} &
+\textbf{Etiqueta} &
+\multicolumn{2}{|c|}{\textbf{Datos}}
+\\
+
+&
+&
+\textbf{anterior} &
+\textbf{actual} &
+&
+\multicolumn{2}{|c|}{}
+\\
+\hline
+\hline
+
+& & & & & \multicolumn{1}{|p{2cm}|}{} & \\
+\hline
+& & & & & \multicolumn{1}{|p{2cm}|}{} & \\
+\hline
+& & & & & \multicolumn{1}{|p{2cm}|}{} & \\
+\hline
+& & & & & \multicolumn{1}{|p{2cm}|}{} & \\
+\hline
+\end{tabular}
+
+\begin{acsolution}\end{acsolution}
+
+\paragraph{Apartado 1}
+
+Se produce una escritura en el bloque B1 de la caché de P2 que se encuentra en
+estado S. Esto produce los siguientes cambios en P2:
+
+\begin{itemize}
+
+\item Se pasa a estado exclusivo (M).
+
+\item Se coloca una invalidación en el bus.
+
+\end{itemize}
+
+La invalidación es ignorada por el procesador P1, pero es tratada por el
+procesador P0.
+
+En P0 se producen los siguientes cambios:
+
+\begin{itemize}
+
+\item Se pasa el estado a inválido (I).
+
+\end{itemize}
+
+En este caso no se producen modificaciones en la memoria principal.
+
+Los estados en los distintos procesadores se muestran en la Tabla~\ref{ex:m5-01:msi-01:tabl:1}.
+
+\begin{table}[htbp]
+
+\begin{tabular}{|l|l|l|l|l|}
+
+\hline
+\multicolumn{5}{|c|}{\textbf{Procesador P0}}\\
+\hline
+Bloque & Estado & Etiqueta & \multicolumn{2}{c|}{Datos}\\
+\hline
+\hline
+B0 & I & 0x00100700 & 0x00000000 & 0x7FAABB11\\
+\hline
+B1 & I & 0x00100708 & 0x00000000 & 0x00001234\\
+\hline
+B2 & M & 0x00100710 & 0x00000000 & 0x0077AABB\\
+\hline
+B3 & I & 0x00100718 & 0x00000000 & 0x7FAABB11\\
+\hline
+
+\hline
+\multicolumn{5}{|c|}{\textbf{Procesador P1}}\\
+\hline
+Bloque & Estado & Etiqueta & \multicolumn{2}{c|}{Datos}\\
+\hline
+\hline
+
+B0 & I & 0x00100700 & 0x00000000 & 0x7FAABB11\\
+\hline
+B1 & M & 0x00100728 & 0x00000000 & 0xFF000000\\
+\hline
+B2 & I & 0x00100710 & 0x00000000 & 0xEEEE7777\\
+\hline
+B3 & S & 0x00100718 & 0x00000000 & 0x7FAABB11\\
+\hline
+
+
+\hline
+\multicolumn{5}{|c|}{\textbf{Procesador P2}}\\
+\hline
+Bloque & Estado & Etiqueta & \multicolumn{2}{c|}{Datos}\\
+\hline
+\hline
+
+B0 & S & 0x00100720 & 0x00000000 & 0x1111AAAA\\
+\hline
+B1 & {\color{red}M} & 0x00100708 & {\color{red}0xFFFFFFFF} & 0X00001234\\
+\hline
+B2 & I & 0x00100710 & 0x00000000 & 0x7FAABB11\\
+\hline
+B3 & I & 0x00100718 & 0x00001234 & 0x1111AABB\\
+\hline
+
+
+\end{tabular}
+
+\caption{Estados de caché correspondientes al apartado 1 del ejercicio~\ref{ex:m5-01:msi-01}.}
+\label{ex:m5-01:msi-01:tabl:1}
+
+\end{table}
+
+Las transiciones de estados y las correspondientes modificaciones se muestran en la Tabla~\ref{ex:m5-01:msi-01:tabl:2}.
+
+\begin{table}[htbp]
+
+\begin{tabular}{|l|l|l|l|l|l|l|}
+
+\hline
+Procesador 	& Bloque 	& Estado 	& 		&  		& \multicolumn{2}{c|}{}\\
+		&		& Anterior	& Estado Nuevo	& Etiqueta	& \multicolumn{2}{c|}{Datos}\\
+\hline
+\hline
+P2 & B1 & I & M & 0X00100708 & 0XFFFFFFFF & 0X00001234\\
+\hline
+P0 & B1 & S & I & 0X00100708 & 0X00000000 & 0X00001234\\
+\hline
+
+\end{tabular}
+
+\caption{Transiciones de estados y modificaciones correspondientes al apartado 1 del ejercicio~\ref{ex:m5-01:msi-01}.}
+\label{ex:m5-01:msi-01:tabl:2}
+\end{table}
+
+\paragraph{Apartado 2}
+
+Se produce una lectura en el bloque B1 de la caché P2 que se encuentra en el
+estado S. Se trata de un acierto y no se produce ningún cambio en las cachés o
+en memoria.
+
+El valor leído es: 0x00000000
+
+\paragraph{Apartado 3}
+
+Se produce un fallo de lectura la caché de P2 para el bloque B3 que está en
+estado inválido (I). Por tanto se coloca el fallo de lectura en el bus y se
+pasa a estado compartido (S).
+
+El procesador P0, tiene este bloque en estado inválido e ignora el fallo de lectura.
+
+El procesador P1, tiene este bloque en estado compartido (S) y continúa en este estado.
+
+El valor leído es 0x00000000
+
+Los estados en los distintos procesadores se muestran en la Tabla~\ref{ex:m5-01:msi-01:tabl:3}.
+
+\begin{table}[htbp]
+
+\begin{tabular}{|l|l|l|l|l|}
+
+\hline
+\multicolumn{5}{|c|}{\textbf{Procesador P0}}\\
+\hline
+Bloque & Estado & Etiqueta & \multicolumn{2}{c|}{Datos}\\
+\hline
+\hline
+
+B0 & I & 0x00100700 & 0x00000000 & 0x7FAABB11\\
+\hline
+B1 & S & 0x00100708 & 0x00000000 & 0x00001234\\
+\hline
+B2 & M & 0x00100710 & 0x00000000 & 0x0077AABB\\
+\hline
+B3 & I & 0x00100718 & 0x00000000 & 0x7FAABB11\\
+\hline
+
+\hline
+\multicolumn{5}{|c|}{\textbf{Procesador P1}}\\
+\hline
+Bloque & Estado & Etiqueta & \multicolumn{2}{c|}{Datos}\\
+\hline
+\hline
+
+B0 & I & 0x00100700 & 0x00000000 & 0x7FAABB11\\
+\hline
+B1 & M & 0x00100728 & 0x00000000 & 0xFF000000\\
+\hline
+B2 & I & 0x00100710 & 0x00000000 & 0xEEEE7777\\
+\hline
+B3 & S & 0x00100718 & 0x00000000 & 0x7FAABB11\\
+\hline
+
+
+\hline
+\multicolumn{5}{|c|}{\textbf{Procesador P2}}\\
+\hline
+Bloque & Estado & Etiqueta & \multicolumn{2}{c|}{Datos}\\
+\hline
+\hline
+
+B0 & S & 0x00100720 & 0x00000000 & 0x1111AAAA\\
+\hline
+B1 & S & 0x00100708 & 0x00000000 & 0X00001234\\
+\hline
+B2 & I & 0x00100710 & 0x00000000 & 0x7FAABB11\\
+\hline
+B3 & S & 0x00100718 & {\color{red}0x00000000} & {\color{red}0x7FAABB11}\\
+\hline
+
+\end{tabular}
+
+\caption{Estados de caché correspondientes al apartado 3 del ejercicio~\ref{ex:m5-01:msi-01}.}
+\label{ex:m5-01:msi-01:tabl:3}
+
+\end{table}
+
+Las transiciones de estados y las correspondientes modificaciones se muestran en la Tabla~\ref{ex:m5-01:msi-01:tabl:4}.
+
+\begin{table}[htbp]
+
+\begin{tabular}{|l|l|l|l|l|l|l|}
+
+\hline
+Procesador 	& Bloque 	& Estado 	& 		&  		& \multicolumn{2}{c|}{}\\
+		&		& Anterior	& Estado Nuevo	& Etiqueta	& \multicolumn{2}{c|}{Datos}\\
+\hline
+\hline
+
+P2 & B3 & I & S & 0X00100718 & 0X00000000 & 0X7FAABB11\\
+\hline
+
+\end{tabular}
+
+\caption{Transiciones de estados y modificaciones correspondientes al apartado 3 del ejercicio~\ref{ex:m5-01:msi-01}.}
+\label{ex:m5-01:msi-01:tabl:4}
+\end{table}
+
