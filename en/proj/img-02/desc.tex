@@ -1,0 +1,32 @@
+\section{Project description}
+
+In this project you will parallelize a possible solution to the previous project
+in this course. You will use OpenMP for parallelizing the provided source code.
+
+\subsection{General overview}
+
+The project is organized in several folders containing different components.
+
+\begin{itemize}
+  \item \textmark{Root directory}: It contains main programs and file
+        \cppkey{CMakeLists.txt}.
+  \item \textmark{common}: It contains the common library for both versions.
+  \item \textmark{soa}: It contains the library specific to 
+        \emph{structures of arrays} solution.
+  \item \textmark{aos}: It contains the library specific to 
+        \emph{arrays of structures} solution.
+  \item \textmark{test}: It contains some general tests.
+  \item \textmark{utest}: It contains unit tests.
+  \item \textmark{in}: Test image directory with image used for evaluation.
+\end{itemize}
+
+When you compile the program in \emph{release} mode to a folder named \cppkey{release},
+the following executables are generated:
+
+\begin{itemize}
+  \item \cppkey{release/img-aos}: Executable for \emph{arrays of structures} version.
+  \item \cppkey{release/img-soa}: Executable for \emph{structures of arrays} version.
+  \item \cppkey{release/utest/utest}: Executable form unit tests.
+        This executable assumes that the program is executed from directory \cppkey{release/utest}.
+        Do not run it from a different directory.
+\end{itemize}

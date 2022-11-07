@@ -1,0 +1,78 @@
+\section{Tasks}
+
+\subsection{Software development}
+
+You will parallelize concrete functionalities from the given project.
+
+In particular, you must parallelize the following functionalities:
+
+\begin{itemize}
+  \item Gray-scale transformation
+    \begin{itemize}
+      \item Function \cppid{bitmap\_aos::to\_gray()}.
+      \item Function \cppid{bitmap\_soa::to\_gray()}.
+    \end{itemize}
+
+  \item Histogram generation:
+    \begin{itemize}
+      \item Function \cppid{bitmap\_aos::generate\_histogram()}.
+      \item Function \cppid{bitmap\_soa::generate\_histogram()}
+    \end{itemize}
+
+  \item Gaussian blur:
+    \begin{itemize}
+      \item Function \cppid{bitmap\_aos::gauss()}.
+      \item Function \cppid{bitmap\_soa::gauss()}
+    \end{itemize}
+\end{itemize}
+
+Remind that you must perform all the evaluations with compiler optimizations
+enabled with the CMake option
+\cppid{-DCMAKE\_BUILD\_TYPE=Release}.
+
+\subsubsection{Code quality rules}
+
+Rules from previous project shall be followed.
+
+\textbad{VERY IMPORTANT}: 
+The source code shall not depend in any manner on the concrete number of threads or
+the scheduling policy. Those parameters shall be controlled from the corresponding
+environment variables that are external to the program.
+
+\subsubsection{Unit tests}
+
+A set of unit tests are provided with the source code.
+Your time shall check that all unit tests are successful after modifying the code.
+
+\subsection{Performance and energy evaluation}
+
+In this task you will perform a comparative evaluation of performance and energy
+for the two implementation strategies \cppid{image-aos} and \cppid{image-soa}.
+
+For each case you must perform evaluations varying the following parameters:
+\begin{itemize}
+  \item \textmark{Number of threads}: 
+        You shall evaluate the impact for number of threads considering values 1, 2, 4, 8, and 16.
+        You can control the number of threads with the environment variable
+        \cppid{OMP\_NUM\_THREADS}.
+
+  \item \textmark{Scheduling policy}: 
+        You shall consider all the available scheduling policies in OpenMP.
+        You can control the scheduling policy with the environment variable
+        \cppid{OMP\_SCHEDULE}.
+      
+\end{itemize}
+
+To conduct the performance evaluation, the total execution time shall be measured.
+In addition, energy use must be also measured.
+The power use must be derived.
+
+All performance evaluations shall be performed in a node from the
+\cppid{avignon} cluster.
+
+Represent in a graphic all total execution times, energy use and power
+for the provided image \cppkey{sabatini.bmp}.
+
+\textbf{The project report shall include conclusions drawn from results}.
+Please, do not limit to simply describing data.
+Try to find convincing explanations of those results.

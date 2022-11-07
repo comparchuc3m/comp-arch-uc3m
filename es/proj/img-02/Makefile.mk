@@ -1,0 +1,2 @@
+$(FINAL_ES_PROJ_IMG_02_PDF): $(ES_PROJ_IMG_02_PARTS) $(ES_CONFIG_INPUT)
+	$(LATEXMK) -jobname=$(subst /,-,$(<D)) $(ES_PROJ_IMG_02_DIR)/ex

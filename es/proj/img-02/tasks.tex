@@ -1,0 +1,79 @@
+\section{Tareas}
+
+\subsection{Desarrollo de software}
+
+El proyecto consiste en la paralelización de funcionalidades concretas del proyecto
+suministrado.
+
+En particular se deben paralelizar las siguientes funcionalidades:
+
+\begin{itemize}
+  \item Transformación a escala de grises:
+    \begin{itemize}
+      \item Función \cppid{bitmap\_aos::to\_gray()}.
+      \item Función \cppid{bitmap\_soa::to\_gray()}.
+    \end{itemize}
+
+  \item Generación de histograma:
+    \begin{itemize}
+      \item Función \cppid{bitmap\_aos::generate\_histogram()}.
+      \item Función \cppid{bitmap\_soa::generate\_histogram()}
+    \end{itemize}
+
+  \item Difusión mediante filtro de Gauss:
+    \begin{itemize}
+      \item Función \cppid{bitmap\_aos::gauss()}.
+      \item Función \cppid{bitmap\_soa::gauss()}
+    \end{itemize}
+\end{itemize}
+
+Tenga también en cuenta que deberá realizar todas las evaluaciones con las
+optimizaciones del compilador activadas con la opción de CMake
+\cppid{-DCMAKE\_BUILD\_TYPE=Release}.
+
+
+\subsubsection{Normas de calidad del código}
+
+Se deberán seguir manteniendo todas las normas aplicables al proyecto anterior.
+
+\textbad{MUY IMPORTANTE}: El código no deberá depender de ninguna forma del 
+número de hilos ni de la política de planificación concreta. Estos parámetros
+se controlarán mediante las variables de entorno correspondiente externas
+al programa.
+
+\subsubsection{Pruebas unitarias}
+
+Se suministran un conjunto de pruebas unitarias. Los equipos deberán comprobar
+que al modificar el código todas las pruebas unitarias siguen teniendo éxito.
+
+\subsection{Evaluación del rendimiento y energía}
+
+Esta tarea consiste en realizar una evaluación comparativa del rendimiento
+de las dos estrategias de implementación \cppid{image-aos} e \cppid{image-soa}.
+
+En cada caso se deben realizar evaluaciones variando los siguientes parámetros:
+\begin{itemize}
+  \item \textmark{Número de hilos}: Se evaluará el impacto del número de hilos
+        considerando los valores 1, 2, 4, 8 y 16. Se puede controlar el número de hilos
+        mediante la variable de entorno \cppid{OMP\_NUM\_THREADS}.
+
+  \item \textmark{Política de planificación}: Se considerarán todas las
+        políticas de planificación disponibles en OpenMP. Se puede controlar
+        la política de planificación mediante la variable de entorno 
+        \cppid{OMP\_SCHEDULE}.
+      
+\end{itemize}
+
+Para evaluar el rendimiento debe medir el tiempo de ejecución de la
+aplicación. También debe medirse el consumo energético de la aplicación
+y derivar el uso de potencia.
+
+Todas las evaluaciones de rendimiento se realizarán en un nodo del
+clúster \cppid{avignon}.
+
+Represente en una gráfica todos los tiempos totales de ejecución, uso de energía y potencia
+obtenidos para la imagen suministrada \cppkey{sabatini.bmp}.
+
+\textbf{Incluya en la memoria de esta práctica las conclusiones que pueda inferir de los resultados.}
+No se limite simplemente a describir los datos. Debe buscar también una
+explicación convincente de los resultados.

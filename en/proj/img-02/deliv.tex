@@ -1,21 +1,17 @@
 \section{Grading}
 
-Final grades for this project is obtained in the following way:
-
+Final grade for this project is obtained accordingly to the following criteria:
 
 \begin{itemize}
-  \item Performance: 20\%.
-  \item Energy use: 20\%.
-  \item Unit tests: 10\%.
-  \item Functional tests: 5\%.
-  \item Design quality: 5\%.
-  \item Code quality: 10\%.
-  \item Performance and eneryg evaluation in the report: 20\%.
-  \item Work organization: 5\%.
-  \item Conclusions: 5\%.  
+  \item Achieved performance: 20\%.
+  \item Achieved energy use: 20\%.
+  \item Modified code and explanation: 15\%.
+  \item Performance and energy evaluation: 20\%.
+  \item Work organization: 10\%.
+  \item Conclusions: 15\%.
 \end{itemize}
 
-\textgood{warnings}:
+\textgood{Warnings}:
 
 \begin{itemize}
   \item If the submitted code does not compile, 
@@ -28,6 +24,7 @@ Final grades for this project is obtained in the following way:
         Beside the head of the school will be notified for
         the corresponding disciplinary actions.
 \end{itemize}
+
 
 \section{Submission procedures}
 
@@ -50,13 +47,13 @@ Two submission links will be enabled:
 \end{itemize}
 
 The project report shall not exceed 15 pages with a font size of 10 points
-or higher, including titlepage and all sections. If there are more than
+or higher, including title-page and all sections. If there are more than
 15 pages, page 16 and above will not be considered during grading.
 The report shall contain, at least, the following sections:
 
 \begin{itemize}
 
-\item \textmark{Titlepage}: It shall contain the following information:
+\item \textmark{Title-page}: It shall contain the following information:
   \begin{itemize}
     \item Project name.
     \item Reduced group where students are enrolled.
@@ -64,25 +61,14 @@ The report shall contain, at least, the following sections:
     \item Name and NIA of all authors.
   \end{itemize}
 
-\item \textmark{Original design}. 
-      It shall include the design for each component in libraries
-      \cppid{common}, \cppid{aos}, \cppid{soa}.
-      In this section and explanation and justification for the main
-      design decisions must be included.
+\item \textmark{Parallelization}.
+      It shall include an explanation of modifications performed on the
+      original code.
 
-\item \textmark{Optimization}. 
-      It shall contain a discusion of applied optimizations and their
-      impact. In particular, it shall specify optimizations performed
-      on the original source code, as well as optimizations enabled
-      with additional compiler flags.
-
-\item \textmark{Performed tests}: 
-      Testing plan descrition to ensure correct execution.
-      It shall include both unit tests and functional tests.
-
-\item \textmark{Performance and energy evaluation}:
-      It shall include performance and energy evaluations that have been
-      carried out.
+\item \textmark{Performance and energy evaluation}: 
+      It shall include performance and energy evaluations carried out by the team.
+      Evaluations shall consider 1, 2, 4, 8, and 16 threads.
+      They will also study the impact of different OpenMP scheduling policies.
 
 \item \textmark{Work organization}:
       It must describe the work organization among team members, 
@@ -92,7 +78,6 @@ The report shall contain, at least, the following sections:
 
 \item \textmark{Conclusions}.
       Special value will be given to conclusions derived from performance evaluation
-      results, as well as thos conclusions relating the performed work with
+      results, as well as those conclusions relating the performed work with
       contents of the course.
-
 \end{itemize}

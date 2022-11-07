@@ -1,0 +1,35 @@
+\section{Descripción del proyecto}
+
+En este proyecto se realizará la paralelización de una posible solución a
+el proyecto práctico anterior. Para la paralelización su hará uso de
+OpenMP.
+
+\subsection{Visión general}
+
+El proyecto que se suministra está organizado en varias carpetas que contienen
+distintos componentes:
+
+\begin{itemize}
+  \item \textmark{Directorio raíz}: Contiene los programas principales y el archivo
+        \cppkey{CMakeLists.txt}.
+  \item \textmark{common}: Contiene la biblioteca común a las dos versiones.
+  \item \textmark{soa}: Contiene la biblioteca específica de la solución basada en
+        \emph{estructuras de arrays}.
+  \item \textmark{aos}: Contiene la biblioteca específica de la solución basada en
+        \emph{arrays de estructuras}.
+  \item \textmark{test}: Contiene algunas pruebas generales.
+  \item \textmark{utest}: Contiene las pruebas unitarias.
+  \item \textmark{in}: Directorio con imagen de prueba que se usará para la evaluación.
+\end{itemize}
+
+Al compilar el programa en modo \emph{release} en una carpeta llamada \cppkey{release},
+se generan los siguientes ejecutables:
+
+\begin{itemize}
+  \item \cppkey{release/img-aos}: Ejecutable para la versión \emph{arrays de estructuras}.
+  \item \cppkey{release/img-soa}: Ejecutable para la versión \emph{estructuras arrays}.
+  \item \cppkey{release/utest/utest}: Ejecutable para pruebas unitarias. Tenga en cuenta que este
+        ejecutable asume que se ejecuta el programa desde el directorio \cppkey{release/utest},
+        por lo que debe ejecutar desde el mismo.
+\end{itemize}
+

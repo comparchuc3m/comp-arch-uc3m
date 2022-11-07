@@ -1,3 +1,4 @@
 ES_PROJ_DIR=es/proj
 
 include $(ES_PROJ_DIR)/img-01/Makefile.def
+include $(ES_PROJ_DIR)/img-02/Makefile.def
