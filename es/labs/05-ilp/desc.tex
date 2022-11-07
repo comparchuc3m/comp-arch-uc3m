@@ -11,32 +11,23 @@ Recuerda que para compilar un programa con opciones de depuración
 cmake -S . -B debug -DCMAKE_BUILD_TYPE=Debug
 \end{lstlisting}
 
-Si quieres generar una configuración que active de forma selectiva alguna optimización,
-puedes utilizar la opción \cppid{CMAKE\_CXX\_FLAGS}. Por ejemplo,
-si quieres compilar en modo depuración, pero activar selectivamente
-la optimización \cppkey{-funroll-loops}, deberás generar una configuración
-como la siguiente:
-
-\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
-cmake -S . -B debug-unroll -DCMAKE_BUILD_TYPE=Debug CMAKE_CXX_FLAGS=-funroll-loops
-\end{lstlisting}
-
-Si quieres generar una una configuración con todas las optimizaciones
-activadas deberás genrar una configuración de \emph{release}.
+Si quieres generar una configuración con todas las optimizaciones
+activadas deberás generar una configuración de \emph{release}.
 
 \begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
 cmake -S . -B release -DCMAKE_BUILD_TYPE=Release
 \end{lstlisting}
 
-Además, para compilar una configuración debes invocar a \cppkey{cmake}
-con el nombre de la configuración:
+Además, para compilar una configuración, debes invocar a \cppkey{cmake}
+con el nombre de dicha configuración:
 
 \begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
-cmake --build debug-unroll
+cmake --build release
 \end{lstlisting}
 
 \fbox{ \parbox{.9\textwidth}{
-\textbad{ATENCIÓN}: Recuerda que para ejecutar trabajos en el clúster
+\textbad{RECORDATORIO}: 
+Para ejecutar trabajos en el clúster
 \cppid{avignon} primero debes crear un \emph{script} para lanzar
 la compilación.
 }}
