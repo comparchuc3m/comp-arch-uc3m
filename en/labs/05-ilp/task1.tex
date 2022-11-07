@@ -1,0 +1,78 @@
+\clearpage
+\subsection{Impact of branch prediction}
+
+In this task you will study the impact of branch prediction.
+
+The program uses a function generating random values in the $[-100.0, 100.0]$ interval. 
+This function is provided in the header file \cppid{generate.hpp} 
+and implemented in the file \cppid{generate.cpp}.
+
+\lstinputlisting[frame=single,title={File: generate.hpp}]{lab/05-ilp/generate.hpp}
+
+\lstinputlisting[frame=single,title={File: generate.cpp}]{lab/05-ilp/generate.cpp}
+
+You are also provided with a main program that computed the average of 
+positive numbers from the generated sample.
+
+\lstinputlisting[frame=single,title={File: bpred1.cpp}]{lab/05-ilp/bpred1.cpp}
+
+The program computes the needed time to print the average.
+
+\subsection{Task: Program execution}
+
+Compile and run the original program. Determine the total execution time and 
+the execution time for computing the average.
+
+\subsection{Task: Branches and branch prediction}
+
+Use the \cppkey{perf} tool to determine the behavior of branches.
+Query the list of available events with the option \cppkey{perf list}.
+
+In particular, you must identify events for:
+\begin{itemize}
+  \item Total number of executed branch instructions (\emph{branch}).
+  \item Total number of prediction misses.
+\end{itemize}
+
+\subsection{Task: Impact on sorted sequences}
+
+Copy the program \cppid{bpred1.cpp} in a new program \cppid{bpred2.cpp}.
+
+Before entering the time measurement block, sort the vector.
+To perform sorting you may select between the following functions from standards library.
+
+\begin{itemize}
+  \item \cppid{std::sort()}: \url{https://en.cppreference.com/w/cpp/algorithm/sort}.
+  \item \cppid{std::ranges::sort()}: \url{https://en.cppreference.com/w/cpp/algorithm/ranges/sort}.
+\end{itemize}
+
+Repeat the measurements, paying attention to the time needed to compute the average.
+
+Find an explanation for new experimental results.
+
+\subsection{Task: Branch elimination}
+
+Copy the program \cppid{bpred1.cpp} in a new program \cppid{bpred3.cpp}.
+
+Try to eliminate branches inside the loop at function \cppid{average\_positive()}. 
+To achieve this, you may use the ternary conditional operator to generate a bitmask:
+
+\begin{lstlisting}
+result = (condition)?expr1:expr2;
+\end{lstlisting}
+
+The evaluation of this statement results in \cppid{expr1} when the condition is true
+or \cppid{expr2} when the condition is false.
+You may use this statement to generate a bitmask that has all bits to 1 when a
+condition is satisfied and all bits to 0 otherwise.
+
+To apply the bitmask on a \cppkey{double} you may use function
+\cppid{std::bit\_cast<>} from C++ 20. 
+You may consult the details about this function at
+\url{https://en.cppreference.com/w/cpp/numeric/bit_cast}.
+Remind to perform a cast to an intger type with the smae size than the floating
+point type.
+
+Repeat measurements, paying attention to time needed to perform the average computation.
+
+Find an explanation to the new expremiental results.

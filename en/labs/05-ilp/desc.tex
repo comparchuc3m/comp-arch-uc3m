@@ -1,0 +1,32 @@
+\section{Lab description}
+
+In this lab you will carry out the evaluation of running several
+C++ programs analyzing performance and studying to values obtained
+from hardware counters.
+
+Please, remind that for compiling a program with debug options
+(and without optimizations) you must generate a \emph{debug} configuration.
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cmake -S . -B debug -DCMAKE_BUILD_TYPE=Debug
+\end{lstlisting}
+
+If you want to generate a configuration with all optimizations
+enabled, you will have to generate a \emph{release} configuration.
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cmake -S . -B release -DCMAKE_BUILD_TYPE=Release
+\end{lstlisting}
+
+Additionally, to compile a give configuration, you must invoke \cppkey{cmake}
+with the corresponding configuration name:
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cmake --build release
+\end{lstlisting}
+
+\fbox{ \parbox{.9\textwidth}{
+\textbad{REMINDER}: 
+To run jobs in the \cppid{avignon} cluster, you must first create a
+script to launch the compilation.
+}}
