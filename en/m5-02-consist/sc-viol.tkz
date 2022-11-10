@@ -1,0 +1,33 @@
+\begin{tikzpicture}
+\tikzset{
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\scriptsize,
+                 minimum height=1cm,minimum width=1.5cm},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0cm},
+  linea/.style={font=\scriptsize,text=white,inner sep=0.1cm},
+}  
+\node[bloque,minimum width=5cm,minimum height=0.5cm] (init) {flag1=0; flag2=0;};
+\node[connpoint,below left=0cm and 0cm of init] (p1) {};
+\node[bloque,below right=0.25cm and 0cm of p1,minimum width=2.3cm,minimum height=2cm] (th1) {};
+\node[connpoint,above left=0cm and 0cm of th1] (pth1) {};
+\node[matrix,below right=0.1cm and 0.1cm of pth1]
+{
+  \node[linea] {flag1=1;};\\
+  \node[linea] {if (flag2==0) \{};\\
+  \node[linea] {    \emph{critical section}};\\
+  \node[linea] {\}};\\
+};
+\node[connpoint,below right=0cm and -2.3cm of init] (p2) {};
+\node[bloque,below right=0.25cm and 0cm of p2,minimum width=2.3cm,minimum height=2cm] (th2) {};
+\node[connpoint,above left=0cm and 0cm of th2] (pth2) {};
+\node[matrix,below right=0.1cm and 0.1cm of pth2]
+{
+  \node[linea] {flag2=1;};\\
+  \node[linea] {if (flag1==0) \{};\\
+  \node[linea] {    \emph{critical section}};\\
+  \node[linea] {\}};\\
+};
+\node[connpoint,below left=0.25cm and 0cm of th1] (passert) {};
+\node[bloque,minimum width=5cm,minimum height=0.5cm,below right=0cm and 0cm of passert]  {assert(p1!=0 || p2!=0);};
+\onslide<1->
+\end{tikzpicture}

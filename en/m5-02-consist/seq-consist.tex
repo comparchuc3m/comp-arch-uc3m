@@ -1,0 +1,160 @@
+\section{Sequential consistency}
+
+\begin{frame}[t]
+\makebox[\textwidth][c]{\input{en/m5-02-consist/multi-proc.tkz}}
+\mode<presentation>{\vfill\pause}
+\begin{footnotesize}
+A multiprocessor system is \textgood{sequentially consistent} if the result of any
+execution is the same that would be obtained if operations from all processors
+were executed in some sequential order, and operations from each individual
+processor appear in that sequence in the order established by the program.
+\begin{flushright}
+Leslie Lamport, 1979
+\end{flushright}
+\end{footnotesize}
+\end{frame}
+
+\begin{frame}[t]{Sequential Consistency: Constraints}
+\begin{itemize}
+  \item \textgood{Program order}.
+    \begin{itemize}
+      \item Memory operations from a program must be made visible to
+            \textmark{all processes} in
+            \textgood{program order}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Atomicity}.
+    \begin{itemize}
+      \item Total execution order between processes must be
+            \textgood{consistent} requiring that all operations are
+            \textmark{atomic}.
+        \begin{itemize}
+          \item All the operations that a processor does after it has seen the new value of a write
+                are not visible to other processes until they have seen the value from that write.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Atomicity}
+\makebox[\textwidth][c]{\input{en/m5-02-consist/atomicity.tkz}}
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item \textgood{Non atomic writes}:
+    \begin{itemize}
+      \item Write on \cppid{b} could bypass to
+            \cppkey{while} loop and read from \cppid{a} would bypass the write.
+        \begin{itemize}
+          \item \cppid{X=0}.
+        \end{itemize}
+    \end{itemize}
+  \item \textgood{Atomic writes}:
+    \begin{itemize}
+      \item \textmark{Sequential consistency is preserved}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]
+\begin{itemize}
+  \item \textgood{Sequential consistency} \textmark{constraints} all memory operations:
+    \begin{itemize}
+      \item Write $\rightarrow$ Read.
+      \item Write $\rightarrow$ Write.
+      \item Read $\rightarrow$ Read, Read $\rightarrow$ Write.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Simple model} to reason about parallel programs.
+
+  \mode<presentation>{\vfill\pause}
+  \item But, simple single processor reorderings may  \textbad{violate} 
+        \textgood{sequential consistency} model:
+    \begin{itemize}
+      \item \textmark{Hardware reordering} to improve performance.
+        \begin{itemize}
+          \item Write buffers, overlapped writes, \ldots
+        \end{itemize}
+      \item \textmark{Compiler optimizations} apply transformations with memory operations reordering.
+        \begin{itemize}
+          \item Scalar replacement, register allocation, instruction scheduling, \ldots
+        \end{itemize}
+      \item \textmark{Transformations} by programmers, or
+            \textmark{refactoring tools} also modify program semantics.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Sequential consistency violation}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\makebox[\textwidth][c]{\input{en/m5-02-consist/sc-viol.tkz}}
+
+\pause 
+
+\column{.5\textwidth}
+\begin{itemize}
+  \item If caches use a \textmark{write buffer}:
+    \begin{itemize}
+      \item Writes are \textbad{delayed} in buffer.
+      \item Reads \textbad{obtain the old value}.
+      \item \textmark{Dekker Algorithm} is no longer \textbad{valid}.
+        \begin{itemize}
+          \item \textmark{Dekker algorithm} is the first known solution
+                to the mutual exclusion problem.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Program order}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\makebox[\textwidth][c]{\input{en/m5-02-consist/prog-order.tkz}}
+
+\column{.5\textwidth}
+\makebox[\textwidth][c]{\input{en/m5-02-consist/prog-order-res.tkz}}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Program order}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\makebox[\textwidth][c]{\input{en/m5-02-consist/ej-prog-order.tkz}}
+
+\column{.5\textwidth}
+\makebox[\textwidth][c]{\input{en/m5-02-consist/ej-prog-order-res.tkz}}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Conditions for sequential consistency}
+\begin{itemize}
+  \item \textgood{Sufficient conditions}:
+    \begin{itemize}
+      \item Each process \textmark{issues memory operations} in program order.
+      \item After \textmark{issuing a write}, 
+            the process that performed the issue \textmark{waits for completions} of write
+            \textmark{before issuing} another operation.
+      \item After \textmark{issuing a read}, 
+            the process that performed the issue \textmark{waits for completion} of read and
+            for \textmark{completion} of the write of the value being read.
+        \begin{itemize}
+          \item Wait for write propagation to all processes.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Very demanding conditions.}
+    \begin{itemize}
+      \item There might be necessary conditions that are less demanding.
+    \end{itemize}
+\end{itemize}
+\end{frame}

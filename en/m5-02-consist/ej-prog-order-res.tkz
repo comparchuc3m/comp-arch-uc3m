@@ -1,0 +1,25 @@
+\begin{tikzpicture}
+\tikzset{
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  flechadot/.style={->,thick,dotted,draw=black,font=\tiny},
+  bloque/.style={rectangle,draw=black,fill=red!70,text=white,thick, font=\scriptsize,
+                 minimum height=0.75cm,minimum width=2.5cm},
+  connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0cm},
+  linea/.style={font=\scriptsize,text=white,inner sep=0.1cm},
+}  
+\pause
+\node[bloque] (op11) {Write flag, 42};
+\node[bloque,below=1.5cm of op11] (op12) {Write flag, 1};
+\path[flecha] (op11) -- (op12);
+\pause
+\node[bloque,right=0.5cm of op11] (op21) {Read flag $\leftarrow$ 0};
+\pause
+\node[bloque,below=1.5cm of op21] (op22) {Read flag $\leftarrow$ 1};
+\path[flecha] (op21) -- (op22);
+\pause
+\path[flechadot] (op12) -- (op22);
+\pause
+\node[bloque,below=1.5cm of op22] (op23) {Read A $\leftarrow$ ¿0?};
+\path[flecha] (op22) -- (op23);
+\onslide<1->
+\end{tikzpicture}

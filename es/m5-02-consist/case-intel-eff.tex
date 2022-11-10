@@ -1,0 +1,25 @@
+\subsection{Efectos del modelo}
+
+\begin{frame}[t]{Modelos de consistencia en Intel}
+\begin{itemize}
+  \item \textgood{Consistencia secuencial}
+    \begin{itemize}
+      \item \textmark{Load}: \asminst{mov} \asmreg{reg}, \asmlabel{[mem]}
+      \item \textmark{Store}: \asminst{xchg} \asmlabel{[mem]}, \asmreg{reg}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Consistencia relajada}
+    \begin{itemize}
+      \item \textmark{Load}: \asminst{mov} \asmreg{reg}, \asmlabel{[mem]}
+      \item \textmark{Store}: \asminst{mov} \asmlabel{[mem]}, \asmreg{reg}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Consistencia de liberación adquisición}
+    \begin{itemize}
+      \item \textmark{Load}: \asminst{mov} \asmreg{reg}, \asmlabel{[mem]}
+      \item \textmark{Store}: \asminst{mov} \asmlabel{[mem]}, \asmreg{reg}
+    \end{itemize}
+\end{itemize}
+\end{frame}

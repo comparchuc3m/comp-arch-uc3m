@@ -1,0 +1,485 @@
+\subsection{Examples}
+
+\begin{frame}[t]{Example: Write ordering}
+\begin{columns}[T]
+
+\column{.2\textwidth}
+\begin{block}{\small Processor A}
+write A.1
+write A.2
+write A.3
+\end{block}
+
+\column{.2\textwidth}
+\begin{block}{\small Processor B}
+write B.1
+write B.2
+write B.3
+\end{block}
+
+\column{.2\textwidth}
+\begin{block}{\small Processor C}
+write C.1
+write C.2
+write C.3
+\end{block}
+
+\column{.4\textwidth}
+\begin{itemize}
+  \item Writes from every processor keep order.
+\end{itemize}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.3\textwidth}
+
+{\small
+\begin{block}{Possible order (I)}
+Write A.1\\
+Write B.1\\
+Write B.2\\
+Write C.1\\
+Write A.2\\
+\end{block}
+}
+\column{.3\textwidth}
+
+{\small
+\begin{block}{Possible order (II)}
+\ldots\\
+Write B.3\\
+Write A.3\\
+Write C.2\\
+Write C.3\\
+\end{block}
+}
+
+\column{.4\textwidth}
+
+\begin{itemize}
+  \item Order for every process is kept.
+  \item No order is guaranteed across processes.
+\end{itemize}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{No reordering R$\rightarrow$R,W$\rightarrow$W}
+
+\begin{block}{Initial state}
+X=0, Y=0
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+
+\begin{block}{Processor 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_x], 1
+MOV [_y], 1
+\end{lstlisting}
+\end{block}
+
+\column{.45\textwidth}
+\begin{block}{Processor 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r1, [_y]
+MOV r2, [_x]
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{State \textbad{not allowed}}
+r1=1 y r2=0
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{No reordering R$\rightarrow$W}
+
+\begin{block}{Initial state}
+X=0, Y=0
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+
+\begin{block}{Processor 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r1, [_x]
+MOV [_y], 1
+\end{lstlisting}
+\end{block}
+
+\column{.45\textwidth}
+\begin{block}{Processor 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r2, [_x]
+MOV [_x], 1
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{State \textbad{not allowed}}
+r1=1 y r2=1
+\end{block}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Reordering W(a)$\rightarrow$R(b)}
+
+\begin{block}{Initial state}
+X=0, Y=0
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+
+\begin{block}{Processor 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_x], 1
+MOV r1, [_y]
+\end{lstlisting}
+\end{block}
+
+\column{.45\textwidth}
+\begin{block}{Processor 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_y], 1
+MOV r2, [_x]
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{State \textmark{allowed}}
+r1=0 y r2=0
+\end{block}
+
+\end{frame}
+
+
+
+\begin{frame}[t,fragile]{No reordering W$\rightarrow$R}
+
+\begin{block}{Initial state}
+X=0
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+
+\begin{block}{Processor 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_x], 1
+MOV r1, [_x]
+\end{lstlisting}
+\end{block}
+
+\column{.45\textwidth}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{State \textbad{not allowed}}
+r1=0
+\end{block}
+
+\end{frame}
+
+
+
+\begin{frame}[t,fragile]{Write visibility from other processor}
+
+\begin{block}{Initial state}
+X=0, Y=0
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+
+\begin{block}{Processor 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_x], 1
+MOV r1, [_x]
+MOV r2, [_y]
+\end{lstlisting}
+\end{block}
+
+\column{.45\textwidth}
+\begin{block}{Processor 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_y], 1
+MOV r3, [_y]
+MOV r4, [_x]
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{State \textmark{allowed}}
+r2=0 y r4=0
+\end{block}
+
+{\footnotesize Writes may be perceived in different order by every processor.}
+
+\end{frame}
+
+
+
+\begin{frame}[t,fragile]{Transitive visibility of writes}
+
+\begin{block}{Initial state}
+X=0, Y=0
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.25\textwidth}
+
+\begin{block}{Processor 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_x], 1
+\end{lstlisting}
+\end{block}
+
+\column{.25\textwidth}
+\begin{block}{Processor 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r1, [_x]
+MOV [_y], 1
+\end{lstlisting}
+\end{block}
+
+\column{.25\textwidth}
+\begin{block}{Processor 3}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r2, [_y]
+MOV r3, [_x]
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{State \textbad{not allowed}}
+r1=1 y r2=1 y r3=0
+\end{block}
+
+\end{frame}
+
+
+
+\begin{frame}[t,fragile]{Consistent order of writes for all processors}
+
+\begin{block}{Initial state}
+X=0, Y=0
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.2\textwidth}
+
+\begin{block}{\small Processor 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_x], 1
+\end{lstlisting}
+\end{block}
+
+\column{.2\textwidth}
+\begin{block}{\small Processor 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_y], 1
+\end{lstlisting}
+\end{block}
+
+\column{.2\textwidth}
+\begin{block}{\small Processor 3}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r1, [_x]
+MOV r2, [_y]
+\end{lstlisting}
+\end{block}
+
+\column{.2\textwidth}
+\begin{block}{\small Processor 4}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r3, [_y]
+MOV r4, [_x]
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{State \textbad{not allowed}}
+r1=1 y r2=0 y r3=1 y r4=0
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Locked instructions define total order}
+
+\begin{block}{Initial state}
+r1=1, r2=1, X=0, Y=0
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.2\textwidth}
+
+\begin{block}{\small Processor 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+XCHG [_X], r1
+\end{lstlisting}
+\end{block}
+
+\column{.2\textwidth}
+\begin{block}{\small Processor 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+XCHG [_y], r2
+\end{lstlisting}
+\end{block}
+
+\column{.2\textwidth}
+\begin{block}{\small Processor 3}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r3, [_x]
+MOV r4, [_y]
+\end{lstlisting}
+\end{block}
+
+\column{.2\textwidth}
+\begin{block}{\small Processor 4}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r5, [_y]
+MOV r6, [_x]
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{State \textbad{not allowed}}
+r3=1 y r4=0 y r5=1 y r6=0
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Reads not reordered with locks}
+
+\begin{block}{Initial state}
+X=0, Y=0, r1=1, r3=1
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+
+\begin{block}{Processor 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+XCHG [_x], r1
+MOV r2, [_y]
+\end{lstlisting}
+\end{block}
+
+\column{.45\textwidth}
+\begin{block}{Processor 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+XCHG [_y], r3
+MOV r4, [_x]
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{State \textbad{not allowed}}
+r2=0 y r4=0
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Writes not reordered with locks}
+
+\begin{block}{Initial state}
+X=0, Y=0, r1=1
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+
+\begin{block}{Processor 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+XCHG [_x], r1
+MOV [_y], r1
+\end{lstlisting}
+\end{block}
+
+\column{.45\textwidth}
+\begin{block}{Processor 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r2, [_y]
+MOV r3, [_x]
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{State \textbad{not allowed}}
+r2=1 y r3=0
+\end{block}
+
+\end{frame}
+

@@ -1,0 +1,20 @@
+\begin{tikzpicture}
+\tikzset{
+  flecha/.style={<->,thick,draw=black,font=\tiny},
+  proc/.style={circle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny,
+               minimum height=0.75cm,minimum width=0.75cm},
+  mem/.style={rectangle,draw=black,fill=green!60!black,text=white,thick, text centered, font=\tiny, minimum width=1cm,
+                minimum height=0.75cm,align=center},
+  etiqueta/.style={font=\tiny,align=left,minimum width=1cm},
+}  
+\node[proc] (p1) {P};
+\node[mem,below=1cm of p1] (memoria) {Memoria};
+\path[flecha] (p1) -- (memoria);
+\node[etiqueta,right=0.5cm of p1] (op1) {STORE};
+\node[etiqueta,below=0 of op1] (op2) {\ldots};
+\node[etiqueta,below=0 of op2] (op3) {LOAD };
+\node[etiqueta,below=0 of op3] (op4) {\ldots};
+\node[etiqueta,below=0 of op4] (op5) {STORE};
+\node[etiqueta,below=0 of op5] (op6) {\ldots};
+\node[etiqueta,below=0 of op6] (op7) {LOAD};
+\end{tikzpicture}

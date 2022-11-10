@@ -1,0 +1,145 @@
+\subsection{Modelo de consistencia}
+
+\begin{frame}[t]{Consistencia de memoria en Intel}
+\begin{itemize}
+  \item Hasta el año 2005 Intel no había clarificado completamente su 
+        \textmark{modelo de consistencia de memoria}.
+    \begin{itemize}
+      \item Complejidad para formalización del modelo.
+      \item Problemas para implementaciones de lenguajes (Java, C++, \ldots).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Actualmente el modelo está completamente clarificado y es público.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Modelo inicial de Intel}
+\begin{itemize}
+  \item \textmark{i486} y \textmark{Pentium}:
+    \begin{itemize}
+      \item Operaciones en orden de programa.
+        \begin{itemize}
+          \item \textbad{Excepción}: Fallos de lectura adelantan escrituras en 
+                \emph{write buffer} solamente si todas las escrituras son aciertos de caché.
+          \item Es imposible que el fallo de lectura coincida con una escritura.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Operaciones atómicas}
+\begin{itemize}
+  \item Desde \textmark{i486}:
+    \begin{itemize}
+      \item Leer o escribir 1 byte.
+      \item Leer o escribir una palabra alineada a 16 bits.
+      \item Leer o escribir una doble palabra alineada a 32 bits.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Desde \textmark{Pentium}:
+    \begin{itemize}
+      \item Leer o escribir quadword alineado a 64 bits.
+      \item Acceso a memoria no cacheada que cabe en bus de datos de 32 bits.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Desde \textmark{P6}:
+    \begin{itemize}
+      \item Acceso no alineado a datos de 16, 32 o 64 bits que caben en una línea de caché.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Bloqueo del bus (I)}
+\begin{itemize}
+  \item Un procesador puede emitir una \textmark{señal de bloqueo} del bus.
+    \begin{itemize}
+      \item Otros elementos \textmark{no pueden acceder} al bus.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Bloqueo automático del bus}:
+    \begin{itemize}
+      \item Instrucción \asminst{XCHG}.
+      \item Actualización de \textmark{descriptores de segmento}, 
+            \textmark{directorio de páginas} y 
+            \textmark{tabla de páginas}.
+      \item Aceptación de interrupciones.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Bloqueo del bus (II)}
+\begin{itemize}
+  \item \textgood{Bloqueo software del bus}:
+    \begin{itemize}
+      \item Uso del prefijo \asminst{LOCK} en:
+      \item Instrucciones de comprobación y modificación de bit (\asminst{BTS}, \asminst{BTR}, \asminst{BTC}).
+      \item Instrucciones de intercambio (\asminst{XADD}, \asminst{CMPXCHG}, \asminst{CMPXCHG8B}).
+      \item Instrucciones aritméticas de 1 operando (\asminst{INC}, \asminst{DEC}, \asminst{NOT}, \asminst{NEG}).
+      \item Instrucciones aritmético-lógicas de 2 operandos (\asminst{ADD}, \asminst{ADC}, \asminst{SUB}, 
+            \asminst{SBB}, \asminst{AND}, \asminst{OR}, \asminst{XOR}).
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Instrucciones de barrera}
+\begin{itemize}
+  \item \asminst{LFENCE}:
+    \begin{itemize}
+      \item Barrera para \textmark{operaciones de load}.
+      \item Cada \textmark{load previo} a \asminst{LFENCE} 
+            se hace \textgood{globalmente visible} antes que cualquier \textmark{load posterior}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \asminst{SFENCE}:
+    \begin{itemize}
+      \item Barrera para \textmark{operaciones de store}.
+      \item Cada \textmark{store previo} a \asminst{SFENCE} se hace \textgood{globalmente visible} 
+            antes que cualquier \textmark{store posterior}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \asminst{MFENCE}:
+    \begin{itemize}
+      \item Barrera para \textmark{operaciones de load/store}.
+      \item Todos los \textmark{load y store previos} a \asminst{MFENCE} son \textgood{globalmente visibles} 
+            antes que cualquier \textmark{load o store posterior}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Modelo de memoria actual dentro del procesador (I)}
+\begin{itemize}
+  \item Lecturas no adelantan lecturas (R $\rightarrow$ R).
+  \item Escrituras no adelantan lecturas (R $\rightarrow$ W).
+  \item Escrituras no adelantan escrituras (W $\rightarrow$ W).
+  \item Hay excepciones para strings y movimientos no temporales.
+  \item Lecturas si adelantan escrituras anteriores (W $\rightarrow$ R) a direcciones diferentes.
+  \item Lecturas/escrituras no adelantan a operaciones de (E/S), instrucciones con cerrojo o instrucciones de serialización.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Modelo de memoria actual dentro del procesador (II)}
+\begin{itemize}
+  \item Lecturas no pueden sobrepasar \asminst{LFENCE} o \asminst{MFENCE} anteriores.
+  \item Escrituras no pueden sobrepasar \asminst{LFENCE}, \asminst{SFENCE} o \asminst{MFENCE} anteriores.
+  \item \asminst{LFENCE} no puede sobrepasar lectura anterior.
+  \item \asminst{SFENCE} no puede sobrepasar escritura anterior.
+  \item \asminst{MFENCE} no puede sobrepasar lectura o escritura anterior.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Modelo de memoria multiprocesador}
+\begin{itemize}
+  \item Cada procesador cumple con reglas anteriores individualmente.
+  \item Las escrituras de un procesador se observan en el mismo orden por todos los demás.
+  \item Las escrituras de un procesador NO se ordenan con respecto a las escrituras de otros procesadores.
+  \item La ordenación de memoria es transitiva.
+  \item Dos escrituras son vistas en un orden consistente por cualquier procesador distinto de esos dos.
+  \item Las instrucciones de cerrojo tienen un orden total.
+\end{itemize}
+\end{frame}

@@ -1,0 +1,25 @@
+\subsection{Model effects}
+
+\begin{frame}[t]{Consistency models in Intel}
+\begin{itemize}
+  \item \textgood{Sequential consistency}
+    \begin{itemize}
+      \item \textmark{Load}: \asminst{mov} \asmreg{reg}, \asmlabel{[mem]}
+      \item \textmark{Store}: \asminst{xchg} \asmlabel{[mem]}, \asmreg{reg}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Relaxed consistency}
+    \begin{itemize}
+      \item \textmark{Load}: \asminst{mov} \asmreg{reg}, \asmlabel{[mem]}
+      \item \textmark{Store}: \asminst{mov} \asmlabel{[mem]}, \asmreg{reg}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Release/acquire consistency}
+    \begin{itemize}
+      \item \textmark{Load}: \asminst{mov} \asmreg{reg}, \asmlabel{[mem]}
+      \item \textmark{Store}: \asminst{mov} \asmlabel{[mem]}, \asmreg{reg}
+    \end{itemize}
+\end{itemize}
+\end{frame}

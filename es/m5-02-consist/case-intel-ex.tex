@@ -1,0 +1,485 @@
+\subsection{Ejemplos}
+
+\begin{frame}[t]{Ejemplo: Orden de escrituras}
+\begin{columns}[T]
+
+\column{.2\textwidth}
+\begin{block}{\small Procesador A}
+write A.1
+write A.2
+write A.3
+\end{block}
+
+\column{.2\textwidth}
+\begin{block}{\small Procesador B}
+write B.1
+write B.2
+write B.3
+\end{block}
+
+\column{.2\textwidth}
+\begin{block}{\small Procesador C}
+write C.1
+write C.2
+write C.3
+\end{block}
+
+\column{.4\textwidth}
+\begin{itemize}
+  \item Las escrituras de cada procesador mantienen el orden.
+\end{itemize}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.3\textwidth}
+
+{\small
+\begin{block}{Posible Orden (I)}
+Write A.1\\
+Write B.1\\
+Write B.2\\
+Write C.1\\
+Write A.2\\
+\end{block}
+}
+\column{.3\textwidth}
+
+{\small
+\begin{block}{Posible Orden (II)}
+\ldots\\
+Write B.3\\
+Write A.3\\
+Write C.2\\
+Write C.3\\
+\end{block}
+}
+
+\column{.4\textwidth}
+
+\begin{itemize}
+  \item Se mantiene el orden de cada proceso.
+  \item No se garantiza ningún orden entre procesos.
+\end{itemize}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{No reordenación R$\rightarrow$R,W$\rightarrow$W}
+
+\begin{block}{Estado inicial}
+X=0, Y=0
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+
+\begin{block}{Procesador 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_x], 1
+MOV [_y], 1
+\end{lstlisting}
+\end{block}
+
+\column{.45\textwidth}
+\begin{block}{Procesador 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r1, [_y]
+MOV r2, [_x]
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{Estado \textbad{NO permitido}}
+r1=1 y r2=0
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{No reordenación R$\rightarrow$W}
+
+\begin{block}{Estado inicial}
+X=0, Y=0
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+
+\begin{block}{Procesador 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r1, [_x]
+MOV [_y], 1
+\end{lstlisting}
+\end{block}
+
+\column{.45\textwidth}
+\begin{block}{Procesador 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r2, [_x]
+MOV [_x], 1
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{Estado \textbad{NO permitido}}
+r1=1 y r2=1
+\end{block}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Reordenación W(a)$\rightarrow$R(b)}
+
+\begin{block}{Estado inicial}
+X=0, Y=0
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+
+\begin{block}{Procesador 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_x], 1
+MOV r1, [_y]
+\end{lstlisting}
+\end{block}
+
+\column{.45\textwidth}
+\begin{block}{Procesador 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_y], 1
+MOV r2, [_x]
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{Estado \textmark{permitido}}
+r1=0 y r2=0
+\end{block}
+
+\end{frame}
+
+
+
+\begin{frame}[t,fragile]{No reordenación W$\rightarrow$R}
+
+\begin{block}{Estado inicial}
+X=0
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+
+\begin{block}{Procesador 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_x], 1
+MOV r1, [_x]
+\end{lstlisting}
+\end{block}
+
+\column{.45\textwidth}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{Estado \textbad{NO permitido}}
+r1=0
+\end{block}
+
+\end{frame}
+
+
+
+\begin{frame}[t,fragile]{Visibilidad de escrituras por otro procesador}
+
+\begin{block}{Estado inicial}
+X=0, Y=0
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+
+\begin{block}{Procesador 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_x], 1
+MOV r1, [_x]
+MOV r2, [_y]
+\end{lstlisting}
+\end{block}
+
+\column{.45\textwidth}
+\begin{block}{Procesador 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_y], 1
+MOV r3, [_y]
+MOV r4, [_x]
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{Estado \textmark{permitido}}
+r2=0 y r4=0
+\end{block}
+
+{\footnotesize Las escrituras pueden percibirse en distinto orden por cada procesador.}
+
+\end{frame}
+
+
+
+\begin{frame}[t,fragile]{Visibilidad transitiva de escrituras}
+
+\begin{block}{Estado inicial}
+X=0, Y=0
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.25\textwidth}
+
+\begin{block}{Procesador 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_x], 1
+\end{lstlisting}
+\end{block}
+
+\column{.25\textwidth}
+\begin{block}{Procesador 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r1, [_x]
+MOV [_y], 1
+\end{lstlisting}
+\end{block}
+
+\column{.25\textwidth}
+\begin{block}{Procesador 3}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r2, [_y]
+MOV r3, [_x]
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{Estado \textbad{NO permitido}}
+r1=1 y r2=1 y r3=0
+\end{block}
+
+\end{frame}
+
+
+
+\begin{frame}[t,fragile]{Orden consistente de escritura para otros procesadores}
+
+\begin{block}{Estado inicial}
+X=0, Y=0
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.2\textwidth}
+
+\begin{block}{\small Procesador 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_x], 1
+\end{lstlisting}
+\end{block}
+
+\column{.2\textwidth}
+\begin{block}{\small Procesador 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV [_y], 1
+\end{lstlisting}
+\end{block}
+
+\column{.2\textwidth}
+\begin{block}{\small Procesador 3}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r1, [_x]
+MOV r2, [_y]
+\end{lstlisting}
+\end{block}
+
+\column{.2\textwidth}
+\begin{block}{\small Procesador 4}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r3, [_y]
+MOV r4, [_x]
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{Estado \textbad{NO permitido}}
+r1=1 y r2=0 y r3=1 y r4=0
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Instrucciones con cerrojo definen un orden total}
+
+\begin{block}{Estado inicial}
+r1=1, r2=1, X=0, Y=0
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.2\textwidth}
+
+\begin{block}{\small Procesador 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+XCHG [_X], r1
+\end{lstlisting}
+\end{block}
+
+\column{.2\textwidth}
+\begin{block}{\small Procesador 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+XCHG [_y], r2
+\end{lstlisting}
+\end{block}
+
+\column{.2\textwidth}
+\begin{block}{\small Procesador 3}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r3, [_x]
+MOV r4, [_y]
+\end{lstlisting}
+\end{block}
+
+\column{.2\textwidth}
+\begin{block}{\small Procesador 4}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r5, [_y]
+MOV r6, [_x]
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{Estado \textbad{NO permitido}}
+r3=1 y r4=0 y r5=1 y r6=0
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Lecturas no se reordenan con cerrojos}
+
+\begin{block}{Estado inicial}
+X=0, Y=0, r1=1, r3=1
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+
+\begin{block}{Procesador 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+XCHG [_x], r1
+MOV r2, [_y]
+\end{lstlisting}
+\end{block}
+
+\column{.45\textwidth}
+\begin{block}{Procesador 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+XCHG [_y], r3
+MOV r4, [_x]
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{Estado \textbad{no permitido}}
+r2=0 y r4=0
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Escrituras no se reordenan con cerrojos}
+
+\begin{block}{Estado inicial}
+X=0, Y=0, r1=1
+\end{block}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}[T]
+
+\column{.45\textwidth}
+
+\begin{block}{Procesador 1}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+XCHG [_x], r1
+MOV [_y], r1
+\end{lstlisting}
+\end{block}
+
+\column{.45\textwidth}
+\begin{block}{Procesador 2}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+MOV r2, [_y]
+MOV r3, [_x]
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{block}{Estado \textbad{no permitido}}
+r2=1 y r3=0
+\end{block}
+
+\end{frame}
+

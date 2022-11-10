@@ -1,0 +1,36 @@
+\begin{tikzpicture}
+\tikzset{
+  flecha/.style={->,thick,draw=red,font=\tiny},
+  bloque/.style={rectangle,draw=black,fill=blue!60!white,text=white,thick, text centered, font=\tiny,
+                 minimum height=1.5cm,minimum width=2.25cm},
+  linea/.style={font=\scriptsize,anchor=base west,text=white},
+  herr/.style={rectangle,draw=black,fill=green!60!black,text=white,thick, text centered, font=\tiny, minimum width=1cm,
+                minimum height=0.75cm,align=center},
+  connpoint/.style={minimum width=0cm, minimum height=0cm, inner sep=0cm},
+}  
+\node[bloque] (th1) {};
+\node[connpoint,above left=0cm and 0cm of th1] (p1) {};
+\node[matrix,below right=0cm and 0.1cm of p1]
+{
+  \node[linea] (l11) {a=1};\\
+};
+\node[bloque,right=1cm of th1] (th2) {};
+\node[connpoint,above left=0cm and 0cm of th2] (p2) {};
+\node[matrix,below right=0cm and 0.1cm of p2]
+{
+  \node[linea] (l21) {while(a==0) \{\}};\\
+  \node[linea] (l22) {b=1};\\
+};
+\node[bloque,right=1cm of th2] (th3) {};
+\node[connpoint,above left=0cm and 0cm of th3] (p3) {};
+\node[matrix,below right=0cm and 0.1cm of p3]
+{
+  \node[linea] (l31) {while(b==0) \{\}};\\
+  \node[linea] {x=a};\\
+};
+\pause
+\path[flecha] (l11) -- (l21);
+\pause
+\path[flecha] (l22) -- (l31);
+\onslide<1->
+\end{tikzpicture}

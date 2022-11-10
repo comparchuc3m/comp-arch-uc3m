@@ -1,0 +1,17 @@
+\begin{tikzpicture}
+\tikzset{
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  bloque/.style={rectangle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny,minimum height=1cm,minimum width=1.5cm},
+  herr/.style={rectangle,draw=black,fill=green!60!black,text=white,thick, text centered, font=\tiny, minimum width=1cm,
+                minimum height=0.75cm,align=center},
+}  
+\node[bloque,align=center] (leng) {Lenguaje\\C, C++, FORTRAN\\\ldots};
+\node[herr,minimum width=2cm,rotate around={90:(1cm,0cm)},right=0cm of leng] (comp) {Compilador};
+\path[flecha] (leng) -- (comp);
+\node[bloque,align=center,right=2cm of leng] (codmaq) {Código\\Máquina};
+\path[flecha] (comp) -- (codmaq);
+\node[herr,minimum width=2cm,rotate around={90:(1cm,0cm)},right=0cm of codmaq] (hw) {Hardware};
+\path[flecha] (codmaq) -- (hw);
+\node[bloque,align=center,right=2cm of codmaq] (code) {Código\\Ejecutado};
+\path[flecha] (hw) -- (code);
+\end{tikzpicture}

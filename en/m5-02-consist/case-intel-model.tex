@@ -1,0 +1,160 @@
+\subsection{Consistency model}
+
+\begin{frame}[t]{Memory consistency in Intel}
+\begin{itemize}
+  \item Until 2005 hand not completely clarified its
+        \textmark{memory consistency model}.
+    \begin{itemize}
+      \item Formalizing the model highly complex.
+      \item Problems for language implementations (Java, C++, \ldots).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Currently the model is clarified and public.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Initial Intel model}
+\begin{itemize}
+  \item \textmark{i486} and \textmark{Pentium}:
+    \begin{itemize}
+      \item Operations in program order.
+        \begin{itemize}
+          \item \textbad{Exception}: 
+                Read misses bypass writes in \emph{write buffer} 
+                only if all writes are cache hits.
+          \item It is impossible that a read miss matches with a write.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Atomic operations}
+\begin{itemize}
+  \item Since \textmark{i486}:
+    \begin{itemize}
+      \item Read or write 1 byte.
+      \item Read or write a 16-bit aligned word.
+      \item Read or write a 32-bit aligned double word.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Since \textmark{Pentium}:
+    \begin{itemize}
+      \item Read or write a 64-bit aligned quadword.
+      \item Non-cached memory access that fits in 32 bit data bus.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Since \textmark{P6}:
+    \begin{itemize}
+      \item Non aligned access to data of 16, 32 or 64 bits that fit in a cache line.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Bus blocking (I)}
+\begin{itemize}
+  \item A processor may issue a \textmark{signal to block} the bus.
+    \begin{itemize}
+      \item Other elements \textmark{cannot access} the bus.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Automatic bus blocking}:
+    \begin{itemize}
+      \item Instruction \asminst{XCHG}.
+      \item Updating \textmark{segment descriptors}, 
+            \textmark{page directory}, and
+            \textmark{page table}.
+      \item Interrupt acceptance.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Bus blocking (II)}
+\begin{itemize}
+  \item \textgood{Bus software blocking}:
+    \begin{itemize}
+      \item Use \asminst{LOCK} prefix in:
+        \begin{itemize}
+          \item Instructions for bit checking and modification
+                (\asminst{BTS}, \asminst{BTR}, \asminst{BTC}).
+          \item Exchange instructions 
+                (\asminst{XADD}, \asminst{CMPXCHG}, \asminst{CMPXCHG8B}).
+          \item 1 operand arithmetic instructions
+                (\asminst{INC}, \asminst{DEC}, \asminst{NOT}, \asminst{NEG}).
+          \item 2 operand arithmetic-logic instructions
+                (\asminst{ADD}, \asminst{ADC}, \asminst{SUB}, 
+                \asminst{SBB}, \asminst{AND}, \asminst{OR}, \asminst{XOR}).
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Barrier instructions}
+\begin{itemize}
+  \item \asminst{LFENCE}:
+    \begin{itemize}
+      \item Barrier for \textmark{load operations}.
+      \item Every \textmark{load preceding} a \asminst{LFENCE} 
+            is \textgood{globally made visible} 
+            before any \textmark{subsequent load}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \asminst{SFENCE}:
+    \begin{itemize}
+      \item Barrier for \textmark{store operations}.
+      \item Every \textmark{store preceding} a \asminst{SFENCE} 
+            is \textgood{globally visible} 
+            before any \textmark{subsequent store}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \asminst{MFENCE}:
+    \begin{itemize}
+      \item Barrier for \textmark{load/store operations}.
+      \item All \textmark{load and store preceding} a \asminst{MFENCE} 
+            are \textgood{globally visible} 
+            before any \textmark{subsequent load or store}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Current memory model within processor (I)}
+\begin{itemize}
+  \item Reads do not bypass other reads (R $\rightarrow$ R).
+  \item Writes do not bypass reads (R $\rightarrow$ W).
+  \item Writes do not bypass writes (W $\rightarrow$ W).
+    \begin{itemize}
+      \item There are exceptions for strings and non-temporal moves.
+    \end{itemize}
+  \item Reads bypass preceding writes (W $\rightarrow$ R) to different addresses.
+  \item Reads/writes do not bypass I/O operations, locked instructions, or
+        serializing instructions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Current memory model within processor (II)}
+\begin{itemize}
+  \item Reads cannot bypass preceding \asminst{LFENCE} or \asminst{MFENCE}.
+  \item Reads cannot bypass preceding \asminst{LFENCE}, \asminst{SFENCE}, or \asminst{MFENCE}.
+  \item \asminst{LFENCE} cannot bypass preceding read.
+  \item \asminst{SFENCE} cannot bypass preceding write.
+  \item \asminst{MFENCE} cannot bypass preceding read or write.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Multiprocessor memory model}
+\begin{itemize}
+  \item Every processor is individually compliant with former rules.
+  \item Writes from a processor are observed in the same order by all other processors.
+  \item Writes from a processor are \textbad{NOT} ordered
+        with respect to writes from other processors.
+  \item Memory ordering is transitive.
+  \item Two writes are viewed in a consistent order by any other processor
+        distinct from those two processors.
+  \item Lock instructions have a total order.
+\end{itemize}
+\end{frame}

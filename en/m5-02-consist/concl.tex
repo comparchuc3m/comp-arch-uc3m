@@ -1,0 +1,39 @@
+\section{Conclusion}
+
+\begin{frame}[t]{Summary}
+\begin{itemize}
+  \item Consistency memory model determines which optimizations are valid.
+  \item \textgood{Sequential consistency} establishes as constraints
+        \textmark{atomicity} and \textmark{program order}.
+  \item More relaxed models than sequential consistency can be used.
+    \begin{itemize}
+      \item \textmark{Weak consistency}.
+      \item \textmark{Release/acquire consistency}
+    \end{itemize}
+  \item Intel memory model has evolved over last decade.
+    \begin{itemize}
+      \item Formalized and publicly available.
+      \item Establishes what operations are atomic, when bus is blocked, and how barriers are defined.
+      \item Defines the memory model within processor and between different processors.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t]{References}
+\begin{itemize}
+  \item \bibhennessy
+  \textgood{Sections}: 5.6
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Shared memory consistency models: A tutorial.}\\
+        Adve, S. V., and Gharachorloo, K.\\
+        IEEE Computer 29, 12 (December 1996), 66-76.
+
+  \mode<presentation>{\vfill}
+  \item \textmark{Intel 64 and IA-32 Architectures Software Developer Manuals.}\\
+        Volume 3: Systems Programming Guide.\\
+        8.2: Memory Ordering
+
+\end{itemize}
+\end{frame}

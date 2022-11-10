@@ -1,0 +1,168 @@
+\section{Other consistency models}
+
+\begin{frame}[t]{Optimizations}
+\begin{itemize}
+  \item Models relaxing program execution order.
+    \begin{itemize}
+      \item Relax W $\rightarrow$ R $\Rightarrow$ 
+            \textmark{Total Store Order}.
+      \item Relax W $\rightarrow$ W and W $\rightarrow$ R $\Rightarrow$ 
+            \textmark{Partial store order}.
+      \item Relax all $\Rightarrow$ 
+        \begin{itemize}
+          \item \textmark{Weak ordering} (PowerPC).
+          \item \textmark{Release consisntency} (RISC V).
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textgood{Notation}:
+    \begin{itemize}
+      \item X $\rightarrow$ Y
+        \begin{itemize}
+          \item X must complete before Y is done.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Reorderings}
+\mode<presentation>{\vfill}
+\makebox[\textwidth][c]
+{
+\begin{tabular}{|l|c|l|}
+\hline
+
+Sequential consistency &
+Opcionalmente &
+R $\rightarrow$ R
+R $\rightarrow$ W\\
+& &
+W $\rightarrow$ R
+W $\rightarrow$ W
+\\
+\hline
+
+Total store order &
+IBM/370 &
+R $\rightarrow$ R
+R $\rightarrow$ W\\
+&
+DEC VAX &
+W $\rightarrow$ W\\
+
+& SPARC & \\
+\hline
+
+Partial store order &
+SPARC &
+R $\rightarrow$ R
+R $\rightarrow$ W\\
+\hline
+
+Weak ordering &
+Power PC &
+\\
+\hline
+
+Release consistency &
+MIPS, RISC V, ARM v8 &
+\\
+\hline
+
+
+\end{tabular}
+}
+
+\end{frame}
+
+\begin{frame}[t]{Reads bypass writes (W$\rightarrow$R)}
+\begin{itemize}
+  \item A \textgood{read} \textmark{may execute before} 
+        a preceding \textgood{write}.
+
+  \mode<presentation>{\vfill}
+  \item Typical in systems with \textgood{write buffer}.
+    \begin{itemize}
+      \item Check consistency with buffer.
+      \item Allow read buffer.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Other models}
+\begin{itemize}
+  \item R $\rightarrow$ W, W $\rightarrow$ R.
+    \begin{itemize}
+      \item Allow that \textgood{writes} 
+            \textmark{may arrive into memory} out of program order.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item R $\rightarrow$ W, 
+        W $\rightarrow$ R, 
+        R $\rightarrow$ R, 
+        W $\rightarrow$ W.
+    \begin{itemize}
+      \item Avoid only data and control dependencies within processor.
+      \item \textgood{Alternatives}:
+        \begin{itemize}
+          \item Weak consistency.
+          \item Release consistency.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Weak ordering}
+\begin{itemize}
+  \item Divides memory operations into \textgood{data operations} 
+        and \textgood{synchronization operations}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Synchronization operations} act as a \textmark{barrier}.
+    \begin{enumerate}
+      \item All preceding data operations in program order to a synchronization 
+            must complete before synchronization is executed.
+      \item All subsequent data operations in program order to a synchronization 
+            operation must wait until synchronization ins completed.
+      \item Synchronization are performed in program order.
+    \end{enumerate}
+
+  \mode<presentation>{\vfill\pause}
+  \item Hardware implementation of \textmark{barrier}.
+    \begin{itemize}
+      \item \textgood{Processor keeps a counter}:
+        \begin{itemize}
+          \item Data operation \textgood{issue} $\Rightarrow$ \textmark{increment}.
+          \item Data operation \textgood{completed} $\Rightarrow$ \textmark{decrement}.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Release/acquire consistency}
+\begin{itemize}
+  \item \textmark{More relaxed} than weak consistency.
+  \item  \textmark{Synchronization accesses} divided into:
+    \begin{itemize}
+      \item \textmark{Acquire}. 
+      \item \textmark{Release}. 
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Semantics}:
+    \begin{itemize}
+      \item \textmark{Acquire}
+        \begin{itemize}
+          \item Must complete before all subsequent memory accesses.
+        \end{itemize}
+      \item \textmark{Release}
+        \begin{itemize}
+          \item Must complete all previous memory accesses.
+          \item Subsequent memory accesses \textgood{MAY} initiate.
+          \item Operations following a \textmark{release} and must wait, must be protected with an \textmark{acquire}.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}

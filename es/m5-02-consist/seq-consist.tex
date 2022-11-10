@@ -1,0 +1,166 @@
+\section{Consistencia secuencial}
+
+\begin{frame}[t]
+\makebox[\textwidth][c]{\input{es/m5-02-consist/multi-proc.tkz}}
+\mode<presentation>{\vfill\pause}
+\begin{footnotesize}
+Un sistema multiprocesador es \textgood{secuencialmente consistente} si el resultado de
+cualquier ejecución es el mismo que se obtendría si las operaciones de todos
+los procesadores se ejecutase en algún orden secuencial, y las operaciones de
+cada procesador individual aparecen en esa secuencia en el orden indicado por
+el programa.
+
+\begin{flushright}
+Leslie Lamport, 1979
+\end{flushright}
+\end{footnotesize}
+\end{frame}
+
+\begin{frame}[t]{Restricciones de la consistencia secuencial}
+\begin{itemize}
+  \item \textgood{Orden de programa}.
+    \begin{itemize}
+      \item Las operaciones de memoria de un programa deben 
+            hacerse visibles a \textmark{todos los procesos} en el 
+            \textgood{orden de programa}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Atomicidad}.
+    \begin{itemize}
+      \item El orden total de ejecución entre procesos debe ser 
+            \textgood{consistente} requiriendo que todas las 
+             operaciones sean \textmark{atómicas}.
+        \begin{itemize}
+          \item Nada que un procesador haga 
+                después de que haya visto el nuevo valor de una escritura 
+                se hace visible a otros procesos antes de que 
+                hayan visto el valor de esa escritura.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Atomicidad}
+\makebox[\textwidth][c]{\input{es/m5-02-consist/atomicity.tkz}}
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item \textgood{Escrituras no atómicas}:
+    \begin{itemize}
+      \item La escritura en \cppid{b} podría adelantar al 
+            bucle \cppkey{while} y la lectura de \cppid{a} 
+            adelantaría la escritura.
+        \begin{itemize}
+          \item \cppid{X=0}.
+        \end{itemize}
+    \end{itemize}
+  \item \textgood{Escrituras atómicas}:
+    \begin{itemize}
+      \item Se preserva la \textmark{consistencia secuencial}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]
+\begin{itemize}
+  \item La \textgood{consistencia secuencial} \textmark{restringe} todas las operaciones de memoria:
+    \begin{itemize}
+      \item Write $\rightarrow$ Read.
+      \item Write $\rightarrow$ Write.
+      \item Read $\rightarrow$ Read, Read $\rightarrow$ Write.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Modelo simple} para razonar sobre programas paralelos.
+
+  \mode<presentation>{\vfill\pause}
+  \item Pero, reordenaciones simples para monoprocesador pueden \textbad{violar} 
+        el modelo de \textgood{consistencia secuencial}:
+    \begin{itemize}
+      \item \textmark{Reordenación de hardware} para mejora del rendimiento.
+        \begin{itemize}
+          \item Write buffers, escrituras solapadas, \ldots
+        \end{itemize}
+      \item \textmark{Optimizaciones de compilador} aplican transformaciones que reordenan operaciones de memoria.
+        \begin{itemize}
+          \item Remplazo de escalares, asignación de registros, planificación de instrucciones, \ldots
+        \end{itemize}
+      \item \textmark{Transformaciones} por programadores o 
+            \textmark{herramientas de refactoring} también modifican 
+            la semántica del programa.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Violación de consistencia secuencial}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\makebox[\textwidth][c]{\input{es/m5-02-consist/sc-viol.tkz}}
+
+\pause 
+
+\column{.5\textwidth}
+\begin{itemize}
+  \item Si las cachés usan búfer de escritura:
+    \begin{itemize}
+      \item Escrituras se \textbad{retrasan} en búfer.
+      \item Lecturas \textbad{obtienen el valor antiguo}.
+      \item Se \textbad{invalida} el \textmark{algoritmo de Dekker}.
+        \begin{itemize}
+          \item El \textmark{algoritmo de Dekker} es la primera solución 
+                conocida al problema de la exclusión mutua.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Orden de programa}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\makebox[\textwidth][c]{\input{es/m5-02-consist/prog-order.tkz}}
+
+\column{.5\textwidth}
+\makebox[\textwidth][c]{\input{es/m5-02-consist/prog-order-res.tkz}}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Orden de programa}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\makebox[\textwidth][c]{\input{es/m5-02-consist/ej-prog-order.tkz}}
+
+\column{.5\textwidth}
+\makebox[\textwidth][c]{\input{es/m5-02-consist/ej-prog-order-res.tkz}}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Condiciones para la consistencia secuencial}
+\begin{itemize}
+  \item \textgood{Condiciones suficientes}:
+    \begin{itemize}
+      \item Cada proceso \textmark{emite las operaciones} de memoria en orden de programa.
+      \item Después de la \textmark{emisión de una escritura}, 
+            el proceso de emisión \textmark{espera a que se complete} la escritura 
+            \textmark{antes de emitir} otra operación.
+      \item Después de \textmark{emitir una lectura}, el proceso que la emitió 
+            \textmark{espera a que se complete} la lectura y a que 
+            la escritura del valor que se está leyendo se \textmark{complete}.
+        \begin{itemize}
+          \item Esperar la propagación de escrituras a todos los procesos.
+        \end{itemize}
+    \end{itemize}
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Son condiciones muy exigentes.}
+    \begin{itemize}
+      \item Puede haber condiciones necesarias menos exigentes.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}

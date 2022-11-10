@@ -1,0 +1,167 @@
+\section{Otros modelos de consistencia}
+
+\begin{frame}[t]{Optimizaciones}
+\begin{itemize}
+  \item Modelos que relajan el orden de ejecución de programa.
+    \begin{itemize}
+      \item Relajar W $\rightarrow$ R $\Rightarrow$
+           \textmark{Orden de almacenamiento total}.
+      \item Relajar W $\rightarrow$ W, W $\rightarrow$ W $\Rightarrow$
+            \textmark{Orden de almacenamiento parcial}.
+      \item Relajar todo $\Rightarrow$
+        \begin{itemize}
+          \item \textmark{Ordenamiento débil} (PowerPC).
+          \item \textmark{Consistencia de liberación} (RISC V).
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill}
+  \item \textgood{Notación}:
+    \begin{itemize}
+      \item X $\rightarrow$ Y
+        \begin{itemize}
+          \item X debe completarse antes de que Y se realice.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Reordenaciones}
+\mode<presentation>{\vfill}
+\makebox[\textwidth][c]
+{
+\begin{tabular}{|l|c|l|}
+\hline
+
+Sequential consistency &
+Opcionalmente &
+R $\rightarrow$ R
+R $\rightarrow$ W\\
+& &
+W $\rightarrow$ R
+W $\rightarrow$ W
+\\
+\hline
+
+Total store order &
+IBM/370 &
+R $\rightarrow$ R
+R $\rightarrow$ W\\
+&
+DEC VAX &
+W $\rightarrow$ W\\
+
+& SPARC & \\
+\hline
+
+Partial store order &
+SPARC &
+R $\rightarrow$ R
+R $\rightarrow$ W\\
+\hline
+
+Weak ordering &
+Power PC &
+\\
+\hline
+
+Release consistency &
+MIPS, RISC V, ARM v8 &
+\\
+\hline
+
+
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}[t]{Lecturas adelantas a escrituras (W$\rightarrow$R)}
+\begin{itemize}
+  \item Una \textgood{lectura} \textmark{puede ejecutarse antes} 
+        que una \textgood{escritura} anterior.
+
+  \mode<presentation>{\vfill}
+  \item Típico en sistemas con \textgood{búfer de escritura}.
+    \begin{itemize}
+      \item Comprobación de consistencia con búfer.
+      \item Permiten lectura de búfer.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Otros modelos}
+\begin{itemize}
+  \item R $\rightarrow$ W, W $\rightarrow$ R.
+    \begin{itemize}
+      \item Permiten que las \textgood{escrituras} 
+            \textmark{puedan llegar a memoria} fuera de orden de programa.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item R $\rightarrow$ W, 
+        W $\rightarrow$ R, 
+        R $\rightarrow$ R, 
+        W $\rightarrow$ W.
+    \begin{itemize}
+      \item Solamente se evitan dependencias de datos y control dentro del procesador.
+      \item \textgood{Alternativas}:
+        \begin{itemize}
+          \item Consistencia débil.
+          \item Consistencia de liberación.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Ordenamiento débil}
+\begin{itemize}
+  \item Divide las operaciones a memoria en \textgood{operaciones de datos} 
+        y \textgood{operaciones de sincronización}.
+
+  \mode<presentation>{\vfill\pause}
+  \item Las \textgood{operaciones de sincronización} actúan como una \textmark{barrera}.
+    \begin{enumerate}
+      \item Todas las operaciones de datos previas en orden de programa a una sincronización 
+            deben completarse antes de ejecutar la sincronización.
+      \item Todas las operaciones de datos posteriores en orden de programa a una sincronización 
+            deben esperar a que se complete la sincronización.
+      \item Las sincronizaciones se realizan en orden de programa.
+    \end{enumerate}
+
+  \mode<presentation>{\vfill\pause}
+  \item Implementación hardware de la \textmark{barrera}.
+    \begin{itemize}
+      \item \textgood{Procesador mantiene un contador}:
+        \begin{itemize}
+          \item \textgood{Emisión} de operación de datos $\Rightarrow$ \textmark{incremento}.
+          \item Operación de datos \textgood{completada} $\Rightarrow$ \textmark{decremento}.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Consistencia de adquisición/liberación}
+\begin{itemize}
+  \item \textmark{Más relajada} que la consistencia débil.
+  \item  \textmark{Accesos de sincronización} divididos en:
+    \begin{itemize}
+      \item \textmark{Acquire} $\rightarrow$ Adquisición.
+      \item \textmark{Relase} $\rightarrow$ Liberación.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Semántica}:
+    \begin{itemize}
+      \item \textmark{Acquire}
+        \begin{itemize}
+          \item Debe completarse antes que todos los accesos a memoria subsiguientes.
+        \end{itemize}
+      \item \textmark{Release}
+        \begin{itemize}
+          \item Deben completarse todos los accesos a memoria previos.
+          \item Accesos memoria posteriores \textgood{SI} pueden iniciarse.
+          \item Operaciones que siguen a \textmark{release} y que deben esperar se deben proteger con un \textmark{acquire}.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}

@@ -1,0 +1,62 @@
+\section{Memory model}
+
+\begin{frame}[t]{Memory consistency}
+\makebox[\textwidth][c]{\input{en/m5-02-consist/modelo.tkz}}
+\mode<presentation>{\vfill}
+\begin{itemize}
+  \item \textgood{Memory consistency model}:
+    \begin{itemize}
+      \item Set of rules defining how the
+            \textmark{memory system} processes memory operations from 
+             \textmark{multiple processors}.
+      \item \textmark{Contract} between programmer and system.
+      \item Determines which \textmark{optimizations are valid} on correct programs.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Memory model}
+\begin{itemize}
+  \item Interface between program and its transformers.
+    \begin{itemize}
+      \item Defines which values can be returned by a read operation.
+    \end{itemize}
+  \item The language's memory model has implications for hardware.
+\end{itemize}
+\mode<presentation>{\vfill}
+\makebox[\textwidth][c]{\input{en/m5-02-consist/leng-mem.tkz}}
+\end{frame}
+
+\begin{frame}[t]{Single processor memory model}
+
+\begin{columns}
+
+\column{.2\textwidth}
+
+\makebox[\textwidth][c]{\input{en/m5-02-consist/single-proc.tkz}}
+
+\column{.8\textwidth}
+
+\begin{itemize}
+  \item \textgood{Memory behavior model}:
+    \begin{itemize}
+      \item Memory operations happen in \textgood{program order}.
+        \begin{itemize}
+          \item A read returns the value from the last write in program order.
+        \end{itemize}
+    \end{itemize}
+  \mode<presentation>{\vfill\pause}
+  \item Semantics defined by \textgood{sequential program order}:
+    \begin{itemize}
+      \item \textmark{Simple} but \textmark{constrained} reasoning.
+        \begin{itemize}
+          \item Solve \textmark{data and control dependencies}.
+        \end{itemize}
+      \item \textmark{Independent} operations may be executed in \textmark{parallel}.
+      \item Optimizations \textmark{preserve semantics}.
+    \end{itemize}
+\end{itemize}
+
+\end{columns}
+
+\end{frame}

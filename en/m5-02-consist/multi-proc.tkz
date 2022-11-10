@@ -1,0 +1,25 @@
+\begin{tikzpicture}
+\tikzset{
+  flecha/.style={->,thick,draw=black,font=\tiny},
+  proc/.style={circle,draw=black,fill=blue!70,text=white,thick, text centered, font=\tiny,
+               minimum height=0.75cm,minimum width=0.75cm},
+  mem/.style={rectangle,draw=black,fill=green!60!black,text=white,thick, text centered, font=\tiny, minimum width=1cm,
+                minimum height=0.75cm,align=center},
+  reqqueue/.style={rectangle,draw=black,fill=blue!60!black,text=white,thick, text centered, font=\tiny, minimum width=1cm,
+                minimum height=0.75cm,align=center},
+  etiqueta/.style={font=\tiny,align=left,minimum width=1cm},
+}  
+\node[proc] (p1) {P};
+\node[proc, right=0.5cm of p1] (p2) {P2};
+\node[proc, right=0.5cm of p2] (p3) {P3};
+\node[proc, right=0.5cm of p3] (p4) {P4};
+\node[proc, right=0.5cm of p4] (p5) {P5};
+\node[reqqueue, below=0.5cm of p3] (req) {LOAD\\\ldots\\STORE\\\ldots\\LOAD};
+\path[flecha] (p1) -- (req);
+\path[flecha] (p2) -- (req);
+\path[flecha] (p3) -- (req);
+\path[flecha] (p4) -- (req);
+\path[flecha] (p5) -- (req);
+\node[mem,below=0.5cm of req] (memory) {Memory};
+\path[flecha] (req) -- (memory);
+\end{tikzpicture}
