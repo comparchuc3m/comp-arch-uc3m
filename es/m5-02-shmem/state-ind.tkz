@@ -1,0 +1,69 @@
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3.5cm,
+                    semithick]
+  \tikzstyle{every state}=[fill=blue,draw=none,text=white,font=\tiny,minimum width=1.75cm,align=center]
+  \tikzset{every edge/.append style={font=\tiny}}
+
+  \node[state] (invalid) {Inválido (I)};
+
+  \node[state] (shared) [below right=2cm and 2cm of invalid] {Compartido\\(Lect/Escr)};
+
+  \node[state] (modified) [below left=2cm and 2cm of invalid] {Modificado\\(Solo lect)};
+
+  \pause 
+
+  \path (invalid) edge
+          node[above,rotate=315]{Lectura CPU}
+          node[below,rotate=315]{\color{blue}\textbf{Enviar mens. fallo lectura}}
+        (shared);
+
+  \path (invalid) edge
+          node[above,rotate=45]{Escritura CPU}
+          node[below,rotate=45]{\color{blue}\textbf{Enviar mens fallo escritura}}
+        (modified);
+
+\pause
+
+  \path (shared) edge[bend right=40]
+          node[above, rotate=315]{Invalidar}
+        (invalid);
+  \path (shared) edge[loop right]
+          node[above right=1em and -3em]{Acierto lectura}
+        (shared);
+  \path (shared) edge[loop below]
+          node[above right=0.75em and 0.75em]{Fallo lectura}
+          node[above right=0.25em and 0.75em]{\color{blue}\textbf{Leer fallo}}
+        (shared);
+  \path (shared) edge[bend left=30]
+          node[above]{Acierto escritura}
+          node[below]{\color{blue}\textbf{Enviar mens invalidación}}
+        (modified);
+  \path (shared) edge[bend left=60]
+          node[above]{Fallo escritura}
+          node[below]{\color{blue}\textbf{Enviar mens fall escritura}}
+        (modified);
+
+\pause
+
+  \path (modified) edge[loop left]
+          node[above left=1.5em and -3em]{Acierto lectura}
+          node[above left=1em and -3em]{Acierto escritura}
+        (modified);
+  \path (modified) edge[loop below]
+          node[above left=1em and 1em] {Fallo escritura}
+          node[above left=0em and 1em] {\color{blue}\textbf{Post-escritura}}
+        (modified);
+  \path (modified) edge[bend left=40]
+          node[above,rotate=45]{Captar/Invalidar}
+          node[below,rotate=45]{\color{blue}\textbf{Post-escritura}}
+        (invalid);
+  \path (modified) edge
+          node[above]{Captar}
+          node[below]{\color{blue}\textbf{Post-escritura}}
+        (shared);
+  \path (modified) edge[bend left=20]
+          node[above]{Fallo lectura}
+          node[below]{\color{blue}\textbf{Post-escritura y leer fallo}}
+        (shared);
+
+\onslide<1->
+\end{tikzpicture}

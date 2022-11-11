@@ -1,0 +1,115 @@
+\section{Introducción a memoria compartida distribuida}
+
+\begin{frame}[t]{Protocolos de espionaje y escalabilidad}
+\begin{itemize}
+  \item \textbad{Problemas} de protocolos de espionaje.
+    \begin{itemize}
+      \item Requiere comunicación con todas las cachés:
+        \begin{itemize}
+          \item En cada fallo de caché.
+          \item En cada escritura de dato compartido.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item ¿Qué \textgood{ventaja} tienen los protocolos de espionaje?
+    \begin{itemize}
+      \item Ausencia de estructura de datos centralizada.
+        \begin{itemize}
+          \item Bajo coste de implementación.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item ¿Qué \textbad{inconveniente} tiene los protocolos de espionaje?
+    \begin{itemize}
+      \item Ausencia de estructura de datos centralizadas.
+        \begin{itemize}
+          \item Comunicaciones limitan la escalabilidad.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Modelo básico de DSM}
+\makebox[\textwidth][c]{
+\input{es/m5-02-shmem/dsm.tkz}
+}
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item \textbad{Necesidad de eliminar tráfico de coherencia.}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Clases de protocolos de coherencia}
+\begin{itemize}
+  \item \textmark{Espionaje} (\emph{snooping}):
+    \begin{itemize}
+      \item Cada caché mantiene el estado de compartición de cada bloque que tiene.
+      \item Las cachés accesibles mediante medio de multidifusión (bus).
+      \item Todas las cachés monitorizan si tienen una copia del bloque.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Basados en directorio}:
+    \begin{itemize}
+      \item El estado de compartición se mantiene en un directorio.
+        \item \textgood{SMP}: 
+              Directorio centralizado en memoria o en caché de más alto nivel.
+        \item \textgood{DSM}: 
+              Para evitar cuello de botella se usa un directorio distribuido (más complejo).
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Protocolo basado en directorio}
+\begin{itemize}
+  \item \textmark{Idea}: Mantener el \textgood{estado} de cada bloque de caché.
+    \begin{itemize}
+      \item ¿Qué cachés tiene copia del bloque?
+      \item Bits de estado del bloque.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Multicores con caché externa compartida.
+    \begin{itemize}
+      \item \textmark{Vector de bits} de longitud igual a número de cores.
+        \begin{itemize}
+          \item Indica que cachés privadas pueden tener copia del bloque.
+          \item Solamente se envía invalidación a cachés marcadas en mapa de bits.
+        \end{itemize}
+      \item Esquema funciona bien dentro de un único multicore.
+      \item \textmark{Ejemplo}: \textgood{Intel Core i7}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Directorio centralizado y escalabilidad}
+\begin{itemize}
+  \item Un directorio centralizado evita broadcast pero
+    \begin{itemize}
+      \item Se convierte en cuello de botella.
+      \item Problema de escalabilidad con número de procesadores.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Solución}: \textmark{Directorio distribuido}.
+    \begin{itemize}
+      \item Distribuir el directorio con la memoria.
+      \item Cada directorio tiene información de la memoria local asociada.
+        \begin{itemize}
+          \item Siempre se sabe a qué directorio ir.
+        \end{itemize}
+      \item Distintas peticiones de coherencia van a distintos directorios.
+    \end{itemize}
+
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Direcotrio distribuido}
+\makebox[\textwidth][c]{
+\input{es/m5-02-shmem/dsm-dist.tkz}
+}
+\mode<presentation>{\vfill\pause}
+\end{frame}

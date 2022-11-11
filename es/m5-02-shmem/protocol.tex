@@ -1,0 +1,125 @@
+\section{Protocolo basado en directorio}
+
+\begin{frame}[t]{Transición de estados}
+\begin{itemize}
+  \item \textgood{En chips multicore}:
+    \begin{itemize}
+      \item La \textmark{coherencia interna} se mantiene mediante \textgood{directorio centralizado}.
+      \item El \textmark{mismo directorio} puede actuar como \textmark{directorio local} en \textgood{DSM}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Implementación del protocolo}:
+    \begin{itemize}
+      \item Transición de estados de \textmark{caché local}.
+        \begin{itemize}
+          \item Envían peticiones a \textmark{directorio local}.
+        \end{itemize}
+      \item Transición de estados del \textmark{directorio}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Transición de estados de caché individual}
+\makebox[\textwidth][c]{
+\input{es/m5-02-shmem/state-ind.tkz}
+}
+\end{frame}
+
+\begin{frame}[t]{Entrada no cacheada}
+\begin{itemize}
+  \item El valor de memoria está actualizado.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Peticiones}:
+    \begin{itemize}
+      \mode<presentation>{\vfill}
+      \item \textmark{Fallo de lectura}:
+        \begin{itemize}
+          \item Se envía dato de memoria a nodo peticionario.
+          \item Nodo peticionario es el único en estado compartido.
+          \item Estado pasa a compartido.
+        \end{itemize}
+      \mode<presentation>{\vfill}
+      \item \textmark{Fallo de escritura}:
+        \begin{itemize}
+          \item Se envía dato de memoria a nodo peticionario.
+          \item El bloque se pasa a estado exclusivo.
+          \item Nodo peticionario es el propietario.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Entrada compartida}
+\begin{itemize}
+  \item El valor de memoria está actualizado.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Peticiones}:
+    \begin{itemize}
+
+      \mode<presentation>{\vfill}
+      \item \textmark{Fallo de lectura}:
+        \begin{itemize}
+          \item Se envía el dato de memoria al nodo peticionario.
+          \item El nodo peticionario se añade al conjunto de nodos de la entrada.
+        \end{itemize}
+
+      \mode<presentation>{\vfill}
+      \item \textmark{Fallo de escritura}:
+        \begin{itemize}
+          \item Se envía el dato de memoria al nodo peticionario.
+          \item Se envían mensajes de invalidación al conjunto de nodos de la entrada.
+          \item Se activa en el conjunto solamente el nodo peticionario.
+          \item Se pasa a estado exclusivo.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Entrada exclusiva}
+\begin{itemize}
+  \item El valor del bloque se encuentra en caché en el nodo identificado por el conjunto (nodo porpietario).
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Peticiones}:
+    \begin{itemize}
+      \item \textmark{Fallo de lectura}:
+        \begin{itemize}
+          \item Se envía mensaje de captación a propietario.
+          \item Se escribe dato en memoria.
+          \item Se envía dato a nodo peticionario.
+          \item Se añade nodo peticionario a conjunto de nodos.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Entrada exclusiva}
+\begin{itemize}
+  \item \textgood{Peticiones}:
+    \begin{itemize}
+      \item \textmark{Post-escritura}:
+        \begin{itemize}
+          \item Ocurre cuando el propietario hace post-escritura del bloque.
+          \item El bloque pasa a estado no cacheado.
+          \item Se vacía el conjunto de la entrada.
+        \end{itemize}
+      \item \textmark{Fallo de escritura}:
+        \begin{itemize}
+          \item El bloque tiene nuevo propietario.
+          \item Se invalida bloque en antiguo propietario y se obtiene valor.
+          \item Se envía valor a nodo peticionario.
+          \item Se activa en el conjunto solamente el nuevo peticionario.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Transición de estados del directorio}
+\makebox[\textwidth][c]{
+\input{es/m5-02-shmem/state-dir.tkz}
+}
+\end{frame}
+

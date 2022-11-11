@@ -1,0 +1,57 @@
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3.5cm,
+                    semithick]
+  \tikzstyle{every state}=[fill=blue,draw=none,text=white,font=\tiny,minimum width=1.75cm,align=center]
+  \tikzset{every edge/.append style={font=\tiny}}
+
+  \node[state] (uncached) {Uncached};
+
+  \node[state] (shared) [below right=2cm and 2cm of invalid] {Shared\\(Read only)};
+
+  \node[state] (exclusive) [below left=2cm and 2cm of invalid] {Exclusive\\(Read/Write))};
+
+  \pause 
+
+  \path (uncached) edge
+          node[above,rotate=315]{Read miss}
+          node[below,rotate=315]{\color{blue}\textbf{Data value reply; Nodes=\{P\}}}
+        (shared);
+
+  \path (uncached) edge
+          node[above,rotate=45]{Write miss}
+          node[below,rotate=45]{\color{blue}\textbf{Data value reply; Nodes=\{P\}}}
+        (exclusive);
+
+\pause
+
+  \path (shared) edge[loop right]
+          node[below right=1em and -3em]{Read miss}
+          node[below right=2em and -3em]{\color{blue}\textbf{Nodes=Nodes+\{P\}}}
+        (shared);
+
+  \path (shared) edge[bend left=30]
+          node[above]{Write miss}
+          node[below]{\color{blue}\textbf{Invalidate; Nodes=\{P\}; Data value reply}}
+        (exclusive);
+
+\pause
+
+  \path (exclusive) edge[loop left]
+          node[below left=1em and -3em]{Write miss}
+          node[below left=2em and -3em]{\color{blue}\textbf{Fetch/Invalidate}}
+          node[below left=2.5em and -3em]{\color{blue}\textbf{Data value reply}}
+          node[below left=3em and -3em]{\color{blue}\textbf{Nodes=\{P\}}}
+        (exclusive);
+
+  \path (exclusive) edge[bend left=30]
+          node[above,rotate=45]{Write-back}
+          node[below,rotate=45]{\color{blue}\textbf{Nodes=\{\}}}
+        (uncached);
+
+  \path (exclusive) edge
+          node[above] {Read miss}
+          node[below] {\color{blue}\textbf{Fetch;Data value reply;Nodes=Nodes+\{P\}}}
+        (shared);
+
+
+\onslide<1->
+\end{tikzpicture}

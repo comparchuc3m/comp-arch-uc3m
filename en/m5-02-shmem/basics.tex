@@ -1,0 +1,82 @@
+\section{Basics of directory protocols}
+
+\begin{frame}[t]{Directory}
+\begin{itemize}
+  \item Basic operations.
+    \begin{itemize}
+      \item Handling a read miss.
+      \item Handling a clean (not modified) shared block write.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Directory must keep \textgood{status for each block}:
+    \begin{itemize}
+      \item \textmark{Shared}: 
+            One or more nodes have a block in cache and its value in memory is updated.
+      \item \textmark{Non cached}: 
+            No node has a copy of the block in cache. 
+      \item \textmark{Modified}: 
+            Only a node has a copy of the block in cache and it has written on it.
+        \begin{itemize}
+          \item The block value in memory is not updated.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Besides}:
+    \begin{itemize}
+      \item Bit map with information of which nodes have a copy of block.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Messages}
+
+{
+\scriptsize
+\begin{tabular}{|p{6.2em}|p{4em}|l|c|l|}
+
+\hline
+Message & Source & Target & Content & \multicolumn{1}{c|}{Function} \\
+\hline
+\hline
+
+Read & Local & Local & P,A & P has read miss in A.\\
+miss & cache & directory & & Request data and P is sharer.\pause\\
+\hline
+
+Write & Local & Local & P,A & P has write miss in A.\\
+miss & cache & directory & & Request data and P is owner.\pause\\
+\hline
+
+Invalidation & Local & Local & A & Invalidate A in all caches.\\
+& cache & directory & & \pause \\
+\hline
+
+Invalidation & Local & Remote & A & Invalidate shared copy.\\
+& cache & directory & & \pause \\
+\hline
+
+Fetch & Local & Remote & A & Fetch block.\\
+& directory & cache & & State to shared.\pause\\
+\hline
+
+Fetch/ & Local & Remote & A & Fetch block.\\
+Invalidation & directory & cache & & Invalidate block.\pause\\
+\hline
+
+Response & Local & Local & D & Return value to directory.\\
+data value & directory & cache & & \pause\\
+\hline
+
+Write-back & Remote & Local & A,D & Write-back data.\\
+data & cache & directory & & \\
+\hline
+\end{tabular}
+\mode<presentation>{\vfill}
+\onslide<1->{
+\textgood{P} $\rightarrow$ \textmark{Node}, 
+\textgood{A} $\rightarrow$ \textmark{Address}, 
+\textgood{D}$\rightarrow$ \textmark{Data}}
+}
+\end{frame}

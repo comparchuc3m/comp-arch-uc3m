@@ -1,0 +1,82 @@
+\section{Bases del protocolo de directorio}
+
+\begin{frame}[t]{Directorio}
+\begin{itemize}
+  \item Operaciones básicas.
+    \begin{itemize}
+      \item Tratamiento de fallo de lectura.
+      \item Tratamiento de escritura en un bloque compartido limpio.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item El directorio debe mantener el \textgood{estado de cada bloque}:
+    \begin{itemize}
+      \item \textmark{Compartido}: 
+            Uno o más nodos tienen el bloque en caché y el valor en memoria está actualizado.
+      \item \textmark{No cacheado}: 
+            Ningún nodo tiene una copia del bloque.
+      \item \textmark{Modificado}: 
+            Solamente un nodo tiene copia del bloque en caché y lo ha escrito.
+        \begin{itemize}
+          \item Valor en memoria no actualizado.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Además}:
+    \begin{itemize}
+      \item Mapa de bits con información de nodos que tienen copias del bloque.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Mensajes}
+
+{
+\scriptsize
+\begin{tabular}{|p{6.2em}|p{4em}|l|c|c|}
+
+\hline
+Mensaje & Fuente & Destino & Contenido & Función \\
+\hline
+\hline
+
+Fallo & Caché & Directorio & P,A & P tiene fallo de lectura en A.\\
+lectura & local & local & & Pedir dato y P compartidor.\pause\\
+\hline
+
+Fallo & Caché & Directorio & P,A & P tiene fallo de escritura en A.\\
+escritura & local & local & & Pedir dato y P propietario.\pause\\
+\hline
+
+Invalidación & Caché & Directorio & A & Invalidar A en todas las cachés.\\
+& local & local & & \pause \\
+\hline
+
+Invalidación & Caché & Directorio & A & Invalidar copia compartida.\\
+& local & remota & & \pause \\
+\hline
+
+Captación & Directorio & Caché & A & Capta bloque.\\
+& local & remota & & Estado a compartido.\pause\\
+\hline
+
+Captación/ & Directorio & Caché & A & Capta bloque.\\
+Innvalidación & local & remota & & Invalida bloque.\pause\\
+\hline
+
+Respuesta & Directorio & Caché & D & Devolver valor a directorio.\\
+valor dato & local & local & & \pause\\
+\hline
+
+Post-escritura & Caché & Directorio & A,D & Post-escritura de dato.\\
+dato & remota & local & & \\
+\hline
+\end{tabular}
+\mode<presentation>{\vfill}
+\onslide<1->{
+\textgood{P} $\rightarrow$ \textmark{Nodo}, 
+\textgood{A} $\rightarrow$ \textmark{Dirección}, 
+\textgood{D}$\rightarrow$ \textmark{Dato}}
+}
+\end{frame}

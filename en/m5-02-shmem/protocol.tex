@@ -1,0 +1,125 @@
+\section{Directory based protocol}
+
+\begin{frame}[t]{State transition}
+\begin{itemize}
+  \item \textgood{In multi-core chips}:
+    \begin{itemize}
+      \item \textmark{Internal coherence} is kept through \textgood{centralized directory}.
+      \item \textmark{Same directory} may act as \textmark{local directory} in \textgood{DSM}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Protocol implementation}:
+    \begin{itemize}
+      \item State transition in \textmark{local cache}.
+        \begin{itemize}
+          \item Send requests to \textmark{local directory}.
+        \end{itemize}
+      \item State transition in \textmark{directory}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{State transition in individual cache}
+\makebox[\textwidth][c]{
+\input{en/m5-02-shmem/state-ind.tkz}
+}
+\end{frame}
+
+\begin{frame}[t]{Non cached entry}
+\begin{itemize}
+  \item Value in memory is updated.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Requests}:
+    \begin{itemize}
+      \mode<presentation>{\vfill}
+      \item \textmark{Read miss}:
+        \begin{itemize}
+          \item Send data in memory to requesting node.
+          \item Requesting node is the only one in shared state.
+          \item State transitions to shared.
+        \end{itemize}
+      \mode<presentation>{\vfill}
+      \item \textmark{Write miss}:
+        \begin{itemize}
+          \item Send data in memory to requesting node.
+          \item Block transitions to exclusive state.
+          \item Requesting node is the owner.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Shared entry}
+\begin{itemize}
+  \item Value in memory is up to date.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Requests}:
+    \begin{itemize}
+
+      \mode<presentation>{\vfill}
+      \item \textmark{Read miss}:
+        \begin{itemize}
+          \item Send data from memory to requesting node.
+          \item Requesting node added to entry nodes set.
+        \end{itemize}
+
+      \mode<presentation>{\vfill}
+      \item \textmark{Write miss}:
+        \begin{itemize}
+          \item Send data from memory to requesting node.
+          \item Send invalidation messages to entry nodes set.
+          \item Enable in set only the requesting node.
+          \item Transition state to exclusive.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Exclusive entry}
+\begin{itemize}
+  \item Block value is in cache in the node identified by the set (owner node).
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Requests}:
+    \begin{itemize}
+      \item \textmark{Read miss}:
+        \begin{itemize}
+          \item Send fetch message to owner.
+          \item Write data in memory.
+          \item Send data to requesting node.
+          \item Add requesting node to node set.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Exclusive entry}
+\begin{itemize}
+  \item \textgood{Requests}:
+    \begin{itemize}
+      \item \textmark{Write back}:
+        \begin{itemize}
+          \item Happens when owner performs write-back of block.
+          \item Block transitions to uncached state.
+          \item Clean entry set.
+        \end{itemize}
+      \item \textmark{Write miss}:
+        \begin{itemize}
+          \item Block has new owner.
+          \item Invalidate block in old owner and get value.
+          \item Send value to requesting node.
+          \item Enable in set only the new requesting.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Directory state transition}
+\makebox[\textwidth][c]{
+\input{en/m5-02-shmem/state-dir.tkz}
+}
+\end{frame}
+

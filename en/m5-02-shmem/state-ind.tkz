@@ -1,0 +1,69 @@
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3.5cm,
+                    semithick]
+  \tikzstyle{every state}=[fill=blue,draw=none,text=white,font=\tiny,minimum width=1.75cm,align=center]
+  \tikzset{every edge/.append style={font=\tiny}}
+
+  \node[state] (invalid) {Invalid (I)};
+
+  \node[state] (shared) [below right=2cm and 2cm of invalid] {Shared\\(Read/Write)};
+
+  \node[state] (modified) [below left=2cm and 2cm of invalid] {Modified\\(Read only)};
+
+  \pause 
+
+  \path (invalid) edge
+          node[above,rotate=315]{CPU read}
+          node[below,rotate=315]{\color{blue}\textbf{Send read miss msg.}}
+        (shared);
+
+  \path (invalid) edge
+          node[above,rotate=45]{CPU write}
+          node[below,rotate=45]{\color{blue}\textbf{Send write miss msg.}}
+        (modified);
+
+\pause
+
+  \path (shared) edge[bend right=40]
+          node[above, rotate=315]{Invalidate}
+        (invalid);
+  \path (shared) edge[loop right]
+          node[above right=1em and -3em]{Read hit}
+        (shared);
+  \path (shared) edge[loop below]
+          node[above right=0.75em and 0.75em]{CPU read miss}
+          node[above right=0.25em and 0.75em]{\color{blue}\textbf{Read miss}}
+        (shared);
+  \path (shared) edge[bend left=30]
+          node[above]{Write hit}
+          node[below]{\color{blue}\textbf{Send invalidation msg.}}
+        (modified);
+  \path (shared) edge[bend left=60]
+          node[above]{Write miss}
+          node[below]{\color{blue}\textbf{Send write miss msg.}}
+        (modified);
+
+\pause
+
+  \path (modified) edge[loop left]
+          node[above left=1.5em and -3em]{Read hit}
+          node[above left=1em and -3em]{Write hit}
+        (modified);
+  \path (modified) edge[loop below]
+          node[above left=1em and 1em] {Write miss}
+          node[above left=0em and 1em] {\color{blue}\textbf{Write-back}}
+        (modified);
+  \path (modified) edge[bend left=40]
+          node[above,rotate=45]{Fetch/Invalidate}
+          node[below,rotate=45]{\color{blue}\textbf{Write-back}}
+        (invalid);
+  \path (modified) edge
+          node[above]{Fetch}
+          node[below]{\color{blue}\textbf{Write-back}}
+        (shared);
+  \path (modified) edge[bend left=20]
+          node[above]{Read miss}
+          node[below]{\color{blue}\textbf{Write-back and read miss}}
+        (shared);
+
+\onslide<1->
+\end{tikzpicture}

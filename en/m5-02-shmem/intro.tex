@@ -1,0 +1,115 @@
+\section{Introduction to distributed shared memory}
+
+\begin{frame}[t]{Snooping protocols and scalability}
+\begin{itemize}
+  \item \textbad{Problems} with snooping protocols.
+    \begin{itemize}
+      \item Requires communication with all caches:
+        \begin{itemize}
+          \item For each cache miss.
+          \item For each shared data write.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item What is the \textgood{advantage} of snooping protocols?
+    \begin{itemize}
+      \item No centralized data structure.
+        \begin{itemize}
+          \item Low implementation cost.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item What is the \textbad{drawback} of snooping protocols?
+    \begin{itemize}
+      \item No centralized data structure.
+        \begin{itemize}
+          \item Communications limit scalability.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{DSM basic model}
+\makebox[\textwidth][c]{
+\input{en/m5-02-shmem/dsm.tkz}
+}
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item \textbad{Need to eliminate coherence traffic.}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Kinds of coherence protocols}
+\begin{itemize}
+  \item \textmark{Snooping} 
+    \begin{itemize}
+      \item Each cache keeps sharing status for each block it holds.
+      \item Caches accessible through broadcasting medium (bus).
+      \item All caches monitor if they have a copy of the block.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Directory based}:
+    \begin{itemize}
+      \item Sharing status kept in a directory.
+        \item \textgood{SMP}: 
+              Centralized directory in memory or last level cache (LLC).
+        \item \textgood{DSM}: 
+              To avoid bottleneck a distributed directory (more complex) is used.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Directory based protocol}
+\begin{itemize}
+  \item \textmark{Idea}: Keep \textgood{status} for each block in cache.
+    \begin{itemize}
+      \item Which caches have a block copy?
+      \item Block state bits.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Multi-cores with external shared cache.
+    \begin{itemize}
+      \item \textmark{Bit vector} with length equal to number of cores.
+        \begin{itemize}
+          \item Signals which private caches many have a copy of block.
+          \item Only send invalidation to caches marked in bitmap.
+        \end{itemize}
+      \item This scheme works well within a single multi-core.
+      \item \textmark{Example}: \textgood{Intel Core i7}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Centralized directory and scalability}
+\begin{itemize}
+  \item A centralized directory avoids broadcasting but
+    \begin{itemize}
+      \item Becomes a bottleneck.
+      \item Scalability problem with increasing number of processors.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Solution}: \textmark{Distributed directory}.
+    \begin{itemize}
+      \item Distribute directory with memory.
+      \item Each directory has information about the associated local memory.
+        \begin{itemize}
+          \item Target directory is always known.
+        \end{itemize}
+      \item Different coherence requests go to different directories.
+    \end{itemize}
+
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Distributed directory}
+\makebox[\textwidth][c]{
+\input{en/m5-02-shmem/dsm-dist.tkz}
+}
+\mode<presentation>{\vfill\pause}
+\end{frame}
