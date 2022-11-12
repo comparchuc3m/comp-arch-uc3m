@@ -1,0 +1,113 @@
+\section{Introduction}
+
+\begin{frame}[t]{Synchronization in shared memory}
+\begin{itemize}
+  \item Communication performed through shared memory.
+    \begin{itemize}
+      \item It is necessary to synchronize multiple accesses to shared variables.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Alternatives}:
+    \begin{itemize}
+      \item Communication 1-1.
+      \item Collective communication (1-N).
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Communication 1 to 1}
+\begin{itemize}
+  \item Ensure that reading (\textmark{receive}) is performed after
+        writing (\textmark{send}).
+  
+  \mode<presentation>{\vfill\pause}
+  \item In case of \textmark{reuse} (loops):
+    \begin{itemize}
+      \item Ensure that writing (\textmark{send}) is performed after former reading (\textmark{receive}).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Need to access with \textgood{mutual exclusion}.
+    \begin{itemize}
+      \item Only one of the processes accesses a variable at the same time.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Critical section}:
+    \begin{itemize}
+      \item Sequence of instructions accessing one or more variables with mutual exclusion.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Collective communication}
+\begin{itemize}
+  \item Needs \textgood{coordination} of \textmark{multiple accesses} to variables.
+    \begin{itemize}
+      \item Writes without interferences.
+      \item Reads \textmark{must wait} for data to be available.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Must \textmark{guarantee accesses} to variable in \textgood{mutual exclusion}.
+
+  \mode<presentation>{\vfill\pause}
+  \item Must \textmark{guarantee} that \textbad{result is not read} 
+        until all processes/threads have executed their critical section.
+  
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Adding a vector}
+\begin{columns}
+
+\column{.5\textwidth}
+\begin{block}{Critical section in loop}
+\begin{lstlisting}
+void f(int max) {
+  vector<double> v = get_vector(max);
+  double sum = 0;
+  
+  auto do_sum = [&](int start, int n) {
+    for (int i=start; i<n; ++i) {
+      sum += v[i];
+    }
+  }
+
+  thread t1{do_sum,0,max/2};
+  thread t2{do_sum,max/2+1,max};
+  t1.join();
+  t2.join();
+}
+\end{lstlisting}
+\end{block}
+
+\mode<presentation>{\pause}
+
+\column{.5\textwidth}
+\begin{block}{Critical section out of loop}
+\begin{lstlisting}
+void f(int max) {
+  vector<double> v = get_vector(max);
+  double sum = 0;
+  
+  auto do_sum = [&](int start, int n) {
+    double local_sum = 0;
+    for (int i=start; i<n; ++i) {
+      local_sum += v[i];
+    }
+    sum += local_sum;
+  }
+
+  thread t1{do_sum,0,max/2};
+  thread t2{do_sum,max/2+1,max};
+  t1.join();
+  t2.join();
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}

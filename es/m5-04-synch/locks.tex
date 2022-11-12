@@ -1,0 +1,289 @@
+\section{Cerrojos}
+
+\begin{frame}[t]{Cerrojo}
+\begin{itemize}
+  \item Un \textgood{cerrojo} es un mecanismo que asegura la \textmark{exclusión mutua}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Dos funciones de sincronización}:
+    \begin{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textmark{Lock(k)}:
+        \begin{itemize}
+          \item Adquiere el cerrojo.
+          \item Si varios intentan adquirir el cerrojo, n-1 pasan a espera.
+          \item Si llegan más procesos, pasan a espera.
+        \end{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textmark{Unlock(k)}:
+        \begin{itemize}
+          \item Libera el cerrojo.
+          \item Permite que uno de los procesos en espera adquiera el cerrojo.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Mecanismos de espera}
+\begin{itemize}
+  \item \textgood{Dos alternativas}: \textmark{espera activa} y \textmark{bloqueo}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Espera activa}:
+    \begin{itemize}
+      \item El proceso queda en \textbad{bucle} que \textmark{constantemente} 
+            consulta valor de variable de control de espera.
+      \item \textmark{Spin-lock}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Bloqueo}:
+    \begin{itemize}
+      \item El proceso queda suspendido y cede el procesador a otro proceso.
+      \item Si un proceso ejecuta \textmark{unlock} y hay procesos 
+            \textbad{bloqueados} se libera a uno de ellos.
+      \item Requiere soporte de un planificador (típicamente SO o \emph{runtime}).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{La selección de la alternativa depende del coste}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Componentes}
+\begin{itemize}
+  \item Tres \textgood{elementos de diseño} en un mecanismo de cerrojos:
+        \textmark{adquisición}, \textmark{espera} y \textmark{liberación}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Método de adquisición}:
+    \begin{itemize}
+      \item Usado para intentar adquirir el cerrojo.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Método de espera}:
+    \begin{itemize}
+      \item Mecanismo para esperar hasta que se pueda adquirir el cerrojo.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Método de liberación}:
+    \begin{itemize}
+      \item Mecanismo para liberar un o varios procesos en espera.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Cerrojos simples}
+\begin{itemize}
+  \item Variable \textmark{compartida} \cppid{k} con dos valores.
+    \begin{itemize}
+      \item \textgood{0} $\rightarrow$ \textmark{abierto}.
+      \item \textgood{1} $\rightarrow$ \textmark{cerrado}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Lock(k)}
+    \begin{itemize}
+      \item Si \cppid{k=1} $\rightarrow$ \textmark{Espera activa} mientras \cppid{k=1}.
+      \item Si \cppid{k=0} $\rightarrow$ \cppid{k=1}.
+      \item \textbad{No se debe permitir} que 2 procesos \textmark{adquieran cerrojo simultáneamente}.
+        \begin{itemize}
+          \item Usar lectura-modificación-escritura para cerrar.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Implementaciones simples}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Test and set}
+\begin{lstlisting}
+void lock(atomic_flag & k) {
+  while (k.test_and_set())
+    {}
+}
+
+void unlock(atomic_flag & k) {
+  k.clear();
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Captación y operación}
+\begin{lstlisting}
+void lock(atomic<int> & k) {
+  while (k.fetch_or(1) == 1)
+    {}
+}
+
+void unlock(atomic<int> & k) {
+  k.store(0);
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Implementaciones simples}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+
+\begin{block}{Intercambio IA-32}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+do_lock:   mov eax, 1
+repeat:    xchg eax, _k
+           cmp eax, 1
+           jz repeat
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Retardo exponencial}
+\begin{itemize}
+  \item \textgood{Objetivo}:
+    \begin{itemize}
+      \item \textmark{Reducir} accesos a memoria.
+      \item \textmark{Limitar} consumo de energía.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}
+
+\column{.6\textwidth}
+\begin{block}{Cerrojo con retardo exponencial}
+\begin{lstlisting}
+void lock(atomic_flag & k) {
+  while (k.test_and_set())
+  {
+    perform_pause(delay);
+    delay *= 2;
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.4\textwidth}
+
+\begin{itemize}
+  \item Se incrementa \textmark{exponencialmente} tiempo entre invocaciones a
+        \cppid{text\_and\_set()}.
+\end{itemize}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Sincronización y modificación}
+\begin{itemize}
+  \item Se pueden \textmark{mejorar prestaciones} si se usa 
+        la \textgood{misma variable para sincronizar y comunicar}.
+    \begin{itemize}
+      \item Se evita usar \textbad{variables compartidas} solamente para sincronizar.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}
+
+\column{.5\textwidth}
+\begin{block}{Suma de un vector}
+\begin{lstlisting}
+double parcial = 0;
+for (int i=iproc; i<max; i+=nproc) {
+  parcial += v[i];
+}
+suma.fetch_add(parcial);
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Cerrojos y orden de llegada}
+\begin{itemize}
+  \item \textbad{Problema}:
+    \begin{itemize}
+      \item Implementaciones simples no fijan orden de adquisición de cerrojo.
+      \item Se podría dar inanición.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Solución}:
+    \begin{itemize}
+      \item Hacer que el cerrojo se adquiera por \textmark{antigüedad} en la solicitud.
+      \item Garantizar orden FIFO.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Cerrojos con etiquetas}
+\begin{itemize}
+  \item \textgood{Dos contadores}:
+    \begin{itemize}
+      \item \textmark{Contador de adquisición}: Número de procesos que han solicitado el cerrojo.
+      \item \textmark{Contador de liberación}: Número de veces que se ha liberado el cerrojo.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \textmark{Lock}:
+    \begin{itemize}
+      \item \textgood{Etiqueta} $\rightarrow$ Valor de contador de adquisición
+      \item Se incrementa contador de adquisición.
+      \item Proceso queda esperando hasta que contador de liberación coincida con etiqueta.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \textmark{Unlock}:
+    \begin{itemize}
+      \item Incrementa el contador de liberación.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t]{Cerrojos basados en colas}
+\begin{itemize}
+  \item Mantener una \textgood{cola} con \textmark{procesos que esperan} 
+        para entrar en \textbad{sección crítica}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Lock}:
+    \begin{itemize}
+      \item Comprobar si cola está vacía.
+      \item Sin un proceso se une a la cola hace espera activa en una variable.
+      \begin{itemize}
+        \item Cada proceso hace espera activa en una variable distinta.
+      \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Unlock}:
+    \begin{itemize}
+      \item Eliminar proceso de cola.
+      \item Modificar variable de espera de proceso.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}

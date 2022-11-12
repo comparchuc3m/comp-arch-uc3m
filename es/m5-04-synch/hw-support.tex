@@ -1,0 +1,155 @@
+\section{Primitivas hardware}
+
+\begin{frame}[t]{Soporte hardware}
+\begin{itemize}
+  \item Necesidad de fijar un orden global en las operaciones.
+    \begin{itemize}
+      \mode<presentation>{\vfill\pause}
+      \item Modelo de consistencia puede ser \textbad{insuficiente y complejo}.
+
+      \mode<presentation>{\vfill\pause}
+      \item Se suele \textgood{complementar} con operaciones de \textmark{lectura-modificación-escritura}.
+
+      \mode<presentation>{\vfill\pause}
+      \item \textgood{Ejemplo en IA-32}:
+        \begin{itemize}
+          \item Instrucciones con prefijo \asminst{LOCK}.
+          \item Acceso al bus de \textgood{forma exclusiva} si posición \textbad{no está en caché}.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Primitivas: Test and set}
+\begin{itemize}
+  \item Instrucción \textgood{Test and Set}:
+    \begin{itemize}
+      \item \textgood{Secuencia atómica}:
+        \begin{enumerate}
+          \mode<presentation>{\vfill}
+          \item \textmark{Lee posición de memoria} en registro (se devolverá como resultado).
+          \mode<presentation>{\vfill}
+          \item \textmark{Escribe el valor} \textgood{1} en la posición de memoria.
+        \end{enumerate}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Usos}: IBM 370, Sparc V9
+      
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Primitivas: Intercambio}
+\begin{itemize}
+  \item Instrucción de \textgood{intercambio} (swap):
+    \begin{itemize}
+      \item \textgood{Secuencia atómica}:
+        \begin{enumerate}
+          \mode<presentation>{\vfill}
+          \item \textgood{Intercambia} los contenidos de una \textmark{posición de memoria} 
+                y un \textmark{registro}.
+          \mode<presentation>{\vfill}
+          \item \textgood{Incluye} una \textmark{lectura de memoria} y una \textmark{escritura de memoria}.
+        \end{enumerate}
+      \mode<presentation>{\vfill}
+      \item \textgood{Más general que test-and-set}.
+    \end{itemize}
+
+    \mode<presentation>{\vfill\pause}
+  \item \textgood{Instrucción IA-32}:
+    \begin{itemize}
+      \item \asminst{XCHG} \asmreg{reg}, \asmlabel{mem}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Usos}: Sparc V9, IA-32, Itanium
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Primitivas: Captación y operación}
+\begin{itemize}
+  \item Instrucción de \textgood{captar y operar} (fetch-and-op):
+    \begin{itemize}
+      \item Diversas operaciones: \textmark{fetch-add}, \textmark{fetch-or}, \textmark{fetch-inc}, \ldots
+
+      \mode<presentation>{\vfill\pause}
+      \item \textgood{Secuencia atómica}:
+        \begin{enumerate}
+
+          \mode<presentation>{\vfill\pause}
+          \item Lee posición de memoria en registro (devuelve este valor).
+
+          \mode<presentation>{\vfill\pause}
+          \item Escribe en posición de memoria el resultado de aplicar al valor original una operación.
+        \end{enumerate}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textgood{Instrucción IA-32}:
+        \begin{itemize}
+          \item \asminst{LOCK XADD} \asmreg{reg}, \asmlabel{mem}
+        \end{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textgood{Usos}: IBM SP3, Origin 2000, IA-32, Itanium.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Primitivas: Comparar e intercambiar}
+\begin{itemize}
+  \item Instrucción \textgood{Comparar-e-intercambiar} (compare-and-swap o compare-and-exchange):
+    \begin{itemize}
+      \item Operación sobre \textgood{dos variables locales} (registros \asmreg{a} y \asmreg{b}) y una 
+             \textgood{posición de memoria} (variable \asmlabel{x}).
+
+      \mode<presentation>{\vfill\pause}
+      \item \textgood{Secuencia atómica}:
+        \begin{enumerate}
+
+          \mode<presentation>{\vfill\pause}
+          \item Lee el valor de \asmlabel{x}.
+
+          \mode<presentation>{\vfill\pause}
+          \item Si \asmlabel{x} es igual a registro \asmreg{a} $\rightarrow$ intercambia \asmlabel{x} y registro \asmreg{b}.
+        \end{enumerate}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textgood{Instrucción IA-32}:
+        \begin{itemize}
+          \item \asminst{LOCK CMPXCHG} \asmlabel{mem}, \asmreg{reg}
+          \item Usa implícitamente registro adicional \asmreg{eax}.
+        \end{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textgood{Usos}: IBM 370, Sparc V9, IA-32, Itanium.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Primitivas: Almacenamiento condicional}
+\begin{itemize}
+  \item Par de instrucciones \textgood{LL/SC} (Load Linked/Store Conditional).
+    \begin{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textgood{Funcionamiento}:
+        \begin{itemize}
+          \item Si el contenido de una \textmark{variable leída} mediante \textgood{LL} 
+                se \textmark{modifica} antes de un \textgood{SC} el almacenamiento no se lleva a cabo.
+          \item Sin entre \textgood{LL} y \textgood{SC} ocurre \textmark{cambio de contexto}, 
+                \textgood{SC} \textbad{no se lleva a cabo}.
+          \item \textgood{SC} devuelve un \textmark{código de éxito/fracaso}.
+        \end{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textgood{Ejemplo Power-PC}:
+        \begin{itemize}
+          \item \asminst{LWARX}
+          \item \asminst{STWCX}
+        \end{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textgood{Usos}: Origin 2000, Sparc V9, Power PC
+    \end{itemize}
+\end{itemize}
+\end{frame}

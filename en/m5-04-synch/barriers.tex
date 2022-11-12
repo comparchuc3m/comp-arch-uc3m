@@ -1,0 +1,104 @@
+\section{Barriers}
+
+\begin{frame}[t]{Barrera}
+\begin{itemize}
+  \item A barrier allows to \textmark{synchronize} several processes in some point.
+  
+    \mode<presentation>{\vfill}
+    \begin{itemize}
+      \item Guarantees that no process passes the barrier until all have arrived.
+      \mode<presentation>{\vfill}
+      \item Used to synchronize phases in a program.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Centralized barriers}
+\begin{itemize}
+  \item Centralized \textgood{counter} associated to the \textmark{barrier}.
+    \begin{itemize}
+      \item Counts number of processes that have arrived the barrier.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Barrier function}:
+    \begin{itemize}
+      \item Increments counter
+      \item Waits the counter to reach the number of processes to be synchronized.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Simple barrier}
+\begin{columns}
+
+\column{.6\textwidth}
+\begin{block}{Simple implementation}
+\begin{lstlisting}
+do_barrier(barrier, n) {
+  lock(barrier.lock);
+  if (barrier.counter == 0) {
+    barrier.flag=0;
+  }
+  local_counter = barrier.counter++;
+  unlock(barrier.lock);
+  if (local_counter == NP) {
+    barrier.counter=0;
+    barrier.flag=1;
+  }
+  else {
+    while (barrier.flag==0) {}
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.4\textwidth}
+\begin{itemize}
+  \item Problem if barrier is reused in a loop.
+\end{itemize}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Barrier with way inversion}
+\begin{columns}
+
+\column{.6\textwidth}
+\begin{block}{Simple implementation}
+\begin{lstlisting}
+do_barrier(barrier, n) {
+  local_flag = !local_flag;
+  lock(barrier.lock);
+  local_counter = barrier.counter++;
+  unlock(barrier.lock);
+  if (local_counter == NP) {
+    barrier.counter=0;
+    barrier.flag=local_flag;
+  }
+  else {
+    while (barrier.flag==local_flag) {}
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.4\textwidth}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Tree barriers}
+\begin{itemize}
+  \item A simple implementation of barriers is not \textbad{scalable}.
+    \begin{itemize}
+      \item Contention in access to shared variables.
+    \end{itemize}
+  \mode<presentation>{\vfill\pause}
+  \item Tree structure for process arrival and release.
+    \begin{itemize}
+      \item Specially useful in distributed networks.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}

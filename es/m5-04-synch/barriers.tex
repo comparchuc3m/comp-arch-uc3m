@@ -1,0 +1,104 @@
+\section{Barreras}
+
+\begin{frame}[t]{Barrera}
+\begin{itemize}
+  \item Una barrera permite \textmark{sincronizar} varios procesos en algún punto.
+  
+    \mode<presentation>{\vfill}
+    \begin{itemize}
+      \item Garantiza que ningún proceso supera la barrera hasta que todos han llegado.
+      \mode<presentation>{\vfill}
+      \item Usadas para sincronizar fases de un programa.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Barreras centralizadas}
+\begin{itemize}
+  \item \textgood{Contador} centralizado asociado a la \textmark{barrera}.
+    \begin{itemize}
+      \item Cuenta el número de procesos que han llegado a la barrera.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Función barrera}:
+    \begin{itemize}
+      \item Incrementa el contador.
+      \item Espera a que el contador llegue al número de procesos a sincronizar.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Barrera simple}
+\begin{columns}
+
+\column{.6\textwidth}
+\begin{block}{Implementación simple}
+\begin{lstlisting}
+do_barrier(barrera, n) {
+  lock(barrera.cerrojo);
+  if (barrera.contador == 0) {
+    barrera.flag=0;
+  }
+  contador_local = barrera.contador++;
+  unlock(barrera.cerrojo);
+  if (contador_local == np) {
+    barrera.contador=0;
+    barrera.flag=1;
+  }
+  else {
+    while (barrera.flag==0) {}
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.4\textwidth}
+\begin{itemize}
+  \item Problema si se reusa la barrera en un bucle.
+\end{itemize}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{Barrera con inversión de sentido}
+\begin{columns}
+
+\column{.6\textwidth}
+\begin{block}{Implementación simple}
+\begin{lstlisting}
+do_barrera(barrera, n) {
+  flag_local = !flag_local;
+  lock(barrera.cerrojo);
+  contador_local = barrera.contador++;
+  unlock(barrera.cerrojo);
+  if (contador_local == np) {
+    barrera.contador=0;
+    barrera.flag=flag_local;
+  }
+  else {
+    while (barrera.flag==flag_local) {}
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.4\textwidth}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Barreras en árbol}
+\begin{itemize}
+  \item Una implementación simple de barreras no es \textbad{escalable}.
+    \begin{itemize}
+      \item Contención en el acceso a variables compartidas.
+    \end{itemize}
+  \mode<presentation>{\vfill\pause}
+  \item Estructuración de los procesos de llegada y liberación en forma de árbol.
+    \begin{itemize}
+      \item Especialmente útil en redes distribuidas.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}

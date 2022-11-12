@@ -16,6 +16,7 @@ include es/m4-03-ilp/Makefile.def
 include es/m5-01-shmem/Makefile.def
 include es/m5-02-dsm/Makefile.def
 include es/m5-03-consist/Makefile.def
+include es/m5-04-synch/Makefile.def
 include es/m6-01-cppintro/Makefile.def
 include es/m6-02-cppconc/Makefile.def
 include es/m6-03-omp/Makefile.def
@@ -52,6 +53,7 @@ include $(ES_M4_03_ILP_DIR)/Makefile.mk
 include $(ES_M5_01_SHMEM_DIR)/Makefile.mk
 include $(ES_M5_02_DSM_DIR)/Makefile.mk
 include $(ES_M5_03_CONSIST_DIR)/Makefile.mk
+include $(ES_M5_04_SYNCH_DIR)/Makefile.mk
 include $(ES_M6_01_CPPINTRO_DIR)/Makefile.mk
 include $(ES_M6_02_CPPCONC_DIR)/Makefile.mk
 include $(ES_M6_03_OMP_DIR)/Makefile.mk

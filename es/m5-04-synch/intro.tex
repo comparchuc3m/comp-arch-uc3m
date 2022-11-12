@@ -1,0 +1,113 @@
+\section{Introducción}
+
+\begin{frame}[t]{Sincronización en memoria compartida}
+\begin{itemize}
+  \item La comunicación se realiza a través de memoria compartida.
+    \begin{itemize}
+      \item Es necesario sincronizar accesos a variable compartida.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Alternativas}:
+    \begin{itemize}
+      \item Comunicación 1-1.
+      \item Comunicación colectiva (1-N).
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Comunicación 1 a 1}
+\begin{itemize}
+  \item Asegurar que la lectura (\textmark{recepción}) se produce después de la
+        escritura (\textmark{emisión}).
+  
+  \mode<presentation>{\vfill\pause}
+  \item En caso de \textmark{reutilización} (bucles):
+    \begin{itemize}
+      \item Asegurar que escritura (\textmark{emisión}) después de lectura (\textmark{recepción}) anterior.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Necesidad de accesos con \textgood{exclusión mutua}.
+    \begin{itemize}
+      \item Solamente uno de los procesos accede a una variable a la vez.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Sección crítica}:
+    \begin{itemize}
+      \item Secuencia de instrucciones que acceden a una o varias variables con exclusión mutua.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Comunicación colectiva}
+\begin{itemize}
+  \item Necesidad de \textgood{coordinación} de \textmark{múltiples accesos} a variables.
+    \begin{itemize}
+      \item Escrituras sin interferencias.
+      \item Lecturas \textmark{deben esperar} a que datos estén disponibles.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Deben \textmark{garantizarse accesos} a variable en \textgood{exclusión mutua}.
+
+  \mode<presentation>{\vfill\pause}
+  \item Debe \textmark{garantizarse} que \textbad{no se lee resultado} 
+        hasta que todos han ejecutado su sección crítica.
+  
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Suma de un vector}
+\begin{columns}
+
+\column{.5\textwidth}
+\begin{block}{Sección crítica en bucle}
+\begin{lstlisting}
+void f(int max) {
+  vector<double> v = get_vector(max);
+  double sum = 0;
+  
+  auto do_sum = [&](int start, int n) {
+    for (int i=start; i<n; ++i) {
+      sum += v[i];
+    }
+  }
+
+  thread t1{do_sum,0,max/2};
+  thread t2{do_sum,max/2+1,max};
+  t1.join();
+  t2.join();
+}
+\end{lstlisting}
+\end{block}
+
+\mode<presentation>{\pause}
+
+\column{.5\textwidth}
+\begin{block}{Sección crítica fuera bucle}
+\begin{lstlisting}
+void f(int max) {
+  vector<double> v = get_vector(max);
+  double sum = 0;
+  
+  auto do_sum = [&](int start, int n) {
+    double local_sum = 0;
+    for (int i=start; i<n; ++i) {
+      local_sum += v[i];
+    }
+    sum += local_sum
+  }
+
+  thread t1{do_sum,0,max/2};
+  thread t2{do_sum,max/2+1,max};
+  t1.join();
+  t2.join();
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}

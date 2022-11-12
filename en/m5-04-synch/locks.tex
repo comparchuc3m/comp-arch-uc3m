@@ -1,0 +1,290 @@
+\section{Locks}
+
+\begin{frame}[t]{Locks}
+\begin{itemize}
+  \item A \textgood{lock} is a mechanism to ensure \textmark{mutual exclusion}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Two synchronization functions}:
+    \begin{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textmark{Lock(k)}:
+        \begin{itemize}
+          \item Acquires the lock.
+          \item If several processes try to acquire the lock, n-1 are kept waiting.
+          \item If more processes arrive, they are kept to waiting.
+        \end{itemize}
+
+      \mode<presentation>{\vfill\pause}
+      \item \textmark{Unlock(k)}:
+        \begin{itemize}
+          \item Releases the lock.
+          \item Allow that a waiting process acquires the lock.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Waiting mechanisms}
+\begin{itemize}
+  \item \textgood{Two alternatives}: \textmark{busy waiting} and \textmark{blocking}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Busy waiting}:
+    \begin{itemize}
+      \item Process waits in a \textbad{loop} that \textmark{constantly} 
+            queries the wait control variable value.
+      \item \textmark{Spin-lock}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Blocking}:
+    \begin{itemize}
+      \item Process remains suspended and yields processor to other process.
+      \item If a process executes \textmark{unlock} and there are 
+            \textbad{blocked} processes, one of them is un-blocked.
+      \item Requires support from a scheduler (usually OS or \emph{runtime}).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Alternative selection depends on cost}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Components}
+\begin{itemize}
+  \item Three \textgood{elements of design} in a locking mechanism:
+        \textmark{acquisition}, \textmark{waiting} y \textmark{release}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Acquisition method}:
+    \begin{itemize}
+      \item Used to try to acquire the lock.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Waiting method}:
+    \begin{itemize}
+      \item Mechanism to wait until lock can be acquired.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Release method}:
+    \begin{itemize}
+      \item Mechanism to release one or several waiting processes.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Simple locks}
+\begin{itemize}
+  \item \textmark{Shared} variable \cppid{k} with two values.
+    \begin{itemize}
+      \item \textgood{0} $\rightarrow$ \textmark{open}.
+      \item \textgood{1} $\rightarrow$ \textmark{closed}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Lock(k)}
+    \begin{itemize}
+      \item If \cppid{k=1} $\rightarrow$ \textmark{Busy waiting} while \cppid{k=1}.
+      \item If \cppid{k=0} $\rightarrow$ \cppid{k=1}.
+      \item \textbad{Do not allow} that 2 processes \textmark{acquire a lock simultaneously}.
+        \begin{itemize}
+          \item Use read-modify-write to close it.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Simple implementations}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Test and set}
+\begin{lstlisting}
+void lock(atomic_flag & k) {
+  while (k.test_and_set())
+    {}
+}
+
+void unlock(atomic_flag & k) {
+  k.clear();
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Fetch and operate}
+\begin{lstlisting}
+void lock(atomic<int> & k) {
+  while (k.fetch_or(1) == 1)
+    {}
+}
+
+void unlock(atomic<int> & k) {
+  k.store(0);
+}
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Simple implementations}
+
+\begin{columns}[T]
+
+\column{.5\textwidth}
+
+\begin{block}{Exchange IA-32}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+do_lock:   mov eax, 1
+repeat:    xchg eax, _k
+           cmp eax, 1
+           jz repeat
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Exponential delay}
+\begin{itemize}
+  \item \textgood{Goal}:
+    \begin{itemize}
+      \item \textmark{Reduce} number of memory accesses.
+      \item \textmark{Limit} energy consumption.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}
+
+\column{.6\textwidth}
+\begin{block}{Lock with exponential delay}
+\begin{lstlisting}
+void lock(atomic_flag & k) {
+  while (k.test_and_set())
+  {
+    perform_pause(delay);
+    delay *= 2;
+  }
+}
+\end{lstlisting}
+\end{block}
+
+\column{.4\textwidth}
+
+\begin{itemize}
+  \item Time between invocations to 
+        \cppid{test\_and\_set()}
+        is incremented \textmark{exponentially} 
+\end{itemize}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}[t,fragile]{Synchronization and modification}
+\begin{itemize}
+  \item \textmark{Performance can be improved} if using the
+        \textgood{same variable to synchronize and communicate}.
+    \begin{itemize}
+      \item Avoid using \textbad{shared variables} only to synchronize.
+    \end{itemize}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+
+\begin{columns}
+
+\column{.5\textwidth}
+\begin{block}{Add a vector}
+\begin{lstlisting}
+double partial = 0;
+for (int i=iproc; i<max; i+=nproc) {
+  partial += v[i];
+}
+sum.fetch_add(partial);
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Locks and arrival order}
+\begin{itemize}
+  \item \textbad{Problem}:
+    \begin{itemize}
+      \item Simple implementations do not fix a lock acquisition order.
+      \item Starvation might happen.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Solution}:
+    \begin{itemize}
+      \item Make the lock is acquired by request \textmark{age}.
+      \item Guarantees FIFO order.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Tagged locks}
+\begin{itemize}
+  \item \textgood{Two counters}:
+    \begin{itemize}
+      \item \textmark{Acquire counter}: Number of processes that have requested the lock.
+      \item \textmark{Release counter}: Number of times the lock has been released.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \textmark{Lock}:
+    \begin{itemize}
+      \item \textgood{Tag} $\rightarrow$ Acquisition counter value.
+      \item Acquisition counter is incremented.
+      \item Process remains waiting until the release counter matches the tag.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \textmark{Unlock}:
+    \begin{itemize}
+      \item Increments release counter.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t]{Queue based locks}
+\begin{itemize}
+  \item Keep a \textgood{queue} with \textmark{processes waiting} 
+        to enter into a \textbad{critical section}.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Lock}:
+    \begin{itemize}
+      \item Check if queue is empty.
+      \item If a process joins the queue it performs busy waiting in a variable.
+      \begin{itemize}
+        \item Each process performs busy waiting in a different variable.
+      \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Unlock}:
+    \begin{itemize}
+      \item Removes process from queue.
+      \item Modifies process waiting control variable.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}

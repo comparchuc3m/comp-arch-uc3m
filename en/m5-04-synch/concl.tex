@@ -1,0 +1,32 @@
+\section{Conclusion}
+
+\begin{frame}[t]{Summary}
+\begin{itemize}[<+->]
+  \item Need for shared memory access synchronization:
+    \begin{itemize}
+      \item Individual (1-1) and collective (1-N) communication.
+    \end{itemize}
+  \item Diversity of hardware primitives for synchronization.
+  \item Locks as a mechanism for mutual exclusion.
+    \begin{itemize}
+      \item Busy waiting versus blocking.
+      \item Three design elements: acquisition, waiting, and release.
+    \end{itemize}
+  \item Locks may lead to problems if order is not fixed (starvation).
+    \begin{itemize}
+      \item Solutions based in tags or queues.
+    \end{itemize}
+  \item Barriers offer mechanisms to structure programs in phases.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t]{References}
+\begin{itemize}
+  \item \bibhennessy
+    \begin{itemize}
+      \item Section: 5.5
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
