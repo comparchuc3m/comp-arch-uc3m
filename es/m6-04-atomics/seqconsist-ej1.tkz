@@ -1,0 +1,23 @@
+\begin{tikzpicture}
+\tikzset{
+    sentencia/.style={rectangle,rounded corners,draw=black, top color=white, bottom color=blue!50,very thick, inner sep=0.5em, minimum size=0, text centered, font=\tiny},
+    flecha/.style={->, >=latex', shorten >=1pt, thick, draw=blue},
+    flechasinc/.style={->, >=latex', shorten >=1pt, thick, draw=red},
+    etiqueta/.style={text centered, font=\tiny} 
+}  
+\pause
+\node[sentencia] (pushback) {v.push\_back(1);};
+\node[sentencia, below=1cm of pushback] (ftrue) {f=true;};
+\draw[flecha] (pushback) -- (ftrue);
+\node[sentencia, right=1cm of pushback] (fload1) {f.load()};
+\node[etiqueta, right=0.25cm of fload1] (etfload1) {false};
+\node[sentencia, below=0.5cm of fload1] (fload2) {f.load()};
+\node[etiqueta, right=0.25cm of fload2] (etfload2) {true};
+\draw[flecha] (fload1) -- (fload2);
+\node[sentencia, below=1cm of fload2] (print) {std::cout << v[0]; };
+\draw[flecha] (fload2) -- (print);
+\pause
+\draw[flechasinc] (ftrue) -- (fload2);
+\onslide<1->
+\end{tikzpicture}
+

@@ -1,0 +1,347 @@
+\section{Modelos de consistencia}
+
+\begin{frame}[t]{Consistencia secuencial}
+\begin{itemize}
+  \item \cppid{memory\_order\_seq\_cst}.
+  \item El programa es consistente con una \textmark{vista secuencial}.
+  \item Si todas las operaciones sobre atómicos son \textmark{secuencialmente consistentes}, 
+        el comportamiento del programa multihilo es como si todas las operaciones 
+        se realizasen en algún orden particular en un único hilo.
+  \item No puede haber reordenaciones.
+  \item Es el modelo más simple de razonar.
+  \item Es el modelo más costoso en rendimiento.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{columns}
+
+\begin{column}{.6\textwidth}
+\begin{block}{Acceso}
+\begin{lstlisting}
+td::atomic<bool> x, y;
+std::atomic<int> z;
+
+void f() {
+  x.store(true, std::memory_order_seq_cst);
+}
+
+void g() {
+  y.store(true, std::memory_order_seq_cst);
+}
+
+void h() {
+  while (!x.load(std::memory_order_seq_cst)) {}
+  if (y.load(std::memory_order_seq_cst))  ++ z;
+}
+
+void i() {
+  while (!y.load(std::memory_order_seq_cst)) {}
+  if (x.load(std::memory_order_seq_cst)) ++z;
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\pause
+
+\begin{column}{.4\textwidth}
+\begin{block}{Lanzamiento de hilos}
+\begin{lstlisting}
+int main() {
+  x = false;
+  y = false;
+  z = 0;
+
+  std::thread t1{f};
+  std::thread t2{g};
+  std::thread t3{h};
+  std::thread t4{i};
+
+  t1.join();
+  t2.join();
+  t3.join();
+  t4.join();
+
+  assert(z.load() !=0);
+
+  return 0;
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Consistencia sequencial: Análisis}
+\input{es/m6-04-atomics/seqconsist-ej2a.tkz}
+\end{frame}
+
+\begin{frame}[t]{Consistencia sequencial: Análisis}
+\input{es/m6-04-atomics/seqconsist-ej2b.tkz}
+\end{frame}
+
+\mode<article>{
+\begin{itemize}
+  \item Si \cppid{y.store()} en \cppid{g()} no \emph{sincroniza-con} \cppid{y.load()} en \cppid{h()}:
+    \begin{itemize}
+      \item La operación de \cppid{load} \emph{ocurre-antes} que la operación \cppid{store()}.
+      \item Necesariamente \cppid{x.store()} de \cppid{f()} \emph{ocurre-antes} que \cppid{x.load()} en \cppid{i()}.
+      \item El hilo \cppid{i()} incrementa la variable \cppid{z}.
+    \end{itemize}
+  \item Si \cppid{x.store()} en \cppid{f()} no \emph{sincroniza-con} \cppid{x.load()} en \cppid{i()}:
+    \begin{itemize}
+      \item La operación de \cppid{load()} \emph{ocurre-antes} que la operación \cppid{store()}.
+      \item Necesariamente \cppid{y.store()} de \cppid{g()} \emph{ocurre-antes} que \cppid{y.load()} en \cppid{h()}.
+      \item El hilo \cppid{h()} incrementa la variable \cppid{z}.
+    \end{itemize}
+\end{itemize}
+}
+
+\begin{frame}[t,fragile]{Ordenes secuencialmente no consistentes}
+\begin{itemize}
+\item Deja de haber un \textmark{orden global de los eventos}.
+  \begin{itemize}
+    \item Cada hilo puede tener \textbad{una vista diferente}.
+      \begin{itemize}
+        \item Los hilos pueden no estar de acuerdo en el orden de los eventos.
+      \end{itemize}
+
+    \pause
+    \item Pero, \ldots
+      \begin{itemize}
+        \item \textgood{Todos los hilos deben estar de acuerdo en el orden de modificación de cada variable}.
+      \end{itemize}
+  \end{itemize}
+  \mode<presentation>{\vfill\pause}
+\item \textgood{Alternativas}:
+  \begin{itemize}
+    \item Ordenamiento \textmark{relajado}.
+    \item Ordenamiento \textmark{adquisición liberación}.
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Ordenamiento relajado}
+\begin{itemize}
+\item \cppid{memory\_order\_relaxed}
+  \item Operaciones relajadas sobre atómicos \textmark{no participan} en la relación \textgood{sincroniza-con}.
+
+  \mode<presentation>{\vfill\pause}
+  \item Operaciones sobre misma variable en mismo hilo \textmark{si cumplen} relación \textgood{ocurre-antes}.
+    \begin{itemize}
+      \mode<presentation>{\vfill}
+      \item \textbad{No se pueden reordenar} accesos a una variable atómica dentro de un mismo hilo.
+      \mode<presentation>{\vfill}
+      \item Una vez que un hilo ha visto un valor de una variable \textbad{no pude ver} un valor más antiguo de esa variable.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Ejemplo}
+\begin{columns}
+
+\begin{column}{.6\textwidth}
+\begin{block}{Acceso a datos}
+\begin{lstlisting}
+std::atomic<bool> x, y; std::atomic<int> z;
+
+void f() {
+  x.store(true, std::memory_order_relaxed);
+  y.store(true, std::memory_order_relaxed);
+}
+void g() {
+  while (!y.load(std::memory_order_relaxed)) {}
+  if (x.load(std::memory_order_relaxed)) { ++z; }
+}
+
+int main() {
+  x=false; y=false; z=0;
+  std::thread t1{f}; std::thread t2{g};
+  t1.join(); t2.join();
+  return 0;
+}
+
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.4\textwidth}
+\input{es/m6-04-atomics/relconsist-ej.tkz}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+
+\mode<article>{
+\begin{itemize}
+  \item Observaciones:
+    \begin{itemize}
+      \item Todas las operaciones sobre \cppid{x} e \cppid{y} son relajadas.
+      \item El incremento de \cppid{z} se realiza con consistencia secuencial.
+    \end{itemize}
+  \vfill
+  \item Consecuencias:
+    \begin{itemize}
+      \item No es posible establecer ninguna relación \emph{sincroniza-con} entre los hilos
+            a través de \cppid{x} o \cppid{y}.
+      \item Los cambios sobre \cppid{x} e \cppid{y} pueden verse en cualquier orden en \cppid{g()}.
+      \item La variable \cppid{z} podría incrementarse o no.
+    \end{itemize}
+\end{itemize}
+}
+
+\begin{frame}[t]{Orden de adquisición/liberación}
+\begin{itemize}
+  \item \cppid{memory\_order\_acquire}, \cppid{memory\_order\_release}, \cppid{memory\_order\_acq\_rel}.
+  
+  \mode<presentation>{\vfill}
+  \item Nivel \textmark{intermedio} de sincronización.
+  
+  \mode<presentation>{\vfill\pause}
+  \item Una operación de \textgood{liberación} que \textmark{escribe un valor} 
+        se \textgood{sincroniza-con} una operación de \textgood{adquisición} que \textmark{lee dicho valor}.
+  
+  \mode<presentation>{\vfill}
+  \item \textgood{Impacto}:
+    \begin{itemize}
+      \item \textbad{Distintos hilos pueden ver distintos órdenes}.
+      \item \textbad{No todos los órdenes son posibles}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]
+\begin{columns}
+
+\begin{column}{.6\textwidth}
+\begin{block}{Acceso}
+\begin{lstlisting}
+std::atomic<bool> x, y;
+std::atomic<int> z;
+
+void f() {
+  x.store(true, std::memory_order_release);
+}
+
+void g() {
+  y.store(true, std::memory_order_release);
+}
+
+void h() {
+  while (!x.load(std::memory_order_acquire)) {}
+  if (y.load(std::memory_order_acquire))  ++ z;
+}
+
+void i() {
+  while (!y.load(std::memory_order_acquire)) {}
+  if (x.load(std::memory_order_acquire)) ++z;
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.4\textwidth}
+\begin{block}{Lanzamiento de hilos}
+\begin{lstlisting}
+int main() {
+  x = false;
+  y = false;
+  z = 0;
+
+  std::thread t1{f};
+  std::thread t2{g};
+  std::thread t3{h};
+  std::thread t4{i};
+
+  t1.join();
+  t2.join();
+  t3.join();
+  t4.join();
+
+  assert(z.load() !=0);
+  return 0;
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Análisis}
+\input{es/m6-04-atomics/relacq-consist-ej.tkz}
+
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item Múltiples ordenes son posibles porque no hay relaciones
+        \emph{acquire} $\rightarrow$ \emph{release}.
+\end{itemize}
+\end{frame}
+
+\mode<article>{
+\begin{itemize}
+  \item Observaciones:
+    \begin{itemize}
+      \item La operación \cppid{x.store()} de \cppid{f()} \emph{sincroniza-con} 
+            la operación \cppid{x.load()} de \cppid{h}.
+        \begin{itemize}
+          \item Release/Acquire.
+        \end{itemize}
+      \item La operación \cppid{y.store()} de \cppid {g()} \emph{sincroniza-con}
+            la operación \cppid{y.load()} de \cppid{i()}.
+        \begin{itemize}
+          \item Release/Acquire.
+        \end{itemize}
+    \end{itemize}
+  \vfill
+  \item Consecuencias:
+    \begin{itemize}
+      \item La operación \cppid{y.load()} de \cppid{h()} podría dar como resultado \cppkey{true} o \cppkey{false}.
+      \item La operación \cppid{x.load()} cd cppid{i()}podría dar como resultado \cppkey{true} o \cppkey{false}.
+    \end{itemize}
+\end{itemize}
+}
+
+\begin{frame}[fragile]{Combinación de órdenes}
+\begin{itemize}
+\item Se puede obtener un efecto \textmark{equivalente}
+      a \textgood{consistencia secuencial} con \textmark{menos coste}.
+\end{itemize}
+\begin{columns}
+
+\begin{column}{.5\textwidth}
+\begin{block}{Acceso}
+\begin{lstlisting}[basicstyle=\tiny]
+std::atomic<bool> x, y; std::atomic<int> z;
+
+void f() {
+  x.store(true, std::memory_order_relaxed);
+  y.store(true, std::memory_order_release);
+}
+void g() {
+  while (!y.load(std::memory_order_acquire)) {}
+  if (x.load(std::memory_order_relaxed)) ++z;
+}
+int main() {
+  x = false; y = false; z = 0;
+  std::thread t1{f}; std::thread t2{g};
+  t1.join(); t2.join();
+  assert(z.load() !=0);
+
+  return 0;
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.5\textwidth}
+\input{es/m6-04-atomics/comb-consist-ej.tkz}
+\end{column}
+
+\end{columns}
+\end{frame}
+

@@ -1,0 +1,79 @@
+\section{Relaciones de ordenación}
+
+
+\begin{frame}[t]{Relación \textbf{sincroniza-con}}
+\begin{itemize}
+  \item \textgood{Relación} entre operaciones sobre \textmark{tipos atómicos}.
+  \vfill
+  \item Una \textmark{escritura} sobre un valor atómico 
+        \textgood{sincroniza-con} 
+        una \textmark{lectura} sobre ese valor atómico \textmark{que lee el valor}:
+    \mode<presentation>{\vfill}
+    \begin{enumerate}[i]
+      \item Almacenado por \textmark{esa escritura}.
+      \item Almacenado por una \textmark{escritura subsiguiente} del mismo hilo que realizó la escritura.
+      \item Almacenado por una \textmark{secuencia} de operaciones \textmark{read-modify-write}
+            sobre el valor de cualquier hilo en la que la primera operación 
+            leyó el valor almacenado por la escritura.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t]{Relación \textbf{ocurre-antes}}
+\begin{itemize}
+  \item Especifica qué operación \textgood{ve los efectos} de otra operación.
+
+  \mode<presentation>{\vfill\pause}
+  \item Dentro de un hilo, una operación \textgood{ocurre-antes} que otra si aparece en una 
+        \textmark{sentencia anterior}.
+    \begin{itemize}
+      \item \textbad{No hay orden entre dos operaciones que aparecen en la misma sentencia}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Entre dos hilos, una operación en un hilo \textgood{ocurre-antes} que otra operación de otro hilo si:
+    \begin{enumerate}[i]
+      \item Existe una relación \textgood{sincroniza-con} entre ambas.
+      \item Existe una cadena de relaciones \textgood{ocurre-antes} y \textgood{sincroniza-con} entre ellas.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Ordenación: Consistencia secuencial}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+
+\begin{block}{Ejemplo}
+\begin{lstlisting}
+std::vector<int> v; 
+std::atomic_bool f(false); 
+
+void escritor() { 
+  v.push_back(1); // #1
+  f = true; // #2
+}
+
+void lector() { 
+  while(!f.load()) { // #3
+    std::this_thread::sleep(
+      std::milliseconds(1)); 
+  }
+  std::cout << v[0] << std::endl; // #4
+} 
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+
+\input{es/m6-04-atomics/seqconsist-ej1.tkz}
+
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item Único resultado posible: \cppid{v[0] == 1}.
+\end{itemize}
+\end{columns}
+
+\end{frame}
+

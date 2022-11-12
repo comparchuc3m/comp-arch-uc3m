@@ -1,0 +1,57 @@
+\section{Barriers}
+
+\begin{frame}[fragile]{Barriers}
+\begin{itemize}
+\item \textmark{Force} \textgood{ordering} without modifying data.
+\end{itemize}
+
+\begin{columns}
+
+\begin{column}{.7\textwidth}
+\begin{block}{Example}
+\begin{lstlisting}
+std::atomic<bool> x, y;
+std::atomic<int> z;
+
+void f() {
+  x.store(true, std::memory_order_relaxed);
+  std::atomic_thread_fence(std::memory_order_release);
+  y.store(true, std::memory_order_relaxed);
+}
+
+void g() {
+  while (!y.load(std::memory_order_relaxed)) {}
+  std::atomic_thread_fence(std::memory_order_acquire);
+  if (x.load(std::memory_order_relaxed)) ++z;
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.3\textwidth}
+\begin{block}{Threads}
+\begin{lstlisting}
+int main() {
+  x = false;
+  y = false;
+  z = 0;
+
+  std::thread t1(f);
+  std::thread t2(g);
+
+  t1.join();
+  t2.join();
+
+  assert(z.load() !=0);
+  return 0;
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}{Barriers: Analysis}
+\input{en/m6-04-atomics/barriers-ej.tkz}
+\end{frame}

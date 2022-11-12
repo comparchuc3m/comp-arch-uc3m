@@ -1,0 +1,37 @@
+\begin{tikzpicture}
+\tikzset{
+    sentencia/.style={rectangle,rounded corners,draw=black, top color=white, bottom color=blue!50,very thick, inner sep=0.5em, minimum size=0, text centered, font=\tiny},
+    flecha/.style={->, >=latex', shorten >=1pt, thick, draw=blue},
+    flechasinc/.style={->, >=latex', shorten >=1pt, thick, draw=red},
+    etiqueta/.style={text centered, font=\tiny} 
+}  
+\pause
+\node[sentencia] (xstore) {x.store(true)};
+\node[sentencia,right=1cm of xstore] (xload1) {x.load()};
+\node[etiqueta, right=0.1cm of xload1] (xload1et) {false};
+\node[sentencia,below=1cm of xload1] (xload2) {x.load()};
+\node[etiqueta, right=0.1cm of xload2] (xload2et) {true};
+\draw[flecha] (xload1) -- (xload2);
+\node[sentencia,right=1cm of xload1et] (yload1) {y.load()};
+\node[etiqueta, right=0.1cm of yload1] (xload1et) {false};
+\node[sentencia,right=1cm of xload1et] (ystore) {y.store(true)};
+\node[sentencia,below=1cm of xload2] (ifyload) {y.load()};
+\draw[flecha] (xload2) -- (ifyload);
+\node[sentencia,below=1cm of yload1] (yload2) {y.load()};
+\node[etiqueta, right=0.1cm of yload2] (yload2et) {true};
+\draw[flecha] (yload1) -- (yload2);
+\node[sentencia,below=1cm of yload2] (ifxload) {x.load()};
+\draw[flecha] (yload2) -- (ifxload);
+\pause
+\draw[flechasinc] (xstore) -- (xload2);
+\draw[flechasinc] (ystore) -- (yload2);
+\pause
+\node[etiqueta,right=0.1cm of ifxload, text=red] (ifxloadet) {false?};
+\pause
+\draw[flechasinc] (ifxload) to [bend left=80] (xstore);
+\pause
+\node[etiqueta,right=0.1cm of ifyload, text=red] (ifyloadet) {true};
+\node[etiqueta,below=0.05cm of ifyloadet, text=red] (incz) {z++};
+\onslide<1->
+\end{tikzpicture}
+

@@ -1,0 +1,288 @@
+\section{Consistency models}
+
+\begin{frame}[t]{Sequential consistency}
+\begin{itemize}
+  \item \cppid{memory\_order\_seq\_cst}.
+  \item The program is consistent with a \textmark{sequential view}.
+  \item If all the operations on atomics are \textmark{sequentially consistent}, 
+        multi-threaded program behavior is as if all the operations would be
+        performed in some particular order in a single thread.
+  \item There cannot be reorderings.
+  \item It is the simplest model to reason about.
+  \item It is the most costly model in terms of performance.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{columns}
+
+\begin{column}{.6\textwidth}
+\begin{block}{Access}
+\begin{lstlisting}
+std::atomic<bool> x, y;
+std::atomic<int> z;
+
+void f() {
+  x.store(true, std::memory_order_seq_cst);
+}
+
+void g() {
+  y.store(true, std::memory_order_seq_cst);
+}
+
+void h() {
+  while (!x.load(std::memory_order_seq_cst)) {}
+  if (y.load(std::memory_order_seq_cst))  ++ z;
+}
+
+void i() {
+  while (!y.load(std::memory_order_seq_cst)) {}
+  if (x.load(std::memory_order_seq_cst)) ++z;
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\pause
+
+\begin{column}{.4\textwidth}
+\begin{block}{Threads launching}
+\begin{lstlisting}
+int main() {
+  x = false;
+  y = false;
+  z = 0;
+
+  std::thread t1{f};
+  std::thread t2{g};
+  std::thread t3{h};
+  std::thread t4{i};
+
+  t1.join();
+  t2.join();
+  t3.join();
+  t4.join();
+
+  assert(z.load() !=0);
+
+  return 0;
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Sequential consistency: Analysis}
+\input{en/m6-04-atomics/seqconsist-ej2a.tkz}
+\end{frame}
+
+\begin{frame}[t]{Sequential consistency: Analysis}
+\input{en/m6-04-atomics/seqconsist-ej2b.tkz}
+\end{frame}
+
+\begin{frame}[t,fragile]{Non-sequentially consistent orders}
+\begin{itemize}
+\item There is no \textmark{global order of events}.
+  \begin{itemize}
+    \item Each thread may have \textbad{a different view}.
+      \begin{itemize}
+        \item Threads might not agree on the same order of events.
+      \end{itemize}
+
+    \pause
+    \item But, \ldots
+      \begin{itemize}
+        \item \textgood{All threads must agree in the modifications order for each variable}.
+      \end{itemize}
+  \end{itemize}
+  \mode<presentation>{\vfill\pause}
+\item \textgood{Alternatives}:
+  \begin{itemize}
+    \item \textmark{relaxed} ordering.
+    \item \textmark{release/acquire} ordering.
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Relaxed ordering}
+\begin{itemize}
+\item \cppid{memory\_order\_relaxed}
+  \item Relaxed operations on atomics \textmark{do not participate} in \textgood{synchronizes-with} relationship.
+
+  \mode<presentation>{\vfill\pause}
+  \item Operations on same variable in the same thread \textmark{do fulfill} \textgood{happens-before} relationship.
+    \begin{itemize}
+      \mode<presentation>{\vfill}
+      \item Accesses to an atomic variable within the same thread \textbad{cannot be reordered}.
+      \mode<presentation>{\vfill}
+      \item Once a thread has seen a value from variable \textbad{it cannot see} an older value of that variable.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Example}
+\begin{columns}
+
+\begin{column}{.6\textwidth}
+\begin{block}{Data access}
+\begin{lstlisting}
+std::atomic<bool> x, y; std::atomic<int> z;
+
+void f() {
+  x.store(true, std::memory_order_relaxed);
+  y.store(true, std::memory_order_relaxed);
+}
+void g() {
+  while (!y.load(std::memory_order_relaxed)) {}
+  if (x.load(std::memory_order_relaxed)) { ++z; }
+}
+
+int main() {
+  x=false; y=false; z=0;
+  std::thread t1{f}; std::thread t2{g};
+  t1.join(); t2.join();
+  return 0;
+}
+
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.4\textwidth}
+\input{en/m6-04-atomics/relconsist-ej.tkz}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[t]{Release/acquire ordering}
+\begin{itemize}
+  \item \cppid{memory\_order\_acquire}, \cppid{memory\_order\_release}, \cppid{memory\_order\_acq\_rel}.
+  
+  \mode<presentation>{\vfill}
+  \item \textmark{Intermediate} level of synchronization.
+  
+  \mode<presentation>{\vfill\pause}
+  \item A \textgood{release} operation \textmark{writing a value} 
+        \textgood{synchronizes-with} an \textgood{acquire} operation \textmark{reading that value}.
+  
+  \mode<presentation>{\vfill}
+  \item \textgood{Impact}:
+    \begin{itemize}
+      \item \textbad{Different threads may see different orders}.
+      \item \textbad{Not all orders are possible}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t,fragile]
+\begin{columns}
+
+\begin{column}{.6\textwidth}
+\begin{block}{Access}
+\begin{lstlisting}
+std::atomic<bool> x, y;
+std::atomic<int> z;
+
+void f() {
+  x.store(true, std::memory_order_release);
+}
+
+void g() {
+  y.store(true, std::memory_order_release);
+}
+
+void h() {
+  while (!x.load(std::memory_order_acquire)) {}
+  if (y.load(std::memory_order_acquire))  ++ z;
+}
+
+void i() {
+  while (!y.load(std::memory_order_acquire)) {}
+  if (x.load(std::memory_order_acquire)) ++z;
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.4\textwidth}
+\begin{block}{Threads launching}
+\begin{lstlisting}
+int main() {
+  x = false;
+  y = false;
+  z = 0;
+
+  std::thread t1{f};
+  std::thread t2{g};
+  std::thread t3{h};
+  std::thread t4{i};
+
+  t1.join();
+  t2.join();
+  t3.join();
+  t4.join();
+
+  assert(z.load() !=0);
+  return 0;
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Analysis}
+\input{en/m6-04-atomics/relacq-consist-ej.tkz}
+
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item multiple orders are possible as there is no relationship
+         \emph{acquire} $\rightarrow$ \emph{release} .
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Combining orderings}
+\begin{itemize}
+\item An \textmark{equivalent} effect to \textgood{sequential consistency} 
+      can be obtained with \textmark{lower cost}.
+\end{itemize}
+\begin{columns}
+
+\begin{column}{.5\textwidth}
+\begin{block}{Access}
+\begin{lstlisting}[basicstyle=\tiny]
+std::atomic<bool> x, y; std::atomic<int> z;
+
+void f() {
+  x.store(true, std::memory_order_relaxed);
+  y.store(true, std::memory_order_release);
+}
+void g() {
+  while (!y.load(std::memory_order_acquire)) {}
+  if (x.load(std::memory_order_relaxed)) ++z;
+}
+int main() {
+  x = false; y = false; z = 0;
+  std::thread t1{f}; std::thread t2{g};
+  t1.join(); t2.join();
+  assert(z.load() !=0);
+
+  return 0;
+}
+\end{lstlisting}
+\end{block}
+\end{column}
+
+\begin{column}{.5\textwidth}
+\input{en/m6-04-atomics/comb-consist-ej.tkz}
+\end{column}
+
+\end{columns}
+\end{frame}
+

@@ -1,0 +1,86 @@
+\section{Ordering relationships}
+
+\begin{frame}[t]{\textbf{synchronizes-with} relation}
+\begin{itemize}
+  \item \textgood{Relationship} between operations on \textmark{atomic types}.
+
+  \mode<presentation>{\vfill}
+  \item A \textmark{write} on an atomic value
+        \textgood{synchronizes-with} 
+        a \textmark{read} on that atomic value \textmark{reading that value}:
+
+    \mode<presentation>{\vfill}
+    \begin{enumerate}[i]
+      \mode<presentation>{\vfill}
+      \item Stored by \textmark{that write}.
+
+      \mode<presentation>{\vfill\pause}
+      \item Stored by a \textmark{subsequent write} from the same thread that performed the write.
+
+      \mode<presentation>{\vfill\pause}
+      \item Stored by a \textmark{sequence} of \textmark{read-modify-write} operations
+            on the value from any thread in which the first operation
+            read the value stored by the write.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[t]{\textbf{happens-before} relationship}
+\begin{itemize}
+  \item Specified which operations \textgood{see the effects} from other operations.
+
+  \mode<presentation>{\vfill\pause}
+  \item Within a thread, an operation \textgood{happens-before} other operation if it
+        appears in a 
+        \textmark{preceding sentence}.
+    \begin{itemize}
+      \item \textbad{There is no order between two operations from the same sentence}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Among two threads, an operation in one thread \textgood{happens-before} other operation from other thread if:
+    \begin{enumerate}[i]
+      \item There is a \textgood{synchronizes-with} relationship among both operations.
+      \item There is a \textgood{happens-before} a \textgood{synchronizes-with} chain of relationships among both operations.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Ordering: Sequential consistency}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+
+\begin{block}{Example}
+\begin{lstlisting}
+std::vector<int> v; 
+std::atomic_bool f(false); 
+
+void writer() { 
+  v.push_back(1); // #1
+  f = true; // #2
+}
+
+void reader() { 
+  while(!f.load()) { // #3
+    std::this_thread::sleep(
+      std::milliseconds(1)); 
+  }
+  std::cout << v[0] << std::endl; // #4
+} 
+\end{lstlisting}
+\end{block}
+
+\column{.5\textwidth}
+
+\input{en/m6-04-atomics/seqconsist-ej1.tkz}
+
+\mode<presentation>{\vfill\pause}
+\begin{itemize}
+  \item Only possible result: \cppid{v[0] == 1}.
+\end{itemize}
+\end{columns}
+
+\end{frame}
+

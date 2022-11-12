@@ -1,0 +1,115 @@
+\section{Memory model}
+
+\begin{frame}[t]{C++ and memory consistency}
+\begin{itemize}
+  \item C++11 defines its own \textmark{concurrency model} as part of the language.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Goal}: 
+        Avoid the need to write code in lower level languages (C, assembler, \ldots)
+        to obtain better performance.
+    \begin{itemize}
+      \item Atomic types.
+      \item Low level synchronization mechanisms.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Allows to build \textmark{lock free data structures}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Objects and memory locations}
+\begin{itemize}
+  \item \textgood{Object}: Is a storage region.
+    \begin{itemize}
+      \item A sequence of one or more bytes.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Memory location}: 
+        Is an object of scalar type or a sequence of contiguous bit fields.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{An object is stored in one or more memory locations}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Example}
+\begin{itemize}
+  \item Structure:
+\begin{lstlisting}
+struct {
+  int i;
+  char c;
+  int d: 10;
+  int e: 16;
+  double f;
+};
+\end{lstlisting}
+  \mode<presentation>{\vfill\pause}
+  \item Memory locations:
+    \begin{enumerate}
+      \item \cppid{i}.
+      \item \cppid{c}.
+      \item \cppid{d}, \cppid{e}.
+      \item \cppid{f}.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Rules}
+\begin{itemize}
+  \item Two threads may access to \textmark{different memory locations} 
+        simultaneously.
+
+  \mode<presentation>{\vfill\pause}
+  \item Two threads may access to the \textmark{same memory locations}
+        simultaneously if both accesses are for \textmark{reading}.
+
+  \mode<presentation>{\vfill\pause}
+  \item If two threads try to access simultaneously to the \textmark{same memory location} 
+        and any access is a \textmark{write}, there is a 
+        \textmark{potential race condition}.
+    \begin{itemize}
+      \item Depends on whether an \textmark{ordering between both accesses} is stablished.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Ordering and race conditions}
+\begin{itemize}
+  \item \textgood{Classic solution}: Use \textmark{synchronization} mechanisms.
+    \begin{itemize}
+      \item Allow to guarantee \textmark{mutual exclusion}.
+      \item Based on OS $\rightarrow$ Might be costly.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbf{Alternative}: Use \textmark{atomic operations} to ensure 
+        \textmark{ordering}.
+ 
+  \mode<presentation>{\vfill\pause}
+    \begin{itemize}
+      \item If \textmark{ordering between two accesses} to a memory location is not established,
+      \item some of the accesses \textmark{is not atomic}, 
+      \item and at least one of the accesses is a \textmark{write}, 
+      \item those are a \textbad{data race} and  
+        \textbad{program behavior is not defined}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Modification order}
+\begin{itemize}
+  \item \textgood{Modification order}: Sequence of writes on an object.
+    \begin{itemize}
+      \item If two threads see different modification orders on an object there is a \textbad{data race}.
+      \item Modifications do not need to be visible in the same instant in all threads.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item A subsequent read to a write on the same thread observes the written value or
+        a subsequent value in its \textmark{modification order}.
+\end{itemize}
+\end{frame}
+

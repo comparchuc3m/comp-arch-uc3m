@@ -1,0 +1,26 @@
+\begin{tikzpicture}
+\tikzset{
+    sentencia/.style={rectangle,rounded corners,draw=black, top color=white, bottom color=blue!50,very thick, inner sep=0.5em, minimum size=0, text centered, font=\tiny},
+    flecha/.style={->, >=latex', shorten >=1pt, thick, draw=blue},
+    flechasinc/.style={->, >=latex', shorten >=1pt, thick, draw=red},
+    etiqueta/.style={text centered, font=\tiny} 
+}  
+\pause
+\node[sentencia] (xstore) {x.store(true,relaxed);};
+\node[sentencia, below=1cm of xstore] (fencerel) {fence(release);};
+\draw[flecha] (xstore) -- (fencerel);
+\node[sentencia,below=1cm of fencerel] (ystore) {y.store(true,relaxed);};
+\draw[flecha] (fencerel) -- (ystore);
+\node[sentencia,right=1cm of xstore] (yload1) {y.load(relaxed)};
+\node[etiqueta, right=0.1cm of yload1] (xload1et) {true};
+\node[sentencia,below=1cm of yload1] (fenceacq) {fence(acquire)};
+\draw[flecha] (yload1) -- (fenceacq);
+\node[sentencia,below=1cm of fenceacq] (ifxload) {x.load()};
+\draw[flecha] (fenceacq) -- (ifxload);
+\pause
+\draw[flechasinc] (fencerel) -- (fenceacq);
+\pause
+\node[etiqueta,right=0.1cm of ifxload, text=red] (ifxloadet) {true};
+\onslide<1->
+\end{tikzpicture}
+

@@ -1,0 +1,112 @@
+\section{Modelo de memoria}
+
+\begin{frame}{C++ y consistencia de memoria}
+\begin{itemize}
+  \item C++11 define un \textmark{modelo de concurrencia} propio como parte del propio lenguaje.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Objetivo}: 
+        Evitar la necesidad de escribir código en lenguajes de más bajo nivel (C, ensamblador, ...) para obtener mayores prestaciones.
+    \begin{itemize}
+      \item Tipos atómicos.
+      \item Mecanismos de sincronización de bajo nivel.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Permite la construcción de \textmark{estructuras de datos libres de cerrojos}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Objetos y posiciones de memoria}
+\begin{itemize}
+  \item \textgood{Objeto}: Es una región de almacenamiento.
+    \begin{itemize}
+      \item Una secuencia de uno o varios bytes.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Posición de memoria}: Es un objeto de un tipo escalar o una secuencia de campos de bits adyacentes.
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Un objeto se almacena en una o varias posiciones de memoria}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Ejemplo}
+\begin{itemize}
+  \item Estructura:
+\begin{lstlisting}
+struct {
+  int i;
+  char c;
+  int d: 10;
+  int e: 16;
+  double f;
+};
+\end{lstlisting}
+  \item Posiciones de memoria:
+    \begin{enumerate}
+      \item \cppid{i}.
+      \item \cppid{c}.
+      \item \cppid{d}, \cppid{e}.
+      \item \cppid{f}.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Reglas}
+\begin{itemize}
+  \item Dos hilos pueden acceder a \textmark{posiciones de memoria distintas} 
+        de forma simultánea.
+
+  \mode<presentation>{\vfill\pause}
+  \item Dos hilos pueden acceder a la \textmark{misma posición de memoria} 
+        de forma simultánea si ambos accesos son de \textmark{lectura}.
+
+  \mode<presentation>{\vfill\pause}
+  \item Si dos hilos intentan acceder de forma simultánea a la \textmark{misma posición de memoria} 
+        y alguno de los accesos es de \textmark{escritura} existe una 
+        \textmark{condición de carrera potencial}.
+    \begin{itemize}
+      \item Depende de si se obliga un \textmark{orden entre ambos accesos}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Ordenamiento y condiciones de carrera}
+\begin{itemize}
+  \item \textgood{Solución clásica}: Uso de mecanismos de \textmark{sincronización}.
+    \begin{itemize}
+      \item Permite garantizar la \textmark{exclusión mutua}.
+      \item Basado en SO $\rightarrow$ Puede ser costoso.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbf{Alternativa}: Uso de \textmark{operaciones atómicas} para garantizar 
+        \textmark{ordenamiento}.
+ 
+  \mode<presentation>{\vfill\pause}
+    \begin{itemize}
+      \item Si no se establece el \textmark{orden entre dos accesos} a una posición de memoria.
+      \item alguno de los accesos \textmark{no es atómico}, 
+      \item y al menos uno de los accesos es una \textmark{escritura}, 
+      \item estos constituyen una \textbad{carrera de datos} y el 
+        \textbad{comportamiento del programa no está definido}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Orden de modificación}
+\begin{itemize}
+  \item \textgood{Orden de modificación}: Secuencia de escrituras sobre un objeto.
+    \begin{itemize}
+      \item Si dos hilos ven distintos ordenes de modificación sobre un objeto hay una \textbad{carrera de datos}.
+      \item Las modificaciones no tienen por qué ser visibles en el mismo instante en todos los hilos.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Una lectura posterior a una escritura en un mismo hilo observa 
+        el valor escrito o un valor posterior en su \textmark{orden de modificación}.
+\end{itemize}
+\end{frame}
+
