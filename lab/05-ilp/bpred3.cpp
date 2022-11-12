@@ -3,16 +3,17 @@
 #include <chrono>
 #include <iostream>
 #include <random>
-#include <algorithm>
 
 double average_positive(const std::vector<double> & v) {
+  static_assert(sizeof(uint64_t) == sizeof(double)); // Compile time check
   double sum = 0.0;
   int n = 0;
-  const auto max = std::ssize(v);
-  for (long i=0; i<max; ++i) {
-    double x = v[i];
-    sum += (x>0)?x:0.0;
-    n += (x>0)?1:0;
+  const auto max = std::size(v);
+  for (unsigned long i=0; i<max; ++i) {
+    const uint64_t mask = (v[i]>0.0) ? static_cast<uint64_t>(-1) : 0;
+    const auto x = std::bit_cast<uint64_t>(v[i]);
+    sum += std::bit_cast<double>(mask & x);
+    n += static_cast<int>(1U & static_cast<uint32_t>(mask));
   }
   return sum / static_cast<double>(n);
 }
