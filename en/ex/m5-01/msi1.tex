@@ -1,0 +1,347 @@
+\begin{acexercise}\end{acexercise}
+\label{ex:m5-01:msi-01}
+
+Given a multiprocessor with a symmetric shared memory architecture based
+on bus with a snooping protocol. Each processor has a cache
+whose consistency is kept using the MSI protocol. Each cache uses
+direct mapping and has four blocks each with two words. This
+cache uses the whole memory address as the tag field.
+
+The following tables show the status of each cache memory, with the less
+significant word on the left.
+
+\medskip
+
+\begin{tabular}{|l|l|l|l|}
+\hline
+\multicolumn{4}{|c|}{Processor P0}\\
+\hline
+\textbf{Block} &
+\textbf{State} &
+\textbf{State} &
+\textbf{Data}
+\\
+\hline
+\hline
+
+B0 & I & 0x00100700 & 0x00000000 0x7FAABB11\\
+\hline
+
+B1 & S & 0x00100708 & 0x00000000 0x00001234\\
+\hline
+
+B2 & M & 0x00100710 & 0x00000000 0x0077AABB\\
+\hline
+
+B3 & I & 0x00100718 & 0x00000000 0x7FAABB11\\
+\hline
+\end{tabular}
+
+\medskip
+
+\begin{tabular}{|l|l|l|l|}
+\hline
+\multicolumn{4}{|c|}{Processor P1}\\
+\hline
+\textbf{Block} &
+\textbf{State} &
+\textbf{State} &
+\textbf{Data}
+\\
+\hline
+\hline
+
+B0 & I & 0x00100700 & 0x00000000 0x7FAABB11\\
+\hline
+B1 & M & 0x00100728 & 0x00000000 0xFF000000\\
+\hline
+B2 & I & 0x00100710 & 0x00000000 0xEEEE7777\\
+\hline
+B3 & S & 0x00100718 & 0x00000000 0x7FAABB11\\
+\hline
+\end{tabular}
+
+\medskip
+
+\begin{tabular}{|l|l|l|l|}
+\hline
+\multicolumn{4}{|c|}{Processor P2}\\
+\hline
+\textbf{Block} &
+\textbf{State} &
+\textbf{State} &
+\textbf{Data}
+\\
+\hline
+\hline
+
+B0 & S & 0x00100720 & 0x00000000 0x1111AAAA\\
+\hline
+B1 & S & 0x00100708 & 0x00000000 0X00001234\\
+\hline
+B2 & I & 0x00100710 & 0x00000000 0x7FAABB11\\
+\hline
+B3 & I & 0x00100718 & 0x00001234 0x1111AABB\\
+\hline
+
+\end{tabular}
+
+\medskip
+
+For each of the cases that are presented below, start with the
+initial situation of the problem, without taking into account changes in
+previous cases. Indicate the changes that occur in the caches. 
+In the case of reads, also indicate what is the value actually read.
+
+
+\begin{enumerate}
+  \item P2: write 0x00100708, 0xFFFFFFFF
+  \item P2: read 0x00100708
+  \item P2: read 0x00100718
+\end{enumerate}
+
+In each case you must fill in a table with the following format,
+justifying the answer:
+
+\begin{tabular}{|l|l|l|l|l|l|p{2cm}|p{2cm}|}
+
+\hline
+\textbf{Processor} &
+\textbf{Block} &
+\textbf{State} &
+\textbf{State} &
+\textbf{State} &
+\multicolumn{2}{|c|}{\textbf{Data}}
+\\
+
+&
+&
+\textbf{previous} &
+\textbf{Current} &
+&
+\multicolumn{2}{|c|}{}
+\\
+\hline
+\hline
+
+& & & & & \multicolumn{1}{|p{2cm}|}{} & \\
+\hline
+& & & & & \multicolumn{1}{|p{2cm}|}{} & \\
+\hline
+& & & & & \multicolumn{1}{|p{2cm}|}{} & \\
+\hline
+& & & & & \multicolumn{1}{|p{2cm}|}{} & \\
+\hline
+\end{tabular}
+
+\begin{acsolution}\end{acsolution}
+
+
+\paragraph{Section 1}
+
+A write occurs in block B1 of the P2 cache that is in
+state S. This produces the following changes in P2:
+
+
+\begin{itemize}
+
+\item Transition to modified state (M).
+
+\item A invalidation is placed on the bus
+
+\end{itemize}
+
+The invalidation is ignored by the processor P1, but is treated by the
+P0 processor.
+
+In P0 the following changes occur:
+
+
+\begin{itemize}
+
+\item Transition to invalid state (I).
+
+\end{itemize}
+
+In this case there are no changes in the main memory.
+
+The states in the different processors are shown in the Table ~\ref{tab:ex:m5-01:msi-01:1}.
+
+\begin{table}[htbp]
+
+\begin{tabular}{|l|l|l|l|l|}
+
+\hline
+\multicolumn{5}{|c|}{\textbf{Processor P0}}\\
+\hline
+Block & State & Label & \multicolumn{2}{c|}{Data}\\
+\hline
+\hline
+B0 & I & 0x00100700 & 0x00000000 & 0x7FAABB11\\
+\hline
+B1 & I & 0x00100708 & 0x00000000 & 0x00001234\\
+\hline
+B2 & M & 0x00100710 & 0x00000000 & 0x0077AABB\\
+\hline
+B3 & I & 0x00100718 & 0x00000000 & 0x7FAABB11\\
+\hline
+
+\hline
+\multicolumn{5}{|c|}{\textbf{Processor P1}}\\
+\hline
+Block & State & Label & \multicolumn{2}{c|}{Data}\\
+\hline
+\hline
+
+B0 & I & 0x00100700 & 0x00000000 & 0x7FAABB11\\
+\hline
+B1 & M & 0x00100728 & 0x00000000 & 0xFF000000\\
+\hline
+B2 & I & 0x00100710 & 0x00000000 & 0xEEEE7777\\
+\hline
+B3 & S & 0x00100718 & 0x00000000 & 0x7FAABB11\\
+\hline
+
+
+\hline
+\multicolumn{5}{|c|}{\textbf{Processor P2}}\\
+\hline
+Block & State & Label & \multicolumn{2}{c|}{Data}\\
+\hline
+\hline
+
+B0 & S & 0x00100720 & 0x00000000 & 0x1111AAAA\\
+\hline
+B1 & {\color{red}M} & 0x00100708 & {\color{red}0xFFFFFFFF} & 0X00001234\\
+\hline
+B2 & I & 0x00100710 & 0x00000000 & 0x7FAABB11\\
+\hline
+B3 & I & 0x00100718 & 0x00001234 & 0x1111AABB\\
+\hline
+
+
+\end{tabular}
+
+\caption{Cache contents for Section 1, exercise~\ref{ex:m5-01:msi-01}.}
+\label{tab:ex:m5-01:msi-01:1}
+
+\end{table}
+
+The states in the different processors are shown in the Table~\ref{tab:ex:m5-01:msi-01:2}.
+
+\begin{table}[htbp]
+
+\begin{tabular}{|l|l|l|l|l|l|l|}
+
+\hline
+Processor 	& Block 	& State 	& 		&  		& \multicolumn{2}{c|}{}\\
+		&		& Previous state	& New state	& Label	& \multicolumn{2}{c|}{Data}\\
+\hline
+\hline
+P2 & B1 & I & M & 0X00100708 & 0XFFFFFFFF & 0X00001234\\
+\hline
+P0 & B1 & S & I & 0X00100708 & 0X00000000 & 0X00001234\\
+\hline
+
+\end{tabular}
+
+\caption{State transitions for section 1, exercise~\ref{ex:m5-01:msi-01}.}
+\label{tab:ex:m5-01:msi-01:2}
+\end{table}
+
+\paragraph{Section 2}
+
+A read is perfomed in P2's cache block B1 that is in shared state. It is a cache hit the returns the value 0x00000000
+
+\paragraph{Section 3}
+
+A read miss is produced in P2's cache for block B3 that is invalid (I). The read miss is placed on the bus, the block is adquired and the state changes to shared (S).
+
+The processor P0, has this block in invalid State and ignores the read miss.
+
+The processor P1, has this Block in shared State (S) and it continues in this State.
+
+The value read is 0x00000000
+
+The States in the different processors are shown in the Table~\ref{tab:ex:m5-01:msi-01:3}.
+
+\begin{table}[htbp]
+
+\begin{tabular}{|l|l|l|l|l|}
+
+\hline
+\multicolumn{5}{|c|}{\textbf{Processor P0}}\\
+\hline
+Block & State & Label & \multicolumn{2}{c|}{Data}\\
+\hline
+\hline
+
+B0 & I & 0x00100700 & 0x00000000 & 0x7FAABB11\\
+\hline
+B1 & S & 0x00100708 & 0x00000000 & 0x00001234\\
+\hline
+B2 & M & 0x00100710 & 0x00000000 & 0x0077AABB\\
+\hline
+B3 & I & 0x00100718 & 0x00000000 & 0x7FAABB11\\
+\hline
+
+\hline
+\multicolumn{5}{|c|}{\textbf{Processor P1}}\\
+\hline
+Block & State & Label & \multicolumn{2}{c|}{Data}\\
+\hline
+\hline
+
+B0 & I & 0x00100700 & 0x00000000 & 0x7FAABB11\\
+\hline
+B1 & M & 0x00100728 & 0x00000000 & 0xFF000000\\
+\hline
+B2 & I & 0x00100710 & 0x00000000 & 0xEEEE7777\\
+\hline
+B3 & S & 0x00100718 & 0x00000000 & 0x7FAABB11\\
+\hline
+
+
+\hline
+\multicolumn{5}{|c|}{\textbf{Processor P2}}\\
+\hline
+Block & State & Label & \multicolumn{2}{c|}{Data}\\
+\hline
+\hline
+
+B0 & S & 0x00100720 & 0x00000000 & 0x1111AAAA\\
+\hline
+B1 & S & 0x00100708 & 0x00000000 & 0X00001234\\
+\hline
+B2 & I & 0x00100710 & 0x00000000 & 0x7FAABB11\\
+\hline
+B3 & S & 0x00100718 & {\color{red}0x00000000} & {\color{red}0x7FAABB11}\\
+\hline
+
+\end{tabular}
+
+\caption{States for Section 3, exercise~\ref{ex:m5-01:msi-01}.}
+\label{tab:ex:m5-01:msi-01:3}
+
+\end{table}
+
+The state transitions are shown in Table~\ref{tab:ex:m5-01:msi-01:4}.
+
+\begin{table}[htbp]
+
+\begin{tabular}{|l|l|l|l|l|l|l|}
+
+\hline
+Processor 	& Block 	& State 	& 		&  		& \multicolumn{2}{c|}{}\\
+		&		& previous state	& New state 	& Label	& \multicolumn{2}{c|}{Data}\\
+\hline
+\hline
+
+P2 & B3 & I & S & 0X00100718 & 0X00000000 & 0X7FAABB11\\
+\hline
+
+\end{tabular}
+
+\caption{State transitions for section 3, exercise~\ref{ex:m5-01:msi-01}.}
+\label{tab:ex:m5-01:msi-01:4}
+\end{table}

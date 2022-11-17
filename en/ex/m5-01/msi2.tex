@@ -1,0 +1,141 @@
+\begin{acexercise}\end{acexercise}
+
+Consider a multiprocessor with a symmetric shared memory architecture 
+with snooping protocol. 
+Each processor has a cache where consistency is kept by using the MSI protocol.
+Each cache block has a single word.
+
+The following table shows the initial state of four different variables in
+each of the caches.
+
+\medskip
+
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+&
+\multicolumn{4}{|c|}{Initial states of the variables}
+\\
+\hline
+
+\textbf{Processor} &
+\textbf{A} &
+\textbf{B} &
+\textbf{C} &
+\textbf{D}
+\\
+\hline
+\hline
+
+\textbf{P0} & 
+Shared & Modified & Shared & Shared
+\\
+\hline
+
+\textbf{P1} &
+Invalid & Invalid & Invalid & Shared
+\\
+\hline
+
+\textbf{P2} &
+Invalid & Invalid & Shared & Shared
+\\
+\hline
+
+\end{tabular}
+
+\medskip
+
+The following table shows the final state of these variables after doing a
+series of accesses to memory.
+
+\medskip
+
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+&
+\multicolumn{4}{|c|}{Final states of the variables}
+\\
+\hline
+
+\textbf{Processor} &
+\textbf{A} &
+\textbf{B} &
+\textbf{C} &
+\textbf{D}
+\\
+\hline
+\hline
+
+\textbf{P0} & 
+Invalid & Invalid & Invalid & Shared
+\\
+\hline
+
+\textbf{P1} &
+Invalid & Invalid & Shared & Modified
+\\
+\hline
+
+\textbf{P2} &
+Modified & Modified & Invalid & Shared
+\\
+\hline
+
+\end{tabular}
+
+\medskip
+
+Complete the following:
+
+\begin{itemize}
+
+  \item For each variable (A, B, C and D) describe the
+accesses made and the processes involved that have allowed to reach
+the final state.
+ 
+
+    \begin{itemize}
+
+      \item \textbf{Note 1}: to reach the final state may be enough
+a single access or a sequence of accesses.
+
+      \item \textbf{Note 2}: there may be a final state
+that is unreachable (that is, that has no solution).
+
+    \end{itemize}
+
+  \item For each previous case describe the generated bus traffic.
+
+\end{itemize}
+
+\begin{acsolution}\end{acsolution}
+
+\begin{itemize}
+
+\item Variable \cppid{A}:
+  \begin{itemize}
+    \item \textbf{\textbf{P2}}  writes \cppid{A} (\emph{exclusive}) invalidating \textbf{P0}.
+    \item \textbf{P2} produces a write miss that is captured by \textbf{P0} and produces no traffic.
+  \end{itemize}
+
+\item Variable \cppid{B}:
+  \begin{itemize}
+    \item \textbf{P2}  writes \cppid{B}  (\emph{exclusive}) invalidating the copy of \textbf{P0}
+    \item \textbf{P2} produces a write miss that is captured by \textbf{P0} that performs a write-block to the cache of \textbf{P2}
+  \end{itemize}
+
+\item Variable \cppid{C}:
+  \begin{itemize}
+    \item \textbf{P1} writes \cppid{B} (\emph{exclusive}) invalidating the other two copies
+    \item \textbf{P1} produces a write miss that is captured by \textbf{P0} and \textbf{P1}. No bus traffic is generated.
+    \item \textbf{P1} reads of writes in \cppid{D} another variable with a related block allocated in the same line as \cppid{C} producing a conflict miss. This makes block \cppid{C} to be replaced and given it was modified it is written into memory. Block \cppid{C} is not present in cache (equivalent to \emph{invalid} state).
+    \item This action of \textbf{P1} produces a \emph{write-back} of the block in memory. 
+    \item \textbf{P1} reads \cppid{C}. Produces a read miss and goes to shared state. 
+  \end{itemize}
+
+\item Variable \cppid{D}:
+  \begin{itemize}
+    \item The final state can not be reached because a block can not be exclusive and shared at the same time.
+  \end{itemize}
+
+\end{itemize}
