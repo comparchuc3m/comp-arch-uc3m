@@ -1,0 +1,150 @@
+\section{Tareas}
+
+\subsection{Compilación y ejecución}
+
+En esta tarea deberás compilar y ejecutar el programa. 
+También compararás las versiones de \emph{Debug} y \emph{Release}.
+
+Compila el proyecto y genera la versión de \emph{Debug}.
+
+Ejecuta el programa generado 3 veces. Anota para cada ejecución, la siguiente información:
+\begin{itemize}
+\item El valor final de \cppid{counter}.
+\item El tiempo de ejecución medido por el programa.
+\end{itemize}
+
+Ahora genera una versión de \emph{Release}.
+
+Vuelve a ejecutar el programa y anota los nuevos resultados.
+
+\subsection{Detección de carreras de datos}
+
+Para detectar las carreras de datos usarás un \textmark{sanitizer} del compilador: 
+\textgood{Thread Sanitizer}.
+
+Vamos a generar dos nuevos perfiles de ejecución a partir de los perfiles de 
+\emph{debug} y \emph{release}. Serán los perfiles \emph{debug-tsan} y \emph{release-tsan}.
+
+Para ello, deberás añadir a la hora de generar el proyecto con cmake el valor
+\cppid{-fsanitize=thread"} con la opción de cmake \cppkey{-DCMAKE\_CXX\_FLAGS}.
+
+Utiliza estos nuevos perfiles para identificar posibles carreras de datos.
+
+\subsection{Protección con cerrojos}
+
+Protege el dato miembro \cppid{value\_} con un \cppid{std::mutex}. Para ello:
+
+\begin{itemize}
+  \item Añade un dato miembro a la clase \cppid{counter} de tipo \cppid{std::mutex}.
+  \item Protege mediante el uso del \cppid{std::mutex} las secciones críticas.
+\end{itemize}
+
+Coloca estas modificaciones en el archivo fuente \cppid{counter\_mutex.cpp}.
+
+Comprueba que el programa esta libre de condiciones de carrera con \textmark{Thread Sanitizer}.
+
+Evalúa el rendimiento del programa para los casos de 2, 4, 8 y 16 hilos.
+
+\subsection{Protección con un atómico}
+
+En C++20 se pueden utilizar tipos atómicos para proteger valores en coma flotante.
+Vamos a utilizar esta propiedad para tener una solución libre de cerrojos.
+
+Cambia el tipo del dato miembro \cppid{value\_} a \cppid{std::atomic<double>}.
+
+Coloca estas modificaciones en el archivo fuente \cppid{counter\_atomic.cpp}.
+
+Comprueba que el programa esta libre de condiciones de carrera con \textmark{Thread Sanitizer}.
+
+Evalúa el rendimiento del programa para los casos de 2, 4, 8 y 16 hilos.
+
+\subsection{Protección con un spin lock y consistencia secuencial}
+
+Ahora estudiaremos los casos en que una variable atómica no es suficiente.
+Consideremos el caso en que en vez de un valor se utilizan dos valores en la sección crítica.
+
+\begin{itemize}
+
+  \item Modifica la clase \cppid{counter} para que tenga un segundo dato miembro 
+        llamado \cppid{time\_} que será de tipo \cppkey{float}.
+
+  \item Modifica la función \cppid{update()} para que en cada invocación se incremente
+        \cppid{time\_} en \cppid{0.25} unidades.
+
+\end{itemize}
+
+Para controlar el acceso a la sección crítica, utiliza un objeto \cppid{spinlock\_mutex} como el siguiente,
+que utiliza consistencia secuencial:
+\begin{lstlisting}
+class spinlock_mutex {
+public:
+  spinlock_mutex() : flag_{} {}
+
+  void lock() {
+    while (flag_.test_and_set(std::memory_order_seq_cst)) {}
+  }
+
+  void unlock() {
+    flag_.clear(std::memory_order_seq_cst);
+  }
+
+private:
+  std::atomic_flag flag_;
+};
+\end{lstlisting}
+
+Coloca estas modificaciones en el archivo fuente \cppid{counter\_spin\_seq.cpp}.
+
+Comprueba que el programa esta libre de condiciones de carrera con \textmark{Thread Sanitizer}.
+
+Evalúa el rendimiento del programa para los casos de 2, 4, 8 y 16 hilos.
+
+\subsection{Protección con un spin lock y consistencia de liberación/adquisición}
+
+Repite el apartado anterior con un \cppid{spinlock\_mutex} que utilice consistencia de
+liberación/adquisición:
+
+\begin{lstlisting}
+class spinlock_mutex {
+public:
+  spinlock_mutex() : flag_{} {}
+
+  void lock() {
+    while (flag_.test_and_set(std::memory_order_acquire)) {}
+  }
+
+  void unlock() {
+    flag_.clear(std::memory_order_release);
+  }
+
+private:
+  std::atomic_flag flag_;
+};
+\end{lstlisting}
+
+Coloca estas modificaciones en el archivo fuente \cppid{counter\_spin\_ra.cpp}.
+
+Comprueba que el programa esta libre de condiciones de carrera con \textmark{Thread Sanitizer}.
+
+Evalúa el rendimiento del programa para los casos de 2, 4, 8 y 16 hilos.
+
+\subsection{Optimización del spinlock}
+
+Para los dos casos anteriores, considera la optimización que se consigue cuando se introduce
+una lectura relajada dentro del bucle de la operación \cppid{lock()}
+
+\begin{lstlisting}
+  void lock() {
+    while (flag_.test_and_set(std::memory_order_XXXX)) {
+      while (flag_.test(std::memory_order_relaxed)) {}
+    }
+  }
+\end{lstlisting}
+
+Coloca estas modificaciones en los archivos fuente \cppid{counter\_spin\_seq\_opt.cpp} y 
+\cppid{counter\_spin\_ra\_opt.cpp}.
+
+Comprueba que el programa esta libre de condiciones de carrera con \textmark{Thread Sanitizer}.
+
+Evalúa el rendimiento del programa para los casos de 2, 4, 8 y 16 hilos.
+

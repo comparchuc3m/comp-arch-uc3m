@@ -1,0 +1,48 @@
+\section{Descripción del laboratorio}
+
+En este laboratorio partirá de un proyecto suministrado que contiene un programa principal,
+que ejecuta una aplicación con varios hilos.
+
+Observa que para compilar un programa con varios hilos con CMake debes tener en cuenta:
+
+\begin{itemize}
+
+\item Debes incluir una línea para encontrar el paquete de compilación de hilos
+\begin{lstlisting}
+find_package(Threads REQUIRED)
+\end{lstlisting}
+
+\item Debes enlazar tu programa con la biblioteca de hilos.
+      Para ello puedes poner la siguiente línea antes de la definición del ejecutable
+      (afectará a todos los ejecutables).
+\begin{lstlisting}
+link_libraries(Threads::Threads)
+\end{lstlisting}
+
+\end{itemize}
+
+Se suministra un programa \cppid{counter.cpp} con la funcionalidad básica.
+
+\begin{itemize}
+
+\item Un clase \cppid{counter} que encapsula un valor en doble precisión, que se inicia a cero.
+      Tiene las siguientes operaciones:
+\begin{itemize}
+  \item Una función \cppid{update()} que incrementa el valor encapsulado.
+  \item Una función \cppid{print()} que imprime el valor del contador.
+\end{itemize}
+
+\item Un programa principal que lanza varios hilos concurrentes.
+\begin{itemize}
+  \item El número de hilos se define en la constante \cppid{num\_threads}.
+  \item El contador compartido es la variable local \cppid{count}.
+  \item Cada hilo realiza $100,000$ actualizaciones del contador.
+  \item Cuando todos los hilos han finalizado se imprime el resultado final del contador.
+  \item También se imprime el tiempo transcurrido en la ejecución de todos los hilos.
+\end{itemize}
+
+\end{itemize}
+
+
+Para llevar a cabo este laboratorio debes realizar todas las pruebas en
+el clúster \textemph{avignon}.
