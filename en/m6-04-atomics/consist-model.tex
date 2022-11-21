@@ -18,7 +18,7 @@
 
 \begin{column}{.6\textwidth}
 \begin{block}{Access}
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\tiny]
 std::atomic<bool> x, y;
 std::atomic<int> z;
 
@@ -47,7 +47,7 @@ void i() {
 
 \begin{column}{.4\textwidth}
 \begin{block}{Threads launching}
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\tiny]
 int main() {
   x = false;
   y = false;
@@ -127,7 +127,7 @@ int main() {
 
 \begin{column}{.6\textwidth}
 \begin{block}{Data access}
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\tiny]
 std::atomic<bool> x, y; std::atomic<int> z;
 
 void f() {
@@ -184,7 +184,7 @@ int main() {
 
 \begin{column}{.6\textwidth}
 \begin{block}{Access}
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\tiny]
 std::atomic<bool> x, y;
 std::atomic<int> z;
 
@@ -211,7 +211,7 @@ void i() {
 
 \begin{column}{.4\textwidth}
 \begin{block}{Threads launching}
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\tiny]
 int main() {
   x = false;
   y = false;
@@ -242,15 +242,15 @@ int main() {
 
 \mode<presentation>{\vfill\pause}
 \begin{itemize}
-  \item multiple orders are possible as there is no relationship
+  \item Multiple orders are possible as there is no relationship
          \emph{acquire} $\rightarrow$ \emph{release} .
 \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Combining orderings}
 \begin{itemize}
-\item An \textmark{equivalent} effect to \textgood{sequential consistency} 
-      can be obtained with \textmark{lower cost}.
+\item \textmark{Equivalent} effect to \textgood{sequential consistency} 
+      with \textmark{lower cost}.
 \end{itemize}
 \begin{columns}
 

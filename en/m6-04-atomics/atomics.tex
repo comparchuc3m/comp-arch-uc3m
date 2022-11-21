@@ -30,7 +30,7 @@
       \item An integral type.
       \item A pointer type.
       \item Type \cppid{bool}.
-      \item It is undefined for real number types (\cppid{float}, \cppid{double}).
+      \item Limited interface real number types (\cppid{float}, \cppid{double}).
       \item Also available for user defined types fulfilling some constraints.
     \end{itemize}
 
@@ -107,7 +107,7 @@ f1.test_and_set();
     \end{itemize}
 \end{itemize}
 \begin{block}{spin lock mutex}
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\tiny]
 class spinlock_mutex {
 private:
   std::atomic_flag f;
