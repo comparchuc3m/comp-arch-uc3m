@@ -1,0 +1,52 @@
+\section{Introduction}
+
+\begin{frame}[t]{Why SIMD?}
+\begin{itemize}
+  \item A wide set of applications exhibits significant \textmark{Data Level Parallelism} (DLP).
+    \begin{itemize}
+      \item Matrix oriented operations (linear algebra).
+      \item Media-oriented image and sound processing.
+      \item Machine learning algorithms.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Energy efficiency:
+    \begin{itemize}
+      \item A single instruction may launch multiple data operations.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Sequential mental model:
+    \begin{itemize}
+      \item But speedup is derived from parallel data operations.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{SIMD Variants}
+\begin{itemize}
+  \item \textmark{Vector architectures}:
+    \begin{itemize}
+      \item Extend pipelined execution of many data operations.
+      \item Considered expensive until recently.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{SIMD instruction set extensions}:
+    \begin{itemize}
+      \item Simultaneous data parallel data operations.
+      \item MMX $\rightarrow$ MultMedia eXtensions.
+      \item SSE $\rightarrow$ Streaming Simd Extensions.
+      \item AVX $\rightarrow$ Advanced Vector eXtensions.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{GPUs}:
+    \begin{itemize}
+      \item Use a graphics accelerator as a compute accelerator.
+      \item Host memory and GPU memory $\rightarrow$ Need to transfer data.
+      \item Heterogeneous computing.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}

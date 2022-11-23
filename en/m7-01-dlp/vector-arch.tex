@@ -1,0 +1,149 @@
+\section{Vector architectures}
+
+\begin{frame}[t]{Vector architecture approach}
+\begin{itemize}
+  \item Perform computations on vectors of data:
+    \begin{enumerate}
+      \item Read data from memory placing in large sequential register files.
+      \item Operate on data in register file.
+      \item Store data into memory reading from register file.
+    \end{enumerate}
+
+  \mode<presentation>{\vfill\pause}
+  \item Register file behaves as compiler cotrolled buffer.
+    \begin{itemize}
+      \item Hides memory latency.
+      \item Memory access deeply pipelined.
+      \item Long memory latency only one per vector load/store.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Example: RV64V}
+\begin{itemize}
+  \item \textmark{Vector registers}: 
+    \begin{itemize}
+      \item 32 vector registers.
+      \item Each vector element 64 bits wide.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Vector functional units}: 
+    \begin{itemize}
+      \item Each unit is fully pipelined.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Vector load/store unit}: 
+    \begin{itemize}
+      \item Transfer vector to/from memory.
+      \item Fully pipelined.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Scalar registers}:
+    \begin{itemize}
+      \item Scalar data input to vector functional units.
+      \item Computing addresses for vector load/store.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Dynamic register typing}
+\begin{itemize}
+  \item Vector instructions omit data type and size.
+    \begin{itemize}
+      \item Associate data type and size with each vector register.
+      \item Instructions to configure vector registers.
+      \item Simplifies the number of vector instructions.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Vector register memory used by enabled vector registers.
+    \begin{itemize}
+      \item 4 vectors of doubles:
+        \begin{itemize}
+          \item \asminst{vsetdcfg} \asmreg{4*FP64} 4 vectors of doubles
+        \end{itemize}
+      \item 1 vector of floats and 3 vectors of doubles:
+        \begin{itemize}
+          \item \asminst{vsetdcfg} \asmreg{1*FP32,3*FP64}
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Maximum vector length:
+    \begin{itemize}
+      \item Set by processor and derived from number of enabled vectors.
+      \item 1024 bytes vector memory with 4 vectors of doubles $\Rightarrow$ 256 / 8 = 32 elements.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Example DAXPY}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{itemize}
+  \item Linear transformation of a vector:
+\[
+\vec{y} = a \cdot \vec{x} + \vec{y}
+\]
+
+  \item Assume vector length match array sizes.
+    \begin{itemize}
+      \item Arrays of 32 elements.
+    \end{itemize}
+\end{itemize}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Scalar code}
+\begin{lstlisting}[language=generalasm2]
+      fld f0, a
+      addi t2,t0,#256
+Loop: fld f1,0(t0)
+      fmul.d f1,f1,f0
+      fld f2,0(t1)
+      fadd.d f2,f2,f1
+      fsd f2,0(t1)
+      addi t0,t0,#8
+      addi t1,t1,#8
+      bne t2,t0,Loop
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{DAXPY with vector instructions}
+\begin{columns}[T]
+
+\column{.65\textwidth}
+\begin{block}{Vectorized DAXPY}
+\begin{lstlisting}[language=generalasm2]
+vsetdcfg 4*FP64  # 4 vectors double precision
+fld f0, a        # Load scalar a in f0
+vld v0, t0       # Load vector v0 from address t0
+vmul v1, v0, f0  # Multiply vector by scalar
+vld v2, t1       # Load vector v2 from address t1
+vadd v3, v1, v2  # Add vectors
+vst v3, t1       # Store vector v3 to address t1
+vdisable         # Disable vector registers
+\end{lstlisting}
+\end{block}
+
+\column{.35\textwidth}
+\begin{itemize}
+  \item Reduction in number of instructions.
+    \begin{itemize}
+      \item 258 $\rightarrow$ 8.
+    \end{itemize}
+
+  \item Vectorization requires independent iterations.
+
+  \item Reduction of stalls thanks to instruction chaining.
+\end{itemize}
+
+\end{columns}
+\end{frame}
