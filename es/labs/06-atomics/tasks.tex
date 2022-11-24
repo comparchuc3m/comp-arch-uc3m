@@ -26,7 +26,7 @@ Vamos a generar dos nuevos perfiles de ejecución a partir de los perfiles de
 \emph{debug} y \emph{release}. Serán los perfiles \emph{debug-tsan} y \emph{release-tsan}.
 
 Para ello, deberás añadir a la hora de generar el proyecto con cmake el valor
-\cppid{-fsanitize=thread"} con la opción de cmake \cppkey{-DCMAKE\_CXX\_FLAGS}.
+\cppid{-fsanitize=thread} con la opción de cmake \cppkey{-DCMAKE\_CXX\_FLAGS}.
 
 Utiliza estos nuevos perfiles para identificar posibles carreras de datos.
 
