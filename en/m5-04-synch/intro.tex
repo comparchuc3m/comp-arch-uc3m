@@ -61,13 +61,13 @@
 \end{frame}
 
 \begin{frame}[fragile]{Adding a vector}
-\begin{columns}
+\mode<presentation>{\vspace{-1.25em}}
+\begin{columns}[T]
 
 \column{.5\textwidth}
 \begin{block}{Critical section in loop}
 \begin{lstlisting}
-void f(int max) {
-  vector<double> v = get_vector(max);
+void f(const std::vector<double> & v) {
   double sum = 0;
   
   auto do_sum = [&](int start, int n) {
@@ -76,8 +76,8 @@ void f(int max) {
     }
   }
 
-  thread t1{do_sum,0,max/2};
-  thread t2{do_sum,max/2+1,max};
+  thread t1{do_sum, 0, std::ssize(v)/2};
+  thread t2{do_sum, std::ssize(v)/2+1, std::ssize(v)};
   t1.join();
   t2.join();
 }
@@ -89,8 +89,7 @@ void f(int max) {
 \column{.5\textwidth}
 \begin{block}{Critical section out of loop}
 \begin{lstlisting}
-void f(int max) {
-  vector<double> v = get_vector(max);
+void f(const std::vector<double> & v) {
   double sum = 0;
   
   auto do_sum = [&](int start, int n) {
@@ -101,8 +100,8 @@ void f(int max) {
     sum += local_sum;
   }
 
-  thread t1{do_sum,0,max/2};
-  thread t2{do_sum,max/2+1,max};
+  thread t1{do_sum, 0, std::ssize(v)/2};
+  thread t2{do_sum, std::ssize(v)/2+1, std::ssize(v)};
   t1.join();
   t2.join();
 }
