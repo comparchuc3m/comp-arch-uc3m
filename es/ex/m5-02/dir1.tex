@@ -1,0 +1,252 @@
+\begin{acexercise}\end{acexercise}
+Una máquina de memoria compartida dispone de cuatro nodos NUMA con las siguientes características:
+
+\begin{itemize}
+  \item Cada nodo tiene un único procesador.
+  \item El procesador tiene un único nivel de caché de 64KB que es asociativa por conjuntos de 8 vías con tamaño de
+línea de 64 bytes.
+  \item La memoria RAM de cada nodo es de 64 GB.
+  \item El directorio se encuentra distribuido entre los nodos.
+\end{itemize}
+
+Conteste a las siguientes preguntas:
+
+\begin{enumerate}
+
+  \item ¿Cuántas máquinas de estado MSI distintas hay en total en esta máquina?
+
+  \item ¿Cuál es el espacio de memoria que puede direccionar el nodo número 2?
+
+  \item Complete la siguiente tabla, para la entrada de caché donde reside la variable x, en la que se deben
+        especificar los estados en las cachés de los nodos de cómputo 
+        (M $\rightarrow$ Modificado, S $\rightarrow$ Compartido, I $\rightarrow$ Inválido), 
+        así como el tráfico de red para cada nodo. 
+        La columna \emph{Instrucción} indica el nodo en el que se ejecuta la instrucción
+        (P1: \asminst{lw}\asmreg{ t1},\asmlabel{ x} significa ejecutar 
+        \asminst{lw}\asmreg{ t1},\asmlabel{ x} en el nodo P1).
+
+\end{enumerate}
+
+\begin{tabular}{|>{\footnotesize}l|*{8}{>{\footnotesize}c|}}
+
+\hline
+& \multicolumn{2}{c}{P1}
+& \multicolumn{2}{c}{P2}
+& \multicolumn{2}{c}{P3}
+& \multicolumn{2}{c|}{P4}
+\\
+\hline
+Instrucción &
+Estado & Tráfico &
+Estado & Tráfico &
+Estado & Tráfico &
+Estado & Tráfico 
+\\
+\hline
+
+Inicial &
+I & -- & I & -- & I & --& I & --\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+&&&&&&&\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+&&&&&&&\\
+\hline
+
+P2: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+&&&&&&&\\
+\hline
+
+P3: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+&&&&&&&\\
+\hline
+
+P3: \asminst{sw} \asmreg{ t2}, \asmlabel{ x} &
+&&&&&&&\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+&&&&&&&\\
+\hline
+
+P4: \asminst{sw} \asmreg{ t1}, \asmlabel{ x} &
+&&&&&&&\\
+\hline
+
+P4: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+&&&&&&&\\
+\hline
+
+\end{tabular}
+
+Así mismo, complete la siguiente tabla en la que se deben especificar el estado en el directorio 
+(U $\rightarrow$ No Cacheado, S $\rightarrow$ Compartido, E $\rightarrow$ Exclusivo), 
+así como la lista de nodos en el directorio y la acciones del directorio.
+
+\begin{tabular}{|l|c|l|l|}
+\hline
+Instrucción & Estado directorio & Lista directorio & Acción directorio
+\\
+\hline
+
+Inicial &
+U & {} & --
+\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+&&\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+&&\\
+\hline
+
+P2: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+&&\\
+\hline
+
+P3: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+&&\\
+\hline
+
+P3: \asminst{sw} \asmreg{ t2}, \asmlabel{ x} &
+&&\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+&&\\
+\hline
+
+P4: \asminst{sw} \asmreg{ t1}, \asmlabel{ x} &
+&&\\
+\hline
+
+P4: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+&&\\
+\hline
+
+\end{tabular}
+
+\begin{acsolution}\end{acsolution}
+
+\paragraph{Apartado 1}
+
+Cada línea de caché contiene una máquina de estados MSI independiente con tres
+posibles estados (modificado, compartido o inválido). El tamaño de la caché
+local de cada procesador es 64 KiB y el tamaño de bloque es 64 B por lo que hay
+1024 líneas en una caché. Como hay cuatro procesadores el número total de
+máquinas de estado es 4 $\times$ 1024 = 4096.
+
+\paragraph{Apartado 2}
+
+Cada nodo tiene 64 GiB de RAM, pero puede acceder a la memoria del resto de nodos. Por tanto el procesador
+número dos puede acceder a 4 * 64 GiB = 256 GiB de memoria.
+
+\paragraph{Apartado 3}
+A continuación se muestran las tablas resultado:
+
+\begin{tabular}{|>{\footnotesize}l|*{8}{>{\footnotesize}c|}}
+
+\hline
+& \multicolumn{2}{c}{P1}
+& \multicolumn{2}{c}{P2}
+& \multicolumn{2}{c}{P3}
+& \multicolumn{2}{c|}{P4}
+\\
+\hline
+Instrucción &
+Estado & Tráfico &
+Estado & Tráfico &
+Estado & Tráfico &
+Estado & Tráfico 
+\\
+\hline
+
+Inicial &
+I & -- & I & -- & I & --& I & --\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+S & Fallo lect. & I & -- & I & -- & I & -- \\
+\hline
+
+P1: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+S & -- & I & -- & I & -- & I & --\\
+\hline
+
+P2: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+S & -- & S & Fallo lect. & I & -- & I & -- \\
+\hline
+
+P3: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+S & -- & S & -- & S & Fallo lect. & I & -- \\
+\hline
+
+P3: \asminst{sw} \asmreg{ t2}, \asmlabel{ x} &
+I & -- & I & -- & M & Invalid. & I & -- \\
+\hline
+
+P1: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+S & Fallo lect. & I & -- & I & Post-escr. & I & -- \\
+\hline
+
+P4: \asminst{sw} \asmreg{ t1}, \asmlabel{ x} &
+I & -- & I & -- & I & -- & M & Fallo escr.\\
+\hline
+
+P4: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+I & -- & I & -- & I & -- & M & --\\
+\hline
+
+\end{tabular}
+
+\vspace{2em}
+
+\begin{tabular}{|l|c|l|l|}
+\hline
+Instrucción & Estado directorio & Lista directorio & Acción directorio
+\\
+\hline
+
+Inicial &
+U & \{\} & --
+\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+S & \{ P1 \} & Resp. dato\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+S & \{ P1 \}& --\\
+\hline
+
+P2: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+S & \{ P1, P2 \} & Resp. dato\\
+\hline
+
+P3: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+S & \{ P1, P2, P3 \} & Resp. dato\\
+\hline
+
+P3: \asminst{sw} \asmreg{ t2}, \asmlabel{ x} &
+E & \{ P3 \} & Invalidar. Resp. dato\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+S & \{ P1, P3 \} & Captar. Resp. dato\\
+\hline
+
+P4: \asminst{sw} \asmreg{ t1}, \asmlabel{ x} &
+E & \{ P4 \} & Invalidar. Resp. dato\\
+\hline
+
+P4: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+E & \{ P4 \} & -- \\
+\hline
+
+\end{tabular}
