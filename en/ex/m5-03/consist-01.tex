@@ -1,0 +1,144 @@
+\begin{acexercise}\end{acexercise}
+
+The following code is executed on a machine with 3 processors. The variables that used are located in shared memory and initialized to 
+\cppid{0}.
+
+Processor 1 executes:
+\begin{lstlisting}
+X=1;
+\end{lstlisting}
+
+Processor 2 executes:
+\begin{lstlisting}
+Print(X);
+Print(Y);
+\end{lstlisting}
+
+Processor 3 executes:
+\begin{lstlisting}
+X=1;
+Print(X);
+\end{lstlisting}
+
+Assume that all the variables are atomics. Answer the following questions: 
+
+
+\begin{itemize}
+  \item Analyze the following outputs
+    \begin{itemize}
+      \item Is it possible to produce this output?
+      \item If so, provide an execution order that produces this output. 
+    \end{itemize}
+\end{itemize}
+
+\bigskip
+\begin{tabular}{|l|l|l|}
+\hline
+\cppid{Print(X)} [P2] & \cppid{Print(Y)} & \cppid{Print(X)} [P3]\\
+\hline
+0 & 0 & 0\\\hline
+0 & 0 & 1\\\hline
+0 & 1 & 0\\\hline
+0 & 1 & 1\\\hline
+1 & 0 & 0\\\hline
+1 & 0 & 1\\\hline
+1 & 1 & 0\\\hline
+1 & 1 & 1\\\hline
+\end{tabular}
+\bigskip
+
+
+\begin{itemize}
+  \item Show a global execution order that is not possible under sequential consistency, but that is possible under a relaxed consistency model. 
+\end{itemize}
+
+\begin{acsolution}\end{acsolution}
+
+The solution to this exercise consists of drawing a dependence graph with the program order
+ and for each case analyse the order relationships.
+
+
+Case 0,0,0:
+
+\begin{lstlisting}
+Print X(2)
+Print Y
+Y=1
+Print X(3)
+X=1
+\end{lstlisting}
+
+Case 0,0,1
+
+\begin{lstlisting}
+Print X(2)
+Print Y
+Y=1
+X=1
+Print X(3)
+\end{lstlisting}
+
+Case 0,1,0
+
+\begin{lstlisting}
+Print X(2)
+Y=1
+Print Y
+Print X(3)
+X=1
+\end{lstlisting}
+
+Case 0,1,1
+
+\begin{lstlisting}
+Print X(2)
+Y=1
+Print Y
+X=1
+Print X(3)
+\end{lstlisting}
+
+Case 1,0,0: {\color{red}not possible}
+
+Case 1,0,1:
+
+\begin{lstlisting}
+X=1
+Print X(2)
+Print Y
+Y=1
+Print X(3)
+\end{lstlisting}
+
+Case 1,1,0
+
+\begin{lstlisting}
+Y=1
+Print X(3)
+X=1
+Print X(2)
+Print Y
+\end{lstlisting}
+
+Case 1,1,1
+
+\begin{lstlisting}
+X=1
+Y=1
+Print X(2)
+Print Y
+Print X(3)
+\end{lstlisting}
+
+Therefore, the only option that does not occur with sequential consistency is the 1.0.0 combination.
+
+However, with a relaxed consistency by eliminating the program order requirement, we could have:
+
+
+\begin{lstlisting}
+Print Y
+Y=1
+Print X(2)
+Print X(3)
+X=1
+\end{lstlisting}

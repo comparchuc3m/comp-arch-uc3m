@@ -1,0 +1,29 @@
+\begin{acexercise}\end{acexercise}
+
+Sea un procesador con arquitectura \textbf{Intel P6 o posterior}, en el que se
+tienen dos variables (\cppid{z} y \cppid{t}) que inicialmente tienen el valor
+\cppid{42}. En dicho procesador dos hilos ejecutan concurrentemente.
+
+El hilo 1 ejecuta:
+\begin{lstlisting}[language={[x86masm]Assembler},basicstyle=\normalsize]
+mov [_z], 1
+mov r1, [_z]
+mov r2, [_t]
+\end{lstlisting}
+
+El hilo 2 ejecuta:
+\begin{lstlisting}[language={[x86masm]Assembler},basicstyle=\normalsize]
+mov [_t], 1
+mov r3, [_t]
+mov r4, [_z]
+\end{lstlisting}
+
+¿Es posible que al final de la ejecución del hilo 2 los registros \asmreg{r2} y \asmreg{r4}
+tengan ambos el valor de \asmlabel{42}? Justifique su respuesta.
+
+\begin{acsolution}\end{acsolution}
+
+Si es posible porque las escrituras \textbf{pueden percibirse en distinto orden
+por cada procesador}. De esta manera en el hilo 1, puede tenerse \cppid{r1=1} y
+\cppid{r2=42}, mientras que en el hilo 2, puede tenerse \cppid{r3=1} y
+\cppid{r4=42}.

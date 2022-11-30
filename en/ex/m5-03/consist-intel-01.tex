@@ -1,0 +1,30 @@
+\begin{acexercise}\end{acexercise}
+
+Given a processor with architecture \textbf{Intel P6 or later}, in which
+there are two variables (\cppid{z} and \cppid{t}) that initially have the value
+\cppid{42}. Two threads run concurrently.
+
+
+Thread 1 executes:
+\begin{lstlisting}[language={[x86masm]Assembler},basicstyle=\normalsize]
+mov [_z], 1
+mov r1, [_z]
+mov r2, [_t]
+\end{lstlisting}
+
+Thread 2 executes:
+\begin{lstlisting}[language={[x86masm]Assembler},basicstyle=\normalsize]
+mov [_t], 1
+mov r3, [_t]
+mov r4, [_z]
+\end{lstlisting}
+
+Is it possible that at the end of execution of thread 2 the records \asmreg{r2} and \asmreg{r4}
+have both the value of \asmlabel{42}? Justify your answer.
+
+\begin{acsolution}\end{acsolution}
+
+It is possible because writes \textbf{can be perceived in a different order
+for each processor}. In this way, in thread 1, you can have \cppid{r1=1} and
+\cppid{r2=42}, while in thread 2, you can have \cppid{r3=1} and
+\cppid{r4=42}.

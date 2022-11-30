@@ -1,0 +1,147 @@
+\begin{acexercise}\end{acexercise}
+
+
+El siguiente programa se ejecuta sobre una máquina que dispone de 3
+procesadores. Sus variables se encuentran en memoria compartida e iniciadas a
+\cppid{0}.
+
+El procesador 1 ejecuta:
+\begin{lstlisting}
+X=1;
+\end{lstlisting}
+
+El procesador 2 ejecuta:
+\begin{lstlisting}
+Print(X);
+Print(Y);
+\end{lstlisting}
+
+El procesador 3 ejecuta:
+\begin{lstlisting}
+X=1;
+Print(X);
+\end{lstlisting}
+
+Asumiendo que todos los accesos a las variables se ejecutan de forma atómica,
+conteste a las siguientes preguntas:
+
+\begin{itemize}
+  \item Para cada uno de los siguientes resultados indique:
+    \begin{itemize}
+      \item ¿Es posible que se obtenga el resultado?
+      \item Si el resultado es posible ofrezca un orden total de las instrucciones que produzcan el resultado.
+    \end{itemize}
+\end{itemize}
+
+\bigskip
+\begin{tabular}{|l|l|l|}
+\hline
+\cppid{Print(X)} [P2] & \cppid{Print(Y)} & \cppid{Print(X)} [P3]\\
+\hline
+0 & 0 & 0\\\hline
+0 & 0 & 1\\\hline
+0 & 1 & 0\\\hline
+0 & 1 & 1\\\hline
+1 & 0 & 0\\\hline
+1 & 0 & 1\\\hline
+1 & 1 & 0\\\hline
+1 & 1 & 1\\\hline
+\end{tabular}
+\bigskip
+
+
+\begin{itemize}
+  \item Indique un orden global de instrucciones (y su correspondiente resultado) 
+        que sea imposible bajo consistencia secuencial, pero posible bajo otros 
+        modelos más relajados.
+\end{itemize}
+
+\begin{acsolution}\end{acsolution}
+
+
+La solución a este ejercicio pasa por dibujar un grafo de dependencia en orden
+de programa y para cada caso añadir las relaciones de orden adicionales.
+
+Caso 0,0,0:
+
+\begin{lstlisting}
+Print X(2)
+Print Y
+Y=1
+Print X(3)
+X=1
+\end{lstlisting}
+
+Caso 0,0,1
+
+\begin{lstlisting}
+Print X(2)
+Print Y
+Y=1
+X=1
+Print X(3)
+\end{lstlisting}
+
+Caso 0,1,0
+
+\begin{lstlisting}
+Print X(2)
+Y=1
+Print Y
+Print X(3)
+X=1
+\end{lstlisting}
+
+Caso 0,1,1
+
+\begin{lstlisting}
+Print X(2)
+Y=1
+Print Y
+X=1
+Print X(3)
+\end{lstlisting}
+
+Caso 1,0,0: {\color{red}No es posible}
+
+Caso 1,0,1:
+
+\begin{lstlisting}
+X=1
+Print X(2)
+Print Y
+Y=1
+Print X(3)
+\end{lstlisting}
+
+Caso 1,1,0
+
+\begin{lstlisting}
+Y=1
+Print X(3)
+X=1
+Print X(2)
+Print Y
+\end{lstlisting}
+
+Caso 1,1,1
+
+\begin{lstlisting}
+X=1
+Y=1
+Print X(2)
+Print Y
+Print X(3)
+\end{lstlisting}
+
+Por tanto la única opción que no se produce con consistencia secuencial es la combinación 1,0,0.
+
+Sin embargo con consistencia relajada al eliminarse el requisito de orden de programa, se tiene:
+
+\begin{lstlisting}
+Print Y
+Y=1
+Print X(2)
+Print X(3)
+X=1
+\end{lstlisting}
