@@ -6,3 +6,5 @@ include $(ES_EX_M4_01_DIR)/Makefile.mk
 include $(ES_EX_M4_02_DIR)/Makefile.mk
 include $(ES_EX_M5_01_DIR)/Makefile.mk
 include $(ES_EX_M5_02_DIR)/Makefile.mk
+include $(ES_EX_M5_03_DIR)/Makefile.mk
+include $(ES_EX_M5_04_DIR)/Makefile.mk

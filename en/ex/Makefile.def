@@ -9,3 +9,5 @@ include $(EN_EX_DIR)/m4-01/Makefile.def
 include $(EN_EX_DIR)/m4-02/Makefile.def
 include $(EN_EX_DIR)/m5-01/Makefile.def
 include $(EN_EX_DIR)/m5-02/Makefile.def
+include $(EN_EX_DIR)/m5-03/Makefile.def
+include $(EN_EX_DIR)/m5-04/Makefile.def
