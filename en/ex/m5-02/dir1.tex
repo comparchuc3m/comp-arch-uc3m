@@ -1,0 +1,251 @@
+\begin{acexercise}\end{acexercise}
+A shared memory machine has four NUMA nodes with the following characteristics:
+
+\begin{itemize}
+  \item Each node has a single processor.
+  \item The processor has a single cache level with 64 KiB which is 8 ways set-associative with a line size of 64 bytes.
+  \item Main memory for each node is 64 GiB.
+  \item The directory is distributed accross nodes.
+\end{itemize}
+
+Answer the following questions:
+
+\begin{enumerate}
+
+  \item How many MSI state machines are there in this machine?
+
+  \item What is the memory space that can be addressed from node 2?
+
+  \item Complete the following tables, for the cache entry where variable x resides.
+        You shall specify the states in nodes caches.
+        (M $\rightarrow$ Modified, S $\rightarrow$ Shared, I $\rightarrow$ Invalid), 
+        as well as the network traffic for eache node.
+        Column \emph{Instruction} specifies the node executing the instruction
+        (P1: \asminst{lw}\asmreg{ t1},\asmlabel{ x} means executiong
+        \asminst{lw}\asmreg{ t1},\asmlabel{ x} in node P1).
+
+\end{enumerate}
+
+\begin{tabular}{|>{\footnotesize}l|*{8}{>{\footnotesize}c|}}
+
+\hline
+& \multicolumn{2}{c}{P1}
+& \multicolumn{2}{c}{P2}
+& \multicolumn{2}{c}{P3}
+& \multicolumn{2}{c|}{P4}
+\\
+\hline
+Instruction &
+State & Traffic &
+State & Traffic &
+State & Traffic &
+State & Traffic 
+\\
+\hline
+
+Initial &
+I & -- & I & -- & I & --& I & --\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+&&&&&&&\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+&&&&&&&\\
+\hline
+
+P2: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+&&&&&&&\\
+\hline
+
+P3: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+&&&&&&&\\
+\hline
+
+P3: \asminst{sw} \asmreg{ t2}, \asmlabel{ x} &
+&&&&&&&\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+&&&&&&&\\
+\hline
+
+P4: \asminst{sw} \asmreg{ t1}, \asmlabel{ x} &
+&&&&&&&\\
+\hline
+
+P4: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+&&&&&&&\\
+\hline
+
+\end{tabular}
+
+Así mismo, complete la siguiente tabla en la que se deben especificar el estado en el directorio 
+(U $\rightarrow$ No Cacheado, S $\rightarrow$ Compartido, E $\rightarrow$ Exclusivo), 
+así como la lista de nodos en el directorio y la acciones del directorio.
+
+\begin{tabular}{|l|c|l|l|}
+\hline
+Instruction & Directory state & Directory List & Directory Action
+\\
+\hline
+
+Initial &
+U & {} & --
+\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+&&\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+&&\\
+\hline
+
+P2: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+&&\\
+\hline
+
+P3: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+&&\\
+\hline
+
+P3: \asminst{sw} \asmreg{ t2}, \asmlabel{ x} &
+&&\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+&&\\
+\hline
+
+P4: \asminst{sw} \asmreg{ t1}, \asmlabel{ x} &
+&&\\
+\hline
+
+P4: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+&&\\
+\hline
+
+\end{tabular}
+
+\begin{acsolution}\end{acsolution}
+
+\paragraph{Section 1}
+
+Each cache line contains an independent MSI state machine with three possible states
+(modified, shared, invalid). 
+Local cache size in each node is 64 KiB with a block size of 64 B.
+Consequently, there are 1024 lines in each cache. 
+With foru processors, the total number of state machines is 4 $\times$ 1024 = 4096.
+
+\paragraph{Section 2}
+
+Each node has 64 GiB of main memory, but can access to the main memory of every other node.
+Thus, processor number 2 can access to 4 $\times$ 64 GiB = 256 GiB.
+
+\paragraph{Section 3}
+Tables are shown below.
+
+\begin{tabular}{|>{\footnotesize}l|*{8}{>{\footnotesize}c|}}
+
+\hline
+& \multicolumn{2}{c}{P1}
+& \multicolumn{2}{c}{P2}
+& \multicolumn{2}{c}{P3}
+& \multicolumn{2}{c|}{P4}
+\\
+\hline
+Instruction &
+State & Traffic &
+State & Traffic &
+State & Traffic &
+State & Traffic 
+\\
+\hline
+
+Initial &
+I & -- & I & -- & I & --& I & --\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+S & Read miss & I & -- & I & -- & I & -- \\
+\hline
+
+P1: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+S & -- & I & -- & I & -- & I & --\\
+\hline
+
+P2: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+S & -- & S & Read miss & I & -- & I & -- \\
+\hline
+
+P3: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+S & -- & S & -- & S & Read miss & I & -- \\
+\hline
+
+P3: \asminst{sw} \asmreg{ t2}, \asmlabel{ x} &
+I & -- & I & -- & M & Invalid. & I & -- \\
+\hline
+
+P1: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+S & Read miss & I & -- & I & Write-back. & I & -- \\
+\hline
+
+P4: \asminst{sw} \asmreg{ t1}, \asmlabel{ x} &
+I & -- & I & -- & I & -- & M & Write miss\\
+\hline
+
+P4: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+I & -- & I & -- & I & -- & M & --\\
+\hline
+
+\end{tabular}
+
+\vspace{2em}
+
+\begin{tabular}{|l|c|l|l|}
+\hline
+Instruction & Directory state & Directory List & Directory Action
+\\
+\hline
+
+Initial &
+U & \{\} & --
+\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+S & \{ P1 \} & Data response\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+S & \{ P1 \}& --\\
+\hline
+
+P2: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+S & \{ P1, P2 \} & Data response\\
+\hline
+
+P3: \asminst{lw} \asmreg{ t2}, \asmlabel{ x} &
+S & \{ P1, P2, P3 \} & Data response\\
+\hline
+
+P3: \asminst{sw} \asmreg{ t2}, \asmlabel{ x} &
+E & \{ P3 \} & Invalidate. Data response\\
+\hline
+
+P1: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+S & \{ P1, P3 \} & Fetch. Data response\\
+\hline
+
+P4: \asminst{sw} \asmreg{ t1}, \asmlabel{ x} &
+E & \{ P4 \} & Invalidate. Data response\\
+\hline
+
+P4: \asminst{lw} \asmreg{ t1}, \asmlabel{ x} &
+E & \{ P4 \} & -- \\
+\hline
+
+\end{tabular}
