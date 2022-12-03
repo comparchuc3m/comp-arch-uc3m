@@ -1,6 +1,5 @@
 \begin{acexercise}\end{acexercise}
 
-
 El siguiente programa se ejecuta sobre una máquina que dispone de 3
 procesadores. Sus variables se encuentran en memoria compartida e iniciadas a
 \cppid{0}.
@@ -18,7 +17,7 @@ Print(Y);
 
 El procesador 3 ejecuta:
 \begin{lstlisting}
-X=1;
+Y=1;
 Print(X);
 \end{lstlisting}
 
@@ -34,9 +33,9 @@ conteste a las siguientes preguntas:
 \end{itemize}
 
 \bigskip
-\begin{tabular}{|l|l|l|}
+\begin{tabular}{|c|c|c|}
 \hline
-\cppid{Print(X)} [P2] & \cppid{Print(Y)} & \cppid{Print(X)} [P3]\\
+\cppid{P2: Print(X)} & \cppid{P2: Print(Y)} & \cppid{P3: Print(X)}\\
 \hline
 0 & 0 & 0\\\hline
 0 & 0 & 1\\\hline
@@ -65,41 +64,41 @@ de programa y para cada caso añadir las relaciones de orden adicionales.
 Caso 0,0,0:
 
 \begin{lstlisting}
-Print X(2)
-Print Y
-Y=1
-Print X(3)
-X=1
+P2: Print(X)
+P2: Print(Y)
+P3: Y=1
+P3: Print(X)
+P1: X=1
 \end{lstlisting}
 
 Caso 0,0,1
 
 \begin{lstlisting}
-Print X(2)
-Print Y
-Y=1
-X=1
-Print X(3)
+P2: Print(X)
+P2: Print(Y)
+P3: Y=1
+P1: X=1
+P3: Print(X)
 \end{lstlisting}
 
 Caso 0,1,0
 
 \begin{lstlisting}
-Print X(2)
-Y=1
-Print Y
-Print X(3)
-X=1
+P2: Print(X)
+P3: Y=1
+P2: Print(Y)
+P3: Print(X)
+P1: X=1
 \end{lstlisting}
 
 Caso 0,1,1
 
 \begin{lstlisting}
-Print X(2)
-Y=1
-Print Y
-X=1
-Print X(3)
+P2: Print(X)
+P3: Y=1
+P2: Print(Y)
+P1: X=1
+P3: Print(X)
 \end{lstlisting}
 
 Caso 1,0,0: {\color{red}No es posible}
@@ -107,31 +106,31 @@ Caso 1,0,0: {\color{red}No es posible}
 Caso 1,0,1:
 
 \begin{lstlisting}
-X=1
-Print X(2)
-Print Y
-Y=1
-Print X(3)
+P1: X=1
+P2: Print(X)
+P2: Print(Y)
+P3: Y=1
+P3: Print(X)
 \end{lstlisting}
 
 Caso 1,1,0
 
 \begin{lstlisting}
-Y=1
-Print X(3)
-X=1
-Print X(2)
-Print Y
+P3: Y=1
+P3: Print(X)
+P1: X=1
+P2: Print(X)
+P2: Print(Y)
 \end{lstlisting}
 
 Caso 1,1,1
 
 \begin{lstlisting}
-X=1
-Y=1
-Print X(2)
-Print Y
-Print X(3)
+P1: X=1
+P3: Y=1
+P2: Print(X)
+P2: Print(Y)
+P3: Print(X)
 \end{lstlisting}
 
 Por tanto la única opción que no se produce con consistencia secuencial es la combinación 1,0,0.
@@ -139,9 +138,9 @@ Por tanto la única opción que no se produce con consistencia secuencial es la 
 Sin embargo con consistencia relajada al eliminarse el requisito de orden de programa, se tiene:
 
 \begin{lstlisting}
-Print Y
-Y=1
-Print X(2)
-Print X(3)
-X=1
+P2: Print(Y)
+P3: Y=1
+P2: Print(X)
+P3: Print(X)
+P1: X=1
 \end{lstlisting}
