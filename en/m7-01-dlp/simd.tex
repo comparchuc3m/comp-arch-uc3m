@@ -1,0 +1,144 @@
+\section{SIMD extensions for multimedia}
+
+\begin{frame}[t]{SIMD in scalar processors}
+\begin{itemize}
+  \item Narrow operations in 32-bit processors:
+    \begin{itemize}
+      \item 8-bit colors in images.
+      \item Audio samples of 8 bits or 16 bits.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Use 256-bit arithmetic unit and partition carry.
+    \begin{itemize}
+      \item 32 8-bit operands.
+      \item 16 16-bit operands.
+      \item 8 32-bit operands.
+      \item 4 64-bit operands.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item SIMD instructions operate on a small vector of data.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{SIMD extensions versus vector processors}
+\begin{itemize}
+
+  \mode<presentation>{\pause}
+  \item No vector length register.
+    \begin{itemize}
+      \item Different versions of instructions for each lenght.
+      \item Fewer opcodes.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item No strided or gather/scatter data transfers.
+    \begin{itemize}
+      \item Limits programs that can be vectorized.
+      \item Being added recently.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item No mask registers.
+    \begin{itemize}
+      \item Limits support of conditional execution.
+      \item Being added recently.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Harder to generate SIMD code.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{SIMD extensions in x86}
+\begin{itemize}
+  \item MMX (MultiMedia eXtensions) -- 1996.
+    \begin{itemize}
+      \item 64-bit floating point $\rightarrow$ 8 8-bit or 4 16-bit operations.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item SSE (Streaming SIMD Extensions) -- 1999.
+    \begin{itemize}
+      \item 16 128-bit registers $\rightarrow$ XMM registers.
+      \item 16 8-bit operations, 8 16-bit operations, or 4 32-bit operations.
+      \item Parallel single precission floating point.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item SSE2 (2001), SSE3 (2004), SSE4 (2007).
+    \begin{itemize}
+      \item More floating point operations.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{AVX}
+\begin{itemize}
+  \item AVX (Advanced Vector eXtensions) -- 2010.
+    \begin{itemize}
+      \item Doubles vector length.
+      \item 256-bit registers $\rightarrow$ YMM registers.
+      \item 4 double precission floating point computations.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item AVX2 -- 2013
+    \begin{itemize}
+      \item Adds gather instruction (\asminst{VGATHER}).
+      \item Vector shift instructions (\asminst{VPSLL}, \asminst{VPSRL}, \asminst{VPSRA}).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item AVX512 -- 2017.
+    \begin{itemize}
+      \item Doubles vector length.
+      \item 512-bit registers $\rightarrow$ ZMM registers.
+      \item 8 double precission floating point computations.
+      \item 250 new instructions (\asminst{VPSCATTER}, \asminst{OPMASK}).
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{SIMD extension Evolution}
+\begin{itemize}
+  \item Incremental approach over time.
+    \begin{itemize}
+      \item Focused on allowing to write libraries.
+      \item But compilers are improving autovectorization (limited improvement).
+      \item Opcodes depend on vector lenght $\Rightarrow$ Doubling opcodes with new length.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Why are SIMD extensions more popular than vector architectures?
+    \begin{enumerate}
+      \item Low cost to add to a standard arithmetic unit.
+      \item Small extra processor state $\rightarrow$ Simpler context switches.
+      \item Lower memory bandwith needed.
+      \item Fixed small length $\rightarrow$ Simpler interactions with virtual memory.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Activity}
+\begin{enumerate}
+  \item \textemph{Read} \textmark{section 4.3} --
+        \emph{SIMD Instruction Set Extensions for Multimedia}.
+    \begin{itemize}
+      \item \textbad{Only} \textmark{The Roofline Visual Performance Model}
+            (pages 307--310).
+      \item \credithennessy
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Key aspects}:
+    \begin{itemize}
+      \item How do we measure arithmetic intesity?
+      \item How do we measure peak floating-point performance?
+      \item What is the performance upper bound for low arithmetic intensity?
+      \item What is the performance upper bound for high arithmetic intensity?
+    \end{itemize}
+\end{enumerate}
+\end{frame}
