@@ -1,0 +1,207 @@
+\section{General Purpose GPU}
+
+\begin{frame}[t]{GPU as an accelerator}
+\begin{itemize}
+  \item GPU (Graphics Processing Unit).
+    \begin{itemize}
+      \item Designed to manipulate memory in order to accelerate
+            creation of images.
+      \item Increased capacities over time.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item GPGPU (General Purpose computing on GPU).
+    \begin{itemize}
+      \item Take advantage of GPU computing capacities.
+      \item Use one (or more) GPU as a co-processor.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Programming models:
+    \begin{itemize}
+      \item OpenACC/OpenMP.
+      \item OpenCL.
+      \item SYCL.
+      \item CUDA.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{CUDA - Compute Unified Device Architecture}
+\begin{itemize}
+  \item GPGPU challenges:
+    \begin{itemize}
+      \item Coordinate computations in CPU and GPU.
+      \item Data transfer from main memory to GPU memory.
+      \item Data transfer from GPU memory to GPU memory.
+      \item Multiple level of parallelism: multithreading, MIMD, SIMD, ILP.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item CUDA-Thread:
+    \begin{itemize}
+      \item Basic building block.
+      \item Thousands of CUDA-Threads can be launched.
+      \item SIMT Programming model $\rightarrow$ Single Instruction Multiple Threads.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item CUDA-Thread Block:
+    \begin{itemize}
+      \item A group of threads executed simultaneously.
+      \item Executed in a multithreaded SIMD Processor.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{CUDA Programming}
+\begin{itemize}
+  \item Distinguish \textgood{device} versus \textgood{host} functions:
+    \begin{itemize}
+      \item \cppkey{\_\_device\_\_}, \cppkey{\_\_host\_\_}, \cppkey{\_\_global\_\_}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \cppkey{\_\_device\_\_} variables allocated to GPU memory.
+
+  \mode<presentation>{\vfill\pause}
+  \item New function call syntax: \cppid{func<{}<{}<dimGrid,dimBlock>{}>{}>(params)}.
+    \begin{itemize}
+      \item \cppid{dimGrid}: Dimension in CUDA-Thread Blocks.
+      \item \cppid{dimBlock}: Dimension in CUDA-Threads.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Predefined identifiers:
+    \begin{itemize}
+      \item \cppid{blockIdx}: Block identifier.
+      \item \cppid{threadIdx}: Thread identifier.
+      \item \cppid{blockDim}: Number of threads per block.
+    \end{itemize}
+  
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Computing DAXPY}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{DAXPY -- C version}
+\begin{lstlisting}
+void daxpy(int n, double a, double * x, double * y) {
+  for (int i=0; i<n; ++i) {
+    y[i] = a * x[i] + y[i];
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{DAXPY -- CUDA version}
+\begin{lstlisting}[morekeywords=__global__]
+__global__
+void daxpy(int n, double a, double * x, double * y) {
+  int i = blockIdx.x * blockDim.x + threadIdx.x;
+  if (i<n) { y[i] = a * x[i] + y[i]; }
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{DAXPY Invocation -- C version}
+\begin{lstlisting}
+daxpy(n, 2.0, vx, vy);
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{DAXPY Invocation -- CUDA version}
+\begin{lstlisting}[morekeywords=__global__]
+__host__ int nblocks = (n + 255) / 256;
+daxpy<<<nblocks,256>>>(n, 2.0, vx, vy);
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t]{Program abstractions}
+\begin{itemize}
+  \item \textgood{Grid} (\textmark{Vectorizable loop}).
+    \begin{itemize}
+      \item Code working an all elements.
+      \item Grid consists of several \textgood{Thread Blocks}.
+      \item \textmark{Example}: A grid of 16 Thread blocks.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Thread Block} (\textmark{Body of vectorizable loop}).
+    \begin{itemize}
+      \item Executed in a \textgood{Multithreaded SIMD Processor}.
+      \item The \textmark{Thread Block Scheduler} allocates blocks to processors.
+      \item \textmark{Example}: 16 blocks of 16 threads.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Thread} (\textmark{SIMD Lane Operations}).
+    \begin{itemize}
+      \item A sequence of SIMD instructions.
+      \item \textmark{Example}: 16 threads width 32 SIMD width.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Registers}
+\begin{itemize}
+  \item Each SIMD Processor has registers (32,768 -- 65,536 32-bit in Pascal).
+    \begin{itemize}
+      \item Divided logically across vector lanes.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Each SIMD Thread limited to 256 registers.
+    \begin{itemize}
+      \item Equivalent to 256 vector registers of 32 elements of single precision.
+      \item Equivalent to 128 registers of 32 elements of double precision.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Need to balance:
+    \begin{itemize}
+      \item Fewer registers per thread allows more threads.
+      \item More registers per thread allows less threads.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Memory}
+\begin{itemize}
+  \item \textgood{Private memory}:
+    \begin{itemize}
+      \item Used for stack frame, register management, and private variables.
+      \item SIMD Lanes do not share private memory.
+      \item Cached in L1 and L2 caches.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Local memory}:
+    \begin{itemize}
+      \item Scratchpad memory with low latency and highbandwidth.
+      \item Small size (typically 48 KiB).
+      \item Shared by SIMD Lanes in a SIMD Processor.
+      \item Shared by Threads in a Thread Block.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{GPU memory}:
+    \begin{itemize}
+      \item Shared by the whole GPU.
+      \item The system (host) processor can read and write only here.
+    \end{itemize}
+\end{itemize}
+\end{frame}
