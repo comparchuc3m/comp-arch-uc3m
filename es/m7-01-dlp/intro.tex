@@ -1,0 +1,53 @@
+\section{Introducción}
+
+\begin{frame}[t]{¿Por qué SIMD?}
+\begin{itemize}
+  \item Muchas aplicaciones exhiben un \textmark{Paralelismo a Nivel de Datos}
+        (DLP -- \emph{Data Level Parallelism}) significativo.
+    \begin{itemize}
+      \item Operaciones matriciales (álgebra lineal).
+      \item Procesamiento multimedia de imagen y sonido.
+      \item Algoritmos de aprendizaje automático.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Eficiencia energética:
+    \begin{itemize}
+      \item Una única instrucción puede lanzar múltiples operaciones de datos.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Modelo mental secuencial:
+    \begin{itemize}
+      \item Pero la aceleración se deriva de la operaciones de datos paralelas.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Variantes SIMD}
+\begin{itemize}
+  \item \textmark{Arquitecturas vectoriales}:
+    \begin{itemize}
+      \item Extiend la ejecución en \emph{pipeline} de muchas operaciones de datos.
+      \item Consideradas costosas hasta hace poco.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Extensiones SIMD a juegos de instrucciones}:
+    \begin{itemize}
+      \item Operaciones simultáneas con paralelismo de datos.
+      \item MMX $\rightarrow$ MultMedia eXtensions.
+      \item SSE $\rightarrow$ Streaming Simd Extensions.
+      \item AVX $\rightarrow$ Advanced Vector eXtensions.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{GPUs}:
+    \begin{itemize}
+      \item Uso de aceleradores gráficos como aceleradores cómputo.
+      \item Memoria de anfitrión y memoria de GPU $\rightarrow$ Necesidad de transferencias.
+      \item Computación heterogénea.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}

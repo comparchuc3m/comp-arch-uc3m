@@ -1,0 +1,150 @@
+\section{Arquitecturas vectoriales}
+
+\begin{frame}[t]{Enfoque de arquitectura vectorial}
+\begin{itemize}
+  \item Realizan cálculos sobre vectores de datos:
+    \begin{enumerate}
+      \item Lee datos de memoria y los ubican en grandes bancos de registros secuenciales.
+      \item Operan sobre datos en el banco de registros.
+      \item Almacenan datos en memoria leyéndolos del banco de registros.
+    \end{enumerate}
+
+  \mode<presentation>{\vfill\pause}
+  \item El banco de registros se comporta como un búfer controlado por el compilador.
+    \begin{itemize}
+      \item Oculta la latencia de memoria.
+      \item El acceso a memoria profundamente segmentado.
+      \item Gran latencia de memoria solamente una vez por \emph{load}/\emph{store}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Ejemplo: RV64V}
+\begin{itemize}
+  \item \textmark{Registros vectoriales}: 
+    \begin{itemize}
+      \item 32 registros vectoriales.
+      \item Cada elemento del vector de 64 bits de ancho.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Unidades funcionales vectoriales}: 
+    \begin{itemize}
+      \item Cada unidad está totalmente segmentada.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Unidad vectorial carga/almacenamiento}: 
+    \begin{itemize}
+      \item Transfiere vector de/a memoria.
+      \item Totalmente segmentada.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Registros escalares}:
+    \begin{itemize}
+      \item Entrada de datos escalar a unidades funcionales vectoriales.
+      \item Cálculo de direcciones para carga/almacenamiento vectorial.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Tipos dinámicos de registros}
+\begin{itemize}
+  \item Las instrucciones vectoriales omiten tipo de datos y tamaño.
+    \begin{itemize}
+      \item Asocia tipo de datos y tamaño con cada registro vectorial.
+      \item Instrucciones para configurar registros vectoriales.
+      \item Simplifica el número de instrucciones vectoriales.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Memoria usada por registros vectoriales activados.
+    \begin{itemize}
+      \item 4 vectores de \cppkey{doubles}:
+        \begin{itemize}
+          \item \asminst{vsetdcfg} \asmreg{4*FP64} 
+        \end{itemize}
+      \item 1 vector de \cppkey{floats} y 3 vectores de \cppkey{doubles}.
+        \begin{itemize}
+          \item \asminst{vsetdcfg} \asmreg{1*FP32,3*FP64}
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Longitud máxima de vector:
+    \begin{itemize}
+      \item Establecida por procesador y derivada del número de vectores activados.
+      \item 1024 bytes con 4 vectores de \cppkey{doubles} $\Rightarrow$ 
+            256 / 8 = 32 elementos.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Ejemplo: DAXPY}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{itemize}
+  \item Transformación lineal de un vector:
+\[
+\vec{y} = a \cdot \vec{x} + \vec{y}
+\]
+
+  \item Asume longitud de vector encaja con tamaño de array.
+    \begin{itemize}
+      \item Arrays de 32 elementos.
+    \end{itemize}
+\end{itemize}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Código escalar}
+\begin{lstlisting}[language=generalasm2]
+      fld f0, a
+      addi t2,t0,#256
+Loop: fld f1,0(t0)
+      fmul.d f1,f1,f0
+      fld f2,0(t1)
+      fadd.d f2,f2,f1
+      fsd f2,0(t1)
+      addi t0,t0,#8
+      addi t1,t1,#8
+      bne t2,t0,Loop
+\end{lstlisting}
+\end{block}
+
+\end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{DAXPY con instruccioens vectoriales}
+\begin{columns}[T]
+
+\column{.65\textwidth}
+\begin{block}{DAXPY vectorizado}
+\begin{lstlisting}[language=generalasm2]
+vsetdcfg 4*FP64  # 4 vectors double precision
+fld f0, a        # Load scalar a in f0
+vld v0, t0       # Load vector v0 from address t0
+vmul v1, v0, f0  # Multiply vector by scalar
+vld v2, t1       # Load vector v2 from address t1
+vadd v3, v1, v2  # Add vectors
+vst v3, t1       # Store vector v3 to address t1
+vdisable         # Disable vector registers
+\end{lstlisting}
+\end{block}
+
+\column{.35\textwidth}
+\begin{itemize}
+  \item Reducción den el número de instrucciones.
+    \begin{itemize}
+      \item 258 $\rightarrow$ 8.
+    \end{itemize}
+
+  \item La vectorización requiere iteraciones independientes.
+
+  \item Reducción de detenciones gracias a encadenamiento de instrucciones.
+\end{itemize}
+
+\end{columns}
+\end{frame}

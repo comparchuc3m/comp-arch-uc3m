@@ -1,0 +1,209 @@
+\section{GPU de propósito general}
+
+\begin{frame}[t]{GPU como acelerador}
+\begin{itemize}
+  \item GPU (Graphics Processing Unit).
+    \begin{itemize}
+      \item Diseñada para manipular memoria para acelerar la creación de imágenes.
+      \item Capacidades incrementadas a lo largo del tiempo.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item GPGPU (General Purpose computing on GPU).
+    \begin{itemize}
+      \item Aprovecha las capaciades de cómputo de GPU.
+      \item Uso de una (o más) GPU como co-procesador.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Modelos de programación:
+    \begin{itemize}
+      \item OpenACC/OpenMP.
+      \item OpenCL.
+      \item SYCL.
+      \item CUDA.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{CUDA - Compute Unified Device Architecture}
+\begin{itemize}
+  \item Desafíos de GPGPU:
+    \begin{itemize}
+      \item Coordinación de aálculo entre CPU y GPU.
+      \item Transferencia de datos de memoria principal a memoria de GPU.
+      \item Transferencia de datos de memoria de GPU a memoria principal.
+      \item Múltiples niveles de paralelismo: multi-hilo, MIMD, SIMD, ILP.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item CUDA-Thread:
+    \begin{itemize}
+      \item Bloque constructivo básico.
+      \item Se pueden lanzar miles de hilos-CUDA.
+      \item Modelo de programación SIMT $\rightarrow$ Single Instruction Multiple Threads.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item CUDA-Thread Block:
+    \begin{itemize}
+      \item Un grupo de hilos ejecutados simultáneamente.
+      \item Ejecutado en un procesador SIMD multi-hilo.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Programación CUDA}
+\begin{itemize}
+  \item Distingue \textgood{dispositivo} frente a funciones de \textgood{anfitrión}:
+    \begin{itemize}
+      \item \cppkey{\_\_device\_\_}, \cppkey{\_\_host\_\_}, \cppkey{\_\_global\_\_}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Variables \cppkey{\_\_device\_\_} asignadas a memoria de GPU.
+
+  \mode<presentation>{\vfill\pause}
+  \item Nueva sintaxis de llamada a función: \cppid{func<{}<{}<dimGrid,dimBlock>{}>{}>(params)}.
+    \begin{itemize}
+      \item \cppid{dimGrid}: Dimensión de Bloques de Hilos-CUDA.
+      \item \cppid{dimBlock}: Dimension de Hilos-CUDA.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Identificadores predefinidos:
+    \begin{itemize}
+      \item \cppid{blockIdx}: Identificador de bloque.
+      \item \cppid{threadIdx}: Indentificador de hilo.
+      \item \cppid{blockDim}: Número de hilos por bloque.
+    \end{itemize}
+  
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Cálculo de DAXPY}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{DAXPY -- Versión en C}
+\begin{lstlisting}
+void daxpy(int n, double a, double * x, double * y) {
+  for (int i=0; i<n; ++i) {
+    y[i] = a * x[i] + y[i];
+}
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{DAXPY -- Versión en CUDA}
+\begin{lstlisting}[morekeywords=__global__]
+__global__
+void daxpy(int n, double a, double * x, double * y) {
+  int i = blockIdx.x * blockDim.x + threadIdx.x;
+  if (i<n) { y[i] = a * x[i] + y[i]; }
+}
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\mode<presentation>{\vfill\pause}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+\begin{block}{Llamada a DAXPY -- versión en C}
+\begin{lstlisting}
+daxpy(n, 2.0, vx, vy);
+\end{lstlisting}
+\end{block}
+
+\pause
+\column{.5\textwidth}
+\begin{block}{Llamada a DAXPY -- versión en CUDA}
+\begin{lstlisting}[morekeywords=__global__]
+__host__ int nblocks = (n + 255) / 256;
+daxpy<<<nblocks,256>>>(n, 2.0, vx, vy);
+\end{lstlisting}
+\end{block}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[t]{Abstracciones de programación}
+\begin{itemize}
+  \item \textgood{Grid} (\textmark{Bucle vectorizable}).
+    \begin{itemize}
+      \item Código trabaja sobre todos los elementos.
+      \item Grid formado por varios \textgood{Bloques de hilo}.
+      \item \textmark{Ejemplo}: Un grid de 16 bloques de hilos.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Bloque de hilos} (\textmark{Cuerpo de bucle vectorizable}).
+    \begin{itemize}
+      \item Ejecutado en un \textgood{Procesador SIMD multi-hilo}.
+      \item El \textmark{Planificador de bloques de hilos} 
+            asigna bloques a procesadores.
+      \item \textmark{Example}: 16 bloques de 16 hilos.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Hilo} (\textmark{Operaciones de vía SIMD}).
+    \begin{itemize}
+      \item Una secuencia de instrucciones SIMD.
+      \item \textmark{Example}: Ancho de 16 hilos y ancho de 32 SIMD.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Registros}
+\begin{itemize}
+  \item Cada procesador SIMD tiene registros (32,768 -- 65,536 32-bit en Pascal).
+    \begin{itemize}
+      \item Dividido logicamente en vías de vector.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Cada hilo SIMD limitado a 256 registros.
+    \begin{itemize}
+      \item Equivalente a 256 registros vectoriales de 32 elementos en simple precisión.
+      \item Equivalente a 128 registros de 32 elementos de doble precisión.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Necesidad de equilibrio:
+  \item Need to balance:
+    \begin{itemize}
+      \item Menos registros por hilo permiten más hilos.
+      \item Más registros por hilo permite menos hilos.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Memoria}
+\begin{itemize}
+  \item \textgood{Memoria privada}:
+    \begin{itemize}
+      \item Usada para marcos de pila, gestión de registros, y variables privadas.
+      \item Vías SIMD no comparten memoria privada.
+      \item Almacenada en cachés L1 y L2.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Memoria local}:
+    \begin{itemize}
+      \item Memoria local con baja latencia y alto ancho de banda.
+      \item Tamaño pequeño (típicamente 48 KiB).
+      \item Compartida por vías SIMD y procesador SIMD.
+      \item Compartida por los hilos en un bloque de hilos.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Memoria GPU}:
+    \begin{itemize}
+      \item Compartida por toda la GPU.
+      \item El procesador del sistema (anfitrión) puede leer y escribir solamente
+            en esta memoria.
+    \end{itemize}
+\end{itemize}
+\end{frame}

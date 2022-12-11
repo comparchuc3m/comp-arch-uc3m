@@ -1,0 +1,148 @@
+\section{Extensiones SIMD para multimedia}
+
+\begin{frame}[t]{SIMD en procesadores escalares}
+\begin{itemize}
+  \item Operaciones estrechas en procesadores de 32 bits:
+    \begin{itemize}
+      \item Colores de 8-bits en imágenes.
+      \item Muestras de audio de 8 o 16 bits.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Uso de unidad aritmética de 256 bits y partición de acarreo.
+    \begin{itemize}
+      \item 32 operandos de 8-bit.
+      \item 16 operandos de 16-bit.
+      \item 8 operandos de 32-bit.
+      \item 4 operandos de 64-bit.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Instrucciones SIMD operan sobre pequeños vectores de datos.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Extensiones SIMD frente a procesadores vectoriales}
+\begin{itemize}
+
+  \mode<presentation>{\pause}
+  \item Sin registro de longitud de vector.
+    \begin{itemize}
+      \item Diferentes versiones de intrucciones para cada longitud.
+      \item Más códigos de operación.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Sin transferencias de datos con huecos (\emph{strided}, \emph{gather/scatter}).
+    \begin{itemize}
+      \item Limita los programas que se pueden vectorizar.
+      \item Recientemente añadidas.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Sin registros de máscaras.
+    \begin{itemize}
+      \item Limita soporte de ejecución condicional.
+      \item Recientemente añadidas.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Código SIMD difícil de generar.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Extensiones SIMD en x86}
+\begin{itemize}
+  \item MMX (MultiMedia eXtensions) -- 1996.
+    \begin{itemize}
+      \item Coma flotante de 64-bit $\rightarrow$ 
+            8 operciones de 8 bits o 4 operaciones de 16 bits.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item SSE (Streaming SIMD Extensions) -- 1999.
+    \begin{itemize}
+      \item 16 registros de 128-bit $\rightarrow$ registros XMM.
+      \item 16 operaciones de 8-bit, 8 operaciones de 16-bit, o 4 operaciones de 32-bit.
+      \item Coma flotante de simple precisión paralela.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item SSE2 (2001), SSE3 (2004), SSE4 (2007).
+    \begin{itemize}
+      \item Mas operaciones de coma flotante.
+    \end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{AVX}
+\begin{itemize}
+  \item AVX (Advanced Vector eXtensions) -- 2010.
+    \begin{itemize}
+      \item Duplica longitud de vector.
+      \item Registros de 256-bit $\rightarrow$ registros YMM.
+      \item 4 operaciones de coma flotante de doble precisión.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item AVX2 -- 2013
+    \begin{itemize}
+      \item Añade instrucción de gather (\asminst{VGATHER}).
+      \item Instrucciones de desplazamiento vectorial
+            (\asminst{VPSLL}, \asminst{VPSRL}, \asminst{VPSRA}).
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item AVX512 -- 2017.
+    \begin{itemize}
+      \item Duplica longitud de vector.
+      \item Registros de 512-bit $\rightarrow$ registros ZMM.
+      \item 8 operaciones de coma flotante de doble precisión.
+      \item 250 nuevas instrucciones (\asminst{VPSCATTER}, \asminst{OPMASK}).
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Evolución de extensiones SIMD}
+\begin{itemize}
+  \item Enfoque incremental a lo largo del tiempo.
+    \begin{itemize}
+      \item Centrado en permitir la escritura de bibliotecas.
+      \item Pero los compiladores están mejorando la autovectorización (mejora limitada).
+      \item Los códigos de operación dependen de la longitud del vector
+            $\Rightarrow$ 
+            Duplciar códigos de operación con cada nueva longitud.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item ¿Por qué son más populares la extensiones SIMD que las arquitecturas vectoriales?
+    \begin{enumerate}
+      \item Bajo coste de añadir una unidad aritmética estándar.
+      \item Pequeño estado de procesador extra $\rightarrow$ Cambios de contexto más simples.
+      \item Se necesita ancho de banda más bajo.
+      \item Longitud fija pequeña $\rightarrow$ Interacciones más simples con memoria virtual.
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Actividad}
+\begin{enumerate}
+  \item \textemph{Lee} la \textmark{sección 4.3} --
+        \emph{SIMD Instruction Set Extensions for Multimedia}.
+    \begin{itemize}
+      \item \textbad{Solamente} \textmark{The Roofline Visual Performance Model}
+            (páginas 307--310).
+      \item \credithennessy
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Aspectos clave}:
+    \begin{itemize}
+      \item ¿Cómo se mide la intensidad aritmética?
+      \item ¿Como se mide el rendimiento máximo de coma flotante?
+      \item ¿Cuál es el límite superior de rendimiento para intensidad aritmética baja?
+      \item ¿Cuál es el límite superior de rendimiento para intensidad aritmética alta?
+    \end{itemize}
+\end{enumerate}
+\end{frame}

@@ -21,6 +21,7 @@ include es/m6-01-cppintro/Makefile.def
 include es/m6-02-cppconc/Makefile.def
 include es/m6-03-omp/Makefile.def
 include es/m6-04-atomics/Makefile.def
+include es/m7-01-dlp/Makefile.def
 
 # Exercise statements
 include es/ex/Makefile.def
@@ -59,6 +60,7 @@ include $(ES_M6_01_CPPINTRO_DIR)/Makefile.mk
 include $(ES_M6_02_CPPCONC_DIR)/Makefile.mk
 include $(ES_M6_03_OMP_DIR)/Makefile.mk
 include $(ES_M6_04_ATOMICS_DIR)/Makefile.mk
+include $(ES_M7_01_DLP_DIR)/Makefile.mk
 
 #Rules for exercises
 include $(ES_EX_DIR)/Makefile.mk
