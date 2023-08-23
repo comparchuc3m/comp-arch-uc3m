@@ -26,12 +26,33 @@ y se apaga otro 25\%?
 
 \begin{enumerate}
 
-\item Cuando el 50\% de los servidores se apagan el ahorro obtenido es del 50\%.
+\item Es importante tener en cuenta que apagar o suspender servidores solamente 
+tiene sentido cuando el centro de datos está operando al 50\% de su capacidad.
 
-Por otra parte, si se suspende el 50\% de los servidores se suspenden, la energía 
-necesaria será:
+Cuando el 50\% de los servidores se apagan, se pasa de una situación en la que
+el 100\% de los servidores está consumiendo el 90\% de potencia a otra situación
+en la que el 50\% de los servidores está consumiendo el 100\% de potencia.
 
-\[P = 0.5 + 0.5 \cdot 0.2 = 0.75 \Rightarrow 75\%\]
+\[P_{ant} = 1 \cdot 0.9 = 0.9\]
+\[P_{nueva} = 0.5\]
+
+Si consideramos la razón de potencias, se tiene:
+
+\[\frac{P_{nueva}}{P_{ant}} = \frac{0.5}{0.9} = 0.56\]
+
+Es decir se necesita un 56\% de la potencia original
+
+Cuando el 50\% de los servidores se suspenden, se pasa de una situación en la que el
+100\% de los servidores está consumiendo el 90\% de potencia a otra situación en la
+que el 50\% de los servidores está consumiendo el 100\% de potencia y el otro
+50\% está consumiendo el 20\% de potencia.
+
+\[P_{ant} = 1 \cdot 0.9 = 0.9\]
+\[P = 0.5 + 0.5 \cdot 0.2 = 0.6\]
+
+Si consideramos la razón de potencias, se tiene:
+
+\[frac{P_{nueva}}{P_{ant}} = \frac{0.6}{0.9} = 0.67\] 
 
 \item Consideremos la razón entre potencias:
 

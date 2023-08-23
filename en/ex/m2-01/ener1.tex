@@ -25,10 +25,32 @@ and turning off 25\% of the servers
 
 \begin{enumerate}
 
-\item When the servers are turned off the savings are 50\%. On the other hand
-if the servers are suspended, the needed energy would be:
+\item It is relevant to consider that turning off or suspending servers only
+makes sense when the data center is operating at 50\% of its full capacity.
 
-\[E = 0.5 + 0.5 \cdot 0.2 = 0.75\]
+When 50\% of servers is turned off, we transition from a situation where 100\%
+of servers are using 90\% of power to another situation in which 50\% of servers
+are using 100\% of power.
+
+\[P_{old} = 1 \cdot 0.9 = 0.9\]
+\[P_{new} = 0.5 \]
+
+If we consider the power ratio, we get:
+
+\[\frac{P_{new}}{P_{old}} = \frac{0.5}{0.9} = 0.56\]
+
+Thus, we need 56\% of the original power.
+
+When 50\% of servers is suspended, we transition from a situation where 100\% of
+servers are using 90\% of power to another situation in which 50\% of servers
+are using 100\% of power and the other 50\% of servers are using 20\% of power.
+
+\[P_{old} = 1 \cdot 0.9 = 0.9\]
+\[P_{new} = 0.5 + 0.5 \cdot 0.2 = 0.6 \]
+
+If we consider the power ratio, we get:
+
+\[\frac{P_{new}}{P_{old}} = \frac{0.6}{0.9} = 0.67\]
 
 \item We will consider the power ratio:
 
