@@ -1,2 +1,0 @@
-$(FINAL_EN_LAB1_CPPDEV_PDF): $(EN_LAB1_CPPDEV_PARTS) $(CONFIG_INPUT)
-	$(LATEXMK) -jobname=$(subst /,-,$(<D)) $(EN_LAB1_CPPDEV_DIR)/ex
