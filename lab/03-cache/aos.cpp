@@ -1,3 +1,5 @@
+#include <array>
+
 struct point {
   double x;
   double y;
@@ -5,7 +7,10 @@ struct point {
 
 int main() {
   constexpr int maxsize = 100000;
-  point a[maxsize], b[maxsize], c[maxsize];  
+
+  std::array<point, maxsize> a;
+  std::array<point, maxsize> b;
+  std::array<point, maxsize> c;
 
   for (int i=0; i<maxsize; ++i) {
     a[i].x = b[i].x + c[i].x;

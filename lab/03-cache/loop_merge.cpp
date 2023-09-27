@@ -1,10 +1,12 @@
+#include <array>
+
 int main(){
   constexpr int maxsize = 100000;
 
-  float u[maxsize];
-  float v[maxsize];
-  float z[maxsize];
-  float t[maxsize];
+  std::array<float,maxsize> u;
+  std::array<float,maxsize> v;
+  std::array<float,maxsize> z;
+  std::array<float,maxsize> t;
 
   for (int i=0; i<maxsize; ++i) {
     u[i] = z[i] + t[i];

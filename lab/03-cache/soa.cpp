@@ -1,8 +1,10 @@
+#include <array>
+
 constexpr int maxsize = 100000;
 
 struct points {
-  double x[maxsize];
-  double y[maxsize];
+  std::array<double, maxsize> x;
+  std::array<double, maxsize> y;
 };
 
 int main() {
