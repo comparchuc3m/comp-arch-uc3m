@@ -24,7 +24,9 @@ you must first create a \emph{script} to launch the compilation.
 \vspace{1em}
 
 This way, it is possible to obtain the information of the execution of the
-program using \textemph{valgrind} and \textemph{cachegrind}:
+program using \textemph{valgrind} and \textemph{cachegrind}. If you want
+to analyze an executable named \cppid{./test}, you can use the following
+command:
 
 \begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
 valgrind --tool=cachegrind ./test

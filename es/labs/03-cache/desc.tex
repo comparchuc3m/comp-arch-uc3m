@@ -14,6 +14,7 @@ ejecutable mediante el comando:
 
 \begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
 cmake -S . -B debug -DCMAKE_BUILD_TYPE=Debug
+cmake --build debug
 \end{lstlisting}
 
 \fbox{ \parbox{.9\textwidth}{
@@ -24,7 +25,8 @@ la compilación.
 \vspace{1em}
 
 De este modo, se puede obtener la información de ejecución del programa
-utilizando \textemph{valgrind} y \textemph{cachegrind}:
+utilizando \textemph{valgrind} y \textemph{cachegrind}. Si quiere analizar
+un ejecutable llamado \cppid{./test}, puede utilizar el siguiente mandato.
 
 \begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
 valgrind --tool=cachegrind ./test
