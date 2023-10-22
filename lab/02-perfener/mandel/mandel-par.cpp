@@ -174,7 +174,7 @@ public:
     return result;
   }
 private:
-  NumericArray _values;
+  NumericArray _values{};
   // A pointer to the data, which is not used outside, but helps the compiler
   // with the SIMD optimization (especially GCC 11).
   NUMBER_TYPE* _x;
