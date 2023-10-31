@@ -3,5 +3,6 @@ EN_LABS_DIR=en/labs
 include $(EN_LABS_DIR)/01-cppdev/Makefile.def
 include $(EN_LABS_DIR)/02-perfener/Makefile.def
 include $(EN_LABS_DIR)/03-cache/Makefile.def
+include $(EN_LABS_DIR)/05-omp/Makefile.def
 include $(EN_LABS_DIR)/05-ilp/Makefile.def
 include $(EN_LABS_DIR)/06-atomics/Makefile.def

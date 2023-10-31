@@ -1,0 +1,94 @@
+\section{Lab description}
+
+In this lab you will carry out the evaluation of running several
+options in a program that performs some operation on a bitmap format image.
+The program is able to convert an image to grayscale and to generate an
+histogram of a given image.
+
+The program executable is called \cppid{imgtool} and it takes three parameters:
+\begin{itemize}
+\item \textmark{operation}: Operation to be applied.
+\item \textmark{input}: The name of the input file. This file will be bitmap image file.
+\item \textmark{output}: The name of the output file
+\end{itemize}
+
+There are five available options:
+
+\begin{itemize}
+\item \textmark{copy}: Copies the input file to the output file.
+\item \textmark{grayscale}: Generates an output bitmap file with the image in gray-scale.
+\item \textmark{histogram}: Generates an output text file with a text representation of the image histogram.
+\item \textmark{par\_grayscale}: Generates an output bitmap file with the image in gray-scale.
+This option performs the computation in parallel and it is currently not correctly implemented.
+\item \textmark{par\_histogram}: Generates an output text file with a text representation of the image histogram.
+This option performs the computation in parallel and it is currently not correctly implemented.
+\end{itemize}
+
+\subsection{Building the program}
+
+Please, remind that for compiling the optimized version of a program, 
+you will have to generate a \emph{release} configuration.
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cmake -S . -B release -DCMAKE_BUILD_TYPE=Release
+\end{lstlisting}
+
+Additionally, to compile a given configuration, you must invoke \cppkey{cmake}
+with the corresponding configuration name:
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cmake --build release
+\end{lstlisting}
+
+\fbox{ \parbox{.9\textwidth}{
+\textbad{REMINDER}: 
+To run jobs in the \cppid{avignon} cluster, you must first create a
+script to launch the compilation.
+}}
+
+\subsection{Source code structure}
+
+The source code is provided with the following structure:
+
+
+\begin{itemize}
+
+\item \textmark{util}: This folder contains the utility library. It contains
+some basic utilities for binary input/output and program arguments parsing.
+
+\item \textmark{img}: This folder contains all the source code for the image manipulation library.
+
+\item \textmark{imgtool}: This folder contains the main program and some helper
+functions.
+
+\end{itemize}
+
+In particular the image library contains a number of software components:
+
+\begin{itemize}
+
+\item \cppid{checking}: Contains error message management and checks.
+
+\item \cppid{pixel}: Represents a pixel in the image.
+
+\item \cppid{normalized\_pixel}: Alternate representation of a pixel used during
+grayscale conversion.
+
+\item \cppid{image\_header}: The header of a bitmap file. It is used for input
+and output.
+
+\item \cppid{image\_metadata}: Metadata on the image as read from the BMP file.
+
+\item \cppid{image}: Implements an image as a 2-dimensional matrix of pixels.
+
+\item \cppid{parallel\_image}: Another implementation of image that you will
+have to modify to implement parallel version of algorithms.
+
+\item \cppid{histogram}: A representation of histograms for the three components
+of the image (red, green, blue).
+
+\end{itemize}
+
+Note that during this lab, you will have to modify component
+\cppid{parallel\_image} to provide a parallel implementation of the
+functionality to convert to grayscale and to compute the histogram.
