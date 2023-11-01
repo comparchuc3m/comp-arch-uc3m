@@ -13,7 +13,7 @@ when there are misses?
 \begin{acsolution}\end{acsolution}
 
 \[
-t_{cpu} = (cycles_cpu + cycles_{stall}) \times t\_{cycle}
+t_{cpu} = (cycles_{cpu} + cycles_{stall}) \times t_{cycle}
 \]
 
 For the ideal case, there are no memory stalls and consequently:
@@ -27,7 +27,7 @@ For the case with misses, we have:
 
 \[
 cycles_{stall} =
-IC \times acceses_{instr} \times (1 - h) \times {penalty}_{fallo}
+IC \times acceses_{instr} \times (1 - h) \times {penalty}_{miss}
 \]
 
 Instrucction acceses are $0.25$ as 25\% of instructions perform a data access.

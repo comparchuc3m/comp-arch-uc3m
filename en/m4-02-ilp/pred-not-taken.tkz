@@ -18,7 +18,7 @@
 }  
 \node[instruc] (inst1) {Branch};
 \node[instruc,below right=0.5cm and 0cm of inst1, anchor=north east] (inst2) {Instr i+1};
-\node[instruc,below right=0.5cm and 0cm of inst2, anchor=north east] (inst3) {Destino bifurc.};
+\node[instruc,below right=0.5cm and 0cm of inst2, anchor=north east] (inst3) {Branch target};
 \node[instruc,below right=0.5cm and 0cm of inst3, anchor=north east] (inst4) {Instr j+1};
 %
 \node[bloque,right=0.25cm of inst1] (im1) {IF};
