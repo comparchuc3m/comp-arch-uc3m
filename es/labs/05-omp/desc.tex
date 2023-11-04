@@ -1,0 +1,104 @@
+\section{Descripción del laboratorio}
+
+En este laboratorio llevarás a cabo la evaluación al ejecutar diversas opciones
+de un programa que realiza algunas operaciones sobre una imagen en formato bitmap.
+El programa es capaz de convertir una imagen a escala de grises y también puede 
+generar el histograma de la imagen.
+
+El programa ejecutable se llama \cppid{imgtool} y toma tres parámetros:
+\begin{itemize}
+\item \textmark{operación}: Operación a aplicar sobre la imagen.
+\item \textmark{entrada}: El nombre del archivo de entrada. Este será el archivo con la imagen en formato bitmap.
+\item \textmark{salida}: El nombre de archivo de salida.
+\end{itemize}
+
+Hay cinco opciones disponibles
+
+\begin{itemize}
+\item \textmark{copy}: Copia el archivo de entrada al archivo de salida.
+\item \textmark{grayscale}: Genera un archivo de salida en formato bitmap con la imagen en escala de grises.
+\item \textmark{histogram}: Genera un archivo de texto con una representación textual del histograma de la imagen.
+\item \textmark{par\_grayscale}: Genera un archivo de salida en formato bitmap con la imagen en escala de grises.
+Esta opción realiza el cómputo en paralelo y actualmente no está implementada de forma correcta.
+\item \textmark{par\_histogram}: Genera un archivo de texto con una representación textual del histograma de la imagen.
+Esta opción realiza el cómputo en paralelo y actualmente no está implementada de forma correcta.
+\end{itemize}
+
+\subsection{Construcción del programa}
+
+Por favor, recuerda que para compilar la versión optimizada del programa 
+deberás generar una configuración de \emph{release}.
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cmake -S . -B release -DCMAKE_BUILD_TYPE=Release
+\end{lstlisting}
+
+Además, para compilar una determinada configuración, deberás invocar a 
+\cppkey{cmake} con el correspondiente nombre de configuración:
+
+\begin{lstlisting}[style=terminal,aboveskip=1em,belowskip=1em]
+cmake --build release
+\end{lstlisting}
+
+\fbox{ \parbox{.9\textwidth}{
+\textbad{REMINDER}: 
+Para ejecutar trabajos en el clúster \cppid{avignon}, deberás crear un
+\emph{script} para lanzar la compilación.
+}}
+
+\subsection{Estructura del código fuente}
+
+El código fuente que se suministra tiene la siguiente estructura:
+
+
+\begin{itemize}
+
+\item \textmark{util}: 
+Esta carpeta contiene la biblioteca de utilidades. Incluye algunas utilidades
+básicas para entrada/salida binaria y procesamiento de argumentos de programa.
+
+\item \textmark{img}: 
+Esta carpeta contiene todo el código fuente para la biblioteca de manipulación
+de imágenes.
+
+\item \textmark{imgtool}: 
+Esta carpeta contiene el programa principal y algunas funciones de ayuda.
+
+\end{itemize}
+
+En particular, la biblioteca de imágenes contiene diversos componentes software:
+
+\begin{itemize}
+
+\item \cppid{checking}: 
+Contiene la gestión de mensajes de error y comprobaciones.
+
+\item \cppid{pixel}: 
+Representa un pixel de la imagen.
+
+\item \cppid{normalized\_pixel}: 
+Representación alternativa de un pixel utilizada durante la conversión a escala
+de grises.
+
+\item \cppid{image\_header}: 
+La cabecera de un archivo de bitmap. Se utiliza para la entrada/salida.
+
+\item \cppid{image\_metadata}: 
+Metadatos de una image tal y como se leen de un archivo BMP.
+
+\item \cppid{image}: 
+Impelementa una imagen como una matriz bi-dimensional de pixels.
+
+\item \cppid{parallel\_image}: 
+Otra implementación de la imagen que tendrás que modificar para implementar la
+versión paralela de los algoritmos.
+
+\item \cppid{histogram}: 
+Una representación de histogramas para los tres componentes de la imagen (rojo,
+verde y azul).
+
+\end{itemize}
+
+Ten en cuenta que durante este laboratorio, tendrás que modificar el componente
+\cppid{parallel\_image} para suministrar una implementación paralela de la
+funcionalidad de conversión a escala de grises y cálculo del histograma.

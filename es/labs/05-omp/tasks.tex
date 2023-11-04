@@ -1,0 +1,134 @@
+\section{Tareas}
+
+Durante este laboratorio realizarás las siguientes tareas:
+
+\begin{enumerate}
+
+\item Construir la versión inicial de la aplicación y evaluar su rendimiento y energía.
+
+\item Modificar el código fuente suministrado para implementar correctamente las
+opciones paralelas de la herramienta.
+
+\item Evaluar la versión paralela que hayas generado estudiando:
+
+\begin{enumerate}
+  \item El impacto del número de hilos desde 2 hasta el doble del número de
+núcleos físicos disponibles.
+
+  \item El impacto de diferentes políticas de planificación (opcional).
+\end{enumerate}
+
+\end{enumerate}
+
+\subsection{Construcción de la versión inicial}
+
+Tu primera tarea es construir la versión original del software. Deberás
+construir solamente la versión de \emph{release}. Para hacerlo, utiliza un
+\emph{script} como el siguiente \cppid{build.sh}:
+
+\lstinputlisting[language=bash]{lab/05-omp/build.sh}
+
+Podrás ejecutar este script en un nodo normal del clúster haciendo:
+
+\begin{lstlisting}[style=terminal]
+sbatch build.sh
+\end{lstlisting}
+
+Para ejecutar la conversión a escala de grises, puedes usar el siguiente
+\emph{script} \cppid{run-gray.sh}:
+
+\lstinputlisting[language=bash]{lab/05-omp/run-gray.sh}
+
+El programa imprimirá el tiempo en microsegundos dedicado a la conversión a
+escala de grises y \textmark{perf} te dará el tiempo total de ejecución.
+Con estos dos valores podrás deducir cuál es la fracción de tiempo del programa
+que se puede mejorar al paralelizar la conversión a escala de grises.
+
+Ahora puedes hacer los mismo ejecutando el cálculo del histograma con el
+\emph{script} \cppid{run-histo.sh}:
+
+\lstinpulisting[language=bash]{lab/05-omp/run-histo.sh}
+
+\subsection{Uso de un nodo NUMA}
+
+A través del \emph{front-end} \textmark{avignon} puedes tener acceso a un
+servidor de cómputo (llamado \textmark{stan}).
+
+Prepara un \emph{script} para ver las características hardware de
+\textmark{stan} llamado \cppid{lscpu.sh}
+
+\lstinputlisting[language=bash]{lab/05-omp/lscpu.sh}
+
+Modifica los \emph{scripts} previos para repetir el ejercicio anterior en
+\textmark{stan}:
+
+El nuevo \cppid{build-stan.sh} debería ser:
+
+\lstinputlisting[language=bash]{lab/05-omp/build-stan.sh}
+
+El nuevo \emph{script} \cppid{run-gray-stan.sh} sería:
+
+\lstinputlisting[language=bash]{lab/05-omp/run-gray-stan.sh}
+
+El nuevo script \cppid{run-histo-stan.sh} sería:
+
+\lstinputlisting[language=bash]{lab/05-omp/run-histo-stan.sh}
+
+\textbad{IMPORTANTE}: 
+Para ejecutar un \emph{script} en \textmark{stan} debes especifica el nombre de
+la cola de ejecución.
+
+\begin{lstlisting}[style=terminal]
+sbatch -p stan script.sh
+\end{lstlisting}
+
+Deduce otra vez cuál es la fracción del programa que puede mejorarse al
+paralelizar la conversión a escala de grises y el cálculo del histograma.
+
+\subsection{Implementación paralela}
+
+En esta sección paralelizarás la conversión a escala de grises y el cálculo del
+histograma. Modificarás la implementación del componente software
+\cppid{parallel\_image}.
+
+Presta atención a las siguientes funciones:
+
+\begin{itemize}
+
+\item \cppid{parallel\_image::to\_grayscale()}: 
+Realiza la conversión a escala de grises.
+\item \cppid{parallel\_image::generate\_histogram()}: 
+Genera la información del histograma.
+
+\end{itemize}
+
+No olvides lo siguiente:
+
+\begin{itemize}
+
+\item En el \cppid{CMakeLists.txt} de la carpeta \textmark{img} 
+necesitarás añadir lo siguiente:
+
+\lstinputlisting{lab/05-omp/cmake-omp.txt}
+
+\item No especifiques el número de hilos en el código. Modificaremos esto
+mediante la correspondiente variable de entorno.
+
+\end{itemize}
+
+\subsection{Evaluación de la versión paralela}
+
+En esta sección evaluarás la aceleración obtenido tanto en un nodo normal como
+en \textmark{stan}.
+
+Como ejemplo, puedes usar el siguiente \emph{script} para ejecutar la conversión
+a escala de grises con diferentes números de hilos usando el ejecutable generado
+para \textmark{stan}:
+
+\lstinputlisting[language=bash]{lab/05-omp/run-gray-omp-stan.sh}
+
+Puedes ejecutar este \emph{script} en \textmark{stan} con el siguiente mandato:
+
+\begin{lstlisting}[style=terminal]
+sbatch -p stan run-gray-omp-stan.sh
+\end{lstlisting}
