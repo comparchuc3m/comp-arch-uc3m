@@ -19,3 +19,177 @@ number of cores.
 \end{enumerate}
 
 \end{enumerate}
+
+\subsection{Building the initial version}
+
+Your first task is to build the original version of the software. You shall
+build only the release mode version. To do so use a script like the following
+\cppid{build.sh}:
+
+\begin{lstlisting}[language=bash]
+#!/bin/sh
+
+. /etc/profile
+module avail
+module load gcc/12.1.0
+cmake --version
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j 8
+\end{lstlisting}
+
+You will run this script in one node of the regular cluster by doing:
+
+\begin{lstlisting}[style=terminal]
+sbatch build.sh
+\end{lstlisting}
+
+To run a grayscale conversion, you may use the following script
+\cppid{run-gray.sh}:
+
+\begin{lstlisting}[language=bash]
+#!/bin/sh
+
+. /etc/profile
+module avail
+module load gcc/12.1.0
+perf stat build/imgtool/imgtool grayscale in/sabatini.bmp sabatini-gseq.bmp
+\end{lstlisting}
+
+The program will print the time in microseconds dedicated to the grayscale
+conversion and \textmark{perf} will give you the total execution time.
+With this two values you will be able to deduce which es the fraction of the
+program that can be improved when parallelizing the grayscale conversion.
+
+Now you can do the same thing by running the histogram computation with the
+script \cppid{run-histo.sh}:
+
+\begin{lstlisting}[language=bash]
+!/bin/sh
+
+. /etc/profile
+module avail
+module load gcc/12.1.0
+perf stat build/imgtool/imgtool histogram in/sabatini.bmp sabatini-seq.hst
+\end{lstlisting}
+
+\subsection{Using a NUMA node}
+
+Through the avignon front-end you may also use a high-end compute server (named
+\textmark{stan}).
+
+Prepare a script to see the hardware features of \textmark{stan} named
+\cppid{lscpu.sh}
+
+\begin{lstlisting}[language=bash]
+#!/bin/sh
+
+. /etc/profile
+lscpu
+\end{lstlisting}
+
+Modify the previous scripts to repeat the previous exercise on \textmark{stan}.
+
+The new \cppid{build-stan.sh} should be:
+
+\begin{lstlisting}[language=bash]
+#!/bin/sh
+
+. /etc/profile
+module avail
+module load gcc/12.1.0
+cmake --version
+cmake -S . -B build-stan -DCMAKE_BUILD_TYPE=Release
+cmake --build build-stan -j 8
+\end{lstlisting}
+
+The new script \cppid{run-gray-stan.sh} should be:
+
+\begin{lstlisting}[language=bash]
+#!/bin/sh
+
+. /etc/profile
+module avail
+module load gcc/12.1.0
+perf stat build-stan/imgtool/imgtool grayscale in/sabatini.bmp sabatini-gseq.bmp
+\end{lstlisting}
+
+The new script \cppid{run-histo-stan.sh} should be:
+
+\begin{lstlisting}[language=bash]
+!/bin/sh
+
+. /etc/profile
+module avail
+module load gcc/12.1.0
+perf stat build-stan/imgtool/imgtool histogram in/sabatini.bmp sabatini-seq.hst
+\end{lstlisting}
+
+\textbad{IMPORTANT}: To run a script on \textmark{stan} you need to specify the
+execution queue name
+
+\begin{lstlisting}[style=terminal]
+sbatch -p stan script.sh
+\end{lstlisting}
+
+Deduce again which es the fraction of the program that can be improved when
+parallelizing the grayscale conversion and the histogram computation.
+
+\subsection{Parallel implementation}
+
+In this section you will parallelize the grayscale conversion and the histogram
+computation. You will modify the implementation in software componente
+\cppid{parallel\_image}.
+
+Pay attention to the following member functions:
+
+\begin{itemize}
+
+\item \cppid{parallel\_image::to\_grayscale()}: Peforms the grayscale
+conversion.
+\item \cppid{parallel\_image::generate\_histogram()}: Generates the histogram
+information.
+
+\end{itemize}
+
+Please do not forget the following:
+
+\begin{itemize}
+
+\item In the \cppid{CMakeFiles.txt} at \textmark{img} folder you will need to
+add the following:
+
+\begin{lstlisting}
+find_package(OpenMP REQUIRED)
+
+target_link_libraries(img Microsoft.GSL::GSL
+        OpenMP::OpenMP_CXX
+)
+\end{lstlisting}
+
+\item Do not specify the number of threads in the code we will change that by
+using corresponding environment variable.
+
+\end{itemize}
+
+\subsection{Evaluation of the parallel version}
+
+In this section you will evaluate the obtained speedup both in the regular
+cluster and in \textmark{stan}.
+
+As an example, you may use the following script to run the grayscale conversion
+with different number of threads:
+
+\begin{lstlisting}[language=bash]
+#!/bin/sh
+
+. /etc/profile
+module avail
+module load gcc/12.1.0
+OMP_NUM_THREADS=1 perf stat build/imgtool/imgtool par_grayscale in/sabatini.bmp sabatini-gpar.bmp
+OMP_NUM_THREADS=2 perf stat build/imgtool/imgtool par_grayscale in/sabatini.bmp sabatini-gpar.bmp
+OMP_NUM_THREADS=4 perf stat build/imgtool/imgtool par_grayscale in/sabatini.bmp sabatini-gpar.bmp
+OMP_NUM_THREADS=8 perf stat build/imgtool/imgtool par_grayscale in/sabatini.bmp sabatini-gpar.bmp
+OMP_NUM_THREADS=16 perf stat build/imgtool/imgtool par_grayscale in/sabatini.bmp sabatini-gpar.bmp
+OMP_NUM_THREADS=32 perf stat build/imgtool/imgtool par_grayscale in/sabatini.bmp sabatini-gpar.bmp
+perf stat build/imgtool/imgtool par_grayscale in/sabatini.bmp sabatini-gpar.bmp
+\end{lstlisting}
