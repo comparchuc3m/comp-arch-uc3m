@@ -208,7 +208,7 @@ Load double & Store double & 0\\
 \end{itemize}
 \end{frame}
 
-\begin{frame}[t]{Stalls and unrolling}
+\begin{frame}[t,shrink=10]{Stalls and unrolling}
 
 \begin{columns}
 
@@ -227,7 +227,7 @@ Load double & Store double & 0\\
 \end{columns}
 \mode<presentation>{\vfill}
 \begin{itemize}
-  \item 27 cycles for every 4 iterations $\rightarrow$ $6.75$ cycles per element.
+  \item 26 cycles for every 4 iterations $\rightarrow$ $6.5$ cycles per element.
 \end{itemize}
 \end{frame}
 
@@ -249,7 +249,7 @@ Load double & Store double & 0\\
       \item Semantically equivalent.
       \item \textgood{Goal}: Make use of \emph{stalls}.
     \end{itemize}
-  \item Update of \asmreg{R1} at enough distance from
+  \item Update of \asmreg{x1} at enough distance from
         \asminst{BNE}.
   \item 14 cycles for every 4 iterations $\rightarrow$ $3.5$ cycles per iteration.
 \end{itemize}
