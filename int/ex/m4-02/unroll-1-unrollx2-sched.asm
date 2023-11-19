@@ -8,5 +8,5 @@ loop: fld     ft0,  0(t1)
       addi    t2,   t2,      16
       fsd     ft2,  0(t3)
       addi    t3,   t3,      16
-      fsd     ft5,  -16(t3)
+      fsd     ft5,  -8(t3)
       bne     t1,   t4,      loop
