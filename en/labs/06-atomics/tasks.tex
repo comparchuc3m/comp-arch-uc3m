@@ -7,7 +7,8 @@ You will also compare the \emph{Debug} and \emph{Release} versions.
 
 Compile the project and generate the \emph{Debug} version.
 
-Run the generated program 3 times.
+Run the generated program 3 times on the \textmark{stan} server.
+
 Take note for each execution of the following information:
 \begin{itemize}
 \item The final value of \cppid{counter}.
@@ -16,7 +17,7 @@ Take note for each execution of the following information:
 
 Now generate the \emph{Release} version.
 
-Run the program again and take note of the new results.
+Run the program again on the \textmark{stan} server and take note of the new results.
 
 \subsection{Detecting data races}
 
@@ -45,7 +46,9 @@ Place this modifications in the source file \cppid{counter\_mutex.cpp}.
 
 Check that the program is free of race conditions with \textmark{Thread Sanitizer}.
 
-Evaluate the performance for the cases of 2, 4, 8 and 16 threads.
+Evaluate the performance for the cases of 2, 4, 8, 16, 32, 64, and 128 threads.
+
+\textbad{NOTE}: All evaluations shall be performed on the \textmark{stan} server.
 
 \subsection{Protecting with an atomic}
 
@@ -58,7 +61,9 @@ Place this modifications in the source file \cppid{counter\_atomic.cpp}.
 
 Check that the program is free of race conditions with \textmark{Thread Sanitizer}.
 
-Evaluate the performance for the cases of 2, 4, 8 and 16 threads.
+Evaluate the performance for the cases of 2, 4, 8, 16, 32, 64, and 128 threads.
+
+\textbad{NOTE}: All evaluations shall be performed on the \textmark{stan} server.
 
 \subsection{Protecting with a spin lock and sequential consistency}
 
@@ -99,7 +104,9 @@ Place this modifications in the source file \cppid{counter\_spin\_seq.cpp}.
 
 Check that the program is free of race conditions with \textmark{Thread Sanitizer}.
 
-Evaluate the performance for the cases of 2, 4, 8 and 16 threads.
+Evaluate the performance for the cases of 2, 4, 8, 16, 32, 64, and 128 threads.
+
+\textbad{NOTE}: All evaluations shall be performed on the \textmark{stan} server.
 
 \subsection{Protecting with a spin lock and release/acquire consistency}
 
@@ -128,7 +135,9 @@ Place this modifications in the source file \cppid{counter\_spin\_ra.cpp}.
 
 Check that the program is free of race conditions with \textmark{Thread Sanitizer}.
 
-Evaluate the performance for the cases of 2, 4, 8 and 16 threads.
+Evaluate the performance for the cases of 2, 4, 8, 16, 32, 64, and 128 threads.
+
+\textbad{NOTE}: All evaluations shall be performed on the \textmark{stan} server.
 
 \subsection{Optimizing the spin lock}
 
@@ -149,4 +158,6 @@ Place this modifications in the source files
 
 Check that the program is free of race conditions with \textmark{Thread Sanitizer}.
 
-Evaluate the performance for the cases of 2, 4, 8 and 16 threads.
+Evaluate the performance for the cases of 2, 4, 8, 16, 32, 64, and 128 threads.
+
+\textbad{NOTE}: All evaluations shall be performed on the \textmark{stan} server.

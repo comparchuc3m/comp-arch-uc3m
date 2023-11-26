@@ -7,7 +7,9 @@ También compararás las versiones de \emph{Debug} y \emph{Release}.
 
 Compila el proyecto y genera la versión de \emph{Debug}.
 
-Ejecuta el programa generado 3 veces. Anota para cada ejecución, la siguiente información:
+Ejecuta el programa generado 3 veces en el servidor \textmark{stan}. 
+
+Anota para cada ejecución, la siguiente información:
 \begin{itemize}
 \item El valor final de \cppid{counter}.
 \item El tiempo de ejecución medido por el programa.
@@ -15,7 +17,7 @@ Ejecuta el programa generado 3 veces. Anota para cada ejecución, la siguiente i
 
 Ahora genera una versión de \emph{Release}.
 
-Vuelve a ejecutar el programa y anota los nuevos resultados.
+Vuelve a ejecutar el programa en el servidor \textmark{stan} y anota los nuevos resultados.
 
 \subsection{Detección de carreras de datos}
 
@@ -43,7 +45,9 @@ Coloca estas modificaciones en el archivo fuente \cppid{counter\_mutex.cpp}.
 
 Comprueba que el programa esta libre de condiciones de carrera con \textmark{Thread Sanitizer}.
 
-Evalúa el rendimiento del programa para los casos de 2, 4, 8 y 16 hilos.
+Evalúa el rendimiento del programa para los casos de 2, 4, 8, 16, 32, 64 y 128 hilos.
+
+\textbad{NOTA}: Todas las evaluaciones se realizarán en el servidor \textmark{stan}.
 
 \subsection{Protección con un atómico}
 
@@ -56,7 +60,9 @@ Coloca estas modificaciones en el archivo fuente \cppid{counter\_atomic.cpp}.
 
 Comprueba que el programa esta libre de condiciones de carrera con \textmark{Thread Sanitizer}.
 
-Evalúa el rendimiento del programa para los casos de 2, 4, 8 y 16 hilos.
+Evalúa el rendimiento del programa para los casos de 2, 4, 8, 16, 32, 64 y 128 hilos.
+
+\textbad{NOTA}: Todas las evaluaciones se realizarán en el servidor \textmark{stan}.
 
 \subsection{Protección con un spin lock y consistencia secuencial}
 
@@ -97,7 +103,9 @@ Coloca estas modificaciones en el archivo fuente \cppid{counter\_spin\_seq.cpp}.
 
 Comprueba que el programa esta libre de condiciones de carrera con \textmark{Thread Sanitizer}.
 
-Evalúa el rendimiento del programa para los casos de 2, 4, 8 y 16 hilos.
+Evalúa el rendimiento del programa para los casos de 2, 4, 8, 16, 32, 64 y 128 hilos.
+
+\textbad{NOTA}: Todas las evaluaciones se realizarán en el servidor \textmark{stan}.
 
 \subsection{Protección con un spin lock y consistencia de liberación/adquisición}
 
@@ -126,7 +134,9 @@ Coloca estas modificaciones en el archivo fuente \cppid{counter\_spin\_ra.cpp}.
 
 Comprueba que el programa esta libre de condiciones de carrera con \textmark{Thread Sanitizer}.
 
-Evalúa el rendimiento del programa para los casos de 2, 4, 8 y 16 hilos.
+Evalúa el rendimiento del programa para los casos de 2, 4, 8, 16, 32, 64 y 128 hilos.
+
+\textbad{NOTA}: Todas las evaluaciones se realizarán en el servidor \textmark{stan}.
 
 \subsection{Optimización del spinlock}
 
@@ -146,5 +156,7 @@ Coloca estas modificaciones en los archivos fuente \cppid{counter\_spin\_seq\_op
 
 Comprueba que el programa esta libre de condiciones de carrera con \textmark{Thread Sanitizer}.
 
-Evalúa el rendimiento del programa para los casos de 2, 4, 8 y 16 hilos.
+Evalúa el rendimiento del programa para los casos de 2, 4, 8, 16, 32, 64 y 128 hilos.
+
+\textbad{NOTA}: Todas las evaluaciones se realizarán en el servidor \textmark{stan}.
 
