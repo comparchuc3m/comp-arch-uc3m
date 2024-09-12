@@ -53,7 +53,7 @@ void f() {
 
 \begin{lstlisting}
 void f(string & s, int n) {
-  unique_ptr<int> p = new int{50};
+  unique_ptr<int> p{new int{50}};
 
   string tmp = s; // Might throw an exception
   if (n<0) return;
