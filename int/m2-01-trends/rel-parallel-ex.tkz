@@ -8,15 +8,29 @@
   connpoint/.style={minimum width=0cm,minimum height=0cm,inner sep=0pt},
 }  
 \node[bloque] (c1) {};
-\node[connpoint, left=0.5cm of c1] (c0) {};
-\node[etiqueta, below=0.1cm of c1] {$R_1(t)$};
-\node[bloque, right=0.5cm of c1] (c2) {};
-\node[etiqueta, below=0.1cm of c2] {$R_2(t)$};
-\node[bloque, right=0.5cm of c2] (c3) {};
-\node[etiqueta, below=0.1cm of c3] {$R_3(t)$};
-\node[connpoint, right=0.5cm of c3] (c4) {};
-\path[sinflecha] (c0) -- (c1);
-\path[sinflecha] (c1) -- (c2);
-\path[sinflecha] (c2) -- (c3);
-\path[sinflecha] (c3) -- (c4);
+\node[etiqueta,below=0.05cm of c1] {$R_1(t)$};
+\node[connpoint, left=0.5cm of c1] (lc1) {};
+\node[connpoint, right=0.5cm of c1] (rc1) {};
+\path[sinflecha] (lc1) -- (c1);
+\path[sinflecha] (rc1) -- (c1);
+\node[bloque, below=0.5cm of c1] (c2) {};
+\node[etiqueta,below=0.05cm of c2] {$R_2(t)$};
+\node[connpoint, left=0.5cm of c2] (lc2) {};
+\node[connpoint, right=0.5cm of c2] (rc2) {};
+\path[sinflecha] (lc2) -- (c2);
+\path[sinflecha] (rc2) -- (c2);
+\node[bloque, below=0.5cm of c2] (c3) {};
+\node[etiqueta,below=0.05cm of c3] {$R_3(t)$};
+\node[connpoint, left=0.5cm of c3] (lc3) {};
+\node[connpoint, right=0.5cm of c3] (rc3) {};
+\path[sinflecha] (lc3) -- (c3);
+\path[sinflecha] (rc3) -- (c3);
+\path[sinflecha] (lc1) -- (lc2);
+\path[sinflecha] (lc3) -- (lc2);
+\path[sinflecha] (rc1) -- (rc2);
+\path[sinflecha] (rc3) -- (rc2);
+\node[connpoint,left=1cm of lc2] (inicio) {};
+\path[sinflecha] (inicio) -- (lc2);
+\node[connpoint,right=1cm of rc2] (fin) {};
+\path[sinflecha] (fin) -- (rc2);
 \end{tikzpicture}
