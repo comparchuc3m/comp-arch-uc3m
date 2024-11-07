@@ -1,0 +1,144 @@
+\begin{acexercise}
+%May 2012 exam.
+\end{acexercise}
+
+Given the following code section:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-3-ex.asm}
+
+Consider that it runs in a machine with additional latencies between
+instructions as expressed in Table~\ref{tab:ex-may-2012:lat}.
+
+\begin{table}[htbp]
+\caption{Additional latencies}
+\label{tab:ex-may-2012:lat}
+
+\begin{tabular}{|p{.4\textwidth}|p{.4\textwidth}|p{.1\textwidth}|}
+
+\hline
+Instruction producing the result (previous) &
+Instruction using the result (subsequent) &
+Latency
+\\
+\hline
+\hline
+
+FP ALU operation &
+FP ALU operation &
+\multicolumn{1}{r|}{5}
+\\
+\hline
+
+FP ALU operation &
+Load/store double &
+\multicolumn{1}{r|}{4}
+\\
+\hline
+
+FP ALU operation &
+Branch instruction &
+\multicolumn{1}{r|}{4}
+\\
+\hline
+
+Load double &
+FP ALU operation &
+\multicolumn{1}{r|}{2}
+\\
+\hline
+
+Load double &
+Load double &
+\multicolumn{1}{r|}{1}
+\\
+\hline
+
+Store double &
+FP ALU operation &
+\multicolumn{1}{r|}{2}
+\\
+\hline
+
+\end{tabular}
+
+\end{table}
+
+The \emph{branch} instruction has a latency of one cycle and no 
+\emph{delay slot}. 
+
+Besides, assume that the machine is able to issue one instruction per cycle,
+except waiting due to stalls and that the processor has a pipeline with a
+single data path.
+
+\begin{enumerate}
+
+  \item Identify all the data dependencies.
+
+  \item Determine the total number of cycles needed to run the complete section of code.
+
+  \item Modify the code to reduce stalls through the loop scheduling technique. Determine
+        the obtained speedup versus to the non-scheduled version.
+
+  \item Modify the code performing a loop unrolling with two loop iterations. Determine
+        the obtained speedup versus the non-scheduled version.
+
+\end{enumerate}
+
+
+\begin{acsolution}
+\end{acsolution}
+
+\paragraph{Section 1}
+
+The following dependencies are produced:
+
+\input{int/ex/m4-02/unroll-3-dep.tex}
+
+\paragraph{Section 2}
+
+The following are the stalls in the execution:
+
+\input{int/ex/m4-02/unroll-3-lst1.asm}
+
+A cycle is required for the initiation code. Each iteration needs 13 cycles. As the loop is executed 5 times, we have a total of:
+
+\[
+1+5 \cdot 13 = 66 \; \textrm{cycles}
+\]
+
+Because there is no delay slot it is not necessary to add a stall cycle after the branch instruction (\asminst{BLE}).
+
+\paragraph{Section 3}
+
+Next, the modified code:
+
+\input{int/ex/m4-02/unroll-3-lst2.asm}
+
+A total time of $1 + 5 \cdot 11 = 56$. Again, we need a cycle for the initiation code. Each iteration needs $13$ cycles. Because there is no delay slot, it is not necessary to add a stall after the jump instruction (\asminst{BLE}).
+
+\[
+\textrm{Speedup} = 66/56 = 1.17
+\]
+
+\paragraph{Section 4}
+
+Next, the modified code:
+
+\input{int/ex/m4-02/unroll-3-lst3.asm}
+
+In total, we now have 2 iterations inside the loop. In addition, the fifth iteration of the original loop is now done at the end. The time required is:
+\[
+1 + 2 \cdot 23 + 10 = 57
+\]
+
+If you also re-schedule the instruction, you can have:
+
+\input{int/ex/m4-02/unroll-3-lst4.asm}
+
+The new time is:
+
+\[
+1 + 2 \cdot 13 + 10 = 37 \; \textrm{cycles}
+\]
+
+\clearpage

@@ -72,6 +72,26 @@ The chronogram is presented in table~\ref{ex:m4-01:instr-01:chrono:forward}.
 \label{ex:m4-01:instr-01:chrono:forward}
 \end{table}
 
+The following observations are relevant:
+\begin{itemize}
+
+\item In cycle 5, instruction \textmark{I2} is stalled because
+      it may get through forwarding the value of register \asmreg{t1},
+      but not the value of register \asmreg{t2}.
+
+\item Register \asmreg{t2} is forwarded to instruction \textmark{I2}
+      (stage \textgood{M}) to instruction \textmark{I3} (stage \textgood{EX}).
+
+\item Instruction \textmark{I2} is stalled in cycle 5
+      because decode unit is busy.
+
+\item In cycle 9, instruction \textmark{I6} is stalled
+      in stage \textgood{ID} as it needs the value of \asmreg{s0}
+      to determine the branch outcome.
+
+\end{itemize}
+
+
 \[
 cycles_{iteration} = \frac{7 + 9 \cdot 99}{100} = \frac{898}{100} = 8.98
 \]
