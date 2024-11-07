@@ -1,0 +1,153 @@
+\begin{acexercise}
+\end{acexercise}
+
+Dada la siguiente sección de código:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-02/unroll-3-ex.asm}
+
+Y teniendo en cuenta que se ejecuta en una máquina con las latencias
+adicionales entre instrucciones indicada por la
+tabla~\ref{tab:ex-may-2012:lat}.
+
+\begin{table}[htbp]
+\caption{Latencias adicionales}
+\label{tab:ex-may-2012:lat}
+
+\begin{tabular}{|p{.4\textwidth}|p{.4\textwidth}|p{.1\textwidth}|}
+
+\hline
+Instrucción que produce el resultado (previa) &
+Instrucción que usa el resultado (posterior) &
+Latencia
+\\
+\hline
+\hline
+
+Operación ALU FP & 
+Operación ALU FP &
+\multicolumn{1}{r|}{5}
+\\
+\hline
+
+Operación ALU FP &
+Cargar/almacenar double &
+\multicolumn{1}{r|}{4}
+\\
+\hline
+
+Operación ALU FP &
+Instrucción de salto &
+\multicolumn{1}{r|}{4}
+\\
+\hline
+
+Cargar doble &
+Operación ALU FP &
+\multicolumn{1}{r|}{2}
+\\
+\hline
+
+Cargar doble &
+Cargar doble &
+\multicolumn{1}{r|}{1}
+\\
+\hline
+
+Almacenar doble	&
+Operación ALU FP &
+\multicolumn{1}{r|}{2}
+\\
+\hline
+
+\end{tabular}
+
+\end{table}
+
+La instrucción de salto (\emph{branch}) tiene una latencia de un ciclo y no
+tiene \emph{delay slot}. 
+
+Suponga además que la máquina en la que ejecuta es capaz de emitir una
+instrucción por ciclo, salvo las esperas debidas a detenciones y que es un
+procesador segmentado con un único camino de datos (\emph{pipeline}). 
+
+\begin{enumerate}
+
+  \item Determine todas las dependencias de datos.
+
+  \item Determine el número de ciclos total que se necesita para ejecutar la
+sección de código completa. 
+
+  \item Modifique el código para reducir las detenciones mediante la técnica de
+planificación de bucle. Determine la aceleración obtenida respecto a la versión
+sin planificar (apartado 2). 
+
+  \item Modifique el código realizando un desenrollamiento de bucle con dos
+iteraciones por bucle. Determine la aceleración obtenida respecto a la versión
+sin planificar (apartado 2). 
+
+\end{enumerate}
+
+
+\begin{acsolution}
+\end{acsolution}
+
+\paragraph{Apartado 1}
+
+Se producen las siguientes dependencias:
+
+\input{int/ex/m4-02/unroll-3-dep.tex}
+
+\paragraph{Apartado 2}
+
+A continuación se identifican las detenciones (\emph{stalls}) en la ejecución:
+
+\input{int/ex/m4-02/unroll-3-lst1.asm}
+
+Se necesita un ciclo para el código de iniciación. Cada iteración necesita 13
+ciclos. Como el bucle se ejecuta 5 veces, se tiene un total de:
+
+\[
+1+5 \cdot 13 = 66
+\]
+
+Debido a que no existe \emph{delay slot} no es necesario añadir un ciclo de
+\emph{stall} después de la instrucción de salto (\asminst{BLE}).
+
+\paragraph{Apartado 3}
+
+A continuación se muestra el código modificado:
+
+\input{int/ex/m4-02/unroll-3-lst2.asm}
+
+Ahora se requiere un tiempo total de $1 + 5 \cdot 11 = 56$. De nuevo, se
+necesita un ciclo para el código de iniciación. Cada iteración necesita $13$
+ciclos. Debido a que no existe delay slot no es necesario añadir un ciclo de
+stall después de la instrucción de salto (\asminst{BLE}).
+
+\[
+\textrm{Speedup} = 66/56 = 1.17
+\]
+
+\paragraph{Apartado 4}
+
+A continuación se muestra el código modificado:
+
+\input{int/ex/m4-02/unroll-3-lst3.asm}
+
+En total ahora se tienen 2 iteraciones dentro del bucle. Además la quinta
+iteración del bucle original se hace ahora al final. El tiempo requerido es:
+
+\[
+1 + 2 \cdot 23 + 10 = 57
+\]
+
+Si además se planifica, se puede tener:
+
+\input{int/ex/m4-02/unroll-3-lst4.asm}
+
+El tiempo pasa a:
+\[
+1 + 2 \cdot 13 + 10 = 37 \textrm{ciclos}
+\]
+
+\clearpage
