@@ -1,0 +1,96 @@
+\clearpage
+\begin{acexercise}
+\label{ex:m4-01:instr-03}
+\end{acexercise}
+%Examen de octubre de 2013.
+
+En un determinado procesador pretende ejecutar el siguiente segmento de código:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-01/instr3-code-question.asm}
+
+Asuma que el procesador tiene una arquitectura segmentada de 5 etapas
+(captación, decodificación, ejecución, memoria y post-escritura) sin envío
+adelantado. Todas las operaciones se ejecutan en un ciclo, excepto las
+operaciones de carga y almacenamiento que requieren dos ciclos adicionales de
+latencia en el acceso a memoria, y las instrucciones de salto que requieren un
+ciclo adicional de ejecución. Asuma que tanto la dirección de salto como
+la evaluación de la condición de bifurcación se conocen al final de la etapa
+de decodificación.
+
+\begin{enumerate}
+
+  \item Determine los riesgos de datos RAW que presenta el código.
+        Ignore posibles riesgos entre interaciones consecutivas.
+
+  \item Muestre un diagrama tiempos con las fases de ejecución de cada
+        instrucción para una iteración.
+
+  \item Determine cuantos ciclos requiere la ejecución de una iteración del
+        bucle si no hay ningún tipo de predicción de saltos.
+
+  \item Determine cuantos ciclos requiere la ejecución de una iteración si se
+        usa un predictor de saltos que predice siempre a tomado.
+
+\end{enumerate}
+
+\begin{acsolution}\end{acsolution}
+
+
+\paragraph{Apartado 1}
+
+\input{int/ex/m4-01/instr3-dep.tex}
+
+\paragraph{Apartado 2}
+
+La Tabla~\ref{tab1:sol-oct-2013} muestra el correspondiente diagrama de
+tiempos.
+
+\begin{table}[htb]
+\input{int/ex/m4-01/instr3-time-01.tex}
+\caption{Diagrama de tiempos del ejercicio~\ref{ex:m4-01:instr-03}.}
+\label{tab1:sol-oct-2013}
+\end{table}
+
+\begin{itemize}
+
+\item \asmlabel{I0}: Requiere tres ciclos de memoria
+
+\item \asmlabel{I1}: Se produce una detención en la etapa de decodificación hasta que 
+I0 hace WB de \asmreg{t3}.
+Requiere 3 ciclos de memoria.
+
+\item \asmlabel{I2}: 
+No puede comenzar a decodificar hasta que se libera la correspondiente unidad por I1.
+Se produce una detención en la etapa de decodificación hasta que I1 hace WB de \asmreg{t1}.
+
+\item \asmlabel{I3}: 
+No se puede captar la instrucción hasta que I2 libera la correspondiente unidad.
+No se puede decodificar la instrucción hasta que I2 libera la correspondiente unidad.
+
+\item \asmlabel{I4}:
+No se puede captar la instrucción hasta que I3 libera la correspondiente unidad.
+Se produce una detención en la etapa de decoficiación hasta que I2 hace WB de \asmreg{t1}.
+Requiere tres ciclos de memoria.
+
+\item \asmlabel{I5}: 
+No se puede decodificar la instrucción hasta que I4 libera la correspondiente unidad.
+Requiere dos ciclos de ejecución.
+No se puede realizar la etapa de memoria hasta que I4 libera la correspondiente unidad.
+
+\end{itemize}
+
+\paragraph{Apartado 3}
+
+En ese caso, la instrucción \asmlabel{I0} de la siguiente iteración no puede
+captarse hasta que se conoce la dirección de bifurcación y el resultado
+de la condición de bifurcación. Esto ocurre al final de la etapa de
+decodificación de \asmlabel{I5}. Por lo que \asmlabel{I0} se capta en el ciclo 17 
+y una iteración requiere 16 ciclos.
+
+\paragraph{Apartado 4}
+
+En ese caso, la predicción se realiza en la etapa de decodificación, que es
+cuando se sabe que se trata de una instrucción de salto, por lo que \asmlabel{I0}
+comenzaría en el ciclo 17, y una iteración requiere 16 ciclos.
+Obsérvese que en este caso no hay diferencia entre no usar un predictor de saltos o predecir el salto a tomado.
+

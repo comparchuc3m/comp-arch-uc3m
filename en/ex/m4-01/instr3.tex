@@ -1,0 +1,79 @@
+\clearpage
+\begin{acexercise}
+\label{ex:m4-01:instr-03}
+\end{acexercise}
+%October 2013 exam.
+
+A certain processor runs the following code segment:
+
+\lstinputlisting[language=generalasm2]{int/ex/m4-01/instr3-code-question.asm}
+
+Assume that the processor has 5 stages pipelined architecture (fetch,
+decode, execute, memory and write-back) without forwarding. All stages
+run in one cycle, except load and store operations which require two additional
+cycles for memory access latency, and branching instructions which require
+one additional execution cycle. Assume that both the banch target address
+and the evaluation of the branch condition are known at the end of the 
+decode stage.
+
+\begin{enumerate}
+
+  \item Identify RAW data hazards in the code.
+
+  \item Show a timing diagram with execution stages for each instruction in
+        one iteration.
+
+  \item Determine how many cycles are required for executing one loop iteration
+        when there is no branch prediction.
+
+  \item Determine how many cycles are required for executing one loop iteration
+        when a branch predictor (always predicting to taken) is used.
+
+\end{enumerate}
+
+\begin{acsolution}\end{acsolution}
+
+
+\paragraph{Section 1}
+
+\input{int/ex/m4-01/instr3-dep.tex}
+
+\paragraph{Section 2}
+
+Table~\ref{tab1:sol-oct-2013} shows the corresponding timing diagram.
+
+\begin{table}[htb]
+\input{int/ex/m4-01/instr3-time-01.tex}
+\caption{Timing diagram for exercise~\ref{ex:m4-01:instr-03}.}
+\label{tab1:sol-oct-2013}
+\end{table}
+
+\begin{itemize}
+
+\item \asmlabel{I0}: Requires three memory cycles
+
+\item \asmlabel{I1}: You can not start decoding until WB of \asmreg{t3} is done. Requires 3 cycles of memory.
+
+\item \asmlabel{I2}: It can not be fetched until the stage is released by \asmlabel{I1}. You can not start to decode until the WB of \asmreg{t1}
+
+\item \asmlabel{I4}: The decoding can not be started until \asmlabel{I2} does WB of \asmreg{t1}
+
+\item \asmlabel{I5}: Fetch can not start until \asmlabel{I4} decoding starts. The memory cycle cannot be started  until the memory cycle of \asmlabel{I4} does not end.
+
+\end{itemize}
+
+\paragraph{Section 3}
+
+In this case, instruction \asmlabel{I0} from next iteration cannot be
+fetched until both the branch target address and the branch condition result
+are known. This happens at the end of decode stage for \asmlabel{I5}. 
+Consequently, \asmlabel{I0} is fetched in cycle 17 and one iteration
+requires 16 cycles.
+
+\paragraph{Section 4}
+
+In this case, the prediction is performed in the decoding step, which is
+when it is known that it is a branch instruction, so \asmlabel{I0}
+starts in cycle 17, and one iteration requires 16 cycles.
+
+\clearpage
