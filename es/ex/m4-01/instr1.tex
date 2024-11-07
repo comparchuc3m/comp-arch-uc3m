@@ -72,6 +72,26 @@ ciclos_{iteracion} = \frac{10 + 13 \cdot 99}{100} = \frac{1297}{100} = 12.97
 \label{ex:m4-01:instr-01:chrono:forward}
 \end{table}
 
+Se deben tener en cuenta las siguientes observaciones:
+\begin{itemize}
+
+\item En el ciclo 5, la instrucción \textmark{I2} tiene una detención
+      porque puede recibir mediante reenvío el registro \asmreg{t1},
+      pero no el registro \asmreg{t2}.
+
+\item El registro \asmreg{t2} se reenvía de la instrucción \textmark{I2}
+      (etapa \textgood{M}) a la instrucción \textmark{I3} 
+      (etapa \textgood{EX}).
+
+\item La instrucción \textmark{I2} tiene una detención en el ciclo 5
+      porque la unidad de decodificación está ocupada.
+
+\item En el ciclo 9, la instrucción \textmark{I6} tiene una detención
+      en su etapa \textgood{ID} porque necesita el valor de \asmreg{s0}
+      para determinar el sentido del salto.
+
+\end{itemize}
+
 \[
 ciclos_{iteracion} = \frac{7 + 9 \cdot 99}{100} = \frac{898}{100} = 8.98
 \]
