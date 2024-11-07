@@ -11,9 +11,9 @@ loop: fld     ft0,  0(t1)
       fadd.d  ft8,  ft6,    ft7
       fadd.d  ft11, ft9,    ft10
       fsd     ft2,  0(t3)
-      fsd     ft5,  0(t3)
-      fsd     ft8,  0(t3)
-      fsd     ft11, 0(t3)
+      fsd     ft5,  8(t3)
+      fsd     ft8,  16(t3)
+      fsd     ft11, 24(t3)
       addi    t1,   t1,     32
       addi    t2,   t2,     32
       addi    t3,   t3,     32
