@@ -4,6 +4,7 @@ INT_ES_EX_M4_02_DIR=$(INT_ES_EX_DIR)/$(ES_EX_M4_02_BASE)
 ES_EX_M4_02_PARTS=\
 $(ES_EX_M4_02_DIR)/*.tex \
 $(INT_ES_EX_M4_02_DIR)/*.asm \
+$(INT_ES_EX_M4_02_DIR)/*.tex \
 
 ES_EX_M4_02_PDF=es-ex-$(ES_EX_M4_02_BASE).pdf
 
