@@ -1,0 +1,56 @@
+\subsection{Análisis dinámico de código con \emph{sanitizers}}
+
+Hay varios \textmark{sanitizers} disponibles en algunos compiladores:
+
+\begin{itemize}
+  \item \textmark{Address Sanitizer}: 
+        Detecta errores de memoria
+  \item \textmark{Leak Sanitizer}: 
+        Subconjunto de \emph{AddressSanitizer} solamente para goteos de memoria.
+  \item \textmark{Thread Sanitizer}: 
+        Detecta errores de concurrencia.
+  \item \textmark{Undefined Behavior Sanitizer}: 
+        Detecta algunos comportamientos no definidos.
+  \item \textmark{Memory Sanitizer} (solo con \cppid{clang++}): 
+        Detecta el uso de memoria sin iniciar.
+\end{itemize}
+
+Puedes utilizarlos añadiendo la correspondiente configuración a
+\textemph{CMakePresets.json}:
+
+\begin{enumerate}
+
+\item Añade a la sección de \textgood{configurePresets} una configuración para
+activar las opciones de \textmark{Address Sanitizer}:
+
+\begin{lstlisting}
+    ,
+    {
+      "name": "asan",
+      "inherits": "default",
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-fsanitize=address",
+        "CMAKE_EXE_LINKER_FLAGS": "-fsanitize=address"
+      }
+    }
+\end{lstlisting}
+
+\item Añade a la sección de \textgood{buildPresets} una configruación para
+compilar con la configuración \textgood{asan}:
+
+\begin{lstlisting}
+    ,
+    {
+      "name": "debug-asan",
+      "configurePreset": "asan",
+      "configuration": "Debug"
+    }
+\end{lstlisting}
+
+\item
+Compila el ejecutable con \textmark{debug-asan}.
+
+\item
+Ejectua el programa y analiza la salida generada.
+
+\end{enumerate}

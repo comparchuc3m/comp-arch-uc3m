@@ -1,0 +1,82 @@
+\subsection{Simple program compilation}
+
+To carry out this exercises we will use the file \cppid{hello.cpp}
+with the following content:
+
+\begin{lstlisting}
+#include <print>
+
+int main() {
+  std::println("Hello");
+}
+\end{lstlisting}
+
+We will use several options to observe different behavior from the command line
+compiler 
+\textmark{g++}.
+
+\begin{itemize}
+  \item \cppid{g++ hello.cpp -E -o hello.ii}: 
+  Runs only the pre-processor and gets the output in file \cppid{hello.ii}.
+    \begin{itemize}
+      \item Try to determine how many lines of C++ code are generated
+            after preprocessing \cppid{hello.cpp}.
+    \end{itemize}
+\begin{lstlisting}[style=terminal,escapechar=@]
+root@a4794809b16b:/workspace@\#@ g++ src/hello.cpp -E hello.ii | wc -l
+\end{lstlisting}
+
+
+  \item \cppid{g++ hello.cpp -S -o hello.s}:
+  Generates assembly code for the current translation unit.
+    \begin{itemize}
+      \item Intenta determinar cuantas líneas de código ensamblador se generan para \cppid{hello.cpp}.
+    \end{itemize}
+\begin{lstlisting}[style=terminal,escapechar=@]
+root@\@@a4794809b16b:/workspace@\#@ g++ src/hello.cpp -S -o hello.s
+root@\@@a4794809b16b:/workspace@\#@ ls -l hello.s
+-rw-r--r-- 1 root root 1403 Sep  3 13:16 hello.s
+root@\@@a4794809b16b:/workspace@\#@ wc -l hello.s 
+63 hello.s
+root@\@@a4794809b16b:/workspace@\#@ g++ src/hello.cpp -S -o hello.s && wc -l hello.s 
+63 hello.s
+\end{lstlisting}
+
+  \item \cppid{g++ hello.cpp -c -o hello.o}:
+  Generates an object file \cppid{hello.o} that can be linked to other object
+  files.
+    \begin{itemize}
+      \item Try to determine how many bytes are required for file \cppid{hello.o}.
+    \end{itemize}
+\begin{lstlisting}[style=terminal,escapechar=@]
+root@\@@a4794809b16b:/workspace@\#@ g++ src/hello.cpp -c -o hello.s
+root@\@@a4794809b16b:/workspace@\#@ ls -l hello.o
+-rw-r--r-- 1 root root 1896 Sep  3 13:22 hello.o
+\end{lstlisting}
+
+  \item \cppid{g++ hello.cpp -o hello}:
+        Generates an executable file named \cppid{hello}.
+    \begin{itemize}
+      \item Try to determine how many bytes are required for the binary
+            executable \cppid{hello}.
+\begin{lstlisting}[style=terminal,escapechar=@]
+root@\@@a4794809b16b:/workspace@\#@ g++ src/hello.cpp -o hello
+root@\@@a4794809b16b:/workspace@\#@ ls -l hello
+-rwxr-xr-x 1 root root 16352 Sep  3 13:23 hello
+root@\@@a4794809b16b:/workspace@\#@ ./hello
+Hello C++
+\end{lstlisting}
+    \end{itemize}
+\end{itemize}
+
+There are some other related tools that might be useful to a systems developer.
+However they are not covered in this lab.
+Try to find information about the following tools:
+
+\begin{itemize}
+  \item \cppid{nm}
+  \item \cppid{readelf}
+  \item \cppid{objdump}
+  \item \cppid{c++filt}
+\end{itemize}
+

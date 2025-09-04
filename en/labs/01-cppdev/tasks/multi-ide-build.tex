@@ -1,0 +1,71 @@
+\subsection{Using multiple source files}
+
+In this section we will create an executable from multiple source files:
+
+\begin{enumerate}
+
+\item
+Create a folder
+\cppid{src/areas}.
+
+\item
+Add a file named
+\cppid{src/areas/geom.hpp}
+
+\begin{lstlisting}
+#ifndef AREAS_GEOM_HPP
+#define AREAS_GEOM_HPP
+
+namespace geom {
+
+  double area(double w, double h);
+
+}
+
+#endif
+\end{lstlisting}
+
+\item 
+Add a file named
+\cppid{src/areas/geom.cpp}:
+
+\begin{lstlisting}
+#include "geom.hpp"
+
+namespace geom {
+  double area(double w, double h) {
+    return w * h;
+  }
+}
+\end{lstlisting}
+
+\item
+Add a file named
+\cppid{src/areas/main.cpp}:
+
+\begin{lstlisting}
+#include "geom.hpp"
+
+#include <print>
+
+int main() {
+  double x = 2.0;
+  double y = 3.0;
+  std::println("area({}, {})= {}", x, y, geom::area(x, y));
+}
+\end{lstlisting}
+
+\item
+Modify file \cppid{CMakeLists.txt} to add a second compilation target.
+
+\begin{lstlisting}
+...
+
+add_executable(areas)
+target_sources(areas PRIVATE src/areas/geom.cpp src/areas/main.cpp)
+\end{lstlisting}
+
+\item
+Run the program.
+
+\end{enumerate}

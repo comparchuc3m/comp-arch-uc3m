@@ -1,0 +1,83 @@
+\subsection{Compilación de un programa sencillo}
+
+Para este ejercicio de compilación utilizaremos el archivo \cppid{hello.cpp} 
+con el siguiente contenido:
+
+\begin{lstlisting}
+#include <print>
+
+int main() {
+  std::println("Hello C++");
+}
+\end{lstlisting}
+
+Utilizaremos diversas opciones para observar diferentes comportamientos de la
+interfaz de línea de comando del compilador
+\textmark{g++}.
+
+\begin{itemize}
+  \item \cppid{g++ hello.cpp -E -o hello.ii}: 
+        Ejecuta solamente el preprocesador y obtiene la salida en el archivo 
+        \cppid{hello.ii}.
+    \begin{itemize}
+      \item Intenta determinar cuantas líneas de código C++ se generan después 
+            de procesar \cppid{hello.cpp}.
+    \end{itemize}
+\begin{lstlisting}[style=terminal,escapechar=@]
+root@a4794809b16b:/workspace@\#@ g++ src/hello.cpp -E hello.ii | wc -l
+\end{lstlisting}
+
+
+  \item \cppid{g++ hello.cpp -S -o hello.s}:
+        Genera código ensamblador para la unidad de traducción actual.
+    \begin{itemize}
+      \item Intenta determinar cuantas líneas de código ensamblador se generan 
+            para \cppid{hello.cpp}.
+    \end{itemize}
+\begin{lstlisting}[style=terminal,escapechar=@]
+root@\@@a4794809b16b:/workspace@\#@ g++ src/hello.cpp -S -o hello.s
+root@\@@a4794809b16b:/workspace@\#@ ls -l hello.s
+-rw-r--r-- 1 root root 1403 Sep  3 13:16 hello.s
+root@\@@a4794809b16b:/workspace@\#@ wc -l hello.s 
+63 hello.s
+root@\@@a4794809b16b:/workspace@\#@ g++ src/hello.cpp -S -o hello.s && wc -l hello.s 
+63 hello.s
+\end{lstlisting}
+
+  \item \cppid{g++ hello.cpp -c -o hello.o}:
+        Genera un archivo objeto \cppid{hello.o} que puede enlazarse con 
+        otros archivos objeto.
+    \begin{itemize}
+      \item Intenta determinar cuantos bytes se requieren para el archivo \cppid{hello.o}.
+    \end{itemize}
+\begin{lstlisting}[style=terminal,escapechar=@]
+root@\@@a4794809b16b:/workspace@\#@ g++ src/hello.cpp -c -o hello.s
+root@\@@a4794809b16b:/workspace@\#@ ls -l hello.o
+-rw-r--r-- 1 root root 1896 Sep  3 13:22 hello.o
+\end{lstlisting}
+
+  \item \cppid{g++ hello.cpp -o hello}:
+        Genera un archivo ejecutable \cppid{hello}.
+    \begin{itemize}
+      \item Intenta determinar cuantos bytes se requieren para el 
+            ejecutable binario \cppid{hello}.
+\begin{lstlisting}[style=terminal,escapechar=@]
+root@\@@a4794809b16b:/workspace@\#@ g++ src/hello.cpp -o hello
+root@\@@a4794809b16b:/workspace@\#@ ls -l hello
+-rwxr-xr-x 1 root root 16352 Sep  3 13:23 hello
+root@\@@a4794809b16b:/workspace@\#@ ./hello
+Hello C++
+\end{lstlisting}
+    \end{itemize}
+\end{itemize}
+
+Hay otras herramientas relacionadas que te podrían ser útiles como desarrollador de sistemas, pero que no se cubren en este laboratorio.
+Intenta encontrar información sobre las siguientes:
+
+\begin{itemize}
+  \item \cppid{nm}
+  \item \cppid{readelf}
+  \item \cppid{objdump}
+  \item \cppid{c++filt}
+\end{itemize}
+
