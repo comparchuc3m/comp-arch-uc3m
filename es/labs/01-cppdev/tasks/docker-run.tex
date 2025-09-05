@@ -24,26 +24,26 @@ También puedes ejecutar un intérprete de mandatos interactivo (opción
 \textemph{-{}-it}) dentro del contenedor. Esto te permitirá ejecutar varios
 mandatos sin abandonar el contenedor.
 
-\begin{lstlisting}[style=terminal,escapechar=@]
-@\$@ docker run --rm -it cpp-intro-lab
-root@\@@b8521933590a:/workspace# g++ --version
+\begin{lstlisting}[style=terminal,escapechar=!]
+!\$! docker run --rm -it cpp-intro-lab
+root!\textgood{@}!b8521933590a:/workspace!\#! g++ --version
 g++ (Ubuntu 14.2.0-4ubuntu2~24.04) 14.2.0
 Copyright (C) 2024 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-root@\@@b8521933590a:/workspace# clang++ --version
+root!\textgood{@}!b8521933590a:/workspace!\textgood{\#}! clang++ --version
 Ubuntu clang version 20.1.8 (++20250804090239+87f0227cb601-1~exp1~20250804210352.139)
 Target: x86_64-pc-linux-gnu
 Thread model: posix
 InstalledDir: /usr/lib/llvm-20/bin
-root@\@@b8521933590a:/workspace# cmake --version
+root!\textgood{@}!b8521933590a:/workspace!\textgood{\#}! cmake --version
 cmake version 4.1.1
 
 CMake suite maintained and supported by Kitware (kitware.com/cmake).
-root@\@@b8521933590a:/workspace# exit
+root!\textgood{@}!b8521933590a:/workspace!\textgood{\#}! exit
 exit
-@\$@
+!\$!
 \end{lstlisting}
 
 \subsubsection{Compartición de archivos}
