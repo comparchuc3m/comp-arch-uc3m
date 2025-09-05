@@ -10,39 +10,18 @@
 
 \column{.6\textwidth}
   \begin{itemize}
-    \item Archivo de cabecera: \mode<presentation>{\cppid{iostream}.}
-      \mode<article>{
-        \begin{itemize}
-          \item Se sigue el paradigma de sustitución de texto.
-        \end{itemize}
-      }
-      \mode<article>{
-        \begin{itemize}
-          \item Alcance que contiene elementos de una biblioteca para evitar conflictos de nombrado.
-          \item Es distinto de los modelos de \emph{paquetes} de otros lenguajes.
-        \end{itemize}
-      }
-    \item Importación de espacio de nombres: \mode<presentation>{\cppid{std}.}
-    \item Programa principal: \mode<presentation>{\cppid{main}.}
+    \item Archivos de cabecera: 
       \begin{itemize}
-        \item Es el punto de entrada al programa.
+        \item \cppid{print}.
+        \item \cppid{iostream}.
       \end{itemize}
-      \mode<article>{
+    \item Espacio de nombres: \cppid{std}.
+    \item Programa principal: \cppid{main}.
+    \item Flujos de salida estándar: 
         \begin{itemize}
-          \item Hay cosas que ocurren antes.
-          \item Hay cosas que ocurren después.
+          \item \cppid{std::cout}: Salida estándar.
+          \item \cppid{std::cerr}: Salida de errores.
         \end{itemize}
-      }
-    \item Flujo de salida estándar: \mode<presentation>{\cppid{cout}.}
-        \begin{itemize}
-          \item Es una variable global.
-        \end{itemize}
-    \item Operador de salida: \mode<presentation>{\cppkey{<{}<}.}
-        \begin{itemize}
-          \item Envia datos a la salida estándar.
-          \item Definido para la mayoría de los tipos.
-        \end{itemize}
-    \item Salto de línea: \cppid{endl} como \cppstr{"\textbackslash n"}.
     \item Código de salida: \cppid{0} (devuelto a SO).
   \end{itemize}
 

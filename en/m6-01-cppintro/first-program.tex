@@ -5,22 +5,18 @@
 
 \column{.65\textwidth}
   \begin{itemize}
-    \item Header file: \mode<presentation>{\cppid{iostream}.}
-    \item Main program: \mode<presentation>{\cppid{main}.}
+    \item Header files: 
+      \begin{itemize}
+        \item \cppid{print}.
+        \item \cppid{iostream}.
+      \end{itemize}
+    \item Namespace: \cppid{std}.
+    \item Main program: \cppid{main}.
+    \item Standard output streams: 
         \begin{itemize}
-          \item It is program entry point.
+          \item \cppid{std::cout}: Standard output.
+          \item \cppid{std::cerr}: Error output.
         \end{itemize}
-    \item Import from namespace: \cppid{std}
-    \item Standard output stream: \cppid{cout}.
-        \begin{itemize}
-          \item It is a global variable
-        \end{itemize}
-    \item Output operator: \cppkey{<{}<}.
-        \begin{itemize}
-          \item Operator to send data to stream.
-          \item Defined for most types.
-        \end{itemize}
-    \item End of line: \cppid{endl} (like \cppstr{"\textbackslash n"}).
     \item Exit code: \cppid{0} (returned to OS).
   \end{itemize}
 

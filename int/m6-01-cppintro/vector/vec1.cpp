@@ -1,14 +1,13 @@
 #include <vector>
 #include <iostream>
+#include <print>
 
 int main() {
-  using namespace std;
-
-  vector<int> v(4);
+  std::vector<int> v(4);
   v[0] = 1;
   v[1] = 2;
   v[2] = 4;
   v[3] = 8;
 
-  cout << v[2] << "\n";
+  std::println("{}", v[2]);
 }

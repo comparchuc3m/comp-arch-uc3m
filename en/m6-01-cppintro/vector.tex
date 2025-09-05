@@ -88,13 +88,13 @@
   \vfill
   \item If no initial value is provided, vector has a size of \cppid{0}.
 \begin{lstlisting}
-vector<double> v; // Vector with 0 elements
+std::vector<double> v; // Vector with 0 elements
 \end{lstlisting}
 
   \vfill
   \item A different initial value can be provided.
 \begin{lstlisting}
-vector<double> v(100, 0.5); // 100 elements initialized to 0.5
+std::vector<double> v(100, 0.5); // 100 elements initialized to 0.5
 \end{lstlisting}
 \end{itemize}
 \end{frame}
@@ -114,7 +114,7 @@ vector<double> v(100, 0.5); // 100 elements initialized to 0.5
 \end{itemize}
 \pause
 \begin{lstlisting}
-vector<int> v;
+std::vector<int> v;
 \end{lstlisting}
 \vspace{-.5em}
 \begin{tikzpicture}
@@ -179,14 +179,14 @@ v.push_back(4);
 \begin{itemize}
   \item Size value can be obtained from a vector through \cppid{size} \emph{member function}.
 \begin{lstlisting}
-cout << v.size();
+std::print("{}", v.size());
 \end{lstlisting}
 
   \vfill
   \item \cppid{size()} allows defining a loop to traverse elements in a vector.
 \begin{lstlisting}
 for (int i=0; i<v.size(); ++i) {
-  cout << "v[" << i << "] = " << v[i] << "\n";
+  std::println("v[{}] = {}", i, v[i]);
 }
 \end{lstlisting}
 
@@ -197,14 +197,14 @@ for (int i=0; i<v.size(); ++i) {
 \begin{itemize}
   \item A vector can be traversed with a range based loop.
 \begin{lstlisting}
-vector<int> v1 { 1, 2, 3, 4 };
+std::vector<int> v1 { 1, 2, 3, 4 };
 for (auto x : v1) {
-  cout << x << "\n";
+  std::println("{}", x);
 }
 
-vector<string> v2 { "Carlos", "Daniel", "José", "Manuel" };
+std::vector<std::string> v2 { "Carlos", "Daniel", "José", "Manuel" };
 for (auto x : v2) {
-  cout << x << "\n";
+  std::println("{}", x);
 }
 \end{lstlisting}
 \end{itemize}

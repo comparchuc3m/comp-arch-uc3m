@@ -1,14 +1,13 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <print>
 
 int main() {
-  using namespace std;
-
-  vector<string> v { "Daniel", "Carlos" };
+  std::vector<std::string> v { "Daniel", "Carlos" };
  
-  vector<int> w { 1969, 2003 };
+  std::vector<int> w { 1969, 2003 };
 
-  cout << v[0] << " : " << w[0] << "\n";
-  cout << v[1] << " : " << w[1] << "\n";
+  std::println("{} : {}", v[0], w[0]);
+  std::println("{} : {}", v[1], w[1]);
 }

@@ -1,25 +1,23 @@
 #include <iostream>
+#include <print>
 #include <vector>
 #include <string>
 #include <algorithm>
 
 int main() {
-  using namespace std;
-
-  vector<string> words;
+  std::vector<std::string> words;
   string w;
 
-  while (cin >> w) {
+  while (std::cin >> w) {
     words.push_back(w);
   }
 
-  sort(words.begin(), words.end());
+  std::ranges::sort(words);
 
-  cout << "\n";
-  cout << words[0] << "\n";
+  std::println("\n{}", words[0]);
   for (std::size_t i=1; i<words.size(); ++i) {
     if (words[i-1] != words[i]) {
-      cout << words[i] << "\n";
+      std::println("\n{}", words[i]);
     }
   }
 }

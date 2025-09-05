@@ -31,12 +31,12 @@
 
 \begin{lstlisting}
 void f() {
-  shared_ptr<string> p1{new string{"Hola"}};
-  shared_ptr<string> p2{p1}; // referencias -> 2
+  std::shared_ptr<std::string> p1{new std::string{"Hola"}};
+  std::shared_ptr<std::string> p2{p1}; // referencias -> 2
 
   auto n = p1->size(); // string::size(). p1 usado como ptr
   *p1 = "Adios";
-  if (p2) { cerr << "Ocupado\n"; }
+  if (p2) { std::cerr << "Ocupado\n"; }
 
   p1 = nullptr; // referencias -> 1
   //...
@@ -52,10 +52,10 @@ void f() {
 \end{itemize}
 
 \begin{lstlisting}
-void f(string & s, int n) {
-  unique_ptr<int> p{new int{50}};
+void f(std::string & s, int n) {
+  std::unique_ptr<int> p{new int{50}};
 
-  string tmp = s; // Podría lanzar excepción
+  std::string tmp = s; // Podría lanzar excepción
   if (n<0) return;
 
   *p = 42;

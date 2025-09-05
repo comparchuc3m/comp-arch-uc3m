@@ -88,9 +88,9 @@
 \end{itemize}
 }
 
-\begin{frame}[t,fragile]{Vectores e iniciación}
+\begin{frame}[t,fragile]{Vectores e inicialización}
 \begin{itemize}
-  \item Un vector con tamaño inicia todos sus valores al valor por defecto del tipo.
+  \item Un vector con tamaño inicializa todos sus valores al valor por defecto del tipo.
     \begin{itemize}
       \item Valores numéricos: \mode<presentation>{\cppid{0}}
       \item Valores de cadena: \mode<presentation>{\cppid{``''}}
@@ -99,13 +99,13 @@
   \vfill
   \item Si no se indica tamaño inicial, el vector tiene tamaño \cppid{0}.
 \begin{lstlisting}
-vector<double> v; // Vector con 0 elementos
+std::vector<double> v; // Vector con 0 elementos
 \end{lstlisting}
 
   \vfill
   \item Se puede suministrar un valor inicial distinto.
 \begin{lstlisting}
-vector<double> v(100, 0.5); // 100 posiciones iniciadas a 0.5
+std::vector<double> v(100, 0.5); // 100 posiciones inicializadas a 0.5
 \end{lstlisting}
 \end{itemize}
 \end{frame}
@@ -125,7 +125,7 @@ vector<double> v(100, 0.5); // 100 posiciones iniciadas a 0.5
 \end{itemize}
 \pause
 \begin{lstlisting}
-vector<int> v;
+std::vector<int> v;
 \end{lstlisting}
 \mode<presentation>{\vspace{-.5em}}
 \begin{tikzpicture}
@@ -188,14 +188,14 @@ v.push_back(4);
 \begin{itemize}
   \item Se puede consultar el tamaño de un vector mediante la \emph{función miembro} \cppid{size}.
 \begin{lstlisting}
-cout << v.size();
+std::println("{}", v.size());
 \end{lstlisting}
 
   \vfill
   \item \cppid{size()} permite definir un bucle para recorrer los elementos de un vector.
 \begin{lstlisting}
 for (int i=0; i<v.size(); ++i) {
-  cout << "v[" << i << "] = " << v[i] << "\n";
+  std::println("v[{}] = {}", i, v[i]);
 }
 \end{lstlisting}
 
@@ -206,14 +206,14 @@ for (int i=0; i<v.size(); ++i) {
 \begin{itemize}
   \item Se puede usar un recorrido basado en rango para un vector.
 \begin{lstlisting}
-vector<int> v1 { 1, 2, 3, 4 };
+std::vector<int> v1 { 1, 2, 3, 4 };
 for (auto x : v1) {
-  cout << x << "\n";
+  std::println("{}", x);
 }
 
-vector<string> v2 { "Carlos", "Daniel", "José", "Manuel" };
+std::vector<std::string> v2 { "Carlos", "Daniel", "José", "Manuel" };
 for (auto x : v2) {
-  cout << x << "\n";
+  std::println("{}", x);
 }
 \end{lstlisting}
 \end{itemize}
