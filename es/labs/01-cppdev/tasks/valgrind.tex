@@ -44,6 +44,14 @@ int main() {
 }
 \end{lstlisting}
 
+\item Modify file \textgood{CMakeLists.txt} to add a third compilation target.
+
+\begin{lstlisting}
+#...
+add_executable(numbers)
+target_sources(numbers PRIVATE src/numbers/main.cpp)
+\end{lstlisting}
+
 \item
 Ejecuta el programa y observa el resultado.
 
