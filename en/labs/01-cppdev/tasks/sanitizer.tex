@@ -34,8 +34,8 @@ options:
       "name": "asan",
       "inherits": "default",
       "cacheVariables": {
-        "CMAKE_CXX_FLAGS": "-fsanitize=address",
-        "CMAKE_EXE_LINKER_FLAGS": "-fsanitize=address"
+        "CMAKE_CXX_FLAGS": "-fsanitize=address -fno-omit-frame-pointer",
+        "CMAKE_EXE_LINKER_FLAGS": "-fsanitize=address -fno-omit-frame-pointer"
       }
     }
 \end{lstlisting}
@@ -61,5 +61,19 @@ Compile executable
 
 \item
 Run the program and analyzed the generated output.
+
+\item
+You might not obtain any information about memory leaks. This is due to a
+known bug in \textmark{Address Sanitizer} when a program uses functions
+\cppid{std::print()} or \cppid{std::println()}.
+
+Modify the program so that the output is done using a line of code such as the
+following:
+
+\begin{lstlisting}
+    std::cout << "v[" << i << "] = " << v[i] << "\n";
+\end{lstlisting}
+
+Remember that you must include the \cppid{iostream} header file.
 
 \end{enumerate}

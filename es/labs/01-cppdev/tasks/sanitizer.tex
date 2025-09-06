@@ -29,8 +29,8 @@ activar las opciones de \textmark{Address Sanitizer}:
       "name": "asan",
       "inherits": "default",
       "cacheVariables": {
-        "CMAKE_CXX_FLAGS": "-fsanitize=address",
-        "CMAKE_EXE_LINKER_FLAGS": "-fsanitize=address"
+        "CMAKE_CXX_FLAGS": "-fsanitize=address -fno-omit-frame-pointer",
+        "CMAKE_EXE_LINKER_FLAGS": "-fsanitize=address -fno-omit-frame-pointer"
       }
     }
 \end{lstlisting}
@@ -52,5 +52,19 @@ Compila el ejecutable con \textmark{debug-asan}.
 
 \item
 Ejectua el programa y analiza la salida generada.
+
+\item
+Puede que no hayas obtenido ninguna información sobre goteos de memoria. Esto se
+debe a un bug conocido de \textmark{Address Sanitizer} cuando un programa
+utiliza las funciones \cppid{std::print()} o \cppid{std::println()}.
+
+Modifica el programa para que la impresión se haga utilizando una línea de
+código como la siguiente:
+
+\begin{lstlisting}
+    std::cout << "v[" << i << "] = " << v[i] << "\n";
+\end{lstlisting}
+
+Recuerda que deberás incluir el archivo de cabecera \cppid{iostream}.
 
 \end{enumerate}
