@@ -1,0 +1,69 @@
+\subsection{Detecting memory leaks with \emph{valgrind}}
+
+\begin{enumerate}
+
+\item
+Create a folder named \cppid{src/numbers}.
+
+\item 
+Add a file named
+\cppid{src/numbers/primitive\_vecnum.hpp}
+
+\begin{lstlisting}
+#ifndef NUMBERS_PRIMITIVE_VECNUM_HPP
+#define NUMBERS_PRIMITIVE_VECNUM_HPP
+
+#include <cstddef>
+
+class vecnum {
+public:
+  explicit vecnum(std::size_t n) : size_{n}, buffer_{new double[n]{}} {}
+  [[nodiscard]] std::size_t size() const { return size_; }
+
+  double operator[](std::size_t i) const { return buffer_[i]; }
+  double &operator[](std::size_t i) { return buffer_[i]; }
+private:
+  std::size_t size_;
+  double * buffer_;
+};
+
+#endif//NUMBERS_PRIMITIVE_VECNUM_HPP
+\end{lstlisting}
+
+\item
+Write the following 
+\cppid{src/numbers/main.cpp} file:
+
+\begin{lstlisting}
+#include "primitive_vecnum.hpp"
+#include <print>
+
+int main() {
+  vecnum v(5);
+  v[2] = 3.0;
+  for (std::size_t i=0; i<v.size(); ++i) {
+    std::println("v[{}] = {}", i, v[i]);
+  }
+}
+\end{lstlisting}
+
+\item Modifica el archivo \textgood{CMakeLists.txt} para añadir un tercer
+objetivo de compilación.
+
+\begin{lstlisting}
+#...
+add_executable(numbers)
+target_sources(numbers PRIVATE src/numbers/main.cpp)
+\end{lstlisting}
+
+\item
+Run the program and look at the result.
+
+\item
+From terminal window run the following command and analyze generated output:
+
+\begin{lstlisting}[style=terminal,escapechar=!]
+root!\textgood{@}!d8e0264cf0b4:/workspace/out/build/default/Debug!\textgood{\#}! valgrind --tool=memcheck ./numbers
+\end{lstlisting}
+
+\end{enumerate}

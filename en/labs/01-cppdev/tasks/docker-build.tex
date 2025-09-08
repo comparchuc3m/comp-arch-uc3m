@@ -1,0 +1,20 @@
+\subsection{Building a docker image}
+
+The code includes file \cppid{Dockerfile} that can be used to build an image
+from command line.
+
+\begin{lstlisting}[style=terminal]
+docker build -f .devcontainer/Dockerfile -t cpp-intro-lab .
+\end{lstlisting}
+
+This command uses the name
+\textmark{cpp-intro-lab} 
+to create an image from file
+\textgood{.devcontainer/Dockerfile} 
+Using as path the current directoyr (path \textgood{.}).
+
+You can check the available images with \textemph{docker image ls}:
+
+\begin{lstlisting}[style=terminal]
+docker image ls
+\end{lstlisting}

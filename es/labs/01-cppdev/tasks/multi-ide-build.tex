@@ -1,0 +1,68 @@
+\subsection{Uso de varios archivos fuente}
+
+En esta sección crearemos un ejecutable con varios archivos fuente:
+
+\begin{enumerate}
+
+\item
+Crea una carpeta llamada \cppid{src/areas}.
+
+\item
+Añade un archivo llamado \cppid{src/areas/geom.hpp}
+
+\begin{lstlisting}
+#ifndef AREAS_GEOM_HPP
+#define AREAS_GEOM_HPP
+
+namespace geom {
+
+  double area(double w, double h);
+
+}
+
+#endif
+\end{lstlisting}
+
+\item 
+Añade un archivo llamado \cppid{src/areas/geom.cpp}:
+
+\begin{lstlisting}
+#include "geom.hpp"
+
+namespace geom {
+  double area(double w, double h) {
+    return w * h;
+  }
+}
+\end{lstlisting}
+
+\item
+Añade un archivo \cppid{src/areas/main.cpp}:
+
+\begin{lstlisting}
+#include "geom.hpp"
+
+#include <print>
+
+int main() {
+  double x = 2.0;
+  double y = 3.0;
+  std::println("area({}, {})= {}", x, y, geom::area(x, y));
+}
+\end{lstlisting}
+
+\item
+Modifica tu archivo \cppid{CMakeLists.txt} para añadir un segundo 
+objetivo de compilación
+
+\begin{lstlisting}
+...
+
+add_executable(areas)
+target_sources(areas PRIVATE src/areas/geom.cpp src/areas/main.cpp)
+\end{lstlisting}
+
+\item
+Ejecuta el programa.
+
+\end{enumerate}

@@ -1,0 +1,19 @@
+\subsection{Construcción de una imagen docker}
+
+El código incluye un archivo \cppid{Dockerfile} que se puede utilizar para
+construir una imagen desde línea de mandatos.
+
+\begin{lstlisting}[style=terminal]
+docker build -f .devcontainer/Dockerfile -t cpp-intro-lab .
+\end{lstlisting}
+
+Este mandato utiliza para crear una imagen con el nombre
+\textmark{cpp-intro-lab} a partir del archivo
+\textgood{.devcontainer/Dockerfile} usando como ruta el directorio actual (ruta
+\textgood{.}).
+
+Puedes comprobar las imágenes disponibles con \textemph{docker image ls}:
+
+\begin{lstlisting}[style=terminal]
+docker image ls
+\end{lstlisting}

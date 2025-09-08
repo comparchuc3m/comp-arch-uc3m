@@ -1,0 +1,64 @@
+\subsection{Fixing memory leaks}
+
+Try to fix the memory leak with at least one of the following alternatives:
+
+\begin{enumerate}
+
+\item 
+Add a destructor to the existing class
+\begin{itemize}
+  \item Make sure that the destructor uses
+        \cppkey{delete []} \cppid{var} 
+        instead of \cppkey{delete} \cppid{var}.
+\end{itemize}
+
+\item 
+Modify the data member of type \cppkey{double*} 
+to become a data member of type
+\cppid{std::unique\_ptr<double[]>}.
+Keep in mind the following:
+
+\begin{itemize}
+  \item Include header \cppid{<memory>}.
+
+  \item Modify data member \cppid{buffer\_} to type \cppid{std::unique\_ptr<double[]>}.
+
+  \item Replace \cppkey{new} in the constructor to a call to 
+        \cppid{std::make\_unique<double[]>(n)}.
+
+  \item Include header \cppid{<algorithm>}.
+
+  \item Add a copy constructor.
+
+\begin{lstlisting}
+vecnum(const vecnum & v) : size_{v.size_}, buffer_{std::make_unique<double[]>(size_)} {
+  std::copy_n(v.buffer_.get(), v.size_, buffer_.get());
+}
+\end{lstlisting}
+\end{itemize}
+
+\end{enumerate}
+
+After that, analyze the effects on memory leaks when using the following
+program 
+\cppid{main.cpp}:
+
+\begin{lstlisting}
+#include <print>
+#include "primitive_vecnum.hpp"
+
+int main() {
+  vecnum v(5);
+  v[2] = 3.0;
+
+  vecnum w{v};
+
+  for (std::size_t i=0; i<v.size(); ++i) {
+    std::println("v[{}] = {}", i, v[i]);
+  }
+
+  for (std::size_t i=0; i<w.size(); ++i) {
+    std::println("w[{}] = {}", i, w[i]);
+  }
+}
+\end{lstlisting}

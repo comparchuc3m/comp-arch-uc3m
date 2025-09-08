@@ -1,0 +1,53 @@
+\subsection{Corrección de goteos de memoria}
+
+Intenta corregir el goteo de memoria con al menos una de las siguientes alternativas:
+
+\begin{enumerate}
+
+\item Añade un destructor a la clase existente.
+\begin{itemize}
+  \item Asegúrate de que en el destructor utilizas 
+        un \cppkey{delete []} \cppid{var} 
+        y no un \cppkey{delete} \cppid{var}.
+\end{itemize}
+
+\item Modifica el dato miembro \cppkey{double*} 
+para utilizar en su lugar un dato miembro \cppid{std::unique\_ptr<double[]>}.
+Ten en cuenta lo siguiente:
+
+\begin{itemize}
+  \item Incluye la cabecera \cppid{<memory>}.
+  \item Modifica el dato miembro \cppid{buffer\_} al tipo \cppid{std::unique\_ptr<double[]>}.
+  \item Remplaza el \cppkey{new} del constructor por una llamada a \cppid{std::make\_unique<double[]>(n)}.
+  \item Incluye la cabecera \cppid{<algorithm>}.
+  \item Añade un constructor de copia.
+\begin{lstlisting}
+vecnum(const vecnum & v) : size_{v.size_}, buffer_{std::make_unique<double[]>(size_)} {
+  std::copy_n(v.buffer_.get(), v.size_, buffer_.get());
+}
+\end{lstlisting}
+\end{itemize}
+
+\end{enumerate}
+
+Después, analiza los efectos sobre los goteos de memoria cuando usas el siguiente programa \cppid{main.cpp}:
+
+\begin{lstlisting}
+#include <print>
+#include "primitive_vecnum.hpp"
+
+int main() {
+  vecnum v(5);
+  v[2] = 3.0;
+
+  vecnum w{v};
+
+  for (std::size_t i=0; i<v.size(); ++i) {
+    std::println("v[{}] = {}", i, v[i]);
+  }
+
+  for (std::size_t i=0; i<w.size(); ++i) {
+    std::println("w[{}] = {}", i, w[i]);
+  }
+}
+\end{lstlisting}

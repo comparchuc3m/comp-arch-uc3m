@@ -1,0 +1,62 @@
+\subsection{Container execution}
+
+\subsubsection{Running a container}
+
+You can run a container from an image with command
+\textemph{docker run}. 
+You can specify the command to be executed inside the container.
+
+Run the following command
+
+\begin{lstlisting}[style=terminal]
+docker run --rm cpp-intro-lab g++ --version
+\end{lstlisting}
+
+This command starts a container from image \textgood{cpp-intro-lab}
+and runs command \textemph{g++ -{}-version}, 
+to get at the terminal output the version from command \textemph{g++} 
+(GCC's compiler for the C++ programming language).
+Option 
+\textemph{-{}-rm} 
+specifies that after finishing the container must be deleted.
+
+\subsubsection{Interactively running a container}
+
+You can also run an interactive command shell
+(option \textemph{-{}-it}) inside the container.
+This will allow you to run several commands without exiting the container.
+
+\begin{lstlisting}[style=terminal,escapechar=!]
+!\$! docker run --rm -it cpp-intro-lab
+root!\textgood{@}!b8521933590a:/workspace!\textgood{\#}! g++ --version
+g++ (Ubuntu 14.2.0-4ubuntu2~24.04) 14.2.0
+Copyright (C) 2024 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+root!\textgood{@}!b8521933590a:/workspace!\textgood{\#}! clang++ --version
+Ubuntu clang version 20.1.8 (++20250804090239+87f0227cb601-1~exp1~20250804210352.139)
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /usr/lib/llvm-20/bin
+root!\textgood{@}!b8521933590a:/workspace!\textgood{\#}! cmake --version
+cmake version 4.1.1
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+root!\textgood{@}!b8521933590a:/workspace!\textgood{\#}! exit
+exit
+!\$!
+\end{lstlisting}
+
+\subsubsection{File sharing}
+
+When a container is executed no file is shared between the host machine and the
+container. To do it you will need to mount a volue (option \textemph{-v}) when
+running the container and to specify the work directory.
+
+\begin{lstlisting}[style=terminal,escapechar=@]
+docker run --rm -it -v @\$@(pwd):/workspace cpp-intro-lab
+\end{lstlisting}
+
+Keep in mind that directory \textmark{/workspace} 
+is defined as work directoyr in file \cppid{Dockerfile}.

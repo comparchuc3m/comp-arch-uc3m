@@ -1,0 +1,129 @@
+\subsection{Using the \textbf{VS Code} development environment}
+
+\begin{enumerate}
+
+\item 
+From project root directory start the
+\textmark{VS Code}
+development environment.
+
+\begin{lstlisting}[style=terminal,escapechar=@]
+@\$@ code .
+\end{lstlisting}
+
+  \begin{itemize}
+    \item If you get a message asking about trusting authors of files
+          in folder, specify \textgood{Yes}.
+  \end{itemize}
+
+\item
+Select in the left panel options for extensions
+(or use menu \textmark{View | Extensions}). 
+Make sure that you install the following extensions:
+
+  \begin{itemize}
+    \item \textmark{Dev Containers}.
+  \end{itemize}
+
+\item
+Select the command palette
+(menu option \textmark{View | Command Palette}) 
+and select option
+\textgood{Dev Containers: Rebuild and Reopen in Container}.
+
+\item
+Add to work space a file named 
+\textgood{CMakeLists.txt}. 
+The file must contain the following instructions:
+
+\begin{lstlisting}
+cmake_minimum_required(VERSION 4.0)
+project(hello LANGUAGES CXX)
+
+add_executable(hello)
+target_sources(hello PRIVATE src/hello.cpp)
+\end{lstlisting}
+
+  \begin{itemize}
+    \item This file specifies the following:
+      \begin{itemize}
+        \item At least version \textgood{4.0} of \textemph{cmake} is needed.
+        \item Project is named \textgood{hello} and it is written in \textgood{C++}.
+        \item Project generates executable \textemph{hello}.
+        \item Executable \textemph{hello} is generated from source file
+              \cppid{src/hello.cpp}.
+      \end{itemize}
+  \end{itemize}
+
+\item
+Add to work space a file named
+\textgood{CMakePresets.json}. 
+The file must contain the following:
+
+\begin{lstlisting}
+{
+  "version": 9,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 30,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "description": "Default configuration",
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/bin/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Release;Debug",
+        "CMAKE_CXX_STANDARD": "23",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_CXX_SCAN_FOR_MODULES": "OFF",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "YES",
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -Werror -pedantic -pedantic-errors -Wconversion -Wsign-conversion"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "debug",
+      "configurePreset": "default",
+      "configuration": "Debug"
+    },
+    {
+      "name": "release",
+      "configurePreset": "default",
+      "configuration": "Release"
+    }
+  ]
+}
+\end{lstlisting}
+
+  \begin{itemize}
+    \item This file establishes the following:
+      \begin{itemize}
+        \item Two configurations shall be generated:
+              \textmark{Debug} and \textmark{Release}.
+        \item Compilation is done in \textmark{C++23} mode without extensions.
+        \item All warnings are enabled.
+      \end{itemize}
+  \end{itemize}
+
+\item 
+In the lower part in the screen you can select the following 
+      \emph{presets}:
+  \begin{itemize}
+    \item Configure: \textmark{default}.
+    \item Build: \textmark{debug} or \textmark{release}.
+  \end{itemize}
+
+\item
+Build the program with \textmark{Build} button.
+
+\item
+Run the program with \textmark{Launch} button. 
+
+\end{enumerate}
+

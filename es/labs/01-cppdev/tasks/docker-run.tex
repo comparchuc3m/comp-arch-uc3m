@@ -1,0 +1,60 @@
+\subsection{Ejecución de contenedor}
+
+\subsubsection{Ejecución de un contenedor}
+
+Puedes ejecutar un contenedor a partir de una imagen con el mandato 
+\textemph{docker run}. Al hacerlo puedes indicar el mandato que quieres
+ejecutar dentro del contenedor.
+
+Ejecuta el siguiente mandato:
+
+\begin{lstlisting}[style=terminal]
+docker run --rm cpp-intro-lab g++ --version
+\end{lstlisting}
+
+Este mandato inicia un contenedor a partir de la image \textgood{cpp-intro-lab}
+y ejecuta el mandato \textemph{g++ -{}-version}, para obtener por la salida del
+terminal la versión del mandato \textemph{g++} (el compilador de GCC para el
+lenguaje C++). La opción \textemph{-{}-rm} indica que una vez finalizado el
+contenedor se debe eliminar.
+
+\subsubsection{Ejecución interactiva de un contenedor}
+
+También puedes ejecutar un intérprete de mandatos interactivo (opción
+\textemph{-{}-it}) dentro del contenedor. Esto te permitirá ejecutar varios
+mandatos sin abandonar el contenedor.
+
+\begin{lstlisting}[style=terminal,escapechar=!]
+!\$! docker run --rm -it cpp-intro-lab
+root!\textgood{@}!b8521933590a:/workspace!\#! g++ --version
+g++ (Ubuntu 14.2.0-4ubuntu2~24.04) 14.2.0
+Copyright (C) 2024 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+root!\textgood{@}!b8521933590a:/workspace!\textgood{\#}! clang++ --version
+Ubuntu clang version 20.1.8 (++20250804090239+87f0227cb601-1~exp1~20250804210352.139)
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /usr/lib/llvm-20/bin
+root!\textgood{@}!b8521933590a:/workspace!\textgood{\#}! cmake --version
+cmake version 4.1.1
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+root!\textgood{@}!b8521933590a:/workspace!\textgood{\#}! exit
+exit
+!\$!
+\end{lstlisting}
+
+\subsubsection{Compartición de archivos}
+
+Cuando se ejecuta un contenedor no se comparte ningún archivo entre la máquina
+anfitriona y el contenedor. Para hacerlo es necesario montar un volumen (opción
+\textemph{-v}) al ejecutar el contenedor e indicar el directorio de trabajo.
+
+\begin{lstlisting}[style=terminal,escapechar=@]
+docker run --rm -it -v @\$@(pwd):/workspace cpp-intro-lab
+\end{lstlisting}
+
+Ten en cuenta que el directorio \textmark{/workspace} se define como directorio
+de trabajo en el archivo \cppid{Dockerfile}.

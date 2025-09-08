@@ -1,0 +1,79 @@
+\subsection{Dynamic analysis of code with \emph{sanitizers}}
+
+There are several \textmark{sanitizers} 
+available in some compilers:
+
+\begin{itemize}
+  \item \textmark{Address Sanitizer}: 
+        Detects memory errors.
+  \item \textmark{Leak Sanitizer}: 
+        Subset from \emph{AddressSanitizer} 
+        only for memory leaks.
+  \item \textmark{Thread Sanitizer}: 
+        Detects concurrency errors.
+  \item \textmark{Undefined Behavior Sanitizer}: 
+        Detects some undefined behavior.
+  \item \textmark{Memory Sanitizer} (only with \cppid{clang++}): 
+        Detect uninitialized memory use.
+\end{itemize}
+
+You can use them by adding the corresponding configuration to
+\textemph{CMakePresets.json}:
+
+\begin{enumerate}
+
+\item 
+Add to section \textgood{configurePresets} 
+a configuration to enable 
+\textmark{Address Sanitizer}
+options:
+
+\begin{lstlisting}
+    ,
+    {
+      "name": "asan",
+      "inherits": "default",
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-fsanitize=address -fno-omit-frame-pointer",
+        "CMAKE_EXE_LINKER_FLAGS": "-fsanitize=address -fno-omit-frame-pointer"
+      }
+    }
+\end{lstlisting}
+
+\item 
+Add to section \textgood{buildPresets}
+a configuration to compile with 
+\textgood{asan}
+configuration:
+
+\begin{lstlisting}
+    ,
+    {
+      "name": "debug-asan",
+      "configurePreset": "asan",
+      "configuration": "Debug"
+    }
+\end{lstlisting}
+
+\item
+Compile executable 
+\textmark{debug-asan}.
+
+\item
+Run the program and analyzed the generated output.
+
+\item
+You might not obtain any information about memory leaks. This is due to a
+known bug in \textmark{Address Sanitizer} when a program uses functions
+\cppid{std::print()} or \cppid{std::println()}.
+
+Modify the program so that the output is done using a line of code such as the
+following:
+
+\begin{lstlisting}
+    std::cout << "v[" << i << "] = " << v[i] << "\n";
+\end{lstlisting}
+
+Remember that you must include the \cppid{iostream} header file.
+
+\end{enumerate}

@@ -1,0 +1,65 @@
+\subsection{Detección de goteos de memoria con \emph{valgrind}}
+
+\begin{enumerate}
+
+\item
+Crea un objetivo llamado \cppid{numbers}.
+
+\item Añade un archivo llamado \cppid{primitive\_vecnum.hpp}
+
+\begin{lstlisting}
+#ifndef NUMBERS_PRIMITIVE_VECNUM_HPP
+#define NUMBERS_PRIMITIVE_VECNUM_HPP
+
+#include <cstddef>
+
+class vecnum {
+public:
+  explicit vecnum(std::size_t n) : size_{n}, buffer_{new double[n]{}} {}
+  [[nodiscard]] std::size_t size() const { return size_; }
+
+  double operator[](std::size_t i) const { return buffer_[i]; }
+  double &operator[](std::size_t i) { return buffer_[i]; }
+private:
+  std::size_t size_;
+  double * buffer_;
+};
+
+#endif//NUMBERS_PRIMITIVE_VECNUM_HPP
+\end{lstlisting}
+
+\item
+Escribe el siguiente \cppid{main.cpp}:
+
+\begin{lstlisting}
+#include "primitive_vecnum.hpp"
+#include <print>
+
+int main() {
+  vecnum v(5);
+  v[2] = 3.0;
+  for (std::size_t i=0; i<v.size(); ++i) {
+    std::println("v[{}] = {}", i, v[i]);
+  }
+}
+\end{lstlisting}
+
+\item Modify file \textgood{CMakeLists.txt} to add a third compilation target.
+
+\begin{lstlisting}
+#...
+add_executable(numbers)
+target_sources(numbers PRIVATE src/numbers/main.cpp)
+\end{lstlisting}
+
+\item
+Ejecuta el programa y observa el resultado.
+
+\item
+Desde la ventana de terminal ejecuta el siguiente mandato y analiza la salida.
+
+\begin{lstlisting}[style=terminal,escapechar=!]
+root!\textgood{@}!d8e0264cf0b4:/workspace/out/build/default/Debug!\textgood{\#}! valgrind --tool=memcheck ./numbers
+\end{lstlisting}
+
+\end{enumerate}
