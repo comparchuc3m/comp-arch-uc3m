@@ -6,7 +6,7 @@
 
 int main() {
   std::vector<std::string> words;
-  string w;
+  std::string w;
 
   while (std::cin >> w) {
     words.push_back(w);
@@ -17,7 +17,7 @@ int main() {
   std::println("\n{}", words[0]);
   for (std::size_t i=1; i<words.size(); ++i) {
     if (words[i-1] != words[i]) {
-      std::println("\n{}", words[i]);
+      std::println("{}", words[i]);
     }
   }
 }
