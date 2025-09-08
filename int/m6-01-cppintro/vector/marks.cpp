@@ -1,13 +1,12 @@
 #include <vector>
 #include <iostream>
+#include <print>
 
 int main() {
-  using namespace std;
-
-  vector<double> marks;
+  std::vector<double> marks;
 
   double x;
-  while (cin >> x) { // x OK?
+  while (std::cin >> x) { // x OK?
     marks.push_back(x);
   }
 
@@ -21,7 +20,7 @@ int main() {
   }
   average /= static_cast<double>(marks.size());
 
-  cout << "Average: " << average << "\n";
-  cout << "Max: " << max_val << "\n";
-  cout << "Min: " << min_val << "\n";
+  std::println("Average: {}", average);
+  std::println("Max: {}", max_val);
+  std::println("Min: {}", min_val);
 }

@@ -66,15 +66,14 @@ void f() {
 int main()
   try {
     f();
-    return 0;
   }
-  catch (out_of_range & e) {
+  catch (out_of_range const & e) {
     cerr << "Out of range:" << e.what() << "\n";
-    return -1;
+    return EXIT_FAILURE;
   }
-  catch (exception & e) {
+  catch (exception const & e) {
     cerr << "Exception: " << e.what() << "\n";
-    return -2;
+    return EXIT_FAILURE;
   }
 }
 \end{lstlisting}

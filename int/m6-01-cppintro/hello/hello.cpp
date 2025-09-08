@@ -1,10 +1,12 @@
+#include <print>
 #include <iostream>
 
 int main() {
-  using namespace std;
+  std::println("Hello C++");
 
-  cout << "Hello C++" << endl;
-  cerr << "Error message\n";
+  std::println(std::cout, "Hello C++");
+
+  std::print(std::cerr, "Error\n");
 
   return 0;
 }

@@ -1,12 +1,12 @@
 #include <iostream>
+#include <print>
 #include <string>
 
 int main() {
   using namespace std;
-  cout << "Enter your name: \n";
+  println("Enter your name:");
 
   string name;
   cin >> name;
-
-  cout << "Hello, " << name << "!\n";
+  println("Hello, {}!", name);
 }

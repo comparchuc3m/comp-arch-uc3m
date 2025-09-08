@@ -55,7 +55,7 @@ void f() {
 
 \column{.6\textwidth}
 \begin{lstlisting}
-double maxref(const std::vector<double> & v) {
+double maxref(std::vector<double> const & v) {
   double res = std::numeric_limits<double>::min();
   for (auto x : v) {
     if (x>res) {
@@ -69,9 +69,9 @@ double maxref(const std::vector<double> & v) {
 \column{.4\textwidth}
 \begin{lstlisting}
 void f() {
-  vector<double> vec(1000000);
+  std::vector<double> vec(1000000);
   //...
-  cout << "Max: " << maxref(vec) << "\n";
+  std::println("Max : {}", maxref(vec));
 }
 \end{lstlisting}
 
