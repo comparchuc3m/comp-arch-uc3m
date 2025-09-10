@@ -7,7 +7,7 @@
   \pause\vfill
   \item An exception may be any type.
 \begin{lstlisting}
-class negative_time {};
+class invalid_time {};
 \end{lstlisting}
 
   \pause\vfill
@@ -15,12 +15,10 @@ class negative_time {};
         (\cppkey{throw}) an exception.
 \begin{lstlisting}
 void print_velocity(double s, double t) {
-  if (t > 0.0) {
-    cout << s/t << "\n";
+  if (t <= 0.0) {
+    throw invalid_time{};
   }
-  else {
-    throw negative_time{};
-  }
+  std::println("velocity = {}", s/t);
 }
 \end{lstlisting}
 
@@ -37,8 +35,8 @@ void f() {
   try {
     print_velocity(s,t);
   }
-  catch (negative_time) {
-    cerr << "Error: Negative time\n";
+  catch (invalid_time) {
+    std::println(std::cerr, "Error: Invalid time\n");
   }
 }
 \end{lstlisting}
@@ -62,19 +60,38 @@ void f() {
       \item All have a \cppid{what()} member function.
     \end{itemize}
 \end{itemize}
+\mode<presentation>{\vspace{-.5em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
 \begin{lstlisting}
-int main()
-  try {
-    f();
+struct invalid_time : public std::invalid_argument{
+  invalid_time() :
+    std::invalid_argument{"Invalid time"} {}
+};
+
+void print_velocity(double s, double t) {
+  if (t <= 0.0) {
+    throw invalid_time{};
   }
-  catch (out_of_range const & e) {
-    cerr << "Out of range:" << e.what() << "\n";
-    return EXIT_FAILURE;
-  }
-  catch (exception const & e) {
-    cerr << "Exception: " << e.what() << "\n";
-    return EXIT_FAILURE;
-  }
+  std::println("velocity = {}", s/t);
 }
 \end{lstlisting}
+
+\column{.5\textwidth}
+\begin{lstlisting}
+int main() try {
+  f();
+}
+catch (std::out_of_range const & e) {
+  std::cerr << "Out of range:" << e.what() << "\n";
+  return EXIT_FAILURE;
+}
+catch (std::exception const & e) {
+  std::cerr << "Exception: " << e.what() << "\n";
+  return EXIT_FAILURE;
+}
+\end{lstlisting}
+\end{columns}
+
 \end{frame}

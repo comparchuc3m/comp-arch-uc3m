@@ -8,7 +8,7 @@
   \pause\vfill
   \item Una excepción puede ser cualquier tipo definido por el usuario.
 \begin{lstlisting}
-class tiempo_negativo {};
+class tiempo_invalido {};
 \end{lstlisting}
 
   \pause\vfill
@@ -16,12 +16,10 @@ class tiempo_negativo {};
         (\cppkey{throw}) una excepción.
 \begin{lstlisting}
 void imprime_velocidad(double s, double t) {
-  if (t > 0.0) {
-    cout << s/t << "\n";
+  if (t <= 0.0) {
+    throw tiempo_invalido{};
   }
-  else {
-    throw tiempo_negativo{};
-  }
+  std::println("velocidad = {}", s/t);
 }
 \end{lstlisting}
 
@@ -38,8 +36,8 @@ void f() {
   try {
     imprime_velocidad(s,t);
   }
-  catch (tiempo_negativo) {
-    cerr << "Error: Tiempo negativo\n";
+  catch (tiempo_invalido) {
+    std::println(std::cerr, "Error: tiempo no válido");
   }
 }
 \end{lstlisting}
@@ -63,19 +61,39 @@ void f() {
       \item Todos tienen una función miembro \cppid{what()}.
     \end{itemize}
 \end{itemize}
+
+\mode<presentation>{\vspace{-.5em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
 \begin{lstlisting}
-int main()
-  try {
-    f();
+struct tiempo_invalido : public std::invalid_argument{
+  tiempo_invalido() :
+    std::invalid_argument{"Tiempo no válido"} {}
+};
+
+void imprime_velocidad(double s, double t) {
+  if (t <= 0.0) {
+    throw tiempo_invalido{};
   }
-  catch (out_of_range const & e) {
-    cerr << "Out of range:" << e.what() << "\n";
-    return EXIT_FAILURE;
-  }
-  catch (exception & e) {
-    cerr << "Excepción: " << e.what() << "\n";
-    return EXIT_FAILURE;
-  }
+  std::println("velocidad = {}", s/t);
 }
 \end{lstlisting}
+
+\column{.5\textwidth}
+\begin{lstlisting}
+int main() try {
+    f();
+}
+catch (std::out_of_range const & e) {
+  std::cerr << "Fuera de rango:" << e.what() << "\n";
+  return EXIT_FAILURE;
+}
+catch (std::exception const & e) {
+  std::cerr << "Excepción: " << e.what() << "\n";
+  return EXIT_FAILURE;
+}
+\end{lstlisting}
+\end{columns}
+
 \end{frame}
