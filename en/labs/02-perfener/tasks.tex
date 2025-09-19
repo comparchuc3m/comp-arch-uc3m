@@ -102,7 +102,7 @@ Place this file in a directory in you local machine named \cppid{lab2}.
 Unzip the file in a sub-directory named \cppid{mandel}:
 
 \begin{lstlisting}[style=terminal]
-username@machine:~/lab2$ unzip mandel.zip mandel
+username@machine:~/lab2$ unzip mandel.zip -d mandel
 Archive:  mandel.zip
   inflating: mandel/CMakeLists.txt   
   inflating: mandel/mandel.cpp       
@@ -117,7 +117,7 @@ To transfer the files you may use the \cppkey{scp} command.
 Firstly, create in the remote directory a sub-directory named \cppid{mandel}.
 
 \begin{lstlisting}[style=terminal]
-$user@avignon-frontened:/~lab2$ mkdir
+$user@avignon-frontened:/~lab2$ mkdir mandel
 $user@avignon-frontened:/~lab2$ ls
 mandel  runlscpu.sh  ...
 \end{lstlisting}
@@ -126,7 +126,7 @@ Go to your local directory where you downloaded the \cppid{mandel.zip} fil and
 use the following command.
 
 \begin{lstlisting}[style=terminal,basicstyle=\tiny\ttfamily,columns=fixed]
-username@machine:~/lab2$ scp mandel/* user@avignon.lab.inf.uc3m.es:~/lab2/mandel
+username@machine:~/lab2$ scp -r mandel/* user@avignon.lab.inf.uc3m.es:~/lab2/mandel
 user@avignon.lab.inf.uc3m.es password: 
 CMakeLists.txt                            100%  427   166.6KB/s   00:00    
 mandel.cpp                                100% 2193   783.0KB/s   00:00    
