@@ -160,32 +160,42 @@ cmake --build mandel-release
 \textbad{ACLARACIÓN}: A continuación se presenta una pequeña descripción
 de lo que hace cada uno de los mandatos
 
+\paragraph{Compilación de la versión de depuración}
+
 \begin{itemize}
-\begin{lstlisting}[style=terminal]
-cmake -S mandel -B mandel-debug -DCMAKE_BUILD_TYPE=Debug
-\end{lstlisting}
   \item Genera una configuración de proyecto en el directorio \cppid{mandel-debug}
         a partir de los archivos fuente del directorio \cppid{mandel}.
         Utiliza como opción la variable \cppkey{DCMAKE\_BUILD\_TYPE=Debug},
         que hace que se utilicen las opciones de compilación de depuración.
-
 \begin{lstlisting}[style=terminal]
-cmake -S mandel -B mandel-release -DCMAKE_BUILD_TYPE=Release
+cmake -S mandel -B mandel-debug -DCMAKE_BUILD_TYPE=Debug
 \end{lstlisting}
+\end{itemize}
+
+\paragraph{Compilación de la versión optimizada}
+
+\begin{itemize}
   \item Genera una configuración de proyecto en el directorio \cppid{mandel-release}
         a partir de los archivos fuente del directorio \cppid{mandel}.
         Utiliza como opción la variable \cppkey{DCMAKE\_BUILD\_TYPE=Release},
-        que hace que se utilicen las opciones de compilación de depuración.
+        que hace que se utilicen las opciones de compilación con optimizaciones.
+\begin{lstlisting}[style=terminal]
+cmake -S mandel -B mandel-release -DCMAKE_BUILD_TYPE=Release
+\end{lstlisting}
+\end{itemize}
 
+\paragraph{Construcción del proyecto}
+
+\begin{itemize}
+  \item Construye el proyecto generado en el directorio \cppid{mandel-debug}.
 \begin{lstlisting}[style=terminal]
 cmake --build mandel-debug
 \end{lstlisting}
-  \item Construye el proyecto generado en el directorio \cppid{mandel-debug}.
 
+  \item Construye el proyecto generado en el directorio \cppid{mandel-release}.
 \begin{lstlisting}[style=terminal]
 cmake --build mandel-release
 \end{lstlisting}
-  \item Construye el proyecto generado en el directorio \cppid{mandel-release}.
 
 \end{itemize}
 

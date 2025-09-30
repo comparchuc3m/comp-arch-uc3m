@@ -160,32 +160,39 @@ cmake --build mandel-release
 \textbad{CLARIFICATION}: 
 A small description of the effects of each command is given below.
 
+\paragraph{Compiling the debug version}
 \begin{itemize}
-\begin{lstlisting}[style=terminal]
-cmake -S mandel -B mandel-debug -DCMAKE_BUILD_TYPE=Debug
-\end{lstlisting}
-  \item Generates a project configuration in directory \cppid{madel-debug}
+  \item Generates a project configuration in directory \cppid{mandel-debug}
         from the source files in directory \cppid{mandel}.
         Use this option with the variable \cppkey{DCMAKE\_BUILD\_TYPE=Debug},
         to use the debug compiler options.
-
 \begin{lstlisting}[style=terminal]
-cmake -S mandel -B mandel-release -DCMAKE_BUILD_TYPE=Release
+cmake -S mandel -B mandel-debug -DCMAKE_BUILD_TYPE=Debug
 \end{lstlisting}
-  \item Generates a project configuration in directory \cppid{madel-release}
+\end{itemize}
+
+\paragraph{Compiling the release version}
+\begin{itemize}
+  \item Generates a project configuration in directory \cppid{mandel-release}
         from the source files in directory \cppid{mandel}.
         Use this option with the variable \cppkey{DCMAKE\_BUILD\_TYPE=Release},
         to use the debug compiler options.
+\begin{lstlisting}[style=terminal]
+cmake -S mandel -B mandel-release -DCMAKE_BUILD_TYPE=Release
+\end{lstlisting}
+\end{itemize}
 
+\paragraph{Building the project}
+\begin{itemize}
+  \item Build the project generated in directory \cppid{mandel-debug}.
 \begin{lstlisting}[style=terminal]
 cmake --build mandel-debug
 \end{lstlisting}
-  \item Build the project generated in directory \cppid{mandel-debug}.
 
+  \item Build the project generated in directory \cppid{mandel-debug}.
 \begin{lstlisting}[style=terminal]
 cmake --build mandel-release
 \end{lstlisting}
-  \item Build the project generated in directory \cppid{mandel-debug}.
 
 \end{itemize}
 
