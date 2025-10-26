@@ -1,0 +1,163 @@
+\section{Uso de algoritmos paralelos}
+
+\begin{frame}[t,fragile]{Aplicación de operación}
+\begin{lstlisting}
+template <class ExecutionPolicy, class ForwardIt, class UnaryFunc>
+void for_each(ExecutionPolicy&& policy, ForwardIt first, ForwardIt last, UnaryFunc f);
+\end{lstlisting}
+
+\begin{itemize}
+  \item Aplica la función unaria \cppid{f()} a cada elemento en el 
+        rango \cppid{[first,last)}.
+
+\mode<presentation>{\vfill\pause}
+\begin{lstlisting}
+#include <vector>
+#include <execution>
+#include "image.hpp"
+
+int main() {
+  std::vector<image> v = load_images("img.dat");
+  auto n = std::count_if(std::execution::par, v.begin(), v.end(), 
+      [](image & im) { m.to_gray(); });
+  store_images(v, "img2.dat");
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Transformaciones}
+\begin{lstlisting}
+template <class ExecutionPolicy, class ForwardIt1, class ForwardIt2, class UnaryOp>
+ForwardIt2 transform(ExecutionPolicy&& policy, ForwardIt1 first1, ForwardIt1 last1,
+                     ForwardIt2 d_first, UnaryOp unary_op);
+\end{lstlisting}
+\begin{itemize}
+  \item Una \textmark{transformación} (conocida a veces como operación de
+        \textmark{map}) transforma los elementos de una secuencia y produce
+        otra secuencia.
+
+  \mode<presentation>{\vfill\pause}
+  \item Para cada elemento \cppid{x} en el rango \cppid{[first1, last1)}
+        escribe el valor \cppid{f(x)} a partir de \cppid{[d\_first,\ldots)}.
+\begin{lstlisting}
+std::vector<double> cuadrado(std::vector<double> const & v) {
+  std::vector<double> r(v.size());
+  std::transform(std::execution::par, v.begin(), v.end(), r.begin(), 
+      [](double x) { return x*x; });
+  return r;
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Transformaciones binarias}
+\begin{lstlisting}
+template<class ExecutionPolicy, class ForwardIt1, class ForwardIt2, class ForwardIt3, class BinaryOp>
+ForwardIt3 transform(ExecutionPolicy&& policy, ForwardIt1 first1, ForwardIt1 last1, ForwardIt2 first2,
+                     ForwardIt3 d_first, BinaryOp binary_op);
+\end{lstlisting}
+
+\begin{itemize}
+  \mode<presentation>{\vfill\pause}
+  \item Para cada elemento \cppid{x} en el rango \cppid{[first1, last1)}
+        e \cppid{y} en el rango \cppid{[first2,\ldots)}
+        escribe el valor \cppid{f(x,y)} a partir de \cppid{[d\_first,\ldots)}.
+\begin{lstlisting}
+std::vector<double> suma(std::vector<double> const & v, std::vector<double> const & w) {
+  std::vector<double> r(v.size());
+  std::transform(std::execution::par, v.begin(), v.end(), w.begin(), r.begin(), 
+      [](double x, double y) { return x+y; });
+  return r;
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Reducciones}
+\begin{lstlisting}
+template <class ExecutionPolicy, class ForwardIt>
+    typename std::iterator_traits<ForwardIt>::value_type
+reduce(ExecutionPolicy&& policy, ForwardIt first, ForwardIt last);
+\end{lstlisting}
+
+\begin{itemize}
+  \mode<presentation>{\vfill\pause}
+  \item Combina todos los elementos del rango \cppid{[first,last)} en un 
+        único valor utilizando una operación de combinación binaria y un
+        valor inicial.
+    \begin{itemize}
+      \item La operación de combinación es la suma.
+      \item El valor inicial es el valor por defecto (típicamente \cppid{0}).
+    \end{itemize}
+\begin{lstlisting}
+void imprime_suma(std::vector<double> const & v) {
+  auto r = std::reduce(std::execution::par, v.begin(), v.end());
+  std::println("Suma ={}", r);
+}
+\end{lstlisting}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Otras formas de reducción}
+\begin{itemize}
+  \item Adicionalmente se puede suministrar:
+    \begin{itemize}
+      \item El valor inicial.
+      \item El valor inicial y la operación de reducción.
+    \end{itemize}
+\begin{lstlisting}
+double suma_cuadrados(std::vector<double> const & v) {
+  return std::reduce(std::execution::par, v.begin(), v.end(), 0.0,
+      [](double x, double y) { return x*x + y*y; }
+  );
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Operaciones map-reduce}
+\begin{itemize}
+  \item Una operación de \textmark{map-reduce} combina una etapa de
+        \textgood{transformación} (operación \textmark{map}) con
+        una \textgood{reducción} de sus resultados parciales
+        (operación de \textmark{reduce}).
+\begin{lstlisting}
+double norma(std::vector<double> const & v) {
+  auto suma = std::transform_reduce(std::execution::par, v.begin(), v.end(),
+    0.0, // valor inicial
+    [](double x, double y) { return x+y; }, // Etapa reduce
+    [](double x) { return x*x; } // Etapa map
+  );
+  return std::sqrt(suma);
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Frecuencias de palabras en texto}
+\begin{itemize}
+  \item Se parte de un vector de palabras: \cppid{std::vector<std::string>}.
+  \item Se genera un diccionario de palabras-frecuencia:
+\cppid{std::map<std::string, std::size\_t>}.
+\end{itemize}
+\begin{lstlisting}
+std::map<std::string,std::size_t> frecuencias(std::vector<std::string> const & v) {
+  using diccionario = std::map<std::string,std::size_t>;
+    return std::transform_reduce(std::execution::par, v.begin(), v.end(), 
+        diccionario{},  // diccionario vacío
+        // Combinación de diccionarios
+        [](diccionario d1, diccionario const & d2) -> diccionario {
+          for (auto const & [clave, valor] : d2) { d1[clave] += valor; }
+          return d1;
+        },
+        // Genera un diccionario con una palabra y frecuencia 1
+        [](std::string const & palabra) { return diccionario{{to_lowercase(palabra), 1}}; }
+    );
+}
+\end{lstlisting}
+\end{frame}
