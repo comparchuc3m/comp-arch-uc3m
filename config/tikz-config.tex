@@ -6,3 +6,17 @@
 
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.9}
+
+\tikzset{
+  invisible/.style={opacity=0},
+  visible on/.style={alt=#1{}{invisible}},
+  alt/.code args={<#1>#2#3}{%
+    \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
+  },
+  bloque/.style={rectangle,draw=black, top color=white, bottom color=blue!50,
+                 very thick, inner sep=0.5em, minimum size=0.6cm, text centered, font=\tiny},
+  bloquelibre/.style={rectangle,draw=black, top color=white, bottom color=blue!10,
+                 very thick, inner sep=0.5em, minimum size=0.6cm, text centered, font=\tiny},
+  flecha/.style={->, >=latex', shorten >=1pt, thick},
+  etiqueta/.style={text centered, font=\tiny} 
+}

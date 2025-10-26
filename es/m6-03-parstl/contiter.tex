@@ -1,0 +1,160 @@
+\section{Contenedores e iteradores}
+
+\begin{frame}[t,fragile]{Contenedores}
+\begin{itemize}
+  \item \textmark{Contenedor}: Objeto capaz de almacenar otros objetos.
+    \begin{itemize}
+      \item Gestionan la adquisición y liberación de memoria para los elementos
+            almacenados.
+      \item Se encargan de inserción, borrado, copia, \ldots
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Contenedor de secuencia}: Organización lógica lineal.
+    \begin{itemize}
+      \item \cppid{std::vector<T>}: Número variable de elementos almacenados de 
+            forma contigua en memoria dinámica.
+      \item \cppid{std::list<T>}: Lista doblemente enlazada.
+      \item \cppid{std::forward\_list<T>}: Lista simplemente enlazada.
+      \item \cppid{std::deque<T>}: Cola de doble extremo.
+      \item \cppid{std::array<T,N>}: Número fijo de elementos almacenados de forma 
+            contigua, sin memoria dinámica.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Iteradores}
+\begin{itemize}
+  \item \textmark{Iterador}: Objeto que hace referencia a una posición en un
+        contenedor y permite manipular el valor almacenado en esa posición.
+    \begin{itemize}
+      \item Es una generalización del concepto de puntero.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item Se puede representar un \textmark{rango} como un par de iteradores:
+    \begin{itemize}
+      \item \textgood{Inicio}: Iterador al primer elemento de la secuencia.
+      \item \textgood{Fin}: Iterador al siguiente elemento al último.
+      \item \textemph{Rango}: Itervalo \textmark{semi-abierto}
+            \textgood{[inicio,fin)}.
+    \end{itemize}
+\mode<presentation>{\vfill}
+\input{es/m6-03-parstl/rango.tkz}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Uso de iteradores}
+\begin{itemize}
+  \item \textemph{Alias de tipos} para iteradores en todos los
+        \textmark{contenedores}.
+    \begin{itemize}
+      \item \cppid{iterator}: Iterador para recorrer elementos del contenedor.
+        \begin{itemize}
+          \item \textgood{Permiten} modificar los elementos apuntados.
+        \end{itemize}
+      \item \cppid{const\_iterator}: Iterador para recorrer elementos del contenedor.
+        \begin{itemize}
+          \item \textbad{No permiten} modificar los elementos apuntados.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textemph{Valores de iterador} para los \textmark{extremos} de un
+        contenedor.
+    \begin{itemize}
+      \item \cppid{c.begin()}: Iterador al principio del contenedor \cppid{c}.
+      \item \cppid{c.end()}: Iterador al final del contenedor \cppid{c}.
+      \item \cppid{c.cbegin()} / \cppid{c.cend()}: Iteradores constantes.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Categorías de iteradores}
+\begin{itemize}
+  \item \textgood{Iterador de entrada}:
+        Permite avanzar y leer una única vez (lectura de flujos).
+  \item \textgood{Iterador de salida}:
+        Permite avanzar y escribir una única vez (escritura de flujos).
+  \item \textgood{Iterador de avance}:
+        Permite avanzar y leer/escribir varias veces un elementos 
+        (listas simplemente enlazadas)
+  \item \textgood{Iterador bidireccional}:
+        Permite además retroceder (listas doblemente enlazadas).
+  \item \textgood{Iterador de acceso directo}:
+        Permite acceder a una posición con un desplazamiento.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Jerarquía en las categorías de iteradores}
+\input{es/m6-03-parstl/categ.tkz}
+\end{frame}
+
+\begin{frame}[t,fragile]{Uso de iteradores de avance}
+\begin{itemize}
+  \item Se pueden usar sobre todos los contenedores de secuencia.
+\begin{lstlisting}
+double suma(std::forward_list<double> const & lst) {
+  double res = 0.0;
+  auto inicio = lst.begin();
+  auto fin = lst.end();
+  while (inicio != fin) {
+    suma += *inicio++;
+  }
+  return res;
+}
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{No permite}:
+    \begin{itemize}
+      \item Retroceder.
+      \item Acceder a una posición con desplazamiento.
+      \item Avanzar/retroceder varios pasos en una única operación.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Uso de iteradores bidireccionales}
+\begin{itemize}
+  \item Se pueden usar sobre contenedores que permitan recorridos en ambas
+        direcciones.
+\begin{lstlisting}
+double invierte(std::list<double> const & lst) {
+  auto inicio = lst.begin();
+  auto fin = lst.end();
+  auto lon = std::distance(inicio,fin) - 1; // o lst::size()-1
+  while (lon>0) {
+    std::swap(*inicio++, *--fin);
+    lon -= 2;
+  }
+}
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{No permite}:
+    \begin{itemize}
+      \item Acceder a una posición con desplazamiento.
+      \item Avanzar/retroceder varios pasos en una única operación.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Uso de iteradores de acceso directo}
+\begin{itemize}
+  \item Se pueden usar sobre contenedores que permitan acceso directo.
+\begin{lstlisting}
+std::vector<double>::iterator busca_ordenado(std::vector<double> const & vec, double valor) {
+  auto inicio = vec.begin();
+  auto fin = vec.end();
+  while (inicio <= fin) {
+    auto mid = inicio + (fin - inicio) / 2;
+    if (*mid == valor) { return mid; }
+    if (*mid < valor) { inicio = mid + 1; }
+    if (*mid > valor) { fin = mid - 1; }
+  }
+  return vec.end();
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}

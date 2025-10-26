@@ -1,0 +1,50 @@
+\section{Algoritmos paralelos}
+
+\begin{frame}[t,fragile]{Algoritmos y política de ejecución}
+\begin{itemize}
+  \item Muchos algoritmos aceptan una \textmark{política de ejecución}:
+\begin{lstlisting}
+std::vector<double> v = obten_valores();
+auto n1 = count(v.begin(), v.end(), [](double x) { return x>0; });
+auto n2 = count(std::execution::seq, v.begin(), v.end(), [](double x) { return x>0; });
+auto n3 = count(std::execution::par, v.begin(), v.end(), [](double x) { return x>0; });
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item Ejecución de tareas independientes en paralelo con \cppid{for\_each()}:
+\begin{lstlisting}
+#include <vector>
+#include <execution>
+#include "image.hpp"
+
+int main() {
+  std::vector<image> v = load_images("img.dat");
+  auto n = std::count_if(std::execution::par, v.begin(), v.end(), 
+      [](image & im) { return not m.is_valid(); });
+  std::println("Imágenes inválidas = {}", n);
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Políticas de ejecución}
+\begin{itemize}
+  \item \cppid{std::execution::seq}:
+    \begin{itemize}
+      \item Ejecución en un único hilo.
+    \end{itemize}
+  \item \cppid{std::execution::par}:
+    \begin{itemize}
+      \item Ejecución en varios hilos sin vectorización.
+    \end{itemize}
+  \item \cppid{std::execution::par\_unseq}:
+    \begin{itemize}
+      \item Ejecución en varios hilos con vectorización.
+    \end{itemize}
+  \item \cppid{std::execution::unseq}:
+    \begin{itemize}
+      \item Ejecución en un único hilo con vectorización.
+    \end{itemize}
+\end{itemize}
+\end{frame}

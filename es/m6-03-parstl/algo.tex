@@ -1,0 +1,146 @@
+\section{Algoritmos genéricos}
+
+\begin{frame}[t,fragile]{Estructura de la biblioteca}
+\begin{itemize}
+  \item Separación en capas:
+    \begin{itemize}
+      \item \textgood{Contenedores}: Estructuras de datos que almacenan
+            información.
+      \item \textgood{Iteradores}: Posiciones sobre los contenedores para
+            acceder y manipular datos de los contenedores.
+      \item \textgood{Algoritmos}: Operaciones definidas en términos de
+            iteradores.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textemph{Ventajas}:
+    \begin{itemize}
+      \item \textmark{Separación de aspectos}:
+            Cada capa tiene responsabilidades bien definidas.
+      \item \textmark{Extensibilidad}:
+            Cada capa se puede extender independientemente.
+      \item \textmark{Especialización}:
+            Distintas versiones de un mismo algoritmo para distintos iteradores.
+      \item \textmark{Optimización}:
+            Decisiones en tiempo de compilación mejoran el código generado.
+      \item \textmark{Paralelismo}:
+            Interfaz única para versiones secuenciales y paralelas.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Categorías de algoritmos}
+\begin{itemize}
+  \item Gran variedad de algoritmos.
+    \begin{itemize}
+      \item Lista completa: \textgood{\url{https://en.cppreference.com/w/cpp/algorithm.html}}
+      \item Más de 100 algoritmos.
+      \item Más algoritmos, además de los de secuencias.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Categorías}:
+    \begin{itemize}
+      \item Operaciones de secuencia sin modificación.
+      \item Operaciones de secuencia con modificación.
+      \item Operaciones de ordenación.
+      \item Operaciones de relación.
+      \item Operaciones numéricas.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Búsqueda simple}
+\begin{lstlisting}
+template< class InputIt, class T >
+InputIt find(InputIt first, InputIt last, T const & value );
+\end{lstlisting}
+
+\begin{itemize}
+  \item Busca el primer elemento en \cppid{[first,last)} que es igual
+        a \cppid{value}.
+    \begin{itemize}
+      \item Devuelve \cppid{last} si no encuentra ninguna aparición.
+    \end{itemize}
+\end{itemize}
+
+\begin{lstlisting}
+std::list lst{-1, 3, 2, 4, -5, 7};
+auto it1 = std::find(lst.begin(), lst.end(), 2); // it1 apunta al tercer elemento
+auto it2 = std::find(lst.begin(), lst.end(), 1); // it1 == lst.end()
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Funciones de orden superior}
+\begin{itemize}
+  \item Muchos algoritmos necesitan recibir como parámetro otra función:
+    \begin{itemize}
+      \item \cppid{std::find\_if(inicio, fin, criterio)}.
+      \item \cppid{std::find\_if\_not(inicio, fin, criterio)}.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textgood{Expresión lambda}:
+        Define una función sin nombre en un contexto local.
+\begin{lstlisting}[escapechar=@]
+std::list lst{-1, 3, 2, 4, -5, 7};
+std::find_if(v.begin(), lst.end(), [](double x) { return x>0 and x%2==0; });
+std::find_if_not(lst.begin(), lst.end(), [](double x) { return <0; });
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Expresiones lambda}
+\begin{itemize}
+  \item \textmark{Captura}: Introduce lambda y permite paso de información.
+\begin{lstlisting}[escapechar=@]
+// Lambda sin captura.
+std::find_if(lst.begin(), lst.end(), [](double x) { return x>0; });@\pause@
+// Lambda con captura por valor. Acceso a max para lectura.
+int max = 3;
+std::find_if(lst.begin(), lst.end(), [=](double x) { return x>max; });@\pause@
+// Lambda con captura por referencia. Acceso para modificación.
+int n = 0;
+std::find_if(lst.begin(), lst.end(), [&](double x) { n++; return x>max; });
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Tipo de retorno}: Se deduce automáticamente a partir de
+        la expresión de retorno.
+    \begin{itemize}
+      \item Se puede especificar explícitamente.
+    \end{itemize}
+\begin{lstlisting}
+std::find(lst.begin(), lst.end(), [](double x) { return x>0; });
+std::find(lst.begin(), lst.end(), ([](double x) -> bool { return x>0; });
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Contando elementos}
+\begin{lstlisting}
+template< class InputIt, class T >
+typename std::iterator_traits<InputIt>::difference_type
+    count( InputIt first, InputIt last, const T& value );
+
+template< class InputIt, class UnaryPred >
+typename std::iterator_traits<InputIt>::difference_type
+    count_if( InputIt first, InputIt last, UnaryPred p );
+\end{lstlisting}
+\begin{itemize}
+  \item Cuenta el número de elementos iguales a un valor o que cumplen
+        con un predicado.
+    \begin{itemize}
+      \item Un predicado unario toma un único parámetro y devuelve un booleano.
+    \end{itemize}
+
+\begin{lstlisting}
+std::vector<std::string> leng{"C++", "Go", "C", "COBOL", "Java"};
+auto n = std::cout_if(leng.begin(), leng.end(), 
+  [](std::string const & nombre) { return nombre.size()>0 and nombre[0]=='C'; }
+);
+\end{lstlisting}
+\end{itemize}
+\end{frame}
