@@ -20,6 +20,7 @@ include en/m5-04-synch/Makefile.def
 include en/m6-01-cppintro/Makefile.def
 include en/m6-02-cppconc/Makefile.def
 include en/m6-03-omp/Makefile.def
+include en/m6-03-parstl/Makefile.def
 include en/m6-04-atomics/Makefile.def
 include en/m7-01-dlp/Makefile.def
 
@@ -59,6 +60,7 @@ include $(EN_M5_04_SYNCH_DIR)/Makefile.mk
 include $(EN_M6_01_CPPINTRO_DIR)/Makefile.mk
 include $(EN_M6_02_CPPCONC_DIR)/Makefile.mk
 include $(EN_M6_03_OMP_DIR)/Makefile.mk
+include $(EN_M6_03_PARSTL_DIR)/Makefile.mk
 include $(EN_M6_04_ATOMICS_DIR)/Makefile.mk
 include $(EN_M7_01_DLP_DIR)/Makefile.mk
 

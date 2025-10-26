@@ -1,0 +1,15 @@
+\begin{tikzpicture}
+
+\node[bloque, text width=2em] (nodo1) {};
+\foreach \i [evaluate=\i as \x using {\i-1}] in {2, 3, 4, 5} {
+  \node[bloque, text width=2em,right=1em of nodo\x] (nodo\i) {};
+  \draw[flecha] (nodo\x) -- (nodo\i);
+}
+\node[bloquelibre, text width=2em,right=1em of nodo5] (nodofin) {};
+
+\node[etiqueta,below=1em of nodo1,font=\scriptsize] (etinicio) {\cppid{first}};
+\node[etiqueta,below=1em of nodofin, font=\scriptsize] (etfin) {\cppid{last}};
+
+\draw[flecha,color=red] (etinicio) -- (nodo1);
+\draw[flecha,color=red] (etfin) -- (nodofin);
+\end{tikzpicture}
