@@ -1,0 +1,50 @@
+\section{Parallel algorithms}
+
+\begin{frame}[t,fragile]{Algorithms and executions policy}
+\begin{itemize}
+  \item Many algorithms accept an \textmark{execution policy}:
+\begin{lstlisting}
+std::vector<double> v = get_values();
+auto n1 = count(v.begin(), v.end(), [](double x) { return x>0; });
+auto n2 = count(std::execution::seq, v.begin(), v.end(), [](double x) { return x>0; });
+auto n3 = count(std::execution::par, v.begin(), v.end(), [](double x) { return x>0; });
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item Executing independent tasks in parallel with \cppid{for\_each()}:
+\begin{lstlisting}
+#include <vector>
+#include <execution>
+#include "image.hpp"
+
+int main() {
+  std::vector<image> v = load_images("img.dat");
+  auto n = std::count_if(std::execution::par, v.begin(), v.end(), 
+      [](image & im) { return not m.is_valid(); });
+  std::println("Invalid images = {}", n);
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Execution policies}
+\begin{itemize}
+  \item \cppid{std::execution::seq}:
+    \begin{itemize}
+      \item Runs in a single thread.
+    \end{itemize}
+  \item \cppid{std::execution::par}:
+    \begin{itemize}
+      \item Rungs in several threads without vectorization.
+    \end{itemize}
+  \item \cppid{std::execution::par\_unseq}:
+    \begin{itemize}
+      \item Runs in several threads with vectorization.
+    \end{itemize}
+  \item \cppid{std::execution::unseq}:
+    \begin{itemize}
+      \item Runs in a single thread with vectorization.
+    \end{itemize}
+\end{itemize}
+\end{frame}

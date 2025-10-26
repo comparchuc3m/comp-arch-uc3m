@@ -1,0 +1,25 @@
+\begin{tikzpicture}
+
+\fill<5->[blue!10,opacity=0.5] (0,0) ellipse ({.5\textwidth} and {.45\textheight});
+\draw<5->[blue, thick] (0,0) circle ({.5\textwidth} and {.45\textheight});
+\node<5->[right] at (5.25, 2.5) {Random access};
+
+\fill<4->[green!10,opacity=0.5] (0,0) ellipse ({.45\textwidth} and {.3\textheight});
+\draw<4->[green, thick] (0,0) ellipse ({.45\textwidth} and {.3\textheight});
+\node<4->[right] at (1.75, 2.6) {Bidirectional};
+
+\fill<3->[yellow!10,opacity=0.5] (0,0) ellipse ({.35\textwidth} and {.2\textheight});
+\draw<3->[yellow, thick] (0,0) ellipse ({.35\textwidth} and {.2\textheight});
+\node<3->[right] at (-0.5, 1.9) {Forward};
+
+\fill[red!10,opacity=0.5] (-2.2,0)  ellipse ({.15\textwidth} and {.08\textheight});
+\draw[red, thick] (-2.2,0)  ellipse ({.15\textwidth} and {.08\textheight});
+\node[right] at (-2.8,.9) {Input};
+
+\fill<2->[orange!10,opacity=0.5] (2.2,0) ellipse ({.15\textwidth} and {.08\textheight});
+\draw<2>[orange, thick] (2.2,0) ellipse ({.15\textwidth} and {.08\textheight});
+\draw<3->[dashed,orange, thick] (2.2,0) ellipse ({.15\textwidth} and {.08\textheight});
+\node<2->[right] at (1.8,.9) {Output};
+
+\end{tikzpicture}
+

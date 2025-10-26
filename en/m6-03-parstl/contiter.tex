@@ -1,0 +1,164 @@
+\section{Containers and iterators}
+
+\begin{frame}[t,fragile]{Containers}
+\begin{itemize}
+  \item \textmark{Container}: 
+        Object capable of storing other objects.
+    \begin{itemize}
+      \item Manage acquisition and release of memory for the stored elements.
+      \item Take care of insertion, removal, copy, \ldots
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textmark{Sequence container}: Logical linear organization.
+    \begin{itemize}
+      \item \cppid{std::vector<T>}: 
+            Variable number of elements contiguosly stored in dynamic memory.
+      \item \cppid{std::list<T>}: 
+            Doubly linked list.
+      \item \cppid{std::forward\_list<T>}: 
+            Simply linked list.
+      \item \cppid{std::deque<T>}: 
+            Double ended queue.
+      \item \cppid{std::array<T,N>}: 
+            Fixed number of elements stored contiguosly, without dynamic memory.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Iterators}
+\begin{itemize}
+  \item \textmark{Iterator}: 
+        Object referring to location in a container that allows to manipulate
+        the value stored in that location.
+    \begin{itemize}
+      \item It is a generalization of the pointer concept.
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item A \textmark{range} can be represented as a pair of iterators:
+    \begin{itemize}
+      \item \textgood{First}: 
+            Iterator to the first element in the sequence.
+      \item \textgood{Last}: 
+            Iterator to one past the last element in the sequence.
+      \item \textemph{Rango}: \textmark{Semi-open} interval
+            \textgood{[first,last)}.
+    \end{itemize}
+\mode<presentation>{\vfill}
+\input{en/m6-03-parstl/rango.tkz}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using iterators}
+\begin{itemize}
+  \item \textemph{Type aliases} for iterators in all
+        \textmark{containers}.
+    \begin{itemize}
+      \item \cppid{iterator}: Iterator to traverse the container.
+        \begin{itemize}
+          \item They \textgood{allow} modifying pointed elements.
+        \end{itemize}
+      \item \cppid{const\_iterator}: Iterator to traverse container.
+        \begin{itemize}
+          \item They \textbad{do not allow} modifying pointed elements.
+        \end{itemize}
+    \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textemph{Iterator values} for \textmark{ends} in a container.
+    \begin{itemize}
+      \item \cppid{c.begin()}: Iterator to the start of \cppid{c}.
+      \item \cppid{c.end()}: Iterator to the end of \cppid{c}.
+      \item \cppid{c.cbegin()} / \cppid{c.cend()}: Constant iterators.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Iterator categories}
+\begin{itemize}
+  \item \textgood{Input iterator}:
+        Allows advancing and reading only once (stream reading).
+  \item \textgood{Output iterator}:
+        Allows advancing and writing only once (stream writing).
+  \item \textgood{Forward iterator}:
+        Allows advancing and reading/writing multiple times
+        (simply linked lists)
+  \item \textgood{Bidirectional iterator}:
+        Additionally allows to move backwards (doubly linked lists).
+  \item \textgood{Random access iterator}:
+        Allows access to a location with an offset.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Iterator categories hierarchy}
+\input{en/m6-03-parstl/categ.tkz}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using forward iterators}
+\begin{itemize}
+  \item Can be used on all sequence containers.
+\begin{lstlisting}
+double add(std::forward_list<double> const & lst) {
+  double res = 0.0;
+  auto first = lst.begin();
+  auto last = lst.end();
+  while (first != last) {
+    res += *first++;
+  }
+  return res;
+}
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Does not allow}:
+    \begin{itemize}
+      \item Going backwards.
+      \item Accessing a location with an offset.
+      \item Advancing or going backwards several steps in one operation.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using bidirectional iterators}
+\begin{itemize}
+  \item Can be used on containers that allow traversal in both directions.
+\begin{lstlisting}
+double invert(std::list<double> const & lst) {
+  auto first = lst.begin();
+  auto last = lst.end();
+  auto len = std::distance(first,last) - 1; // o lst::size()-1
+  while (len>0) {
+    std::swap(*first++, *--last);
+    len -= 2;
+  }
+}
+\end{lstlisting}
+
+  \mode<presentation>{\vfill\pause}
+  \item \textbad{Does not allow}:
+    \begin{itemize}
+      \item Accessing a location with an offset.
+      \item Advancing or going backwards several steps in one operation.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Using random access iterators}
+\begin{itemize}
+  \item Can be used on containers that allow random access.
+\begin{lstlisting}
+std::vector<double>::iterator find_sorted(std::vector<double> const & vec, double value) {
+  auto first = vec.begin();
+  auto last = vec.end();
+  while (first <= last) {
+    auto mid = first + (last - first) / 2;
+    if (*mid == value) { return mid; }
+    if (*mid < value) { first = mid + 1; }
+    if (*mid > value) { last = mid - 1; }
+  }
+  return vec.end();
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}

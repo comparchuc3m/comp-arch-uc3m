@@ -1,0 +1,161 @@
+\section{Using parallel algorithms}
+
+\begin{frame}[t,fragile]{Applying an operation}
+\begin{lstlisting}
+template <class ExecutionPolicy, class ForwardIt, class UnaryFunc>
+void for_each(ExecutionPolicy&& policy, ForwardIt first, ForwardIt last, UnaryFunc f);
+\end{lstlisting}
+
+\begin{itemize}
+  \item Applies unary function \cppid{f()} to each element in range
+        \cppid{[first,last)}.
+
+\mode<presentation>{\vfill\pause}
+\begin{lstlisting}
+#include <vector>
+#include <execution>
+#include "image.hpp"
+
+int main() {
+  std::vector<image> v = load_images("img.dat");
+  auto n = std::count_if(std::execution::par, v.begin(), v.end(), 
+      [](image & im) { m.to_gray(); });
+  store_images(v, "img2.dat");
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Transformations}
+\begin{lstlisting}
+template <class ExecutionPolicy, class ForwardIt1, class ForwardIt2, class UnaryOp>
+ForwardIt2 transform(ExecutionPolicy&& policy, ForwardIt1 first1, ForwardIt1 last1,
+                     ForwardIt2 d_first, UnaryOp unary_op);
+\end{lstlisting}
+\begin{itemize}
+  \item A \textmark{transformation} (also known as \textmark{map} operation) 
+        transforms elements in a sequence and produces a new sequence.
+
+  \mode<presentation>{\vfill\pause}
+  \item For each element \cppid{x} in the range \cppid{[first1, last1)}
+        writes the value \cppid{f(x)} starting at \cppid{[d\_first,\ldots)}.
+\begin{lstlisting}
+std::vector<double> square(std::vector<double> const & v) {
+  std::vector<double> r(v.size());
+  std::transform(std::execution::par, v.begin(), v.end(), r.begin(), 
+      [](double x) { return x*x; });
+  return r;
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Binary tranformations}
+\begin{lstlisting}
+template<class ExecutionPolicy, class ForwardIt1, class ForwardIt2, class ForwardIt3, class BinaryOp>
+ForwardIt3 transform(ExecutionPolicy&& policy, ForwardIt1 first1, ForwardIt1 last1, ForwardIt2 first2,
+                     ForwardIt3 d_first, BinaryOp binary_op);
+\end{lstlisting}
+
+\begin{itemize}
+  \mode<presentation>{\vfill\pause}
+  \item For eache element \cppid{x} in the range \cppid{[first1, last1)}
+        and \cppid{y} in the range \cppid{[first2,\ldots)}
+        writes the value \cppid{f(x,y)} starting from \cppid{[d\_first,\ldots)}.
+\begin{lstlisting}
+std::vector<double> add(std::vector<double> const & v, std::vector<double> const & w) {
+  std::vector<double> r(v.size());
+  std::transform(std::execution::par, v.begin(), v.end(), w.begin(), r.begin(), 
+      [](double x, double y) { return x+y; });
+  return r;
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Reductions}
+\begin{lstlisting}
+template <class ExecutionPolicy, class ForwardIt>
+    typename std::iterator_traits<ForwardIt>::value_type
+reduce(ExecutionPolicy&& policy, ForwardIt first, ForwardIt last);
+\end{lstlisting}
+
+\begin{itemize}
+  \mode<presentation>{\vfill\pause}
+  \item Combines all the element in range \cppid{[first,last)}
+        in a single value, using a combination operation and an initial value.  
+    \begin{itemize}
+      \item Combination operation is addition.
+      \item The initial value is the default value (usually \cppid{0}).
+    \end{itemize}
+\begin{lstlisting}
+void print_addition(std::vector<double> const & v) {
+  auto r = std::reduce(std::execution::par, v.begin(), v.end());
+  std::println("Sum = {}", r);
+}
+\end{lstlisting}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{Other forms of reduction}
+\begin{itemize}
+  \item Additionally the following can be provided:
+    \begin{itemize}
+      \item Initial value.
+      \item Initial value and reduction operation.
+    \end{itemize}
+\begin{lstlisting}
+double sum_squares(std::vector<double> const & v) {
+  return std::reduce(std::execution::par, v.begin(), v.end(), 0.0,
+      [](double x, double y) { return x*x + y*y; }
+  );
+}
+\end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Operations map-reduce}
+\begin{itemize}
+  \item A \textmark{map-reduce} operation combines a
+        \textgood{transformation} operation (\textmark{map} operation) 
+        with a \textgood{reduction} of its partial results
+        (\textmark{reduce} operation).
+\begin{lstlisting}
+double norm(std::vector<double> const & v) {
+  auto sum = std::transform_reduce(std::execution::par, v.begin(), v.end(),
+    0.0, // valor inicial
+    [](double x, double y) { return x+y; }, // Reduce stage
+    [](double x) { return x*x; } // Map stage
+  );
+  return std::sqrt(sum);
+}
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]{Word frequency in text}
+\begin{itemize}
+  \item Starting from a vector of words: \cppid{std::vector<std::string>}.
+  \item Generate a dictionary of word-frequency:
+\cppid{std::map<std::string, std::size\_t>}.
+\end{itemize}
+\begin{lstlisting}
+std::map<std::string,std::size_t> frequencies(std::vector<std::string> const & v) {
+  using dictionary = std::map<std::string,std::size_t>;
+    return std::transform_reduce(std::execution::par, v.begin(), v.end(), 
+        dictionary{},  // empty dictionary
+        // Combining dictionaries
+        [](dictionary d1, dictionary const & d2) -> dictionary {
+          for (auto const & [key, value] : d2) { d1[key] += value; }
+          return d1;
+        },
+        // Generate a dictionary with a word and frequency 1
+        [](std::string const & word) { return dictionary{{to_lowercase(word), 1}}; }
+    );
+}
+\end{lstlisting}
+\end{frame}
