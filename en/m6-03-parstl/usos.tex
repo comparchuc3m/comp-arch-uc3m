@@ -18,8 +18,8 @@ void for_each(ExecutionPolicy&& policy, ForwardIt first, ForwardIt last, UnaryFu
 
 int main() {
   std::vector<image> v = load_images("img.dat");
-  auto n = std::count_if(std::execution::par, v.begin(), v.end(), 
-      [](image & im) { m.to_gray(); });
+  std::for_each(std::execution::par, v.begin(), v.end(), 
+      [](image & im) { im.to_gray(); });
   store_images(v, "img2.dat");
 }
 \end{lstlisting}
