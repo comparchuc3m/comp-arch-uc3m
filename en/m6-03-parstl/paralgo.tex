@@ -11,7 +11,7 @@ auto n3 = count(std::execution::par, v.begin(), v.end(), [](double x) { return x
 \end{lstlisting}
 
   \mode<presentation>{\vfill\pause}
-  \item Executing independent tasks in parallel with \cppid{for\_each()}:
+  \item Counting values that satify a predicate with \cppid{count\_if()}:
 \begin{lstlisting}
 #include <vector>
 #include <execution>
@@ -20,7 +20,7 @@ auto n3 = count(std::execution::par, v.begin(), v.end(), [](double x) { return x
 int main() {
   std::vector<image> v = load_images("img.dat");
   auto n = std::count_if(std::execution::par, v.begin(), v.end(), 
-      [](image & im) { return not m.is_valid(); });
+      [](image & im) { return not im.is_valid(); });
   std::println("Invalid images = {}", n);
 }
 \end{lstlisting}
