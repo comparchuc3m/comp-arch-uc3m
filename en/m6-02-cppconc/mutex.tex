@@ -11,6 +11,8 @@
       \item \cppid{timed\_mutex}: Non-recursive \emph{mutex} with timed operations.
       \item \cppid{recursive\_timed\_mutex}: Recursive \emph{mutex} with timed operations.
     \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
   \item Only a thread can own a \emph{mutex} at a given time.
     \begin{itemize}
       \item Acquire a \emph{mutex} $\rightarrow$ Get exclusive access to object.
@@ -48,7 +50,7 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Example}
+\begin{frame}[t,fragile]{Example}
 \begin{columns}
 
 \begin{column}{.5\textwidth}
@@ -90,7 +92,7 @@ void f() {
 \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Errors in mutual exclusion}
+\begin{frame}[t,fragile]{Errors in mutual exclusion}
 \begin{itemize}
   \item In case of error exception \cppid{system\_error} is thrown.
   \item Error codes:
@@ -109,14 +111,13 @@ try {
   m.lock();
 }
 catch (std::system_error & e) {
-  std::cerr << e.what() << "\n";
-  std::cerr << e.code() << "\n";
+  std::cerr << e.what() << '\n' << e.code() << '\n';
 }
 \end{lstlisting}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Deadlines}
+\begin{frame}[t]{Deadlines}
 \begin{itemize}
   \item Operations supported by \cppid{timed\_mutex} and \cppid{recursive\_timed\_mutex}.
   \vfill
@@ -132,7 +133,7 @@ catch (std::system_error & e) {
 
 \subsection{Condition variables}
 
-\begin{frame}{Condition variables}
+\begin{frame}[t]{Condition variables}
 \begin{itemize}
   \item Synchronizing operations among threads.
   \item Optimized for class \cppid{mutex} (alternative \cppid{condition\_variable\_any})).
@@ -155,7 +156,7 @@ catch (std::system_error & e) {
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Notification/waiting operations}
+\begin{frame}[t]{Notification/waiting operations}
 \begin{itemize}
   \item Notification:
     \begin{itemize}
@@ -176,7 +177,7 @@ catch (std::system_error & e) {
 \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Revisiting producer/consumer}
+\begin{frame}[t,fragile]{Revisiting producer/consumer}
 \begin{block}{Predicate injection in wait}
 \begin{lstlisting}
 void consumer() {

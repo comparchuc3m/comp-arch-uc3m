@@ -2,7 +2,7 @@
 
 \subsection{Objetos mutex}
 
-\begin{frame}{Clasificación de \emph{mutex}}
+\begin{frame}[t]{Clasificación de \emph{mutex}}
 \begin{itemize}
   \item Representan el acceso exclusivo a un recurso.
     \begin{itemize}
@@ -11,6 +11,8 @@
       \item \cppid{timed\_mutex}: \emph{Mutex} no recursivo con operaciones con tiempo límite.
       \item \cppid{recursive\_timed\_mutex}: \emph{Mutex} recursivo con operaciones con tiempo límite.
     \end{itemize}
+
+  \mode<presentation>{\vfill\pause}
   \item Solamente un hilo puede poseer un \emph{mutex} en un momento dado.
     \begin{itemize}
       \item Adquirir un \emph{mutex} $\rightarrow$ obtener acceso exclusivo al objeto.
@@ -25,7 +27,7 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Operaciones}
+\begin{frame}[t]{Operaciones}
 \begin{itemize}
   \item Construcción y destrucción:
     \begin{itemize}
@@ -49,7 +51,7 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Ejemplo}
+\begin{frame}[t,fragile]{Ejemplo}
 \begin{columns}
 
 \begin{column}{.5\textwidth}
@@ -91,7 +93,7 @@ void f() {
 \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Errores en exclusión mutua}
+\begin{frame}[t,fragile]{Errores en exclusión mutua}
 \begin{itemize}
   \item En caso de error se lanza la excepción \cppid{system\_error}.
   \item Códigos de error:
@@ -110,14 +112,13 @@ try {
   m.lock();
 }
 catch (std::system_error & e) {
-  std::cerr << e.what() << "\n";
-  std::cerr << e.code() << "\n";
+  std::cerr << e.what() << '\n' << e.code() << '\n';
 }
 \end{lstlisting}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Tiempo límite}
+\begin{frame}[t]{Tiempo límite}
 \begin{itemize}
   \item Operaciones soportadas por \cppid{timed\_mutex} y \cppid{recursive\_timed\_mutex}.
   \vfill
@@ -133,7 +134,7 @@ catch (std::system_error & e) {
 
 \subsection{Variables condición}
 
-\begin{frame}{Variables condición}
+\begin{frame}[t]{Variables condición}
 \begin{itemize}
   \item Sincronización de operaciones entre hilos.
   \item Optimizada para la clase \cppid{mutex} (alternativa \cppid{condition\_variable\_any})).
@@ -156,7 +157,7 @@ catch (std::system_error & e) {
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Operaciones de notificación/espera}
+\begin{frame}[t]{Operaciones de notificación/espera}
 \begin{itemize}
   \item Notificación:
     \begin{itemize}
@@ -176,7 +177,7 @@ catch (std::system_error & e) {
 \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Revisando el producto consumidor}
+\begin{frame}[t,fragile]{Revisando el producto consumidor}
 \begin{block}{Inyectando el predicado en wait}
 \begin{lstlisting}
 void consumidor() {
