@@ -57,7 +57,7 @@ partial results are combined to perform the actual reduction.
 \begin{lstlisting}[label={lst:parallel-reduce},
 caption={Reduction based on block range}]
 auto resultado = tbb::parallel_reduce(
-    tbb::blocked_range<std::size_T>(0, max),
+    tbb::blocked_range<std::size_t>(0, max),
     0.0, // Initial value
     [=](tbb::blocked_range<std::size_t> const & r, double init) {
       for (auto i=r.begin(); i!=r.end(); ++i) {
