@@ -60,7 +60,7 @@ functions in parallel.
 invocation}]
 tbb::parallel_invoke(
   [&]() { task1(); },
-  [&]() { tarea2(); },
+  [&]() { task2(); },
   [&]() { tarea3(); },
   [&]() { tarea4(); }
 );
