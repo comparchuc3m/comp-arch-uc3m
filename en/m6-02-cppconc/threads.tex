@@ -2,13 +2,18 @@
 
 \begin{frame}[fragile]{Thread launching}
 \begin{itemize}
-  \item A \textgood{thread} represented by class \cppid{std::thread}.
+  \item A \textgood{thread} represented by objects of types \cppid{std::thread}
+        or \cppid{std::jthread}.
     \begin{itemize}
       \item Usually represents an OS thread.
     \end{itemize}
 \end{itemize}
 
 \mode<presentation>{\vfill}
+
+\begin{columns}[T]
+
+\column{.51\textwidth}
 \begin{block}{Launching a thread from a function}
 \begin{lstlisting}
 void f1();
@@ -23,6 +28,22 @@ void g() {
 }
 \end{lstlisting}
 \end{block}
+
+\pause
+\column{.52\textwidth}
+\begin{block}{Launching a thread from a function}
+\begin{lstlisting}
+void f1();
+void f2();
+
+void g() {
+  std::jthread t1{f1}; // Launches thread executing f1()
+  std::jthread t2{f2}; // Launches thread executing f2()
+} // Waits until t1 and t2 terminate
+\end{lstlisting}
+\end{block}
+\end{columns}
+
 \end{frame}
 
 
@@ -51,8 +72,8 @@ void f2(double x, double y);
 
 void g() {
   std::thread t1{f1, 10}; // Runs f1(10)
-  std::thread t2{f1}; // Error
-  std::thread t3{f2, 1.0} // Error
+  std::thread t2{f1}; // Error: Missing argument
+  std::thread t3{f2, 1.0} // Error: Wrong argument type
   std::thread t4{f2, 1.0, 1.0}; // Runs f2(1.0,1.0)
   //...
   // Thread joins 

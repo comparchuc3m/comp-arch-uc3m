@@ -21,7 +21,7 @@
 #include <iostream>
 
 int main() {
-  std::future<int> r = std::async(tarea, 1, 10);
+  std::future<int> r = std::async(tarea, 1, 10); // Ejecuta tarea(1,10)
   otra_tarea();
   std::cout << "Resultado= " << r.get() << "\n";
   return 0;
