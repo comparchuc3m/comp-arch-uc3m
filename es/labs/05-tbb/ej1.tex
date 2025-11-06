@@ -3,7 +3,7 @@
 
 Todo el código de este ejercicio está en la carpeta \textemph{01-invoke}.
 
-En este ejercicio vamos a ver como se pueden ejecutar varias tareas
+En este ejercicio vamos a ver cómo se pueden ejecutar varias tareas
 independientes en paralelo. Para ello vamos a utilizar una función que genera
 un vector de números en doble precisión, donde cada número se obtiene
 multiplicando su función por un factor de escala.
@@ -45,7 +45,7 @@ lo que se obtiene el valor promedio.
 \subsubsection{Ejecución paralela}
 
 La función \cppid{run\_par()} contiene originalmente el mismo código. En este
-ejercicio vamos a modificarla para que realicen paralelo las 4 operaciones del
+ejercicio vamos a modificarla para que se realicen paralelo las 4 operaciones del
 paso 2. Después haremos lo mismo con el paso 3.
 
 Para ello podemos utilizar la función \cppid{tbb::parallel\_invoke()}. Esta

@@ -13,7 +13,7 @@ En TBB cualquier algoritmo paralelo genera un conjunto de tareas. Éstas tareas
 se pueden dividir en otras más pequeñas. De esta manera, cada hilo mantiene una
 lista de tareas pendientes de realizar de distinto tamaño. Cuando la lista de
 tareas de un hilo queda vacía, este hilo roba una tarea a otro hilo para
-progresar. Este mecanismos es muy efectivo para mantener el equilibrio de carga
+progresar. Este mecanismo es muy efectivo para mantener el equilibrio de carga
 entre los distintos hilos.
 
 Un elemento fundamental en el reparto de trabajo es el \textmark{partitioner}.

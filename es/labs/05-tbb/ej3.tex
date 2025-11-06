@@ -4,8 +4,8 @@
 Todo el código de este ejercicio se encuentra en la carpeta
 \textemph{03-picalc}.
 
-En este ejercicio vamos a ver como se puede optimizar un algoritmo de reducción.
-Loa vamos a aplicar a un algoritmo que calcula el área de un círculo como paso
+En este ejercicio vamos a ver cómo se puede optimizar un algoritmo de reducción.
+Lo vamos a aplicar a un algoritmo que calcula el área de un círculo como paso
 previo a calcular el valor del número $\pi$.
 
 \subsubsection{Cálculo secuencial del número PI}
@@ -19,7 +19,9 @@ definida:
 \frac{\pi}{4}
 \]
 
-Por tanto el valor de $\pi$ se puede aproximar:
+Por tanto, el valor de $\pi$ se puede aproximar, dividiendo el intervalo de
+integración (en este caso [0,1]) en $N$ sub-intervalos de longitud $\Delta x =
+\frac{1}{N}$ y usando el siguiente desarrollo:
 
 \[
 \pi \approx 4 \cdot \sum_{i=0}^{N-1} f(i \cdot \Delta x + \frac{\Delta x}{2}) \Delta x =
@@ -49,7 +51,7 @@ rango de bloque con la función \cppid{tbb::parallel\_reduce()} (ver
 listado~\ref{lst:parallel-reduce}). Esta función
 toma un rango de bloque unidimensional \cppid{tbb::blocked\_range<T>} y dos
 expresiones lambda. La primera expresión lambda realiza un cálculo parcial en el
-espacio de iteraciones del rango. La segunda expresión lambda especifica como se
+espacio de iteraciones del rango. La segunda expresión lambda especifica cómo se
 combinan los resultados parciales para realizar la reducción propiamente dicha.
 
 \begin{lstlisting}[label={lst:parallel-reduce},
