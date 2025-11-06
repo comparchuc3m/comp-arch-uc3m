@@ -22,7 +22,7 @@
 #include <iostream>
 
 int main() {
-  std::future<int> r = std::async(task, 1, 10);
+  std::future<int> r = std::async(task, 1, 10); // Runs task(1,10)
   other_task();
   std::cout << "Result= " << r.get() << "\n";
   return 0;

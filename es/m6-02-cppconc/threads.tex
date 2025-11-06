@@ -2,13 +2,17 @@
 
 \begin{frame}[fragile]{Lanzamiento de hilos}
 \begin{itemize}
-  \item Un \textgood{hilo} representado por la clase \cppid{std::thread}.
+  \item Un \textgood{hilo} representado objetos de tipo \cppid{std::thread} o
+        \cppid{std::jthread}.
     \begin{itemize}
       \item Normalmente representa un hilo del SO.
     \end{itemize}
 \end{itemize}
 
 \mode<presentation>{\vfill}
+\begin{columns}[T]
+
+\column{.5\textwidth}
 \begin{block}{Lanzando un hilo a través de una función}
 \begin{lstlisting}
 void f1();
@@ -23,6 +27,22 @@ void g() {
 }
 \end{lstlisting}
 \end{block}
+
+\pause
+\column{.52\textwidth}
+\begin{block}{Lanzando un hilo a través de una función}
+\begin{lstlisting}
+void f1();
+void f2();
+
+void g() {
+  std::jthread t1{f1}; // Lanza un hilo que ejecuta f1()
+  std::jthread t2{f2}; // Lanza un hilo que ejecuta f2()
+} // Espera a que terminen t1 y t2
+\end{lstlisting}
+\end{block}
+
+\end{columns}
 \end{frame}
 
 
@@ -51,8 +71,8 @@ void f2(double x, double y);
 
 void g() {
   std::thread t1{f1, 10}; // Ejecuta f1(10)
-  std::thread t2{f1}; // Error
-  std::thread t3{f2, 1.0} // Error
+  std::thread t2{f1}; // Error: falta parámetro
+  std::thread t3{f2, 1.0} // Error: tipo de parámetro
   std::thread t4{f2, 1.0, 1.0}; // Ejecuta f2(1.0,1.0)
   //...
   // Joins de hilos
