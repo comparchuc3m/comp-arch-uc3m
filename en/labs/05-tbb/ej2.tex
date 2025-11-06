@@ -1,0 +1,174 @@
+\clearpage
+\subsection{Exercise: Matrix Multiplication}
+
+All the code for this exercise is in the
+\textemph{02-matrixmult} folder.
+
+In this exercise we will see different ways to optimize a matrix
+multiplication algorithm.
+
+\subsubsection{A Matrix Class}
+
+For this exercise the definition of the \cppid{matrix} type will be used, which is
+presented in Listing~\ref{lst:matrix}.
+
+\begin{lstlisting}[label={lst:matrix},
+caption={Matrix class}]
+class matrix {
+public:
+  matrix(std::size_t rows, std::size_t cols) : rows_(rows), cols_(cols), data_(rows * cols, 0.0) { }
+
+  double & operator[](std::size_t i, std::size_t j) { return data_[i * cols_ + j]; }
+  double const & operator[](std::size_t i, std::size_t j) const { return data_[i * cols_ + j]; }
+
+  [[nodiscard]] std::size_t rows() const { return rows_; }
+  [[nodiscard]] std::size_t cols() const { return cols_; }
+
+private:
+  std::size_t rows_, cols_;
+  std::vector<double> data_;
+};
+\end{lstlisting}
+
+The matrix class stores all values in a one-dimensional vector, where
+the data is stored by rows. The \cppkey{[]} operator is overloaded so
+that individual values can be accessed. The example in
+Listing~\ref{lst:matrix-ex} presents a use of this class.
+
+\begin{lstlisting}[label={lst:matrix-ex},
+caption={Example of using the \cppid{matrix} type}]
+void f() {
+  matrix m(5,4); // 5 rows, 4 columns
+  m[2,2] = 5.0;
+  m[1,2] = m[2,2] * 2.0;
+  //...
+}
+\end{lstlisting}
+
+\subsubsection{Creating a Matrix with Random Values}
+
+A support function for this exercise is \cppid{create\_matrix()} (see
+Listing~\ref{lst:create-matrix}) which allows creating a matrix with random values
+from a number of rows, a number of columns and a random number generator.
+The function fills each cell with a random value
+between \cppid{-10.0} and \cppid{10.0}.
+
+\begin{lstlisting}[label={lst:create-matrix},
+caption={Matrix creation function}]
+  auto create_matrix(std::size_t rows, std::size_t cols, std::mt19937_64 & rng) {
+    matrix mat(rows, cols);
+    std::uniform_real_distribution dist{-10.0, 10.0};
+    for (std::size_t i = 0; i < rows; ++i) {
+      for (std::size_t j = 0; j < cols; ++j) {
+        mat[i, j] = dist(rng);
+      }
+    }
+    return mat;
+  }
+\end{lstlisting}
+
+\subsubsection{Sequential Matrix Multiplication}
+
+The example includes two fully implemented versions of matrix multiplication
+that do not require modification:
+
+\begin{itemize}
+
+\item \cppid{matrix\_multiply\_seq()}: 
+Performs the multiplication of two matrices and returns a new matrix with the
+product result. Uses the conventional multiplication algorithm.
+
+\item \cppid{matrix\_multiply\_blocked\_seq()}:
+Performs the multiplication of two matrices and returns a new matrix with the
+product result. Uses a block-based algorithm to improve the
+cache hit rate.
+
+\end{itemize}
+
+The code contains three other versions of the multiplication function that
+must be developed from the \cppid{matrix\_multiply\_seq()} function.
+
+\subsubsection{Parallel Version Based on Integer Index}
+
+The simplest way to parallelize a loop is using the
+\cppid{tbb::parallel\_for()} version based on an integer index (see
+Listing~\ref{lst:parallel-for-idx}).
+In this version the lower index and upper index (which must be
+of the same type) are passed and a lambda expression that takes as its only parameter an integer
+value.
+
+\begin{lstlisting}[label={lst:parallel-for-idx},
+caption={Use of parallel for loop based on index}]
+tbb::parallel_for(std::size_t{0}, max_value, 
+  [&](std::size_t i) {
+    // code for iteration i
+    // Can update variables external to the call
+  }
+);
+\end{lstlisting}
+
+The TBB library is responsible for distributing the iterations among the available
+threads.
+
+Use this type of call to modify the
+\cppid{matrix\_multiply\_par()} function and measure the achieved speedup.
+
+\subsubsection{Parallel Version Based on One-Dimensional Block}
+
+Another way to parallelize a loop is using the
+\cppid{tbb::parallel\_for()} version based on one-dimensional block ranges
+(\cppid{tbb::blocked\_range<T>}) (see Listing~\ref{lst:parallel-for-rng1}).
+
+In this version the range is passed as a value of type
+\cppid{tbb::blocked\_range<T>} and a lambda expression that takes as its only
+parameter a value of type \cppid{blocked\_range<T>}.
+
+\begin{lstlisting}[label={lst:parallel-for-rng1},
+caption={Use of parallel for loop based on 1D range}]
+tbb::parallel_for(tbb::blocked_range<std::size_t>{0, max_value}, 
+  [&](std::blocked_range<std::size_t> r) {
+    for (auto i = r.begin(); i!=r.end(); ++i) {
+      // code for iteration i
+      // Can update variables external to the call
+    }
+  }
+);
+\end{lstlisting}
+
+The TBB library is responsible for dividing the range into smaller subranges down to
+a certain level of granularity. When a range is no longer divided it is passed to
+the lambda.
+
+Use this type of call to modify the
+\cppid{matrix\_multiply\_par\_range()} function and measure the achieved speedup.
+
+\subsubsection{Parallel Version Based on Two-Dimensional Block}
+
+Another similar way to parallelize a loop is using the
+\cppid{tbb::parallel\_for()} version based on two-dimensional block ranges
+(\cppid{tbb::blocked\_range2d<T>}) (see Listing~\ref{lst:parallel-for-rng2}).
+
+In this version the range is passed as a value of type
+\cppid{tbb::blocked\_range2d<T>} and a lambda expression that takes as its only
+parameter a value of type \cppid{blocked\_range2d<T>}.
+
+\begin{lstlisting}[label={lst:parallel-for-rng2},
+caption={Use of parallel for loop based on 2D range}]
+tbb::parallel_for(tbb::blocked_range2d<std::size_t>{0, max_value1, 0, max_value2}, 
+  [&](std::blocked_range2d<std::size_t> r) {
+    for (auto i = r.rows().begin(); i!=r.rows().end(); ++i) {
+      for (auto j = r.cols().begin(); j!=r.cols().end(); ++j) {
+        // code for iteration i,j
+        // Can update variables external to the call
+      }
+    }
+  }
+);
+\end{lstlisting}
+
+The TBB library is responsible for dividing the range into smaller subranges in
+both dimensions down to a certain level of granularity. When a range is no longer
+divided it is passed to the lambda.
+
+Use this type of call to modify the
+\cppid{matrix\_multiply\_par\_range()} function and measure the achieved speedup.

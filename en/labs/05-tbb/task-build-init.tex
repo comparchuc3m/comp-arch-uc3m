@@ -1,0 +1,43 @@
+\subsection{Building the Initial Version}
+
+Your first task is to build the original version of the exercises. You should
+build only the \emph{release} version. To do this, use a
+\emph{script} like the one shown in Listing~\ref{lst:build-normal}.
+
+You can run this script on a normal cluster node by doing:
+
+\begin{lstlisting}[style=terminal,language=bash]
+sbatch build-normal.sh
+\end{lstlisting}
+
+To run any of the programs, you can use a
+\emph{script} like \cppid{run-invoke.sh} (see Listing~\ref{lst:run-invoke-normal}).
+
+\lstinputlisting[
+language=bash,style=terminal,
+caption={Execution script for invoke on a normal node},
+label={lst:run-invoke-normal}
+]{lab/05-tbb/run-invoke-normal.sh}
+
+Note that in this script two queue system variables are defined:
+\cppid{job-name} and {output}. The first sets the job name in the queue system
+and the second defines the name of the job output file.
+Remember that the logs directory must exist beforehand.
+
+\begin{lstlisting}[style=terminal,language=bash]
+mkdir logs
+sbatch run-invoke-normal.sh
+\end{lstlisting}
+
+You can find the program execution output in the
+\textemph{logs/invoke-normal.txt} file.
+
+Now you can do the same by running similar scripts for the rest of the programs.
+In the supporting material you will find the following
+scripts:
+\textemph{run-invoke-normal.sh},
+\textemph{run-matrixmult-normal.sh},
+\textemph{run-picalc-normal.sh},
+\textemph{run-pimontecarlo-normal.sh} and
+\textemph{run-matrixmult-part-normal.sh}.
+
