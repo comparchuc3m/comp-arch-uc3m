@@ -72,7 +72,7 @@ void f2(double x, double y);
 void g() {
   std::thread t1{f1, 10}; // Ejecuta f1(10)
   std::thread t2{f1}; // Error: falta parámetro
-  std::thread t3{f2, 1.0} // Error: tipo de parámetro
+  std::thread t3{f2, 1.0}; // Error: tipo de parámetro
   std::thread t4{f2, 1.0, 1.0}; // Ejecuta f2(1.0,1.0)
   //...
   // Joins de hilos
