@@ -1,0 +1,81 @@
+\section{Descripción del laboratorio}
+
+En este laboratorio te familiarizarás con la programación paralela utilizando
+la biblioteca TBB (\emph{Threading Building Blocks}).
+
+En total practicarás con los siguientes ejercicios:
+
+\begin{itemize}
+
+\item \textmark{invoke}:
+En este ejercicio practicarás la ejecución de tareas en paralelo.
+
+\item \textmark{matrixmult}:
+En este ejercicio partiremos de un producto de matrices clásico y veremos
+distintas alternativas para optimizar la ejecución del producto de matrices.
+
+\item \textmark{picalc}:
+En este ejercicio veremos como acelerar un método numérico para calcular una
+integral. Aplicaremos estas técnicas al cálculo del número $\pi$.
+
+\item \textmark{pimontecarlo}:
+En este ejercicio veremos como se puede paralelizar un algoritmo que depende de
+un generador de números aleatorios. Aplicaremos esta técnica a una simulación
+de Monte Carlo para estimar el valor del número $\pi$.
+
+\item \textmark{matrixmult-part}:
+En este ejercicio veremos los distintas formas de repartir el trabajo entre los
+hilos de un programa paralelo.
+
+\end{itemize}
+
+\subsection{Construcción de los programas}
+
+Por favor, recuerda que para compilar la versión optimizada del programa 
+deberás generar una configuración de \emph{release}.
+
+\begin{tcolorbox}
+[colframe=red!50!black,
+colback=red!10!white, 
+title={\textbf{IMPORTANTE}}]
+Para ejecutar trabajos en el clúster \cppid{avignon}, deberás crear un
+\emph{script} para lanzar la compilación.
+\end{tcolorbox}
+
+Por ejemplo, el script~\ref{lst:build-normal} permite compilar en un nodo normal del
+cĺuster Avignon. En primer lugar, se genera la configuración de compilación en el
+directorio \textemph{build/normal}. A continuación se realiza la compilación
+generando los ejecutables correspondientes utilizando la configuración de
+compilación \textemph{gcc-release} y la configuración \textemph{Release}.
+
+\lstinputlisting[
+caption={Script de compilación para nodo normal del clúster Avignon},
+label=lst:build-normal,
+language=bash,style=terminal]
+{lab/05-tbb/build-normal.sh}
+
+\subsection{Estructura del código fuente}
+
+El código fuente que se suministra tiene la siguiente estructura:
+
+\begin{itemize}
+
+\item \textgood{01-invoke}: 
+Ejercicio de invocación de tareas paralelas.
+
+\item \textgood{02-matrixmult}:
+Ejercicio de producto de matrices.
+
+\item \textgood{03-picalc}:
+Ejercicio de cálculo del número $\pi$.
+
+\item \textgood{04-pimontecarlo}:
+Ejercicio del estimación del número $\pi$ con el método de Monte Carlo.
+
+\item \textgood{05-matrixmult-part}:
+Ejercicio de uso de esquemas de particionamiento de tareas.
+
+\end{itemize}
+
+Ten en cuenta que durante este laboratorio, tendrás que modificar los ejemplos
+los ejemplos para completarlos antes de ejecutar.

@@ -1,0 +1,7 @@
+#!/bin/sh
+#SBATCH --job-name=matrixmult-part-stan
+#SBATCH --output=./logs/matrixmult-part-stan.txt
+
+set -Eeu pipefail
+export LD_LIBRARY_PATH="/opt/gcc-14/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+build/stan/05-matrixmult-part/Release/matrixmultpart

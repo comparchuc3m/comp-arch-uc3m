@@ -1,0 +1,46 @@
+\subsection{Características de nodo NUMA}
+
+A través del \emph{front-end} \textmark{avignon} puedes tener acceso a un
+servidor de cómputo (llamado \textmark{stan}).
+
+Prepara un \emph{script} para ver las características hardware de
+\textmark{stan} llamado \cppid{lscpu.sh}. El listado~\ref{lst:lscpu} presenta
+un posible script
+
+\lstinputlisting[
+language=bash,style=terminal,
+caption={Script para obtención de características del hardware},
+label={lst:lscpu},
+]{lab/05-tbb/lscpu.sh}
+
+Revisa las principales características del hardware y analiza las diferencias
+con los nodos normales de cómputo y el nodo \textmark{stan}.
+
+\subsection{Construcción de la versión NUMA}
+
+En el material de apoyo encontrarás \emph{scripts} con el sufijo
+\textmark{stan}. Estos están diseñados para usarlos en este nodo de cómputo.
+
+Podrás compilar en este nodo haciendo:
+
+\begin{lstlisting}[language=bash,style=terminal]
+sbatch -p stan build-stan.sh
+\end{lstlisting}
+
+Para ejecutar, puedes usar un script como \textgood{run-invoke-stan.sh} (ver
+listado~\ref{lst:run-invoke-stan}:
+
+\lstinputlisting[
+language=bash,style=terminal,
+caption={Script de ejecución para invoke en el nodo stan},
+label={lst:run-invoke-stan}
+]{lab/05-tbb/run-invoke-stan.sh}
+
+\textbad{IMPORTANTE}: 
+Para ejecutar un \emph{script} en \textmark{stan} debes especifica el nombre de
+la cola de ejecución.
+
+\begin{lstlisting}[style=terminal]
+sbatch -p stan run-invoke-stan.sh
+\end{lstlisting}
+

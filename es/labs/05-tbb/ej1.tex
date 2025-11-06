@@ -1,0 +1,83 @@
+\clearpage
+\subsection{Ejercicio: Invocación paralela}
+
+Todo el código de este ejercicio está en la carpeta \textemph{01-invoke}.
+
+En este ejercicio vamos a ver como se pueden ejecutar varias tareas
+independientes en paralelo. Para ello vamos a utilizar una función que genera
+un vector de números en doble precisión, donde cada número se obtiene
+multiplicando su función por un factor de escala.
+
+\subsubsection{Generación de números}
+
+La función \cppid{generate\_values()} (ver listado~\ref{lst:genvals}) es una
+función auxiliar que no se va a modificar:
+
+\begin{lstlisting}[label={lst:genvals},caption={Generación de vector de valores}]
+  std::vector<double> generate_values(std::size_t n, double factor) {
+    std::vector<double> vec;
+    vec.reserve(n);
+    for (std::size_t i = 0; i < n; ++i) {
+      vec.push_back(static_cast<double>(i) * factor);
+    }
+    return vec;
+  }
+\end{lstlisting}
+
+\subsubsection{Ejecución secuencial}
+
+La función \cppid{run\_seq()} ejecuta un código secuencial que realiza
+consecutivamente las siguientes tareas:
+
+\begin{enumerate}
+
+\item Genera 4 vectores de un millón de valores cada uno de ellos.
+
+\item Aplica a cada uno de los cuatro vectores una transformación que sustituye
+cada valor por su doble. Esta es la primera medida de tiempo que se realiza.
+
+\item Aplica a cada uno de los cuatro elementos una operación de reducción
+secuencial para sumar todos los elementos y dividir por el número elementos, con
+lo que se obtiene el valor promedio.
+
+\end{enumerate}
+
+\subsubsection{Ejecución paralela}
+
+La función \cppid{run\_par()} contiene originalmente el mismo código. En este
+ejercicio vamos a modificarla para que realicen paralelo las 4 operaciones del
+paso 2. Después haremos lo mismo con el paso 3.
+
+Para ello podemos utilizar la función \cppid{tbb::parallel\_invoke()}. Esta
+función toma como parámetro una lista de expresiones lambda e invoca a cada una
+de ellas un un hilo de ejecución separado, de forma que pueden ejecutarse en
+paralelo.
+
+El listado~\ref{lst:par-invoke-ex} presenta un ejemplo de ejecución de varias
+funciones en paralelo.
+
+\begin{lstlisting}[float=htpb!,label={lst:par-invoke-ex},caption={Ejemplo de invocación
+paralela}]
+tbb::parallel_invoke(
+  [&]() { tarea1(); },
+  [&]() { tarea2(); },
+  [&]() { tarea3(); },
+  [&]() { tarea4(); }
+);
+\end{lstlisting}
+
+Utiliza \cppid{tbb::parallel\_invoke()} para que las cuatro llamadas a
+\cppid{std::transform()} se realicen en paralelo. 
+
+De la misma forma, utiliza \cppid{tbb::parallel\_invoke()} para que las cuatro
+evaluaciones de los promedios (\cppid{avg1}, \cppid{avg2}, \cppid{avg3} y
+\cppid{avg4}) se realicen en paralelo. En este caso no puedes colocar la
+definición de las variables dentro de las expresiones lambda porque pasarían a
+tener alcance local y no podrías acceder a ellas luego. Pero puedes definirlas
+antes de la invocación paralela, dándoles valor inicial \cppid{0.0} y luego
+actualizarlas dentro las expresiones lambda.
+
+\subsubsection{Medición de tiempos}
+
+Mide los tiempos de ejecución de cada una de las dos etapas en el nodo de
+cómputo \textmark{normal} y en \textmark{stan}.

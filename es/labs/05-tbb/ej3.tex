@@ -1,0 +1,71 @@
+\clearpage
+\subsection{Ejercicio: Cálculo del número PI}
+
+Todo el código de este ejercicio se encuentra en la carpeta
+\textemph{03-picalc}.
+
+En este ejercicio vamos a ver como se puede optimizar un algoritmo de reducción.
+Loa vamos a aplicar a un algoritmo que calcula el área de un círculo como paso
+previo a calcular el valor del número $\pi$.
+
+\subsubsection{Cálculo secuencial del número PI}
+
+El valor del número $\pi$ se puede calcular a partir de la siguiente integral
+definida:
+
+\[
+\int_{0}^{1} \frac{1}{1+x^2} dx =
+\arctan{1} - \arctan{0} =
+\frac{\pi}{4}
+\]
+
+Por tanto el valor de $\pi$ se puede aproximar:
+
+\[
+\pi \approx 4 \cdot \sum_{i=0}^{N-1} f(i \cdot \Delta x + \frac{\Delta x}{2}) \Delta x =
+4 \cdot \Delta x \sum_{i=0}^{N-1} \frac{1}{1 + ( (i + \frac{1}{2}) \Delta x )^2}
+\]
+
+En el ejercicio ya se suministra la implementación secuencial de este algoritmo
+en la función \cppid{compute\_pi\_seq()} (ver listado~\ref{lst:pi-calc-seq}).
+
+\begin{lstlisting}[label={lst:pi-calc-seq},
+caption={Cálculo secuencial del número pi}]
+  double compute_pi_seq(std::size_t num_steps) {
+    double const deltax = 1.0 / static_cast<double>(num_steps);
+    double sum          = 0.0;
+    for (std::size_t i = 0; i < num_steps; ++i) {
+      double const x = (static_cast<double>(i) + 0.5) * deltax;
+      sum += 1.0 / (1.0 + x * x);
+    }
+    return 4 * deltax * sum;
+  }
+\end{lstlisting}
+
+\subsubsection{Versión paralela del cálculo de PI}
+
+Para calcular la suma del algoritmo se puede utilizar una reducción basada en un
+rango de bloque con la función \cppid{tbb::parallel\_reduce()} (ver
+listado~\ref{lst:parallel-reduce}). Esta función
+toma un rango de bloque unidimensional \cppid{tbb::blocked\_range<T>} y dos
+expresiones lambda. La primera expresión lambda realiza un cálculo parcial en el
+espacio de iteraciones del rango. La segunda expresión lambda especifica como se
+combinan los resultados parciales para realizar la reducción propiamente dicha.
+
+\begin{lstlisting}[label={lst:parallel-reduce},
+caption={Reducción badada rango de bloque}]
+auto resultado = tbb::parallel_reduce(
+    tbb::blocked_range<std::size_T>(0, max),
+    0.0, // Valor inicial
+    [=](tbb::blocked_range<std::size_t> const & r, double init) {
+      for (auto i=r.begin(); i!=r.end(); ++i) {
+        // Realizar cálculos y a actualizar init
+      }
+      return init;
+    },
+    [](double x, double y) { return x+y; }
+);
+\end{lstlisting}
+
+Utiliza este tipo llamada para modificar la función \cppid{compute\_pi\_par()} y
+mide la aceleración conseguida.

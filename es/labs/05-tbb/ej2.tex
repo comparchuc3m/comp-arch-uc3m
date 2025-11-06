@@ -1,0 +1,174 @@
+\clearpage
+\subsection{Ejercicio: Producto de matrices}
+
+Todo el código de este ejercicio se encuentra en la carpeta
+\textemph{02-matrixmult}.
+
+En este ejercicio vamos a ver distintas maneras de optimizar un algoritmo de
+multiplicación de matrices.
+
+\subsubsection{Un clase matriz}
+
+Para este ejercicio se utilizará la definición del tipo \cppid{matrix} que se
+presenta en el listado~\ref{lst:matrix}.
+
+\begin{lstlisting}[label={lst:matrix},
+caption={Clase matriz}]
+class matrix {
+public:
+  matrix(std::size_t rows, std::size_t cols) : rows_(rows), cols_(cols), data_(rows * cols, 0.0) { }
+
+  double & operator[](std::size_t i, std::size_t j) { return data_[i * cols_ + j]; }
+  double const & operator[](std::size_t i, std::size_t j) const { return data_[i * cols_ + j]; }
+
+  [[nodiscard]] std::size_t rows() const { return rows_; }
+  [[nodiscard]] std::size_t cols() const { return cols_; }
+
+private:
+  std::size_t rows_, cols_;
+  std::vector<double> data_;
+};
+\end{lstlisting}
+
+La case matriz almacena todos los valores en un vector de una dimensión, donde
+los datos se almacenan por filas. El operador \cppkey{[]} está sobrecargado de
+manera que se pueden acceder a los valores individuales. El ejemplo en el
+listado~\ref{lst:matrix-ex} presenta un uso de esta clase.
+
+\begin{lstlisting}[label={lst:matrix-ex},
+caption={Ejemplo de uso del tipo \cppid{matrix}}]
+void f() {
+  matrix m(5,4); // 5 rows, 4 columns
+  m[2,2] = 5.0;
+  m[1,2] = m[2,2] * 2.0;
+  //...
+}
+\end{lstlisting}
+
+\subsubsection{Creación de una matriz con valores aleatorios}
+
+Una función de apoyo para este ejercicio es \cppid{create\_matrix()} (ver
+listado~\ref{lst:create-matrix}) que permite crear una matriz con valores
+aleatorios a partir de un número de filas, un número de columnas y un generador
+de números aleatorios. La función rellena cada celda con un valor aleatorio
+entre \cppid{-10.0} y \cppid{10.0}.
+
+\begin{lstlisting}[label={lst:create-matrix},
+caption={Función de creación de matrices}]
+  auto create_matrix(std::size_t rows, std::size_t cols, std::mt19937_64 & rng) {
+    matrix mat(rows, cols);
+    std::uniform_real_distribution dist{-10.0, 10.0};
+    for (std::size_t i = 0; i < rows; ++i) {
+      for (std::size_t j = 0; j < cols; ++j) {
+        mat[i, j] = dist(rng);
+      }
+    }
+    return mat;
+  }
+\end{lstlisting}
+
+\subsubsection{Multiplicación de matrices secuencial}
+
+El ejemplo incluye dos versiones del producto de matrices totalmente
+implementados y que no requieren modificación:
+
+\begin{itemize}
+
+\item \cppid{matrix\_multiply\_seq()}: 
+Realiza la multiplicación de dos matrices y devuelve una nueva matriz con el
+resultado del producto. Utiliza el algoritmo convencional de multiplicación.
+
+\item \cppid{matrix\_multiply\_blocked\_seq()}:
+Realiza la multiplicación de dos matrices y devuelve una nueva matriz con el
+resultado del producto. Utiliza un algoritmo basado en bloques para mejorar la
+tasa de aciertos de la caché.
+
+\end{itemize}
+
+El código contiene otras tres versiones de la función de multiplicación que
+deben desarrollarse a partir de la función \cppid{matrix\_multiply\_seq()}.
+
+\subsubsection{Versión paralela basada en índice entero}
+
+La forma más sencilla de paralelizar un bucle es usando la versión de
+\cppid{tbb::parallel\_for()} basada en un índice entero (ver
+listado~\ref{lst:parallel-for-idx}). 
+En esta versión se pasan el índice inferior y el índice superior (que deben ser
+del mismo tipo) y una expresión lambda que toma como único parámetro un valor
+entero.
+
+\begin{lstlisting}[label={lst:parallel-for-idx},
+caption={Uso de bucle for paralelo basado en índice}]
+tbb::parallel_for(std::size_t{0}, max_value, 
+  [&](std::size_t i) {
+    // código para iteración i
+    // Puede actualizar variables externas a la llamada
+  }
+);
+\end{lstlisting}
+
+La biblioteca TBB se encarga de repartir las iteraciones entre los hilos
+disponibles.
+
+Utiliza este tipo de llamada para modificar la función
+\cppid{matrix\_multiply\_par()} y mide la aceleración conseguida.
+
+\subsubsection{Versión paralela basada en bloque de una dimensión}
+
+Otra forma de paralelizar un bucle es utilizando la versión de
+\cppid{tbb::parallel\_for()} basada en rangos de bloque unidimensionales
+(\cppid{tbb::blocked\_range<T>}) (ver listado~\ref{lst:parallel-for-rng1}).
+
+En esta versión se pasa el rango como un valor de tipo
+\cppid{tbb::blocked\_range<T>} y una expresión lambda que toma como único
+parámetro un valor de tipo \cppid{blocked\_range<T>}.
+
+\begin{lstlisting}[label={lst:parallel-for-rng1},
+caption={Uso de bucle for paralelo basado en rango 1D}]
+tbb::parallel_for(tbb::blocked_range<std::size_t>{0, max_value}, 
+  [&](std::blocked_range<std::size_t> r) {
+    for (auto i = r.begin(); i!=r.end(); ++i) {
+      // código para iteración i
+      // Puede actualizar variables externas a la llamada
+    }
+  }
+);
+\end{lstlisting}
+
+La biblioteca TBB se encarga de dividir el rango en subrangos más pequeños hasta
+un cierto nivel de granularidad. Cuando un rango no se divide más se pasa éste a
+la lambda.
+
+Utiliza este tipo de llamada para modificar la función
+\cppid{matrix\_multiply\_par\_range()} y mide la aceleración conseguida.
+
+\subsubsection{Versión paralela basada en bloque de dos dimensiones}
+
+Otra forma similare de paralelizar un bucle es utilizando la versión de
+\cppid{tbb::parallel\_for()} basada en rangos de bloque bidimensionales
+(\cppid{tbb::blocked\_range2d<T>}) (ver listado~\ref{lst:parallel-for-rng2}).
+
+En esta versión se pasa el rango como un valor de tipo
+\cppid{tbb::blocked\_range2d<T>} y una expresión lambda que toma como único
+parámetro un valor de tipo \cppid{blocked\_range2d<T>}.
+
+\begin{lstlisting}[label={lst:parallel-for-rng2},
+caption={Uso de bucle for paralelo basado en rango 2D}]
+tbb::parallel_for(tbb::blocked_range2d<std::size_t>{0, max_value1, 0, max_value2}, 
+  [&](std::blocked_range2d<std::size_t> r) {
+    for (auto i = r.rows().begin(); i!=r.rows().end(); ++i) {
+      for (auto j = r.cols().begin(); j!=r.cols().end(); ++j) {
+        // código para iteración i,j
+        // Puede actualizar variables externas a la llamada
+      }
+    }
+  }
+);
+\end{lstlisting}
+
+La biblioteca TBB se encarga de dividir el rango en subrangos más pequeños en
+ambas dimensiones hasta un cierto nivel de granularidad. Cuando un rango no se
+divide más se pasa éste a la lambda.
+
+Utiliza este tipo de llamada para modificar la función
+\cppid{matrix\_multiply\_par\_range()} y mide la aceleración conseguida.
