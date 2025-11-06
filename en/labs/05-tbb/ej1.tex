@@ -1,0 +1,83 @@
+\clearpage
+\subsection{Exercise: Parallel invocation}
+
+All the code for this exercise is in the \textemph{01-invoke} folder.
+
+In this exercise we will see how multiple independent tasks can be executed
+in parallel. For this we will use a function that generates
+a vector of double precision numbers, where each number is obtained
+by multiplying its position by a scaling factor.
+
+\subsubsection{Number generation}
+
+The function \cppid{generate\_values()} (see listing~\ref{lst:genvals}) is an
+auxiliary function that will not be modified:
+
+\begin{lstlisting}[label={lst:genvals},caption={Vector of values generation}]
+  std::vector<double> generate_values(std::size_t n, double factor) {
+    std::vector<double> vec;
+    vec.reserve(n);
+    for (std::size_t i = 0; i < n; ++i) {
+      vec.push_back(static_cast<double>(i) * factor);
+    }
+    return vec;
+  }
+\end{lstlisting}
+
+\subsubsection{Sequential execution}
+
+The function \cppid{run\_seq()} executes sequential code that consecutively
+performs the following tasks:
+
+\begin{enumerate}
+
+\item Generates 4 vectors of one million values each.
+
+\item Applies to each of the four vectors a transformation that replaces
+each value with its double. This is the first time measurement performed.
+
+\item Applies to each of the four elements a sequential reduction
+operation to sum all elements and divide by the number of elements, thereby
+obtaining the average value.
+
+\end{enumerate}
+
+\subsubsection{Parallel execution}
+
+The function \cppid{run\_par()} originally contains the same code. In this
+exercise we will modify it so that the 4 operations of
+step 2 are performed in parallel. Then we will do the same with step 3.
+
+For this we can use the function \cppid{tbb::parallel\_invoke()}. This
+function takes as a parameter a list of lambda expressions and invokes each
+of them in a separate execution thread, so that they can be executed in
+parallel.
+
+Listing~\ref{lst:par-invoke-ex} presents an example of parallel execution of multiple
+functions.
+
+\begin{lstlisting}[float=htpb!,label={lst:par-invoke-ex},caption={Example of parallel
+invocation}]
+tbb::parallel_invoke(
+  [&]() { task1(); },
+  [&]() { task2(); },
+  [&]() { task3(); },
+  [&]() { task4(); }
+);
+\end{lstlisting}
+
+Use \cppid{tbb::parallel\_invoke()} so that the four calls to
+\cppid{std::transform()} are performed in parallel.
+
+Similarly, use \cppid{tbb::parallel\_invoke()} so that the four
+evaluations of the averages (\cppid{avg1}, \cppid{avg2}, \cppid{avg3} and
+\cppid{avg4}) are performed in parallel. In this case you cannot place the
+variable definitions inside the lambda expressions because they would have
+local scope and you would not be able to access them later. But you can define them
+before the parallel invocation, giving them initial value \cppid{0.0} and then
+update them inside the lambda expressions.
+
+\subsubsection{Time measurement}
+
+Measure the execution times of each of the two stages on the compute node
+\textmark{normal} and on \textmark{stan}.

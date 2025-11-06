@@ -1,0 +1,44 @@
+\subsection{Common code}
+
+\subsubsection{TBB steady state simulation}
+
+The TBB library requires a series of initialization tasks to be performed. In most
+applications this time is irrelevant and is amortized by the
+duration of the program. However, the programs we will use in the
+exercises are very short and it is not appropriate to include these measurements in
+the execution time of our algorithms.
+
+To avoid the noise this can introduce, in all exercises
+you will find a function \cppid{warm\_up\_tbb()} that will run before
+starting other parallel tasks. This function (see
+listing~\ref{lst:warm-up-tbb}) waits a certain time for the library to initialize
+without including it in the time measurement.
+
+\begin{lstlisting}[caption={TBB warm-up
+function},label={lst:warm-up-tbb}]
+  void warm_up_tbb() {
+    tbb::parallel_for(0, tbb::info::default_concurrency(), [=](int) {
+      tbb::tick_count t0 = tbb::tick_count::now();
+      while ((tbb::tick_count::now() - t0).seconds() < 0.01) {
+      }
+    });
+  }
+\end{lstlisting}
+
+\subsubsection{Measuring execution time of a function}
+
+In all programs there are times when you want to measure how long it takes to
+run a function. For this you can use the component from the
+standard library \cppid{chrono} (see listing~\ref{lst:chrono}).
+
+\begin{lstlisting}[caption={Measuring task times},label={lst:chrono}]
+void f() {
+  using namespace std::chrono;
+  auto start = high_resolution_clock::now();
+  function_to_measure();
+  auto end  = std::chrono::high_resolution_clock::now();
+  auto diff = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+  std::println("Execution time: {}", diff);
+  //...
+}
+\end{lstlisting}

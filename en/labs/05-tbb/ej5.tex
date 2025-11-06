@@ -1,0 +1,57 @@
+\clearpage
+\subsection{Advanced task partitioning and matrix product}
+
+All the code for this exercise is in the
+\textemph{05-matrixmult-part} folder.
+
+In this exercise we will evaluate the different task partitioners that
+TBB offers.
+
+\subsubsection{Task partitioning}
+
+In TBB any parallel algorithm generates a set of tasks. These tasks
+can be divided into smaller ones. In this way, each thread maintains a
+list of pending tasks of different sizes. When a thread's task list
+becomes empty, that thread steals a task from another thread to
+progress. This mechanism is very effective in maintaining load balance
+among different threads.
+
+A fundamental element in work distribution is the \textmark{partitioner}.
+That is, the object responsible for partitioning tasks into smaller
+ones.
+
+The library offers the following strategies:
+
+\begin{itemize}
+
+\item \cppid{simple\_partitioner}:
+The range is divided until a grain size associated with the range is reached.
+If no value is specified, the grain size is unity.
+
+\item \cppid{auto\_partitioner}:
+The range is divided dynamically and division can be stopped even if the
+grain size is not reached.
+It is the default partitioner in most algorithms.
+
+\item \cppid{static\_partitioner}:
+The range is divided uniformly but there is no possibility of load balancing.
+It is the partitioner with the least overhead, but may not be suitable if there is
+imbalance among tasks.
+
+\item \cppid{affinity\_partitioner}:
+Combines features of \cppid{auto\_partitioner} and
+\cppid{static\_partitioner} improving cache usage if the same
+partitioner object is repeatedly passed to the same algorithm. It starts by generating a
+static partition, but then adapts it dynamically.
+
+\end{itemize}
+
+\subsection{Evaluation of partitioners}
+
+This exercise includes code to evaluate different matrix product algorithms with
+different partitioners. In each evaluation each algorithm is
+run 10 times and average values are taken.
+
+In this exercise you do not have to modify the code. Analyze the results with
+the different partitioners and try to find explanations for the
+results.
