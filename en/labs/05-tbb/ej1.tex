@@ -61,7 +61,7 @@ invocation}]
 tbb::parallel_invoke(
   [&]() { task1(); },
   [&]() { task2(); },
-  [&]() { tarea3(); },
+  [&]() { task3(); },
   [&]() { tarea4(); }
 );
 \end{lstlisting}
