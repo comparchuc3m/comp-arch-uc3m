@@ -73,7 +73,7 @@ void f2(double x, double y);
 void g() {
   std::thread t1{f1, 10}; // Runs f1(10)
   std::thread t2{f1}; // Error: Missing argument
-  std::thread t3{f2, 1.0} // Error: Wrong argument type
+  std::thread t3{f2, 1.0}; // Error: Wrong argument type
   std::thread t4{f2, 1.0, 1.0}; // Runs f2(1.0,1.0)
   //...
   // Thread joins 
