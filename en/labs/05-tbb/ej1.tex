@@ -59,7 +59,7 @@ functions in parallel.
 \begin{lstlisting}[float=htpb!,label={lst:par-invoke-ex},caption={Example of parallel
 invocation}]
 tbb::parallel_invoke(
-  [&]() { tarea1(); },
+  [&]() { task1(); },
   [&]() { tarea2(); },
   [&]() { tarea3(); },
   [&]() { tarea4(); }
