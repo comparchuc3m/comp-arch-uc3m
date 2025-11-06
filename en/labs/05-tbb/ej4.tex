@@ -1,0 +1,74 @@
+\clearpage
+\subsection{Estimating the Number PI Using Monte Carlo Simulation}
+
+All the code for this exercise is in the
+\textemph{04-pimontecarlo} folder.
+
+In this exercise we will address a possible approach to using random
+numbers in parallel algorithms.
+
+\subsubsection{Monte Carlo Simulations}
+
+A possible way to approximate the value of the number $\pi$ is by generating random
+coordinates within a square of side \cppid{1.0}. The proportion of points
+whose distance from the lower left corner is less than or equal to \cppid{1.0}
+coincides with the value $\frac{\pi}{4}$. The value will be more accurate the greater
+the number of generated values.
+
+The \cppid{compute\_pi\_seq()} function (see Listing~\ref{lst:pi-seq-montecarlo})
+generates a number of points using a random number generator of type
+\cppid{std::mt19934\_64}.
+
+\begin{lstlisting}[label={lst:pi-seq-montecarlo},
+caption={Approximation of the value of PI using Monte Carlo simulation}]
+  double compute_pi_seq(std::size_t num_samples, std::size_t seed) {
+    std::mt19937_64 rng{seed};
+    std::uniform_real_distribution gen{0.0, 1.0};
+    std::size_t num_hits = 0;
+    for (std::size_t i = 0; i < num_samples; ++i) {
+      double const x = gen(rng);
+      double const y = gen(rng);
+      if (x * x + y * y <= 1.0) {
+        ++num_hits;
+      }
+    }
+    return 4.0 * static_cast<double>(num_hits) / static_cast<double>(num_samples);
+  }
+\end{lstlisting}
+
+\subsubsection{Monte Carlo Simulations in Parallel}
+
+If you observe the code of \cppid{compute\_pi\_seq()} it is a reduction.
+However, the problem is that all parallel tasks
+would have to share a single random number generator (the variable
+\cppid{rng}), which could lead to data races, in addition to not being
+deterministic.
+
+Fortunately, Mersenne-Twister type generators have an interesting
+property. In general, sequences generated from consecutive integer
+seeds give rise to independent pseudo-random sequences.
+
+Therefore, the approach for the \cppid{compute\_pi\_par()} function could be
+like the one presented in Listing~\ref{lst:pi-par-montecarlo}.
+
+\begin{lstlisting}[label={lst:pi-par-montecarlo},
+caption={Parallel approximation of the value of PI using Monte Carlo simulation}]
+  double compute_pi_par(std::size_t num_samples, std::size_t seed) {
+    std::size_t const sum = tbb::parallel_reduce(
+        tbb::blocked_range<std::size_t>(0, num_samples), std::size_t{0},
+        [seed](tbb::blocked_range<std::size_t> const & r, std::size_t init) {
+          std::mt19937_64 local_rng{seed + r.begin()}; // Local RNG
+          std::uniform_real_distribution gen{0.0, 1.0};
+          for (std::size_t i = r.begin(); i != r.end(); ++i) {
+            // Update init
+          }
+          return init;
+        },
+        [](std::size_t x, std::size_t y) { return x + y; });
+
+    return 4.0 * static_cast<double>(sum) / static_cast<double>(num_samples);
+  }
+\end{lstlisting}
+
+Complete the code for \cppid{compute\_pi\_par()} and measure the
+achieved speedup.

@@ -1,0 +1,82 @@
+\section{Lab Description}
+
+In this laboratory you will become familiar with parallel programming using
+the TBB (\emph{Threading Building Blocks}) library.
+
+In total, you will practice with the following exercises:
+
+\begin{itemize}
+
+\item \textmark{invoke}:
+In this exercise you will practice executing tasks in parallel.
+
+\item \textmark{matrixmult}:
+In this exercise we will start from a classic matrix multiplication and see
+different alternatives to optimize the matrix multiplication execution.
+
+\item \textmark{picalc}:
+In this exercise we will see how to accelerate a numerical method to calculate an
+integral. We will apply these techniques to calculating the number $\pi$.
+
+\item \textmark{pimontecarlo}:
+In this exercise we will see how to parallelize an algorithm that depends on
+a random number generator. We will apply this technique to a Monte Carlo simulation
+to estimate the value of the number $\pi$.
+
+\item \textmark{matrixmult-part}:
+In this exercise we will see the different ways to distribute work among the
+threads of a parallel program.
+
+\end{itemize}
+
+\subsection{Building the programs}
+
+Please remember that to compile the optimized version of the program 
+you must generate a \emph{release} configuration.
+
+\begin{tcolorbox}
+[colframe=red!50!black,
+colback=red!10!white, 
+title={\textbf{IMPORTANT}}]
+To run jobs on the \textmark{avignon} cluster, you must create a
+\emph{script} to launch the compilation.
+\end{tcolorbox}
+
+For example, the script in Listing~\ref{lst:build-normal} allows compilation on a
+normal node of the \textmark{avignon} cluster. First, the compilation
+configuration is generated in the \textemph{build/normal} directory. Then
+the compilation is performed generating the corresponding
+executables using the \textemph{gcc-release} compilation configuration
+and the \textemph{Release} configuration.
+
+\lstinputlisting[
+caption={Compilation script for normal node of the \textmark{avignon} cluster},
+label=lst:build-normal,
+language=bash,style=terminal]
+{lab/05-tbb/build-normal.sh}
+
+\subsection{Source code structure}
+
+The supplied source code has the following structure:
+
+\begin{itemize}
+
+\item \textgood{01-invoke}: 
+Parallel task invocation exercise.
+
+\item \textgood{02-matrixmult}:
+Matrix multiplication exercise.
+
+\item \textgood{03-picalc}:
+Exercise to calculate the number $\pi$.
+
+\item \textgood{04-pimontecarlo}:
+Exercise to estimate the number $\pi$ with the Monte Carlo method.
+
+\item \textgood{05-matrixmult-part}:
+Exercise on using task partitioning schemes.
+
+\end{itemize}
+
+Keep in mind that during this laboratory, you will have to modify the examples
+to complete them before running.

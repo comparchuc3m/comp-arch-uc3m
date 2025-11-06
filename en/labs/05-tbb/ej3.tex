@@ -1,0 +1,73 @@
+\clearpage
+\subsection{Exercise: Calculating the Number PI}
+
+All the code for this exercise is in the
+\textemph{03-picalc} folder.
+
+In this exercise we will see how a reduction algorithm can be optimized.
+We will apply it to an algorithm that calculates the area of a circle as a
+preliminary step to calculating the value of the number $\pi$.
+
+\subsubsection{Sequential Calculation of the Number PI}
+
+The value of the number $\pi$ can be calculated from the following definite
+integral:
+
+\[
+\int_{0}^{1} \frac{1}{1+x^2} dx =
+\arctan{1} - \arctan{0} =
+\frac{\pi}{4}
+\]
+
+Therefore, the value of $\pi$ can be approximated by dividing the integration
+interval (in this case [0,1]) into $N$ sub-intervals of length $\Delta x =
+\frac{1}{N}$ and using the following development:
+
+\[
+\pi \approx 4 \cdot \sum_{i=0}^{N-1} f(i \cdot \Delta x + \frac{\Delta x}{2}) \Delta x =
+4 \cdot \Delta x \sum_{i=0}^{N-1} \frac{1}{1 + ( (i + \frac{1}{2}) \Delta x )^2}
+\]
+
+In the exercise the sequential implementation of this algorithm is already supplied
+in the \cppid{compute\_pi\_seq()} function (see Listing~\ref{lst:pi-calc-seq}).
+
+\begin{lstlisting}[label={lst:pi-calc-seq},
+caption={Sequential calculation of the number pi}]
+  double compute_pi_seq(std::size_t num_steps) {
+    double const deltax = 1.0 / static_cast<double>(num_steps);
+    double sum          = 0.0;
+    for (std::size_t i = 0; i < num_steps; ++i) {
+      double const x = (static_cast<double>(i) + 0.5) * deltax;
+      sum += 1.0 / (1.0 + x * x);
+    }
+    return 4 * deltax * sum;
+  }
+\end{lstlisting}
+
+\subsubsection{Parallel Version of PI Calculation}
+
+To calculate the sum of the algorithm you can use a reduction based on a
+block range with the \cppid{tbb::parallel\_reduce()} function (see
+Listing~\ref{lst:parallel-reduce}). This function
+takes a one-dimensional block range \cppid{tbb::blocked\_range<T>} and two
+lambda expressions. The first lambda expression performs a partial calculation in the
+iteration space of the range. The second lambda expression specifies how the
+partial results are combined to perform the actual reduction.
+
+\begin{lstlisting}[label={lst:parallel-reduce},
+caption={Reduction based on block range}]
+auto resultado = tbb::parallel_reduce(
+    tbb::blocked_range<std::size_T>(0, max),
+    0.0, // Initial value
+    [=](tbb::blocked_range<std::size_t> const & r, double init) {
+      for (auto i=r.begin(); i!=r.end(); ++i) {
+        // Perform calculations and update init
+      }
+      return init;
+    },
+    [](double x, double y) { return x+y; }
+);
+\end{lstlisting}
+
+Use this type of call to modify the \cppid{compute\_pi\_par()} function and
+measure the achieved speedup.

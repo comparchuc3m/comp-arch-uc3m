@@ -1,0 +1,40 @@
+\subsection{Initial Project Structure}
+
+The supplied code contains the general project structure with a
+directory for each of the exercises we will perform.
+
+The \textemph{CMakePresets.json} file contains the general project configuration
+with the configuration and build \textmark{presets}.
+
+To work with TBB you will need to have this
+library installed. The library is already installed on all compute nodes of the
+\textmark{avignon} system. It is also included in the
+corresponding \textmark{Dockerfile} configuration in case you want to try the examples on your
+machine. The package to install this library on a GNU/Linux machine
+is \textemph{libtbb-dev}.
+
+If you look at the \textemph{CMakeLists.txt} file the only relevant thing is in
+the following line:
+
+\begin{lstlisting}
+find_package(TBB REQUIRED)
+\end{lstlisting}
+
+This tells CMake that it must find the TBB library installed on the system
+and that otherwise it must generate a compilation error.
+
+Within the project you will find a folder with the initial content of each
+exercise. All code is always in a single file named
+\cppid{main.cpp}. In the corresponding \textemph{CMakeLists.txt} file
+you will find the executable definition and the dependency establishment
+with respect to TBB.
+
+\begin{lstlisting}
+add_executable(invoke)
+target_sources(invoke PRIVATE
+    main.cpp
+)
+target_link_libraries(invoke PRIVATE
+    TBB::tbb
+)
+\end{lstlisting}
