@@ -35,7 +35,7 @@ standard library (see Listing~\ref{lst:chrono}).
 void f() {
   using namespace std::chrono;
   auto start = high_resolution_clock::now();
-function_to_be_measured();
+  function_to_be_measured();
   auto end  = std::chrono::high_resolution_clock::now();
   auto diff = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
   std::println("Execution time: {}", diff);
