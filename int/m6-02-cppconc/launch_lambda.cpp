@@ -6,7 +6,7 @@ void g() {
     [&] {
       fft(img);
       filter(img);
-      inv_fft(img)
+      inv_fft(img);
     }
   };
   //...
