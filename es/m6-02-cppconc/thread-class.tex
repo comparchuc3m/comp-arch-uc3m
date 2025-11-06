@@ -328,42 +328,18 @@ void ejemplo() {
 \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Hilo automático}
-\begin{itemize}
-  \item Se puede usar el patrón RAII.
-    \begin{itemize}
-      \item Resource Acquisition Is Initialization.
-    \end{itemize}
-\end{itemize}
-\begin{block}{Un hilo que hace join}
-\begin{lstlisting}
-struct hilo_automatico : std::thread {
-  using std::thread::thread; // Todos los constructores de thread
-  ~hilo_automatico() { 
-    if (joinable()) join(); 
-  }
-};
-\end{lstlisting}
-\end{block}
-\begin{itemize}
-  \item El constructor adquire el recurso.
-  \item El destructor libera el recurso.
-  \item Evita el goteo de recursos.
-\end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]{Simplificación con RAII}
+\begin{frame}[fragile]{Simplificación con jthread}
 \begin{itemize}
   \item Simplificación de código y seguridad.
 \end{itemize}
 \begin{block}{Ejemplo}
 \begin{lstlisting}
 void ejemplo() {
-  hilo_automatico t1{f}; // Hilo que ejecuta la tarea f
-  hilo_automatico t2; // Hilo vacío.
+  std::jthread t1{f}; // Hilo que ejecuta la tarea f
+  std::jthread t2; // Hilo vacío.
 
   if (modo == modo1) {
-    hilo_automatico tg {g}; 
+    std::jthread tg{g}; 
     // ...
     t2 = std::move(tg); // tg vacía, t2 asociada a g()
   }
@@ -374,7 +350,7 @@ void ejemplo() {
 \end{block}
 \end{frame}
 
-\begin{frame}[fragile]{Hilos no asociados}
+\begin{frame}[t,fragile]{Hilos no asociados}
 \begin{itemize}
   \item Se puede indicar que un hilo sigue ejecutando después de que el destructor se ejecute con \cppid{detach()}.
   \item Útil para tareas que se ejecutan como demonios.
@@ -397,7 +373,7 @@ void f() {
 \end{block}
 \end{frame}
 
-\begin{frame}[fragile]{Problemas con hilos no asociados}
+\begin{frame}[t,fragile]{Problemas con hilos no asociados}
 \begin{itemize}
   \item Incovenientes:
     \begin{itemize}
@@ -416,7 +392,7 @@ void f() {
 \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Un bug difícil de cazar}
+\begin{frame}[t,fragile]{Un bug difícil de cazar}
 \begin{itemize}
   \item \alert{Problema}: Cuidado con el acceso a variables locales desde un hilo no asociado despues de su destrucción.
 \end{itemize}
@@ -431,7 +407,7 @@ void g() {
 \end{block}
 \end{frame}
 
-\begin{frame}{Operaciones sobre el hilo actual}
+\begin{frame}[t,fragile]{Operaciones sobre el hilo actual}
 \begin{itemize}
   \item Operaciones sobre el hilo actual como funciones globales en sub-espacio de nombres \cppid{this\_thread}.
     \begin{itemize}
