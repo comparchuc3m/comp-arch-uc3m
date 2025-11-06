@@ -1,0 +1,74 @@
+\clearpage
+\subsection{Estimación del número PI mediante simulación de Monte Carlo}
+
+Todo el código de este ejercicio se encuentra en la carpeta
+\textemph{04-pimontecarlo}.
+
+En este ejercicio vamos a abordar una posible aproximación al uso de números
+aleatorios en algoritmos paralelos.
+
+\subsubsection{Simulaciones de Monte Carlo}
+
+Una posible manera de aproximar el valor el número $\pi$ es generando coordenadas
+aleatorias dentro de un cuadrado de lado \cppid{1.0}. La proporción del puntos
+cuya distancia a la esquina inferior izquierda es menor o igual que \cppid{1.0}
+coincide con el valor $\frac{\pi}{4}$. El valor será más preciso cuanto mayor
+sea el número de valores generados.
+
+La función \cppid{compute\_pi\_seq()} (ver listador\ref{lst:pi-seq-montecarlo})
+genera un número de puntos utilizando un generador de números aleatorios de tipo
+\cppid{std::mt19934\_64}.
+
+\begin{lstlisting}[label={lst:pi-seq-montecarlo},
+caption={Aproximación del valor de PI mediante simulación de Monte Carlo}]
+  double compute_pi_seq(std::size_t num_samples, std::size_t seed) {
+    std::mt19937_64 rng{seed};
+    std::uniform_real_distribution gen{0.0, 1.0};
+    std::size_t num_hits = 0;
+    for (std::size_t i = 0; i < num_samples; ++i) {
+      double const x = gen(rng);
+      double const y = gen(rng);
+      if (x * x + y * y <= 1.0) {
+        ++num_hits;
+      }
+    }
+    return 4.0 * static_cast<double>(num_hits) / static_cast<double>(num_samples);
+  }
+\end{lstlisting}
+
+\subsubsection{Simulaciones de Monte Carlo en paralelo}
+
+Si observas el código de \cppid{compute\_pi\_seq()} se trata de una reducción.
+No obstante, el problema que se plantea es que todas las tareas paralelas
+tendrían que compartir un único generador de números aleatorios (la variable
+\cppid{rng}), lo que podría dar lugar a carreras de datos, además de no ser
+determinista.
+
+Afortunadamente, los generadores de tipo Mersenne-Twister tienen una propiedad
+interesante. En general, secuencias generadas a partir de semillas enteras
+consecutivas dan lugar a secuencias pseudo-aleatorias independientes.
+
+Por tanto, la aproximación de la función \cppid{compute\_pi\_par()} podría ser
+como el que se presenta en el listado~\ref{lst:pi-par-montecarlo}.
+
+\begin{lstlisting}[label={lst:pi-par-montecarlo},
+caption={Aproximación paralela del valor de PI mediante simulación de Monte Carlo}]
+  double compute_pi_par(std::size_t num_samples, std::size_t seed) {
+    std::size_t const sum = tbb::parallel_reduce(
+        tbb::blocked_range<std::size_t>(0, num_samples), std::size_t{0},
+        [seed](tbb::blocked_range<std::size_t> const & r, std::size_t init) {
+          std::mt19937_64 local_rng{seed + r.begin()}; // RNG local
+          std::uniform_real_distribution gen{0.0, 1.0};
+          for (std::size_t i = r.begin(); i != r.end(); ++i) {
+            // Actualización de init
+          }
+          return init;
+        },
+        [](std::size_t x, std::size_t y) { return x + y; });
+
+    return 4.0 * static_cast<double>(sum) / static_cast<double>(num_samples);
+  }
+\end{lstlisting}
+
+Completa el código para \cppid{compute\_pi\_par()} y mide la aceleración
+conseguida.

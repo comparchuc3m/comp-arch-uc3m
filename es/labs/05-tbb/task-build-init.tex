@@ -1,0 +1,43 @@
+\subsection{Construcción de la versión inicial}
+
+Tu primera tarea es construir la versión original de los ejercicios. Deberás
+construir solamente la versión de \emph{release}. Para hacerlo, utiliza un
+\emph{script} como el que se presenta en el listado~\ref{lst:build-normal}.
+
+Podrás ejecutar este script en un nodo normal del clúster haciendo:
+
+\begin{lstlisting}[style=terminal,language=bash]
+sbatch build-normal.sh
+\end{lstlisting}
+
+Para ejecutar cualquiera de los programas, puedes usar el
+\emph{script} como \cppid{run-invoke.sh} (ver listado~\ref{lst:run-invoke-normal}).
+
+\lstinputlisting[
+language=bash,style=terminal,
+caption={Script de ejecución para invoke en un nodo normal},
+label={lst:run-invoke-normal}
+]{lab/05-tbb/run-invoke-normal.sh}
+
+Observa que en este script se definen dos variables del sistema de colas:
+\cppid{job-name} y {output}. La primera fija el nombre del trabajo en el sistema
+de colas y la segunda define el nombre del archivo de salida del trabajo.
+Recuerda que el directorio logs, debe existir previamente.
+
+\begin{lstlisting}[style=terminal,language=bash]
+mkdir logs
+sbatch run-invoke-normal.sh
+\end{lstlisting}
+
+La salida de la ejecución del programa podrás encontrarla en el archivo
+\textemph{logs/invoke-normal.txt}.
+
+Ahora puedes hacer lo mismo ejecutando para el resto de programas
+lazando scripts similares. En el material de apoyo encontrarás los siguientes
+scripts:
+\textemph{run-invoke-normal.sh},
+\textemph{run-matrixmult-normal.sh},
+\textemph{run-picalc-normal.sh},
+\textemph{run-pimontecarlo-normal.sh} y
+\textemph{run-matrixmult-part-normal.sh}.
+

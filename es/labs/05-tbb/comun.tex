@@ -1,0 +1,44 @@
+\subsection{Código común}
+
+\subsubsection{Simulación de régimen permanente de TBB}
+
+La biblioteca TBB requiere realizar una serie de tareas de inicialización. En la
+mayoría de las aplicaciones este tiempo es irrelevante y se amortiza por la
+duración del programa. No obstante, los programas que vamos a usar en los
+ejercicios son de muy corta duración y no es procedente incluir esas medidas en
+el tiempo de ejecución de nuestros algoritmos.
+
+Para evitar el ruido que esto puede introducir en todos los ejercicios
+encontrarás una función \cppid{warm\_up\_tbb()} que se ejecutará antes de
+comenzar otras tareas paralelas. Esta función (ver
+listado~\ref{lst:warm-up-tbb}) espera un cierto tiempo para que se inicialice
+la biblioteca sin incluirlo en la medida de tiempos.
+
+\begin{lstlisting}[caption={Función de calentamiento de
+TBB},label={lst:warm-up-tbb}]
+  void warm_up_tbb() {
+    tbb::parallel_for(0, tbb::info::default_concurrency(), [=](int) {
+      tbb::tick_count t0 = tbb::tick_count::now();
+      while ((tbb::tick_count::now() - t0).seconds() < 0.01) {
+      }
+    });
+  }
+\end{lstlisting}
+
+\subsubsection{Medida de tiempo de la ejecución de una función}
+
+En todos los programas hay veces que se quiere medir cuanto tiempo tarda en
+ejecutarse una función. Para esto se puede utilizar el componente de la
+biblioteca estándar \cppid{chrono} (ver listado~\ref{lst:chrono}).
+
+\begin{lstlisting}[caption={Medida de tiempos de una tarea},label={lst:chrono}]
+void f() {
+  using namespace std::chrono;
+  auto start = high_resolution_clock::now();
+  funcion_que_se_quiere_medir();
+  auto end  = std::chrono::high_resolution_clock::now();
+  auto diff = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+  std::println("Execution time: {}", diff);
+  //...
+}
+\end{lstlisting}

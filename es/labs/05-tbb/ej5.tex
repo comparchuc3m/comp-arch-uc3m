@@ -1,0 +1,57 @@
+\clearpage
+\subsection{Partición avanzada de tareas y producto de matrices}
+
+Todo el código de este ejercicio se encuentra en la carpeta
+\textemph{05-matrixmult-part}.
+
+En este ejercicio vamos a valuar de los distintos particionadores de tareas que
+ofrece TBB.
+
+\subsubsection{Partición de tareas}
+
+En TBB cualquier algoritmo paralelo genera un conjunto de tareas. Éstas tareas
+se pueden dividir en otras más pequeñas. De esta manera, cada hilo mantiene una
+lista de tareas pendientes de realizar de distinto tamaño. Cuando la lista de
+tareas de un hilo queda vacía, este hilo roba una tarea a otro hilo para
+progresar. Este mecanismos es muy efectivo para mantener el equilibrio de carga
+entre los distintos hilos.
+
+Un elemento fundamental en el reparto de trabajo es el \textmark{partitioner}.
+Es decir, el objeto encargado de la partición de tareas en otras de menor
+tamaño.
+
+La biblioteca ofrece las siguientes estrategias:
+
+\begin{itemize}
+
+\item \cppid{simple\_partitioner}:
+El rango se divide hasta que se alcanza un tamaño de grano asociado al rango.
+Si no se especifica ningún valor el tamaño del grano es la unidad.
+
+\item \cppid{auto\_partitioner}:
+El rango se divide dinámicamente y puede pararse la división aunque no se
+alcance el tamaño de grano.
+Es el particionador por defecto en la mayoría de los algoritmos.
+
+\item \cppid{static\_partitioner}:
+El rango se divide uniformemente pero no hay posibilidad de equilibrio de carga.
+Es el particionador con menos sobrecarga, pero puede no ser adecuado si hay
+desequilibrio entre las tareas.
+
+\item \cppid{affinity\_partitioner}:
+Combina características de \cppid{auto\_partitioner} y
+\cppid{static\_partitioner} mejorando el uso de la caché si el mismo objeto
+particionador se pasa repetidamente al mismo algoritmo. Comienza generando una
+partición estática, pero posteriormente la adapta dinámicamente.
+
+\end{itemize}
+
+\subsection{Evaluación de los particionadores}
+
+Este ejercicio incluye código para evaluar distintos algoritmos de producto de
+matrices con distintos particionadores. En cada evaluación cada algoritmo se
+ejecuta 10 veces y se toman valores promedios.
+
+En este ejercicio no tienes que modificar el código. Analiza los resultados con
+los distintos particionadores e intenta encontrar explicaciones para los
+resultados.
