@@ -24,7 +24,7 @@ un generador de números aleatorios. Aplicaremos esta técnica a una simulación
 de Monte Carlo para estimar el valor del número $\pi$.
 
 \item \textmark{matrixmult-part}:
-En este ejercicio veremos los distintas formas de repartir el trabajo entre los
+En este ejercicio veremos las distintas formas de repartir el trabajo entre los
 hilos de un programa paralelo.
 
 \end{itemize}
@@ -38,18 +38,19 @@ deberás generar una configuración de \emph{release}.
 [colframe=red!50!black,
 colback=red!10!white, 
 title={\textbf{IMPORTANTE}}]
-Para ejecutar trabajos en el clúster \cppid{avignon}, deberás crear un
+Para ejecutar trabajos en el clúster \textmark{avignon}, deberás crear un
 \emph{script} para lanzar la compilación.
 \end{tcolorbox}
 
-Por ejemplo, el script~\ref{lst:build-normal} permite compilar en un nodo normal del
-cluster Avignon. En primer lugar, se genera la configuración de compilación en el
-directorio \textemph{build/normal}. A continuación se realiza la compilación
-generando los ejecutables correspondientes utilizando la configuración de
-compilación \textemph{gcc-release} y la configuración \textemph{Release}.
+Por ejemplo, el script del listado~\ref{lst:build-normal} permite compilar en un
+nodo normal del cluster \textmark{avignon}. En primer lugar, se genera la
+configuración de compilación en el directorio \textemph{build/normal}. A
+continuación se realiza la compilación generando los ejecutables
+correspondientes utilizando la configuración de compilación
+\textemph{gcc-release} y la configuración \textemph{Release}.
 
 \lstinputlisting[
-caption={Script de compilación para nodo normal del clúster Avignon},
+caption={Script de compilación para nodo normal del clúster \textmark{avignon}},
 label=lst:build-normal,
 language=bash,style=terminal]
 {lab/05-tbb/build-normal.sh}
