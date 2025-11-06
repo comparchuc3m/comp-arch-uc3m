@@ -336,42 +336,18 @@ void example() {
 \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Automatic thread}
-\begin{itemize}
-  \item RAII pattern can be used.
-    \begin{itemize}
-      \item Resource Acquisition Is Initialization.
-    \end{itemize}
-\end{itemize}
-\begin{block}{A joining thread}
-\begin{lstlisting}
-struct auto_thread : std::thread {
-  using thread::thread; // All thread constructors
-  ~auto_thread() { 
-    if (joinable()) join(); 
-  }
-};
-\end{lstlisting}
-\end{block}
-\begin{itemize}
-  \item Constructor acquires resource.
-  \item Destructor releases resource.
-  \item Avoids resource leakage.
-\end{itemize}
-\end{frame}
-
-\begin{frame}[t,fragile]{Simplifying with RAII}
+\begin{frame}[t,fragile]{Simplifying with jthread}
 \begin{itemize}
   \item Simpler code and higher safety.
 \end{itemize}
 \begin{block}{Example}
 \begin{lstlisting}
 void example() {
-  auto_thread t1{f}; // Thread running task f
-  auto_thread t2; // Empty thread
+  std::jthread t1{f}; // Thread running task f
+  std::jthread t2; // Empty thread
 
   if (modo == mode1) {
-    auto_thread tg {g}; 
+    std::jthread tg {g}; 
     // ...
     t2 = move(tg); // tg empty, t2 running g()
   }
@@ -445,7 +421,7 @@ void g() {
 \end{block}
 \end{frame}
 
-\begin{frame}{Operations on current thread}
+\begin{frame}[t,fragile]{Operations on current thread}
 \begin{itemize}
   \item Operations on current thread as global functions in name subspace \cppid{this\_thread}.
     \begin{itemize}
