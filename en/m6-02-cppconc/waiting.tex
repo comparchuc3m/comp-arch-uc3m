@@ -12,7 +12,8 @@ auto t1 = high_resolution_clock::now();
   \item Time difference:
 \begin{lstlisting}
 auto dif = duration_cast<nanoseconds>(t2-t1);
-std::cout << "Dif = " << dif.count() << '\n';
+std::println("Dif = {}", dif);
+std::cout << dif.count() << '\n';
 \end{lstlisting}
 
   \mode<presentation>{\vfill\pause}
