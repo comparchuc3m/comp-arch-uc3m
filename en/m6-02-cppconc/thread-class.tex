@@ -349,7 +349,7 @@ void example() {
   if (modo == mode1) {
     std::jthread tg {g}; 
     // ...
-    t2 = move(tg); // tg empty, t2 running g()
+    t2 = std::move(tg); // tg empty, t2 running g()
   }
 
   vector<int> v{10000}; // Might throw exceptions
