@@ -126,7 +126,7 @@ parameter a value of type \cppid{blocked\_range<T>}.
 \begin{lstlisting}[label={lst:parallel-for-rng1},
 caption={Use of parallel for loop based on 1D range}]
 tbb::parallel_for(tbb::blocked_range<std::size_t>{0, max_value}, 
-  [&](std::blocked_range<std::size_t> r) {
+  [&](tbb::blocked_range<std::size_t> r) {
     for (auto i = r.begin(); i!=r.end(); ++i) {
       // code for iteration i
       // Can update variables external to the call
@@ -155,7 +155,7 @@ parameter a value of type \cppid{blocked\_range2d<T>}.
 \begin{lstlisting}[label={lst:parallel-for-rng2},
 caption={Use of parallel for loop based on 2D range}]
 tbb::parallel_for(tbb::blocked_range2d<std::size_t>{0, max_value1, 0, max_value2}, 
-  [&](std::blocked_range2d<std::size_t> r) {
+  [&](tbb::blocked_range2d<std::size_t> r) {
     for (auto i = r.rows().begin(); i!=r.rows().end(); ++i) {
       for (auto j = r.cols().begin(); j!=r.cols().end(); ++j) {
         // code for iteration i,j
