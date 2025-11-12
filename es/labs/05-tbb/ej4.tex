@@ -54,7 +54,7 @@ como la que se presenta en el listado~\ref{lst:pi-par-montecarlo}.
 \begin{lstlisting}[label={lst:pi-par-montecarlo},
 caption={Aproximación paralela del valor de PI mediante simulación de Monte Carlo}]
   double compute_pi_par(std::size_t num_samples, std::size_t seed) {
-    std::size_t const sum = tbb::parallel_reduce(
+    std::size_t const num_hits = tbb::parallel_reduce(
         tbb::blocked_range<std::size_t>(0, num_samples), std::size_t{0},
         [seed](tbb::blocked_range<std::size_t> const & r, std::size_t init) {
           std::mt19937_64 local_rng{seed + r.begin()}; // RNG local
@@ -66,7 +66,7 @@ caption={Aproximación paralela del valor de PI mediante simulación de Monte Ca
         },
         [](std::size_t x, std::size_t y) { return x + y; });
 
-    return 4.0 * static_cast<double>(sum) / static_cast<double>(num_samples);
+    return 4.0 * static_cast<double>(num_hits) / static_cast<double>(num_samples);
   }
 \end{lstlisting}
 
