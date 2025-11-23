@@ -48,16 +48,15 @@
 \end{frame}
 
 \begin{frame}[t,fragile]{Ordering: Sequential consistency}
-
 \mode<presentation>{\vspace{-1em}}
-\begin{columns}[T]
+\begin{columns}
 
 \column{.5\textwidth}
 
 \begin{block}{Example}
 \begin{lstlisting}
 std::vector<int> v; 
-std::atomic_bool f(false); 
+std::atomic_bool f = false; 
 
 void writer() { 
   v.push_back(1); // #1
