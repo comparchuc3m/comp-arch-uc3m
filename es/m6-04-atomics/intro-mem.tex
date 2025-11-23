@@ -1,6 +1,6 @@
 \section{Modelo de memoria}
 
-\begin{frame}{C++ y consistencia de memoria}
+\begin{frame}[t]{C++ y consistencia de memoria}
 \begin{itemize}
   \item C++11 define un \textmark{modelo de concurrencia} propio como parte del propio lenguaje.
 
@@ -17,7 +17,7 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Objetos y posiciones de memoria}
+\begin{frame}[t]{Objetos y posiciones de memoria}
 \begin{itemize}
   \item \textgood{Objeto}: Es una región de almacenamiento.
     \begin{itemize}
@@ -32,7 +32,7 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Ejemplo}
+\begin{frame}[t,fragile]{Ejemplo}
 \begin{itemize}
   \item Estructura:
 \begin{lstlisting}
@@ -54,7 +54,7 @@ struct {
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Reglas}
+\begin{frame}[t]{Reglas}
 \begin{itemize}
   \item Dos hilos pueden acceder a \textmark{posiciones de memoria distintas} 
         de forma simultánea.
@@ -73,7 +73,7 @@ struct {
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Ordenamiento y condiciones de carrera}
+\begin{frame}[t]{Ordenamiento y condiciones de carrera}
 \begin{itemize}
   \item \textgood{Solución clásica}: Uso de mecanismos de \textmark{sincronización}.
     \begin{itemize}
@@ -96,7 +96,7 @@ struct {
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Orden de modificación}
+\begin{frame}[t]{Orden de modificación}
 \begin{itemize}
   \item \textgood{Orden de modificación}: Secuencia de escrituras sobre un objeto.
     \begin{itemize}
