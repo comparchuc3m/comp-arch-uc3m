@@ -25,7 +25,17 @@
     \end{itemize}
 
   \mode<presentation>{\vfill\pause}
-  \item \textgood{Posición de memoria}: Es un objeto de un tipo escalar o una secuencia de campos de bits adyacentes.
+  \item \textgood{Posición de memoria}: Es un objeto de un \textmark{tipo
+        escalar} o una secuencia de \textmark{campos de bits} adyacentes.
+
+    \begin{itemize}
+      \item \textgood{Tipo escalar}:
+            Tipos aritméticos, tipos enumerados, tipos puntero.
+
+      \item \textgood{Campo de bits}:
+            Dato miembro entero con tamaño explícito en bits.
+    \end{itemize}
+
 
   \mode<presentation>{\vfill\pause}
   \item \textmark{Un objeto se almacena en una o varias posiciones de memoria}.
@@ -33,25 +43,36 @@
 \end{frame}
 
 \begin{frame}[t,fragile]{Ejemplo}
+\begin{columns}[T]
+
+\column{.4\textwidth}
 \begin{itemize}
   \item Estructura:
 \begin{lstlisting}
-struct {
+struct datos {
   int i;
   char c;
   int d: 10;
   int e: 16;
   double f;
 };
+
+datos x;
 \end{lstlisting}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\column{.4\textwidth}
+\begin{itemize}
   \item Posiciones de memoria:
     \begin{enumerate}
-      \item \cppid{i}.
-      \item \cppid{c}.
-      \item \cppid{d}, \cppid{e}.
-      \item \cppid{f}.
+      \item \cppid{x.i}.
+      \item \cppid{x.c}.
+      \item \cppid{x.d}, \cppid{x.e}.
+      \item \cppid{x.f}.
     \end{enumerate}
 \end{itemize}
+\end{columns}
 \end{frame}
 
 \begin{frame}[t]{Reglas}
