@@ -28,9 +28,9 @@
   \item El tipo genérico \cppid{atomic<T>} permite definir variables atómicas para el tipo \cppid{T}, donde \cppid{T} es:
     \begin{itemize}
       \item Un tipo integral.
+      \item Un tipo de coma flotante.
       \item Un tipo puntero.
       \item El tipo \cppid{bool}.
-      \item No está definido para tipos reales (\cppid{float}, \cppid{double}).
       \item También para tipos definidos por el usuario que cumplan con algunas restricciones.
     \end{itemize}
   \mode<presentation>{\vfill\pause}
@@ -46,27 +46,6 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}[t]{Operaciones sobre tipos atómicos}
-\begin{itemize}
-  \item Las operaciones sobre atómicos pueden especificar opcionalmente un ordenamiento de memoria.
-    \begin{itemize}
-      \item Por defecto \cppid{memory\_order\_seq\_cst}.
-    \end{itemize}
-  \item Operaciones de almacenamiento:
-    \begin{itemize}
-      \item \cppid{memory\_order\_relaxed}, \cppid{memory\_order\_release}, \cppid{memory\_order\_seq\_cst}.
-    \end{itemize}
-  \item Operaciones de lectura:
-    \begin{itemize}
-      \item \cppid{memory\_order\_relaxed}, \cppid{memory\_order\_consume}, \cppid{memory\_order\_acquire}, \cppid{memory\_order\_seq\_cst}
-    \end{itemize}
-  \item Operaciones lectura-modificación-escritura:
-    \begin{itemize}
-      \item \cppid{memory\_order\_relaxed}, \cppid{memory\_order\_consume}, \cppid{memory\_order\_acquire}, \cppid{memory\_order\_release}, \cppid{memory\_order\_acq\_rel}, \cppid{memory\_order\_seq\_cst}.
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
 \begin{frame}[t,fragile]{\texttt{\textbf{atomic\_flag}}}
 \begin{itemize}
   \item Tipo atómico \textmark{más simple posible}.
@@ -75,13 +54,13 @@
       \item Siempre es libre de cerrojos.
 
       \mode<presentation>{\vfill\pause}
-      \item Siempre hay que iniciarlos explícitamente a desactivado.
+      \item Inicialización por defecto a desactivado.
 \begin{lstlisting}
-std::atomic_flag f1 = ATOMIC_FLAG_INIT;
+std::atomic_flag f1; // f1 está desactivado
 \end{lstlisting}
 
       \mode<presentation>{\vfill\pause}
-      \item \textgood{Operaciones}:
+      \item \textgood{Operaciones básicas}:
         \begin{itemize}
           \item \textmark{Desactivar}: 
 \begin{lstlisting}
@@ -98,46 +77,75 @@ f1.test_and_set();
 \end{frame}
 
 \begin{frame}[t,fragile]{Ejemplo: Un \emph{spin lock}}
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}[T]
+
+\column{.5\textwidth}
+
 \begin{itemize}
   \item Cerrojo que no hace uso de servicios del SO.
     \begin{itemize}
       \item Útil si los bloqueos van a durar muy poco tiempo y se quiere evitar problemas de cambio de contexto.
     \end{itemize}
+  \pause
+
+
+  \mode<presentation>{\vspace{1em}}
+  \item Inicialmente desactivado.
+
+  \mode<presentation>{\vspace{1em}}
+  \item \cppid{lock()}:
+        Activa flag.
+    \begin{itemize}
+      \item Si previamente activado $\Rightarrow$ repetir.
+    \end{itemize}
+
+  \mode<presentation>{\vspace{1em}}
+  \item \cppid{unlock()}:
+        Desactiva flag.
+
 \end{itemize}
+
+\column{.5\textwidth}
 \begin{block}{spin lock mutex}
 \begin{lstlisting}
 class spinlock_mutex {
-private:
-  std::atomic_flag f;
 public:
-  spinlock_mutex() : f{ATOMIC_FLAG_INIT} {}
+  spinlock_mutex() = default;
 
   void lock() {
     while (f.test_and_set()) {}
   }
+
   void unlock() {
     flag.clear();
   }
+
+private:
+  std::atomic_flag f;
 };
 \end{lstlisting}
 \end{block}
+\end{columns}
+
 \end{frame}
 
-\begin{frame}[t,fragile]{\texttt{\textbf{atomic\_bool}}}
+\begin{frame}[t,fragile]{\texttt{\textbf{atomic<bool>}}}
 \begin{itemize}
   \item Más operaciones que \cppid{atomic\_flag}.
     \item Se puede iniciar y asignar con \cppid{bool}s.
     \item No se puede copiar de otro \cppid{atomic<bool>}.
-    \item Modificación: \cppid{a.store(orden)}
-    \item Consulta: \cppid{a.exchange(b, orden)}
-    \item Conversión automática a \cppid{bool} (consistencia sec.): \cppid{a.load(orden)}
+    \item Modificación: \cppid{a.store(valor)}, \cppid{a.exchange(b)}.
+    \item Consulta: \cppid{a.load()}.
 \end{itemize}
+
+\mode<presentation>{\vfill}
 \begin{block}{Ejemplo}
 \begin{lstlisting}
 std::atomic<bool> a;
-bool x = a.load(std::memory_order_acquire);
+bool x = a.load();
 a.store(true);
-x = a.exchange(false, std::memory_order_acq_rel);
+x = a.exchange(false); // x<-a, a<-false
 \end{lstlisting}
 \end{block}
 \end{frame}
@@ -147,7 +155,8 @@ x = a.exchange(false, std::memory_order_acq_rel);
   \item Compara el valor del atómico con un valor \textmark{esperado}.
     \begin{itemize}
       \item Si son iguales almacena el valor \textmark{deseado} en el atómico.
-      \item Si no son iguales no modifica el atómico.
+      \item Si no son iguales, carga el valor del atómico en
+            \textmark{esperado}.
       \item Siempre retorna indicación de éxito o fracaso.
     \end{itemize}
 
@@ -164,20 +173,13 @@ x = a.exchange(false, std::memory_order_acq_rel);
           \item No permite fallos espúreos.
         \end{itemize}
     \end{enumerate}
-%  \item Consecuencia:
-%    \begin{itemize}
-%      \item Cuando se usa en un bucle, la versión \emph{weak} da mejor rendimiento en algunas plataformas.
-%      \item Cuando \emph{weak} necesita un bucle pero \emph{strong} no, \emph{strong} es mejor.
-%    \end{itemize}
 
 \end{itemize}
 \end{frame}
 
-\begin{frame}[t,fragile]{\texttt{\textbf{atomic\_address}}}
+\begin{frame}[t,fragile]{\texttt{\textbf{atomic<T*>}}}
 \begin{itemize}
   \item Acceso atómico a una dirección de memoria.
-  \item No se puede copiar.
-  \item Se puede copiar un puntero (\cppkey{void*}).
   \item Interfaz similar a atomic<bool>:
     \begin{itemize}
       \item \cppid{is\_lock\_free()}, \cppid{load()}, \cppid{store()}, \cppid{exchange()},
@@ -185,18 +187,15 @@ x = a.exchange(false, std::memory_order_acq_rel);
     \end{itemize}
   \item Operaciones adicionales.
     \begin{itemize}
-      \item \cppid{fetch\_add()}, \cppid{fetch\_sub()}.
+      \item \cppid{fetch\_add(delta)}, \cppid{fetch\_sub(delta)}.
         \begin{itemize}
-          \item Permiten especificar ordenamiento.
           \item Devuelven valor previo al cambio.
         \end{itemize}
     \end{itemize}
-      \item \cppid{+=}, \cppid{-=}.
+      \item \cppid{a += delta}, \cppid{a -= delta}.
         \begin{itemize}
           \item Devuelven valor posterior al cambio.
-          \item Todas usan aritmética de byte.
         \end{itemize}
-      \item Otras aritméticas con \cppid{atomic<T*>}.
 \end{itemize}
 \end{frame}
 
@@ -210,9 +209,12 @@ x = a.exchange(false, std::memory_order_acq_rel);
     \end{itemize}
   \item Operaciones aritméticas:
     \begin{itemize}
-      \item \cppid{fetch\_add()}, \cppid{fetch\_sub()}, \cppid{fetch\_and()}, \cppid{fetch\_or()}, \cppid{fetch\_xor()}.
-      \item \cppid{+=}, \cppid{-=}, \cppid{\&=}, \cppid{|=}, \cppid{\^{}=}.
-      \item \cppid{++x}, \cppid{x++}, \cppid{--x}, \cppid{x--}
+      \item \cppid{fetch\_add(valor)}, \cppid{fetch\_sub(valor)}.
+      \item \cppid{a += valor}, \cppid{a -= valor}.
+      \item \cppid{fetch\_and(valor)}, \cppid{fetch\_or(valor)},
+            \cppid{fetch\_xor(valor)}.
+      \item \cppid{a \&= valor}, \cppid{a |= valor}, \cppid{a \^{}= valor}.
+      \item \cppid{++a}, \cppid{a++}, \cppid{-{}-a}, \cppid{a-{}-}
       \item No hay otras operaciones aritméticas (\cppid{*}, \cppid{/}, \cppid{\%}).
     \end{itemize}
 \end{itemize}
