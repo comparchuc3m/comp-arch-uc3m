@@ -14,13 +14,13 @@
 \end{frame}
 
 \begin{frame}[t,fragile]
-\begin{columns}
+\mode<presentation>{\vspace{-1.5em}}
+\begin{columns}[T]
 
 \begin{column}{.6\textwidth}
 \begin{block}{Acceso}
 \begin{lstlisting}
-td::atomic<bool> x, y;
-std::atomic<int> z;
+td::atomic<bool> x, y; std::atomic<int> z;
 
 void f() {
   x.store(true, std::memory_order_seq_cst);
@@ -64,8 +64,6 @@ int main() {
   t4.join();
 
   assert(z.load() !=0);
-
-  return 0;
 }
 \end{lstlisting}
 \end{block}
@@ -74,12 +72,16 @@ int main() {
 \end{columns}
 \end{frame}
 
-\begin{frame}[t]{Consistencia sequencial: Análisis}
+\begin{frame}[t]{Consistencia secuencial: Análisis}
+\begin{center}
 \input{es/m6-04-atomics/seqconsist-ej2a.tkz}
+\end{center}
 \end{frame}
 
-\begin{frame}[t]{Consistencia sequencial: Análisis}
+\begin{frame}[t]{Consistencia secuencial: Análisis}
+\begin{center}
 \input{es/m6-04-atomics/seqconsist-ej2b.tkz}
+\end{center}
 \end{frame}
 
 \mode<article>{
@@ -140,6 +142,7 @@ int main() {
 \end{frame}
 
 \begin{frame}[t,fragile]{Ejemplo}
+\mode<presentation>{\vspace{-1em}}
 \begin{columns}
 
 \begin{column}{.6\textwidth}
@@ -160,7 +163,6 @@ int main() {
   x=false; y=false; z=0;
   std::thread t1{f}; std::thread t2{g};
   t1.join(); t2.join();
-  return 0;
 }
 
 \end{lstlisting}
@@ -215,13 +217,13 @@ int main() {
 
 
 \begin{frame}[t,fragile]
-\begin{columns}
+\mode<presentation>{\vspace{-1.5em}}
+\begin{columns}[T]
 
 \begin{column}{.6\textwidth}
 \begin{block}{Acceso}
 \begin{lstlisting}
-std::atomic<bool> x, y;
-std::atomic<int> z;
+std::atomic<bool> x, y; std::atomic<int> z;
 
 void f() {
   x.store(true, std::memory_order_release);
@@ -263,7 +265,6 @@ int main() {
   t4.join();
 
   assert(z.load() !=0);
-  return 0;
 }
 \end{lstlisting}
 \end{block}
@@ -273,7 +274,9 @@ int main() {
 \end{frame}
 
 \begin{frame}[t]{Análisis}
+\begin{center}
 \input{es/m6-04-atomics/relacq-consist-ej.tkz}
+\end{center}
 
 \mode<presentation>{\vfill\pause}
 \begin{itemize}
@@ -331,8 +334,6 @@ int main() {
   std::thread t1{f}; std::thread t2{g};
   t1.join(); t2.join();
   assert(z.load() !=0);
-
-  return 0;
 }
 \end{lstlisting}
 \end{block}

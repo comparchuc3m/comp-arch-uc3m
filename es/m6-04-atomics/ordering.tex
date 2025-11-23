@@ -41,14 +41,15 @@
 \end{frame}
 
 \begin{frame}[t,fragile]{Ordenación: Consistencia secuencial}
-\begin{columns}[T]
+\mode<presentation>{\vspace{-1em}}
+\begin{columns}
 
 \column{.5\textwidth}
 
 \begin{block}{Ejemplo}
 \begin{lstlisting}
 std::vector<int> v; 
-std::atomic_bool f(false); 
+std::atomic_bool f = false; 
 
 void escritor() { 
   v.push_back(1); // #1
