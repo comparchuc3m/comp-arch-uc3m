@@ -20,7 +20,7 @@
 \begin{column}{.6\textwidth}
 \begin{block}{Acceso}
 \begin{lstlisting}
-td::atomic<bool> x, y; std::atomic<int> z;
+std::atomic<bool> x, y; std::atomic<int> z;
 
 void f() {
   x.store(true, std::memory_order_seq_cst);
