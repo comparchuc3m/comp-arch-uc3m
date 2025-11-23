@@ -188,11 +188,11 @@ x = a.exchange(false, std::memory_order_acq_rel);
         \begin{itemize}
           \item Return value previous to change.
         \end{itemize}
-    \end{itemize}
       \item \cppid{a += delta}, \cppid{a -= delta}.
         \begin{itemize}
           \item Return the value after the change.
         \end{itemize}
+    \end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -211,7 +211,7 @@ x = a.exchange(false, std::memory_order_acq_rel);
       \item \cppid{fetch\_and(value)}, \cppid{fetch\_or(value)},
             \cppid{fetch\_xor(value)}.
       \item \cppid{a \&= value}, \cppid{a |= value}, \cppid{a \^{}= value}.
-      \item \cppid{++a}, \cppid{a++}, \cppid{-{}-a}, \cppid{a-{}-}
+      \item \cppid{++a}, \cppid{a++}, \cppid{\text{-}-a}, \cppid{a\text{-}-}
       \item There are no other arithmetic operations (\cppid{*}, \cppid{/}, \cppid{\%}).
     \end{itemize}
 \end{itemize}
