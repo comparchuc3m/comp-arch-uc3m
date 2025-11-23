@@ -154,7 +154,7 @@ x = a.exchange(false, std::memory_order_acq_rel);
   \item Compares atomic value with an \textmark{expected} value.
     \begin{itemize}
       \item If both are equal, the \textmark{desired} value is stored in the atomic.
-      \item If not equal, atomic valued is loaded int \textmark{expected}.
+      \item If not equal, atomic value is loaded into \textmark{expected}.
       \item It always returns success/failure indication.
     \end{itemize}
 
