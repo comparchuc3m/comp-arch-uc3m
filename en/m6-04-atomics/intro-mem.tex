@@ -27,7 +27,15 @@
 
   \mode<presentation>{\vfill\pause}
   \item \textgood{Memory location}: 
-        Is an object of scalar type or a sequence of contiguous bit fields.
+        Is an object of \textmark{scalar type} or a sequence of contiguous
+        \textmark{bit fields}.
+
+    \begin{itemize}
+      \item \textgood{Scalar type}: 
+            Arithmetic types, enumeration types, or pointer types.
+      \item \textgood{Bit field}:
+            Integer data member with explicit size in bits.
+    \end{itemize}
 
   \mode<presentation>{\vfill\pause}
   \item \textmark{An object is stored in one or more memory locations}.
@@ -35,26 +43,37 @@
 \end{frame}
 
 \begin{frame}[t,fragile]{Example}
+\begin{columns}[T]
+
+\column{.4\textwidth}
 \begin{itemize}
   \item Structure:
 \begin{lstlisting}
-struct {
+struct data {
   int i;
   char c;
   int d: 10;
   int e: 16;
   double f;
 };
+
+data x;
 \end{lstlisting}
-  \mode<presentation>{\vfill\pause}
+\end{itemize}
+
+\mode<presentation>{\vfill\pause}
+\column{.4\textwidth}
+\begin{itemize}
   \item Memory locations:
     \begin{enumerate}
-      \item \cppid{i}.
-      \item \cppid{c}.
-      \item \cppid{d}, \cppid{e}.
-      \item \cppid{f}.
+      \item \cppid{x.i}.
+      \item \cppid{x.c}.
+      \item \cppid{x.d}, \cppid{x.e}.
+      \item \cppid{x.f}.
     \end{enumerate}
 \end{itemize}
+
+\end{columns}
 \end{frame}
 
 \begin{frame}[t]{Rules}
