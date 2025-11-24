@@ -126,9 +126,9 @@ that is unreachable (that is, that has no solution).
 
 \item Variable \cppid{C}:
   \begin{itemize}
-    \item \textbf{P1} writes \cppid{B} (\emph{exclusive}) invalidating the other two copies
+    \item \textbf{P1} writes \cppid{C} (\emph{exclusive}) invalidating the other two copies
     \item \textbf{P1} produces a write miss that is captured by \textbf{P0} and \textbf{P1}. No bus traffic is generated.
-    \item \textbf{P1} reads of writes in \cppid{D} another variable with a related block allocated in the same line as \cppid{C} producing a conflict miss. This makes block \cppid{C} to be replaced and given it was modified it is written into memory. Block \cppid{C} is not present in cache (equivalent to \emph{invalid} state).
+    \item \textbf{P1} reads or writes in another variable with a related block allocated in the same line as \cppid{C} producing a conflict miss. This makes block \cppid{C} to be replaced and given it was modified it is written into memory. Block \cppid{C} is not present in cache (equivalent to \emph{invalid} state).
     \item This action of \textbf{P1} produces a \emph{write-back} of the block in memory. 
     \item \textbf{P1} reads \cppid{C}. Produces a read miss and goes to shared state. 
   \end{itemize}
