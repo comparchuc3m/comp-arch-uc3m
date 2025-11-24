@@ -127,11 +127,11 @@ que sea inalcanzable (es decir, que no tiene solución).
 
 \item Variable \cppid{C}:
   \begin{itemize}
-    \item \textbf{P1} escribe \cppid{B} (estado a exclusive) invalidando las otras dos copias.
+    \item \textbf{P1} escribe \cppid{C} (estado a exclusive) invalidando las otras dos copias.
     \item \textbf{P1} genera un write miss en el bus que lo captura \textbf{P0} y \textbf{P1} los cuales no generan tráfico.
-    \item \textbf{P1} lee o escribe \cppid{D} otra variable cuyo bloque ocupa la misma línea caché que \cppid{C} generando un fallo de conflicto. Esto hace que el bloque de \cppid{C} se reemplace y como ha sido modificado se escribe en memoria. El bloque de \cppid{C} no está presente en caché (equivalente a estado \emph{invalid}).
+    \item \textbf{P1} lee o escribe otra variable cuyo bloque ocupa la misma línea caché que \cppid{C} generando un fallo de conflicto. Esto hace que el bloque de \cppid{C} se reemplace y como ha sido modificado se escribe en memoria. El bloque de \cppid{C} no está presente en caché (equivalente a estado \emph{invalid}).
     \item Esta acción de \textbf{P1} genera de tráfico realizando el \emph{write-back} del bloque en memoria.
-    \item \textbf{P1} lee \cppid{C}. Genera un fallo de escritura y pasa a estado compartido. 
+    \item \textbf{P1} lee \cppid{C}. Genera un fallo de lectura y pasa a estado compartido. 
   \end{itemize}
 
 \item Variable \cppid{D}:
