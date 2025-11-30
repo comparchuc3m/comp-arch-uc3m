@@ -3,24 +3,6 @@
 This lab starts from a project provided to you that contains a main program
 that runs an application with multiple threads.
 
-Note that for compiling a multi-threaded program with CMake you must keep in mind:
-
-\begin{itemize}
-
-\item You must include a line to find the compilation package for threads:
-\begin{lstlisting}
-find_package(Threads REQUIRED)
-\end{lstlisting}
-
-\item You must link your program with the threading library.
-      To achieve this, you must include the following line before the executable definition.
-      (it will affect to all subsequent executables).
-\begin{lstlisting}
-link_libraries(Threads::Threads)
-\end{lstlisting}
-
-\end{itemize}
-
 You are provided a program \cppid{counter.cpp} with basic functionality.
 
 \begin{itemize}
@@ -46,3 +28,6 @@ You are provided a program \cppid{counter.cpp} with basic functionality.
 
 To carry out this lab, you must carry out all evaluations in the
 \textemph{avignon} cluster.
+
+You can download the initial code for this project from the following repository:
+\url{https://github.com/comparchuc3m/cpp-atomics-lab-support}.
