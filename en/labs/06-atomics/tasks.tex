@@ -24,14 +24,15 @@ Run the program again on the \textmark{stan} server and take note of the new res
 To detect data races you will use a compiler \textmark{sanitizer}: 
 \textgood{Thread Sanitizer}.
 
-We will generate two new execution profiles from the \emph{debug} and \emph{release} profiles.
-They will be named \emph{debug-tsan} and \emph{release-tsan}.
+You can edit the \textgood{CMakePresets.json} file to add the compilation flag
+to the \textmark{default} preset:
 
-When generating the corresponding projects with cmake you will need to add the flag
-\cppid{"-fsanitize=thread"} with option
-\cppkey{-DCMAKE\_CXX\_FLAGS="-fsanitize=thread"}.
+\begin{lstlisting}
+"CMAKE_CXX_FLAGS": "-Wall -Wextra -Werror -pedantic -pedantic-errors -Wconversion -Wsign-conversion -fsanitize=thread",
+\end{lstlisting}
 
-Use these new profiles to identify possible data races.
+As you can observe, an additional compilation flag
+\textmark{-fsanitize=thread} has been added.
 
 \subsection{Protecting with locks}
 
@@ -42,13 +43,11 @@ Protect the \cppid{value\_} data member with a \cppid{std::mutex}. For this:
   \item Protect by using \cppid{std::mutex} the critical sections.
 \end{itemize}
 
-Place this modifications in the source file \cppid{counter\_mutex.cpp}.
-
+Place these modifications in the directory \textemph{counter-mutex}.
 Check that the program is free of race conditions with \textmark{Thread Sanitizer}.
 
-Evaluate the performance for the cases of 2, 4, 8, 16, 32, 64, and 128 threads.
-
 \textbad{NOTE}: All evaluations shall be performed on the \textmark{stan} server.
+Evaluate the performance for the cases of 2, 4, 8, 16, 32, 64, and 128 threads.
 
 \subsection{Protecting with an atomic}
 
@@ -57,13 +56,11 @@ We will use this to provide a lock free solution.
 
 Change the type of data member \cppid{value\_} to \cppid{std::atomic<double>}.
 
-Place this modifications in the source file \cppid{counter\_atomic.cpp}.
-
+Place these modifications in the directory \textemph{counter-atomic}.
 Check that the program is free of race conditions with \textmark{Thread Sanitizer}.
 
-Evaluate the performance for the cases of 2, 4, 8, 16, 32, 64, and 128 threads.
-
 \textbad{NOTE}: All evaluations shall be performed on the \textmark{stan} server.
+Evaluate the performance for the cases of 2, 4, 8, 16, 32, 64, and 128 threads.
 
 \subsection{Protecting with a spin lock and sequential consistency}
 
@@ -85,14 +82,14 @@ as the following, with sequential consistency:
 \begin{lstlisting}
 class spinlock_mutex {
 public:
-  spinlock_mutex() : flag_{} {}
-
   void lock() {
-    while (flag_.test_and_set(std::memory_order_seq_cst)) {}
+    while (flag_.test_and_set()) {
+      std::this_thread::yield();
+    }
   }
 
   void unlock() {
-    flag_.clear(std::memory_order_seq_cst);
+    flag_.clear();
   }
 
 private:
@@ -100,30 +97,60 @@ private:
 };
 \end{lstlisting}
 
-Place this modifications in the source file \cppid{counter\_spin\_seq.cpp}.
-
+Place these modifications in the directory \textemph{counter-spinseq}.
 Check that the program is free of race conditions with \textmark{Thread Sanitizer}.
 
-Evaluate the performance for the cases of 2, 4, 8, 16, 32, 64, and 128 threads.
-
 \textbad{NOTE}: All evaluations shall be performed on the \textmark{stan} server.
+Evaluate the performance for the cases of 2, 4, 8, 16, 32, 64, and 128 threads.
 
 \subsection{Protecting with a spin lock and release/acquire consistency}
 
 Repeat the previous section with a \cppid{spinlock\_mutex} that uses
-release/acquire consistency.
+release/acquire consistency:
 
 \begin{lstlisting}
 class spinlock_mutex {
 public:
-  spinlock_mutex() : flag_{} {}
-
   void lock() {
-    while (flag_.test_and_set(std::memory_order_acquire)) {}
+    while (flag_.test_and_set(std::memory_order_acquire)) {
+      while (flag_.test(std::memory_order_relaxed)) {
+        std::this_thread::yield();
+      }
+      // spin-wait
+    }
+  }
+
+  void unlock() { flag_.clear(std::memory_order_release); }
+
+private:
+  std::atomic_flag flag_;
+};
+\end{lstlisting}
+
+Place these modifications in the directory \textemph{counter-spinra}. Check
+that the program is free of race conditions with \textmark{Thread
+Sanitizer}.
+
+\textbad{NOTE}: All evaluations shall be performed on the \textmark{stan} server.
+Evaluate the performance for the cases of 2, 4, 8, 16, 32, 64, and 128 threads.
+
+\subsection{Optimization}
+
+An alternative to the release/acquire case is using
+\cppid{wait()}/\cppid{notify()} primitives:
+
+\begin{lstlisting}
+class spinlock_mutex {
+public:
+  void lock() {
+    while (flag_.test_and_set(std::memory_order_acquire)) {
+      flag_.wait(true, std::memory_order_relaxed);
+    }
   }
 
   void unlock() {
     flag_.clear(std::memory_order_release);
+    flag_.notify_one();
   }
 
 private:
@@ -131,33 +158,9 @@ private:
 };
 \end{lstlisting}
 
-Place this modifications in the source file \cppid{counter\_spin\_ra.cpp}.
-
-Check that the program is free of race conditions with \textmark{Thread Sanitizer}.
-
-Evaluate the performance for the cases of 2, 4, 8, 16, 32, 64, and 128 threads.
+Place these modifications in the directory \textemph{counter-spinwn}.
+Check that the program is free of race conditions with \textmark{Thread
+Sanitizer}.
 
 \textbad{NOTE}: All evaluations shall be performed on the \textmark{stan} server.
-
-\subsection{Optimizing the spin lock}
-
-For the two previous cases, consider optimizing the spin lock by inserting a relaxed read
-inside the loop for operation \cppid{lock()}.
-
-\begin{lstlisting}
-  void lock() {
-    while (flag_.test_and_set(std::memory_order_XXXX)) {
-      while (flag_.test(std::memory_order_relaxed)) {}
-    }
-  }
-\end{lstlisting}
-
-Place this modifications in the source files 
-\cppid{counter\_spin\_seq\_opt.cpp} and
-\cppid{counter\_spin\_ra\_opt.cpp}.
-
-Check that the program is free of race conditions with \textmark{Thread Sanitizer}.
-
 Evaluate the performance for the cases of 2, 4, 8, 16, 32, 64, and 128 threads.
-
-\textbad{NOTE}: All evaluations shall be performed on the \textmark{stan} server.
