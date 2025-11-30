@@ -120,7 +120,6 @@ public:
       while (flag_.test(std::memory_order_relaxed)) {
         std::this_thread::yield();
       }
-      // spin-wait
     }
   }
 
