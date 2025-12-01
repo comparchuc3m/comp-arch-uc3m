@@ -1,25 +1,7 @@
 \section{Descripción del laboratorio}
 
-En este laboratorio partirá de un proyecto suministrado que contiene un programa principal,
+En este laboratorio partirás de un proyecto suministrado que contiene un programa principal,
 que ejecuta una aplicación con varios hilos.
-
-Observa que para compilar un programa con varios hilos con CMake debes tener en cuenta:
-
-\begin{itemize}
-
-\item Debes incluir una línea para encontrar el paquete de compilación de hilos
-\begin{lstlisting}
-find_package(Threads REQUIRED)
-\end{lstlisting}
-
-\item Debes enlazar tu programa con la biblioteca de hilos.
-      Para ello puedes poner la siguiente línea antes de la definición del ejecutable
-      (afectará a todos los ejecutables).
-\begin{lstlisting}
-link_libraries(Threads::Threads)
-\end{lstlisting}
-
-\end{itemize}
 
 Se suministra un programa \cppid{counter.cpp} con la funcionalidad básica.
 
@@ -43,6 +25,8 @@ Se suministra un programa \cppid{counter.cpp} con la funcionalidad básica.
 
 \end{itemize}
 
-
 Para llevar a cabo este laboratorio debes realizar todas las pruebas en
 el clúster \textemph{avignon}.
+
+Puedes descargar el código inicial para este proyecto del siguiente repositorio:
+\url{https://github.com/comparchuc3m/cpp-atomics-lab-support}.

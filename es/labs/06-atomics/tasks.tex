@@ -24,13 +24,15 @@ Vuelve a ejecutar el programa en el servidor \textmark{stan} y anota los nuevos 
 Para detectar las carreras de datos usarás un \textmark{sanitizer} del compilador: 
 \textgood{Thread Sanitizer}.
 
-Vamos a generar dos nuevos perfiles de ejecución a partir de los perfiles de 
-\emph{debug} y \emph{release}. Serán los perfiles \emph{debug-tsan} y \emph{release-tsan}.
+Puedes editar el archivo \textgood{CMakePresets.json} para añadir el flag de
+compilación al preset \textmark{default}:
 
-Para ello, deberás añadir a la hora de generar el proyecto con cmake el valor
-\cppid{-fsanitize=thread} con la opción de cmake \cppkey{-DCMAKE\_CXX\_FLAGS}.
+\begin{lstlisting}
+"CMAKE_CXX_FLAGS": "-Wall -Wextra -Werror -pedantic -pedantic-errors -Wconversion -Wsign-conversion -fsanitize=thread",
+\end{lstlisting}
 
-Utiliza estos nuevos perfiles para identificar posibles carreras de datos.
+Como puedes observar se ha añadido un flag de compilación adicional
+\textmark{-fsanitize=thread}.
 
 \subsection{Protección con cerrojos}
 
@@ -41,13 +43,12 @@ Protege el dato miembro \cppid{value\_} con un \cppid{std::mutex}. Para ello:
   \item Protege mediante el uso del \cppid{std::mutex} las secciones críticas.
 \end{itemize}
 
-Coloca estas modificaciones en el archivo fuente \cppid{counter\_mutex.cpp}.
-
-Comprueba que el programa esta libre de condiciones de carrera con \textmark{Thread Sanitizer}.
-
-Evalúa el rendimiento del programa para los casos de 2, 4, 8, 16, 32, 64 y 128 hilos.
+Coloca estas modificaciones en el directorio \textemph{counter-mutex}.
+Comprueba que el programa está libre de condiciones de carrera con
+\textmark{Thread Sanitizer}.
 
 \textbad{NOTA}: Todas las evaluaciones se realizarán en el servidor \textmark{stan}.
+Evalúa el rendimiento del programa para los casos de 2, 4, 8, 16, 32, 64 y 128 hilos.
 
 \subsection{Protección con un atómico}
 
@@ -56,15 +57,14 @@ Vamos a utilizar esta propiedad para tener una solución libre de cerrojos.
 
 Cambia el tipo del dato miembro \cppid{value\_} a \cppid{std::atomic<double>}.
 
-Coloca estas modificaciones en el archivo fuente \cppid{counter\_atomic.cpp}.
-
-Comprueba que el programa esta libre de condiciones de carrera con \textmark{Thread Sanitizer}.
-
-Evalúa el rendimiento del programa para los casos de 2, 4, 8, 16, 32, 64 y 128 hilos.
+Coloca estas modificaciones en el directorio \textemph{counter-atomic}.
+Comprueba que el programa está libre de condiciones de carrera con
+\textmark{Thread Sanitizer}.
 
 \textbad{NOTA}: Todas las evaluaciones se realizarán en el servidor \textmark{stan}.
+Evalúa el rendimiento del programa para los casos de 2, 4, 8, 16, 32, 64 y 128 hilos.
 
-\subsection{Protección con un spin lock y consistencia secuencial}
+\subsection{Protección con un \emph{spin lock} y consistencia secuencial}
 
 Ahora estudiaremos los casos en que una variable atómica no es suficiente.
 Consideremos el caso en que en vez de un valor se utilizan dos valores en la sección crítica.
@@ -84,14 +84,14 @@ que utiliza consistencia secuencial:
 \begin{lstlisting}
 class spinlock_mutex {
 public:
-  spinlock_mutex() : flag_{} {}
-
   void lock() {
-    while (flag_.test_and_set(std::memory_order_seq_cst)) {}
+    while (flag_.test_and_set()) {
+      std::this_thread::yield();
+    }
   }
 
   void unlock() {
-    flag_.clear(std::memory_order_seq_cst);
+    flag_.clear();
   }
 
 private:
@@ -99,15 +99,15 @@ private:
 };
 \end{lstlisting}
 
-Coloca estas modificaciones en el archivo fuente \cppid{counter\_spin\_seq.cpp}.
+Coloca estas modificaciones en el directorio \textemph{counter-spinseq}.
+Comprueba que el programa está libre de condiciones de carrera con
+\textmark{Thread Sanitizer}.
 
-Comprueba que el programa esta libre de condiciones de carrera con \textmark{Thread Sanitizer}.
+\textbad{NOTA}: Todas las evaluaciones se realizarán en el servidor
+\textmark{stan}. Evalúa el rendimiento del programa para los casos de 2, 4, 8,
+16, 32, 64 y 128 hilos.
 
-Evalúa el rendimiento del programa para los casos de 2, 4, 8, 16, 32, 64 y 128 hilos.
-
-\textbad{NOTA}: Todas las evaluaciones se realizarán en el servidor \textmark{stan}.
-
-\subsection{Protección con un spin lock y consistencia de liberación/adquisición}
+\subsection{Protección con un \emph{spin lock} y consistencia de liberación/adquisición}
 
 Repite el apartado anterior con un \cppid{spinlock\_mutex} que utilice consistencia de
 liberación/adquisición:
@@ -115,14 +115,45 @@ liberación/adquisición:
 \begin{lstlisting}
 class spinlock_mutex {
 public:
-  spinlock_mutex() : flag_{} {}
-
   void lock() {
-    while (flag_.test_and_set(std::memory_order_acquire)) {}
+    while (flag_.test_and_set(std::memory_order_acquire)) {
+      while (flag_.test(std::memory_order_relaxed)) {
+        std::this_thread::yield();
+      }
+    }
+  }
+
+  void unlock() { flag_.clear(std::memory_order_release); }
+
+private:
+  std::atomic_flag flag_;
+};
+\end{lstlisting}
+
+Coloca estas modificaciones en el directorio \textemph{counter-spinra}. Comprueba
+que el programa está libre de condiciones de carrera con \textmark{Thread
+Sanitizer}.
+
+\textbad{NOTA}: Todas las evaluaciones se realizarán en el servidor \textmark{stan}.
+Evalúa el rendimiento del programa para los casos de 2, 4, 8, 16, 32, 64 y 128 hilos.
+
+\subsection{Optimización}
+
+Una alternativa sobre el caso de liberación adquisición es la utilización de
+primitivas \cppid{wait()}/\cppid{notify()}:
+
+\begin{lstlisting}
+class spinlock_mutex {
+public:
+  void lock() {
+    while (flag_.test_and_set(std::memory_order_acquire)) {
+      flag_.wait(true, std::memory_order_relaxed);
+    }
   }
 
   void unlock() {
     flag_.clear(std::memory_order_release);
+    flag_.notify_one();
   }
 
 private:
@@ -130,33 +161,10 @@ private:
 };
 \end{lstlisting}
 
-Coloca estas modificaciones en el archivo fuente \cppid{counter\_spin\_ra.cpp}.
-
-Comprueba que el programa esta libre de condiciones de carrera con \textmark{Thread Sanitizer}.
-
-Evalúa el rendimiento del programa para los casos de 2, 4, 8, 16, 32, 64 y 128 hilos.
+Coloca estas modificaciones en el directorio \textemph{counter-spinwn}.
+Comprueba que el programa está libre de condiciones de carrera con
+\textmark{Thread Sanitizer}.
 
 \textbad{NOTA}: Todas las evaluaciones se realizarán en el servidor \textmark{stan}.
-
-\subsection{Optimización del spinlock}
-
-Para los dos casos anteriores, considera la optimización que se consigue cuando se introduce
-una lectura relajada dentro del bucle de la operación \cppid{lock()}
-
-\begin{lstlisting}
-  void lock() {
-    while (flag_.test_and_set(std::memory_order_XXXX)) {
-      while (flag_.test(std::memory_order_relaxed)) {}
-    }
-  }
-\end{lstlisting}
-
-Coloca estas modificaciones en los archivos fuente \cppid{counter\_spin\_seq\_opt.cpp} y 
-\cppid{counter\_spin\_ra\_opt.cpp}.
-
-Comprueba que el programa esta libre de condiciones de carrera con \textmark{Thread Sanitizer}.
-
 Evalúa el rendimiento del programa para los casos de 2, 4, 8, 16, 32, 64 y 128 hilos.
-
-\textbad{NOTA}: Todas las evaluaciones se realizarán en el servidor \textmark{stan}.
 
