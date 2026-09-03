@@ -1,0 +1,53 @@
+{
+    "cmake.ignoreCMakeListsMissing": true,
+    "makefile.configureOnOpen": false,
+    "cmake.configureOnOpen": false,
+    "files.associations": {
+        "*.tex": "latex"
+    },
+    "[tex]": {
+        "editor.wordWrap": "wordWrapColumn",
+        "editor.wordWrapColumn": 100,
+        "editor.rulers": [
+            100
+        ],
+        "editor.defaultFormatter": "James-Yu.latex-workshop",
+        "editor.formatOnSave": true
+    },
+    "[latex]": {
+        "editor.defaultFormatter": "James-Yu.latex-workshop",
+        "editor.wordWrap": "wordWrapColumn",
+        "editor.wordWrapColumn": 100,
+        "editor.rulers": [
+            100
+        ],
+        "editor.formatOnSave": true
+    },
+    "latex-workshop.latex.autoBuild.run": "never",
+    "latex-workshop.latex.recipe.default": "make all (root)",
+    "latex-workshop.latex.tools": [
+        {
+            "name": "make-root",
+            "command": "bash",
+            "args": [
+                "-lc",
+                "cd \"${workspaceFolder}\" && make all"
+            ]
+        }
+    ],
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "make all (root)",
+            "tools": [
+                "make-root"
+            ]
+        }
+    ],
+    "latex-workshop.latex.build.enableMagicComments": true,
+    "latex-workshop.formatting.latexindent.args": [
+        "-c",
+        "%DIR%/",
+        "%TMPFILE%",
+        "-y=defaultIndent: '  '"
+    ]
+}
